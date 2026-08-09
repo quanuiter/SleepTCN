@@ -52,7 +52,7 @@ from .training_data import (
 )
 
 
-EXPERIMENT_IDS = ("E0", "E1", "E2", "E3")
+EXPERIMENT_IDS = ("E0", "E1", "E2", "E3", "E4", "E5", "E6")
 
 
 @dataclass(frozen=True)
@@ -155,8 +155,8 @@ def build_context(
     torch_device = torch.device(device)
     if torch_device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but is unavailable")
-    config_path = workspace / "configs" / "experiments_v1.json"
-    split_path = workspace / "data" / "splits" / "sleepedf_sc_10fold_seed42_v1.json"
+    config_path = workspace / "configs" / "experiments_v2.json"
+    split_path = workspace / "data" / "splits" / "sleepedf_sc_10fold_seed42_v2.json"
     config = json.loads(config_path.read_text(encoding="utf-8"))
     if config["protocol"].get("validation_schedule") != "end_of_epoch":
         raise ValueError("runner only accepts the frozen end_of_epoch schedule")
@@ -168,6 +168,7 @@ def build_context(
     run_root = (
         workspace
         / "runs"
+        / "v2"
         / mode
         / experiment_id
         / f"fold_{outer_fold:02d}"
@@ -178,6 +179,7 @@ def build_context(
         / "data"
         / "cache"
         / "features"
+        / "v2"
         / mode
         / f"fold_{outer_fold:02d}"
         / f"seed_{seed}"
@@ -792,7 +794,7 @@ def run_experiment(context: RunContext) -> dict[str, Any]:
         context.workspace
         / "data"
         / "splits"
-        / "sleepedf_sc_10fold_seed42_v1.json"
+        / "sleepedf_sc_10fold_seed42_v2.json"
     )
     partitions = resolve_fold_partitions(
         context.workspace / "data" / "processed",
@@ -823,6 +825,8 @@ def run_experiment(context: RunContext) -> dict[str, Any]:
         "git_commit": git_commit,
         "git_dirty": git_dirty,
         "runner_code_sha256": runner_code_sha256(context.workspace),
+        "config_path": "configs/experiments_v2.json",
+        "split_path": "data/splits/sleepedf_sc_10fold_seed42_v2.json",
         "data_variant": context.data_variant,
         "role_records": {
             "train": [record.info.record_key for record in train_records],

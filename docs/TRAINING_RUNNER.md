@@ -1,4 +1,8 @@
-# Trình chạy huấn luyện E0–E3
+# Trình chạy huấn luyện E0–E6 (giao thức v2)
+
+E4–E6 là các nhánh loại bỏ thành phần tiền xử lý. Chúng chỉ được chạy sau
+khi `processed_validation_v2.json` đạt. E1 vẫn phải chạy sau E0 cùng fold và
+seed; các E khác độc lập về checkpoint.
 
 ## Bảo vệ bắt buộc
 

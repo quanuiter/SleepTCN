@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "status": "doe_v2_cpu_data_validated_gpu_smoke_pending",
+  "dataset": {
+    "name": "sleep-edf-expanded/sleep-cassette/1.0.0",
+    "split_manifest": "data/splits/sleepedf_sc_10fold_seed42_v2.json",
+    "n_classes": 5,
+    "ignored_label": -1,
+    "padding_label": -100
+  },
+  "protocol": {
+    "training_seed_initial": 42,
+    "confirmatory_training_seeds": [42, 123, 2025],
+    "test_each_subject_exactly_once": true,
+    "validation_fold_policy": "next_fold_modulo_10",
+    "checkpoint_metric": "validation_macro_f1",
+    "primary_test_metric": "macro_f1",
+    "model_output": "logits",
+    "sequence_loss": "masked_cross_entropy",
+    "sequence_augmentation": false,
+    "n1_boost": 1.0,
+    "rem_boost": 1.0,
+    "inspect_test_during_training": false,
+    "validation_schedule": "end_of_epoch",
+    "resume_boundary": "last_completed_epoch"
+  },
+  "statistical_analysis": {
+    "primary_metric": "macro_f1",
+    "primary_uncertainty": "paired_subject_cluster_bootstrap_95ci",
+    "supporting_test": "paired_subject_wilcoxon_two_sided",
+    "multiple_testing_correction": "holm",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2026,
+    "primary_comparisons": ["E1-E0", "E2-E1", "E3-E2", "E3-E6"]
+  },
+  "components": {
+    "cnn15": {
+      "feature_dim": 75,
+      "manipulation_sets": ["current", "previous", "next"],
+      "class_specific_cnns_per_set": 5,
+      "learning_rate": 0.001,
+      "batch_size": 64,
+      "max_epochs": 1000,
+      "early_stopping_patience_validations": 10,
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_weighted_loss",
+      "validation_source": "validation_subject_fold"
+    },
+    "bilstm": {
+      "input_dim": 75,
+      "hidden_dim": 128,
+      "bidirectional": true,
+      "output_classes": 5,
+      "learning_rate": 0.01,
+      "batch_size_records": 4,
+      "max_epochs": 1000,
+      "early_stopping_patience_validations": 10,
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_macro_f1"
+    },
+    "resnet1d": {
+      "input_channels": 1,
+      "stem": {
+        "channels": 32,
+        "kernel_size": 50,
+        "stride": 5,
+        "padding": 25,
+        "max_pool_kernel": 3,
+        "max_pool_stride": 2,
+        "max_pool_padding": 1
+      },
+      "residual_blocks": [
+        {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+        {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+        {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+      ],
+      "feature_dim": 128,
+      "classifier_dropout": 0.5,
+      "learning_rate": 0.001,
+      "optimizer": "adamw",
+      "weight_decay": 0.0001,
+      "batch_size_epochs": 64,
+      "max_epochs": 40,
+      "early_stopping_patience_epochs": 8,
+      "class_weighting": "balanced_from_train_subjects_only",
+      "validation_source": "validation_subject_fold",
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_macro_f1"
+    },
+    "common_tcn": {
+      "hidden_dim": 128,
+      "kernel_size": 3,
+      "residual_blocks": 6,
+      "dilations": [1, 2, 4, 8, 16, 32],
+      "convolutions_per_block": 2,
+      "dropout": 0.2,
+      "learning_rate": 0.0005,
+      "batch_size_records": 8,
+      "max_epochs": 300,
+      "early_stopping_patience_validations": 30,
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_macro_f1",
+      "class_weights": [1.0, 1.0, 1.0, 1.0, 1.0]
+    }
+  },
+  "experiments": {
+    "E0": {
+      "name": "paper_raw_15cnn_bilstm",
+      "data_variant": "paper_raw_v1",
+      "extractor": "cnn15",
+      "sequence_model": "bilstm",
+      "purpose": "corrected_reference_baseline"
+    },
+    "E1": {
+      "name": "paper_raw_15cnn_common_tcn",
+      "data_variant": "paper_raw_v1",
+      "extractor": "cnn15",
+      "sequence_model": "common_tcn",
+      "reuse_extractor_features_from": "E0",
+      "comparison": "E1_minus_E0_estimates_sequence_model_change"
+    },
+    "E2": {
+      "name": "paper_raw_resnet_common_tcn",
+      "data_variant": "paper_raw_v1",
+      "extractor": "resnet1d",
+      "sequence_model": "common_tcn",
+      "comparison": "E2_minus_E1_estimates_extractor_change"
+    },
+    "E3": {
+      "name": "filtered_v2_resnet_common_tcn",
+      "data_variant": "filtered_v2",
+      "extractor": "resnet1d",
+      "sequence_model": "common_tcn",
+      "comparison": "E3_minus_E2_estimates_full_preprocessing_package"
+    },
+    "E4": {
+      "name": "bandpass_resnet_common_tcn",
+      "data_variant": "bandpass_v2",
+      "extractor": "resnet1d",
+      "sequence_model": "common_tcn",
+      "comparison": "E4_minus_E2_estimates_bandpass_change"
+    },
+    "E5": {
+      "name": "bandpass_clip_resnet_common_tcn",
+      "data_variant": "bandpass_clip_v2",
+      "extractor": "resnet1d",
+      "sequence_model": "common_tcn",
+      "comparison": "E5_minus_E4_estimates_clipping_change"
+    },
+    "E6": {
+      "name": "filtered_zscore_resnet_common_tcn",
+      "data_variant": "filtered_zscore_v2",
+      "extractor": "resnet1d",
+      "sequence_model": "common_tcn",
+      "comparison": "E3_minus_E6_estimates_amplitude_scaling_vs_zscore"
+    }
+  },
+  "historical_results": {
+    "status": "reference_only_not_primary_ablation",
+    "reason": "historical_15cnn_tcn_and_resnet_tcn_used_different_tcn_configs_and_splits"
+  }
+}

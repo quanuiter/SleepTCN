@@ -4,11 +4,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
+import sys
 from dataclasses import asdict
 from pathlib import Path
 
+import numpy
+import pyedflib
+import scipy
+
 from sleeptcn.preprocessing import (
     PreprocessConfig,
+    VALID_VARIANTS,
     load_source_hashes,
     pair_files,
     process_record,
@@ -25,7 +32,7 @@ def main() -> int:
         "--variants",
         nargs="+",
         default=["paper_raw_v1", "filtered_v2"],
-        choices=["paper_raw_v1", "filtered_v2"],
+        choices=sorted(VALID_VARIANTS),
     )
     parser.add_argument("--record-key", action="append", default=[])
     parser.add_argument("--overwrite", action="store_true")
@@ -63,6 +70,13 @@ def main() -> int:
         "source_readonly": str(args.data_dir.resolve()),
         "raw_manifest": str(args.raw_manifest.resolve()),
         "config": asdict(config),
+        "generation_environment": {
+            "python": sys.version,
+            "platform": platform.platform(),
+            "numpy": numpy.__version__,
+            "scipy": scipy.__version__,
+            "pyedflib": pyedflib.__version__,
+        },
         "variants": args.variants,
         "selected_record_keys": selected_keys,
         "summary": {
@@ -89,4 +103,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

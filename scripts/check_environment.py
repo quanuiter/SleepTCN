@@ -36,8 +36,10 @@ def main() -> int:
     args = parser.parse_args()
     root = args.workspace.resolve()
     errors: list[str] = []
+    if not ((3, 10) <= sys.version_info[:2] < (3, 12)):
+        errors.append("unsupported_python_version_expected_3.10_or_3.11")
 
-    split_path = root / "data/splits/sleepedf_sc_10fold_seed42_v1.json"
+    split_path = root / "data/splits/sleepedf_sc_10fold_seed42_v2.json"
     sidecar_path = split_path.with_suffix(split_path.suffix + ".sha256")
     split_manifest = json.loads(split_path.read_text(encoding="utf-8"))
     split_errors = validate_split_structure(split_manifest)
@@ -48,7 +50,7 @@ def main() -> int:
         errors.append("split_manifest_sha256")
 
     processed_validation = json.loads(
-        (root / "data/manifests/processed_validation_v1.json").read_text(
+        (root / "data/manifests/processed_validation_v2.json").read_text(
             encoding="utf-8"
         )
     )
@@ -58,9 +60,10 @@ def main() -> int:
         errors.append("processed_validation_global_errors")
 
     experiment_config = json.loads(
-        (root / "configs/experiments_v1.json").read_text(encoding="utf-8")
+        (root / "configs/experiments_v2.json").read_text(encoding="utf-8")
     )
-    if set(experiment_config["experiments"]) != {"E0", "E1", "E2", "E3"}:
+    expected_experiments = {f"E{index}" for index in range(7)}
+    if set(experiment_config["experiments"]) != expected_experiments:
         errors.append("experiment_registry")
     if experiment_config["dataset"]["ignored_label"] != -1:
         errors.append("ignored_label_config")
@@ -68,7 +71,13 @@ def main() -> int:
         errors.append("padding_label_config")
 
     sample_results = {}
-    for variant in ("paper_raw_v1", "filtered_v2"):
+    for variant in (
+        "paper_raw_v1",
+        "bandpass_v2",
+        "bandpass_clip_v2",
+        "filtered_v2",
+        "filtered_zscore_v2",
+    ):
         path = root / "data/processed" / variant / "SC4002E.npz"
         info = inspect_record(path, variant)
         sample_results[variant] = {

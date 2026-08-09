@@ -33,4 +33,3 @@ variants:
     clip_uv: 800.0
     scale_factor: 100.0
     notch_filter: none
-

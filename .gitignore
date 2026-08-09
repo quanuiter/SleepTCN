@@ -16,6 +16,7 @@ data/processed/
 data/cache/
 runs/**
 !runs/.gitkeep
+legacy/
 *.edf
 *.npz
 *.npy
@@ -27,4 +28,3 @@ runs/**
 Thumbs.db
 .idea/
 .vscode/
-

@@ -34,7 +34,7 @@ def _expected_sequence_checkpoint(run_root: Path, experiment_id: str) -> Path:
 
 
 def _extractor_sha256(run_root: Path, experiment_id: str) -> str:
-    if experiment_id in {"E2", "E3"}:
+    if experiment_id not in {"E0", "E1"}:
         return sha256_file(run_root / "checkpoints" / "resnet1d" / "best.pt")
     source_root = run_root
     if experiment_id == "E1":
@@ -139,16 +139,13 @@ def validate_run(workspace: Path, run_root: Path) -> dict[str, Any]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("status") != "complete":
         raise ValueError("run manifest is not complete")
+    config_relative = manifest.get("config_path", "configs/experiments_v1.json")
+    split_relative = manifest.get(
+        "split_path", "data/splits/sleepedf_sc_10fold_seed42_v1.json"
+    )
     current_hashes = {
-        "config_sha256": sha256_file(
-            workspace / "configs" / "experiments_v1.json"
-        ),
-        "split_sha256": sha256_file(
-            workspace
-            / "data"
-            / "splits"
-            / "sleepedf_sc_10fold_seed42_v1.json"
-        ),
+        "config_sha256": sha256_file(workspace / config_relative),
+        "split_sha256": sha256_file(workspace / split_relative),
         "runner_code_sha256": runner_code_sha256(workspace),
     }
     for key, value in current_hashes.items():

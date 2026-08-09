@@ -1,5 +1,10 @@
 # SleepTCN
 
+> Giao thức đang hoạt động là **v2 (E0–E6)**. Bắt đầu từ
+> `docs/NEXT_STEPS.md`, sau đó đọc `docs/EXPERIMENT_PROTOCOL_V2.md` và
+> `docs/STATISTICAL_ANALYSIS.md`. Các báo cáo smoke E0–E3 trước đây thuộc
+> giao thức v1 và không phải kết quả dùng cho bài viết.
+
 Workspace nghiên cứu sạch cho phân loại giai đoạn giấc ngủ trên **Sleep-EDF Expanded – Sleep Cassette (SC)**.
 
 ## Phạm vi đã khóa

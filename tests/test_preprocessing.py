@@ -6,6 +6,7 @@ from sleeptcn.preprocessing import (
     PreprocessConfig,
     annotations_to_labels,
     filtered_v2,
+    preprocess_signal_variant,
     trim_sleep_window,
 )
 
@@ -58,6 +59,34 @@ class FilterTests(unittest.TestCase):
         self.assertEqual(result.dtype, np.float32)
         self.assertTrue(np.isfinite(result).all())
         self.assertEqual(clip_fraction, 0.0)
+
+    def test_ablation_variants_are_finite_and_distinct(self) -> None:
+        config = PreprocessConfig(clip_uv=100.0, scale_factor=10.0)
+        time = np.arange(30 * 100, dtype=np.float64) / 100.0
+        signal = 150 * np.sin(2 * np.pi * 10 * time)
+        outputs = {}
+        for variant in (
+            "bandpass_v2",
+            "bandpass_clip_v2",
+            "filtered_v2",
+            "filtered_zscore_v2",
+        ):
+            output, clip_fraction, metadata = preprocess_signal_variant(
+                signal, variant, config
+            )
+            self.assertTrue(np.isfinite(output).all())
+            self.assertGreater(clip_fraction, 0.0)
+            self.assertIn("normalization", metadata)
+            outputs[variant] = output
+        self.assertGreater(float(np.max(np.abs(outputs["bandpass_v2"]))), 100.0)
+        self.assertLessEqual(float(np.max(np.abs(outputs["bandpass_clip_v2"]))), 100.0)
+        self.assertLessEqual(float(np.max(np.abs(outputs["filtered_v2"]))), 10.0)
+        self.assertAlmostEqual(
+            float(outputs["filtered_zscore_v2"].mean()), 0.0, places=5
+        )
+        self.assertAlmostEqual(
+            float(outputs["filtered_zscore_v2"].std()), 1.0, places=5
+        )
 
 
 if __name__ == "__main__":

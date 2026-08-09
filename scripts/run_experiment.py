@@ -1,4 +1,4 @@
-"""CLI chay E0-E3; mac dinh khong mo khoa tap test."""
+"""CLI chay giao thuc E0-E6; mac dinh khong mo khoa tap test."""
 
 from __future__ import annotations
 
@@ -15,7 +15,11 @@ from sleeptcn.experiment import build_context, run_experiment
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", type=Path, required=True)
-    parser.add_argument("--experiment", choices=["E0", "E1", "E2", "E3"], required=True)
+    parser.add_argument(
+        "--experiment",
+        choices=["E0", "E1", "E2", "E3", "E4", "E5", "E6"],
+        required=True,
+    )
     parser.add_argument("--fold", type=int, required=True)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", default="cuda")

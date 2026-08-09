@@ -115,6 +115,27 @@ def validate_file(
                 errors.append("filtered_clip_bound")
             if "sosfiltfilt" not in scalar_text(npz, "filter"):
                 errors.append("filtered_filter_metadata")
+        elif variant == "bandpass_v2":
+            if scalar_text(npz, "normalization") != "none":
+                errors.append("bandpass_normalization_metadata")
+            if "sosfiltfilt" not in scalar_text(npz, "filter"):
+                errors.append("bandpass_filter_metadata")
+        elif variant == "bandpass_clip_v2":
+            if np.max(np.abs(x)) > 800.001:
+                errors.append("bandpass_clip_bound")
+            if "clip_800.0uV" not in scalar_text(npz, "normalization"):
+                errors.append("bandpass_clip_metadata")
+        elif variant == "filtered_zscore_v2":
+            if "record_zscore" not in scalar_text(npz, "normalization"):
+                errors.append("zscore_normalization_metadata")
+            if scalar_text(npz, "normalization_scope") != "full_record_after_filter_clip":
+                errors.append("zscore_scope_metadata")
+            if not np.isfinite(float(npz["normalization_mean"])):
+                errors.append("zscore_mean_metadata")
+            if not np.isfinite(float(npz["normalization_std"])) or float(
+                npz["normalization_std"]
+            ) <= 0:
+                errors.append("zscore_std_metadata")
 
         label_counts = Counter(int(value) for value in y)
         summary = {
@@ -144,7 +165,13 @@ def validate_file(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--processed-root", type=Path, required=True)
-    parser.add_argument("--preprocess-manifest", type=Path, required=True)
+    parser.add_argument(
+        "--preprocess-manifest",
+        type=Path,
+        action="append",
+        required=True,
+        help="May be repeated to validate frozen and newly generated variants together.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
         "--variants", nargs="+", default=["paper_raw_v1", "filtered_v2"]
@@ -153,13 +180,18 @@ def main() -> int:
     parser.add_argument("--expected-subjects", type=int, default=78)
     args = parser.parse_args()
 
-    process_manifest = json.loads(
-        args.preprocess_manifest.read_text(encoding="utf-8")
-    )
-    expected_hashes = {
-        (record["variant"], record["record_key"]): record["output_sha256"]
-        for record in process_manifest["records"]
-    }
+    process_manifests = [
+        json.loads(path.read_text(encoding="utf-8"))
+        for path in args.preprocess_manifest
+    ]
+    expected_hashes = {}
+    for manifest in process_manifests:
+        for record in manifest["records"]:
+            key = (record["variant"], record["record_key"])
+            value = record["output_sha256"]
+            if key in expected_hashes and expected_hashes[key] != value:
+                raise ValueError(f"conflicting manifest hashes for {key}")
+            expected_hashes[key] = value
 
     files_by_variant = {
         variant: sorted((args.processed_root / variant).glob("SC*.npz"))
@@ -205,7 +237,9 @@ def main() -> int:
     report = {
         "schema_version": 1,
         "processed_root": str(args.processed_root.resolve()),
-        "preprocess_manifest": str(args.preprocess_manifest.resolve()),
+        "preprocess_manifests": [
+            str(path.resolve()) for path in args.preprocess_manifest
+        ],
         "variants": args.variants,
         "summary": {
             "files": len(records),

@@ -29,7 +29,13 @@ LABEL_MAP = {
     "Movement time": -1,
     "Sleep stage ?": -1,
 }
-VALID_VARIANTS = {"paper_raw_v1", "filtered_v2"}
+VALID_VARIANTS = {
+    "paper_raw_v1",
+    "bandpass_v2",
+    "bandpass_clip_v2",
+    "filtered_v2",
+    "filtered_zscore_v2",
+}
 
 
 @dataclass(frozen=True)
@@ -169,9 +175,18 @@ def trim_sleep_window(
     )
 
 
-def filtered_v2(signal: np.ndarray, config: PreprocessConfig) -> tuple[np.ndarray, float]:
+def preprocess_signal_variant(
+    signal: np.ndarray, variant: str, config: PreprocessConfig
+) -> tuple[np.ndarray, float, dict[str, Any]]:
+    """Apply one auditable preprocessing ablation to a continuous EEG record.
+
+    Z-score statistics are computed from the full record after filtering and
+    clipping. They never use labels or train/validation/test population data.
+    """
     if signal.ndim != 1:
         raise ValueError("continuous signal must be one-dimensional")
+    if variant not in VALID_VARIANTS - {"paper_raw_v1"}:
+        raise ValueError(f"Unsupported filtered variant: {variant}")
     sos = butter(
         config.bandpass_order,
         [config.bandpass_low_hz, config.bandpass_high_hz],
@@ -179,13 +194,54 @@ def filtered_v2(signal: np.ndarray, config: PreprocessConfig) -> tuple[np.ndarra
         fs=config.sampling_rate_hz,
         output="sos",
     )
-    filtered = sosfiltfilt(sos, signal.astype(np.float64, copy=False))
-    clip_fraction = float(np.mean(np.abs(filtered) > config.clip_uv))
-    filtered = np.clip(filtered, -config.clip_uv, config.clip_uv)
-    filtered = filtered / config.scale_factor
-    if not np.isfinite(filtered).all():
-        raise ValueError("Filtered signal contains NaN or infinity")
-    return filtered.astype(np.float32), clip_fraction
+    bandpassed = sosfiltfilt(sos, signal.astype(np.float64, copy=False))
+    clip_fraction = float(np.mean(np.abs(bandpassed) > config.clip_uv))
+    metadata: dict[str, Any] = {
+        "normalization_scope": "none",
+        "normalization_mean": None,
+        "normalization_std": None,
+    }
+    if variant == "bandpass_v2":
+        output = bandpassed
+        normalization = "none"
+    else:
+        clipped = np.clip(bandpassed, -config.clip_uv, config.clip_uv)
+        if variant == "bandpass_clip_v2":
+            output = clipped
+            normalization = f"clip_{config.clip_uv}uV"
+        elif variant == "filtered_v2":
+            output = clipped / config.scale_factor
+            normalization = (
+                f"clip_{config.clip_uv}uV_then_divide_{config.scale_factor}"
+            )
+        elif variant == "filtered_zscore_v2":
+            mean = float(clipped.mean(dtype=np.float64))
+            std = float(clipped.std(dtype=np.float64))
+            if not np.isfinite(std) or std <= 0.0:
+                raise ValueError("Cannot z-score a record with zero/nonfinite std")
+            output = (clipped - mean) / std
+            normalization = f"clip_{config.clip_uv}uV_then_record_zscore"
+            metadata.update(
+                {
+                    "normalization_scope": "full_record_after_filter_clip",
+                    "normalization_mean": mean,
+                    "normalization_std": std,
+                }
+            )
+        else:  # pragma: no cover - guarded above
+            raise AssertionError(variant)
+    if not np.isfinite(output).all():
+        raise ValueError("Processed signal contains NaN or infinity")
+    metadata["normalization"] = normalization
+    return output.astype(np.float32), clip_fraction, metadata
+
+
+def filtered_v2(signal: np.ndarray, config: PreprocessConfig) -> tuple[np.ndarray, float]:
+    """Backward-compatible helper for the frozen filtered_v2 definition."""
+    output, clip_fraction, _ = preprocess_signal_variant(
+        signal, "filtered_v2", config
+    )
+    return output, clip_fraction
 
 
 def atomic_savez(path: Path, arrays: dict[str, Any]) -> None:
@@ -306,16 +362,29 @@ def process_record(
                     "filter": np.array("none"),
                     "normalization": np.array("none"),
                 }
-            elif variant == "filtered_v2":
-                processed, clip_fraction = filtered_v2(continuous_raw, config)
+            elif variant in VALID_VARIANTS - {"paper_raw_v1"}:
+                processed, clip_fraction, processing_metadata = (
+                    preprocess_signal_variant(continuous_raw, variant, config)
+                )
                 x = processed.reshape(signal_epoch_count, config.samples_per_epoch)[start:stop]
                 variant_metadata = {
                     "filter": np.array(
                         f"butterworth_sosfiltfilt_order{config.bandpass_order}_"
                         f"{config.bandpass_low_hz}-{config.bandpass_high_hz}Hz"
                     ),
-                    "normalization": np.array(
-                        f"clip_{config.clip_uv}uV_then_divide_{config.scale_factor}"
+                    "normalization": np.array(processing_metadata["normalization"]),
+                    "normalization_scope": np.array(
+                        processing_metadata["normalization_scope"]
+                    ),
+                    "normalization_mean": np.float64(
+                        np.nan
+                        if processing_metadata["normalization_mean"] is None
+                        else processing_metadata["normalization_mean"]
+                    ),
+                    "normalization_std": np.float64(
+                        np.nan
+                        if processing_metadata["normalization_std"] is None
+                        else processing_metadata["normalization_std"]
                     ),
                 }
             else:  # pragma: no cover - protected above
