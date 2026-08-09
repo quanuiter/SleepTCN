@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "split_manifest": "D:\\SleepTCN\\data\\splits\\sleepedf_sc_10fold_seed42_v1.json",
+  "split_manifest_sha256": "c3a8a4556dc886401781ed5f553b7109810f7569c09d8bf3b4a118c0e1948f93",
+  "summary": {
+    "passed": true,
+    "errors": [],
+    "subjects": 78,
+    "folds": 10,
+    "outer_runs": 10,
+    "variants": {
+      "paper_raw_v1": {
+        "files": 153,
+        "mismatched_subjects": 0,
+        "aggregate_mismatches": 0
+      },
+      "filtered_v2": {
+        "files": 153,
+        "mismatched_subjects": 0,
+        "aggregate_mismatches": 0
+      }
+    }
+  }
+}

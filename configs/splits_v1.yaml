@@ -1,0 +1,17 @@
+dataset: sleep-edf-expanded/sleep-cassette/1.0.0
+subject_id_rule: first_5_characters_of_record_key
+
+split:
+  n_folds: 10
+  seed: 42
+  method: sorted_subjects_then_numpy_default_rng_permutation_then_array_split
+  test_policy: test_fold_i
+  validation_policy: fold_i_plus_1_modulo_10
+  train_policy: remaining_8_folds
+
+compatible_variants:
+  - paper_raw_v1
+  - filtered_v2
+
+manifest: data/splits/sleepedf_sc_10fold_seed42_v1.json
+manifest_sha256: data/splits/sleepedf_sc_10fold_seed42_v1.json.sha256

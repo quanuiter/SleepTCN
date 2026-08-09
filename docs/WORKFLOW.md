@@ -4,11 +4,11 @@ Tài liệu này là danh sách kiểm soát bắt buộc. Không chuyển sang 
 
 ## A. Kiểm kê dữ liệu gốc — CPU
 
-- [ ] Xác nhận 153 PSG, 153 Hypnogram, 78 đối tượng.
-- [ ] Ghép cặp bằng khóa bản ghi 7 ký tự, không bằng thứ tự danh sách.
-- [ ] Kiểm tra không thiếu và không trùng khóa.
-- [ ] Sinh manifest và mã băm nguồn.
-- [ ] Kiểm tra thời điểm bắt đầu, kênh, tần số lấy mẫu và thời lượng bằng `pyedflib`.
+- [x] Xác nhận 153 PSG, 153 Hypnogram, 78 đối tượng.
+- [x] Ghép cặp bằng khóa bản ghi 7 ký tự, không bằng thứ tự danh sách.
+- [x] Kiểm tra không thiếu và không trùng khóa.
+- [x] Sinh manifest và mã băm nguồn.
+- [x] Kiểm tra thời điểm bắt đầu, kênh, tần số lấy mẫu và thời lượng bằng `pyedflib`.
 
 Đầu ra: `data/manifests/raw_inventory.json` và báo cáo kiểm định EDF.
 
@@ -24,19 +24,19 @@ Mỗi NPZ phải lưu phiên bản tiền xử lý, mã đối tượng, mã b�
 
 ## C. Kiểm định dữ liệu đã xử lý — CPU
 
-- [ ] Mỗi epoch có 3.000 mẫu.
-- [ ] Không NaN/vô cực.
-- [ ] Nhãn chỉ thuộc `-1, 0, 1, 2, 3, 4`.
-- [ ] `paper_raw_v1` và `filtered_v2` có cùng nhãn, vị trí và số epoch.
-- [ ] Movement/Unknown không bị xóa.
+- [x] Mỗi epoch có 3.000 mẫu.
+- [x] Không NaN/vô cực.
+- [x] Nhãn chỉ thuộc `-1, 0, 1, 2, 3, 4`.
+- [x] `paper_raw_v1` và `filtered_v2` có cùng nhãn, vị trí và số epoch.
+- [x] Movement/Unknown không bị xóa.
 - [ ] Có bảng phân bố lớp, biên độ, tỷ lệ cắt và đồ thị phổ.
 
 ## D. Chia dữ liệu — CPU
 
-- [ ] Tạo một tệp 10-fold cố định theo đối tượng, seed 42.
-- [ ] Hai đêm của cùng người luôn ở cùng fold.
-- [ ] Mỗi vòng dùng 1 fold test, fold kế tiếp validation, 8 fold train.
-- [ ] Kiểm tra tự động ba tập không giao nhau.
+- [x] Tạo một tệp 10-fold cố định theo đối tượng, seed 42.
+- [x] Hai đêm của cùng người luôn ở cùng fold.
+- [x] Mỗi vòng dùng 1 fold test, fold kế tiếp validation, 8 fold train.
+- [x] Kiểm tra tự động ba tập không giao nhau.
 
 ## E. Chạy thử — GPU
 
@@ -62,4 +62,3 @@ Không thay siêu tham số sau khi đã xem kết quả test. Nếu phát hiệ
 - Lưu dự đoán theo đối tượng, bản ghi và epoch.
 - Tính khoảng tin cậy 95% bằng bootstrap theo đối tượng.
 - So sánh E1−E0, E2−E1 và E3−E2 trên cùng đối tượng.
-
