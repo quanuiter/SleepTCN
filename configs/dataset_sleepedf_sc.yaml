@@ -1,0 +1,29 @@
+dataset_name: sleep-edf-expanded
+dataset_version: "1.0.0"
+subset: sleep-cassette
+
+paths:
+  windows_raw_readonly: "E:/research/Dataset/physionet.org/files/sleep-edfx/1.0.0/sleep-cassette"
+  gpu_raw_readonly: "/workspace/datasets/sleep-edfx/1.0.0/sleep-cassette"
+  processed_root: "data/processed"
+  manifest_root: "data/manifests"
+
+expected:
+  subjects: 78
+  psg_files: 153
+  hypnogram_files: 153
+
+signal:
+  channel: "EEG Fpz-Cz"
+  sampling_rate_hz: 100
+  epoch_seconds: 30
+  samples_per_epoch: 3000
+
+labels:
+  wake: 0
+  n1: 1
+  n2: 2
+  n3: 3
+  rem: 4
+  ignored: -1
+
