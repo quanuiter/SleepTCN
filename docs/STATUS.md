@@ -22,7 +22,7 @@
 
 - `9ffe786`: tiền xử lý đã kiểm định.
 - `dbcc103`: chia fold và hợp đồng mô hình CPU.
-- Mốc trình chạy huấn luyện: sẽ được ghi sau khi hoàn tất tài liệu/provenance của giai đoạn này.
+- `4e7113f`: trình chạy huấn luyện E0–E3, checkpoint, artifact và notebook GPU.
 
 ## Việc còn lại trước thí nghiệm chính
 

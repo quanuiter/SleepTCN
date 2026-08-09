@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "created_local_date": "2026-08-09",
+  "status": "pass",
+  "scope": "E0_E1_E2_E3_training_runner_cpu_smoke_and_artifact_validation",
+  "implementation_git_commit": "4e7113ffbc2f32021a51614493dc8ef40b1f24e1",
+  "config_sha256": "d8da091fd34ade2a5fe7b41f583bdd417096f6ac394837271c6de771fb27bc0b",
+  "split_sha256": "c3a8a4556dc886401781ed5f553b7109810f7569c09d8bf3b4a118c0e1948f93",
+  "runner_code_sha256": "c6743c1622edb9f5e79c61489a6698ed635dfe2dfce348a8aec7420a83f9b6c0",
+  "verification": {
+    "unit_tests_passed": 47,
+    "unit_tests_failed": 0,
+    "compileall_passed": true,
+    "smoke_outer_fold": 0,
+    "smoke_seed": 42,
+    "smoke_device": "cpu",
+    "smoke_train_records": 2,
+    "smoke_validation_records": 1,
+    "validation_record_key": "SC4041E",
+    "validation_valid_epochs_per_run": 1235,
+    "test_role_locked": true,
+    "resume_verified": true,
+    "clean_git_resume_commit": "4e7113ffbc2f32021a51614493dc8ef40b1f24e1"
+  },
+  "smoke_artifacts_not_tracked_by_git": {
+    "E0": {
+      "manifest_sha256": "156a2342b1817d5a66f68ff4188a4da0777633965ce8739d916a0339215ed174",
+      "validation_report_sha256": "a08e5b75b301e90bb435b622a419f1a00c5fbfb9a21752b4e1735ccfad745d81"
+    },
+    "E1": {
+      "manifest_sha256": "e9ff6072537719615952147d36533d527873c274486ac63854b35567eaeef61a",
+      "validation_report_sha256": "b3c913474c29950fd80ddc83b2cc7b8c30a58a92e3d7bb41fcb8febeede6e28e"
+    },
+    "E2": {
+      "manifest_sha256": "91c909fd60e9b7316f362788e573422211a774300928612d47a067dad10aff0e",
+      "validation_report_sha256": "44b59dfae290ce75d168c55b23dbc565d5400e923226f0a76012412fd5219221"
+    },
+    "E3": {
+      "manifest_sha256": "2c74e3231137e73b678b4b6351ff09066df2713cfcff08b18c69ee07ea057e81",
+      "validation_report_sha256": "68b4d0e4d2d2e4e12937fb9dc5c16f1427ced3538a40dd3a4b0281a3a4237801"
+    }
+  },
+  "tracked_file_sha256": {
+    "configs/experiments_v1.json": "d8da091fd34ade2a5fe7b41f583bdd417096f6ac394837271c6de771fb27bc0b",
+    "src/sleeptcn/artifacts.py": "ae52ca8d372091e3991ffecec300b91a11db07323d8a50a08c85fdb47f6d18ee",
+    "src/sleeptcn/engine.py": "8adabc9161be4a9437659608f144115091bde7a469b509c41047d8ff6b7964cf",
+    "src/sleeptcn/experiment.py": "edae912645c6575a48963671f123886cc367bc28c7cefdfc3ea1111af08d6d13",
+    "src/sleeptcn/run_validation.py": "3f69f12f4e710bb821a33505ed6e73b0044b3716354cd4a75239ab1f55517c42",
+    "src/sleeptcn/training_data.py": "2da2125355c17503ad523612cd7666108630bb2a9da7fbb53823b5db4d24c761",
+    "scripts/run_experiment.py": "87f043647131952e69ef6ca0f3a3d5f86af2cde35e4279d7e3e6ff0310b07c81",
+    "scripts/validate_run_artifacts.py": "119404d9e237b5ef4cbe7c614a820b4ed8eb22aad2f309b5ef2ebeab8d2a570f",
+    "notebooks/20_chay_thu_gpu.ipynb": "f3b52ec5afdbb840daa9fc1f22a30c21d7de1703ae7c8ca89524ae4e0b734f49"
+  }
+}
