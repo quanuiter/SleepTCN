@@ -2,39 +2,34 @@
 
 ## Đã hoàn thành
 
-- [x] Kiểm kê tên tệp và SHA-256: 153 cặp, 78 đối tượng.
-- [x] Kiểm định metadata EDF: 153/153 đạt, không lỗi.
-- [x] Xác nhận kênh `EEG Fpz-Cz`, 100 Hz, đơn vị µV.
-- [x] Sinh và kiểm định `paper_raw_v1`: 153 NPZ.
-- [x] Sinh và kiểm định `filtered_v2`: 153 NPZ.
-- [x] Giữ 298 epoch Movement/Unknown bằng nhãn `-1`.
-- [x] Commit mốc tiền xử lý v1: `9ffe786`.
-- [x] Tạo manifest 10-fold seed 42 theo 78 đối tượng.
-- [x] Kiểm định 10 vòng train/validation/test không rò rỉ.
-- [x] Viết bộ nạp NPZ kiểm tra phiên bản, metadata, nhãn và chỉ số epoch.
-- [x] Khóa kiến trúc SleepCNN, BiLSTM, ResNet-1D và TCN trả về logits.
-- [x] Khóa mặt nạ riêng cho nhãn bỏ qua `-1` và nhãn đệm `-100`.
+- [x] Kiểm kê 153 cặp PSG/Hypnogram của 78 đối tượng và mã băm nguồn.
+- [x] Kiểm định metadata EDF 153/153 bản ghi.
+- [x] Sinh và kiểm định 153 NPZ `paper_raw_v1` và 153 NPZ `filtered_v2`.
+- [x] Giữ đúng 298 epoch Movement/Unknown bằng nhãn `-1` ở vị trí thời gian gốc.
+- [x] Khóa manifest 10-fold seed 42 theo đối tượng; train/validation/test không giao nhau.
+- [x] Khóa bộ nạp, kiến trúc SleepCNN/BiLSTM/ResNet-1D/TCN, mặt nạ và chỉ số đánh giá.
 - [x] Khóa phép dịch current/previous/next trong biên từng bản ghi và thứ tự 75 đặc trưng 15CNN.
-- [x] Khóa chỉ số accuracy, F1 vĩ mô, Cohen's kappa và chỉ số từng lớp.
-- [x] Toàn bộ 28 kiểm thử CPU đạt.
-- [x] Kiểm thử hợp đồng trên bản ghi thật `SC4002E` đạt cho E0–E3.
+- [x] Viết vòng huấn luyện, dừng sớm, checkpoint nguyên tử và tiếp tục từ epoch hoàn tất cuối.
+- [x] Kiểm thử huấn luyện liên tục và huấn luyện tiếp tục cho trọng số giống tuyệt đối trên CPU.
+- [x] Viết kho đặc trưng có mã băm và dự đoán có `subject_id`, `record_key`, `original_epoch_index`.
+- [x] Nối đầy đủ E0, E1, E2, E3; E1 bắt buộc dùng lại 15CNN của E0.
+- [x] Khóa tập test khỏi API huấn luyện; smoke mode không thể mở test.
+- [x] Toàn bộ 47 kiểm thử tự động đạt.
+- [x] Smoke run CPU bằng dữ liệu thật đạt cho E0–E3.
+- [x] Bốn báo cáo kiểm định độc lập đạt: checkpoint, extractor, nhãn, chỉ số epoch và metrics đều khớp.
 
-## Tệp bằng chứng
+## Mốc Git
 
-- `data/manifests/raw_inventory.json`
-- `data/manifests/edf_metadata_audit.json`
-- `data/manifests/preprocess_manifest_v1.json`
-- `data/manifests/processed_validation_v1.json`
-- `data/manifests/preprocess_provenance_v1.json`
-- `data/splits/sleepedf_sc_10fold_seed42_v1.json`
-- `data/splits/sleepedf_sc_10fold_seed42_v1.json.sha256`
-- `data/splits/sleepedf_sc_10fold_seed42_v1_validation.json`
-- `runs/cpu_contract_smoke.json` (đầu ra cục bộ, không đưa vào Git)
+- `9ffe786`: tiền xử lý đã kiểm định.
+- `dbcc103`: chia fold và hợp đồng mô hình CPU.
+- Mốc trình chạy huấn luyện: sẽ được ghi sau khi hoàn tất tài liệu/provenance của giai đoạn này.
 
-## Việc còn lại trước GPU
+## Việc còn lại trước thí nghiệm chính
 
-1. Viết và kiểm thử trình chạy huấn luyện/checkpoint cho một fold.
-2. Bảo đảm validation chỉ dùng fold đối tượng validation, kể cả khi huấn luyện 15 CNN.
-3. Ghi dự đoán kèm `subject_id`, `record_key`, `original_epoch_index` để có thể kiểm toán.
-4. Khóa môi trường Docker/notebook Python 3.11 và phiên bản PyTorch CUDA của nhà cung cấp GPU.
-5. Sau đó mới chạy thử một fold, 1–2 epoch trên GPU; chưa chạy test để chọn siêu tham số.
+1. Tạo môi trường GPU Python 3.11 theo nhà cung cấp được chọn.
+2. Chạy `check_environment.py --require-gpu` trong chính container/notebook đó.
+3. Chạy smoke GPU E0–E3 ở fold 0, không mở test.
+4. Đo thời gian, VRAM và dung lượng cache/checkpoint để lập ngân sách 10 fold.
+5. Chỉ khi bốn smoke GPU và kiểm định artifact đều đạt mới bắt đầu thí nghiệm đầy đủ.
+
+Chưa có kết quả mô hình chính thức. Các metrics trong `runs/smoke/` không được dùng trong khóa luận hoặc bài báo.

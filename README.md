@@ -24,11 +24,16 @@ src/sleeptcn/  Mã nguồn dùng chung
 tests/         Kiểm thử tự động
 ```
 
-## Thứ tự bắt đầu
+## Trạng thái và thứ tự tiếp theo
 
-1. Đọc `docs/WORKFLOW.md`.
-2. Chạy `scripts/audit_raw_dataset.py` trên máy CPU.
-3. Không thuê GPU cho tới khi các cổng kiểm tra dữ liệu và chia đối tượng đều đạt.
+Các cổng CPU, trình chạy E0–E3 và smoke CPU đã đạt. Đọc lần lượt:
+
+1. `docs/STATUS.md` — trạng thái đã kiểm chứng.
+2. `docs/EXPERIMENT_PROTOCOL.md` — giao thức so sánh E0–E3.
+3. `docs/TRAINING_RUNNER.md` — lệnh chạy và cổng bảo vệ.
+4. `notebooks/20_chay_thu_gpu.ipynb` — smoke GPU fold 0, không mở test.
+
+Không chạy đầy đủ 10 fold cho tới khi smoke GPU của cả bốn thí nghiệm và trình kiểm định artifact đều đạt.
 
 ## Quy tắc bất biến
 
@@ -36,4 +41,3 @@ tests/         Kiểm thử tự động
 - Không chia train/validation/test theo epoch hay theo bản ghi; phải chia theo đối tượng.
 - Không xóa Movement/Unknown khỏi chuỗi; giữ vị trí và gán nhãn `-1`.
 - Mọi kết quả phải lưu cấu hình, mã băm dữ liệu, mã băm fold và commit Git.
-

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "cpu_contract_pass_training_runner_pending",
+  "status": "training_runner_cpu_smoke_pass_gpu_smoke_pending",
   "dataset": {
     "name": "sleep-edf-expanded/sleep-cassette/1.0.0",
     "split_manifest": "data/splits/sleepedf_sc_10fold_seed42_v1.json",
@@ -20,7 +20,9 @@
     "sequence_augmentation": false,
     "n1_boost": 1.0,
     "rem_boost": 1.0,
-    "inspect_test_during_training": false
+    "inspect_test_during_training": false,
+    "validation_schedule": "end_of_epoch",
+    "resume_boundary": "last_completed_epoch"
   },
   "components": {
     "cnn15": {
@@ -31,7 +33,8 @@
       "batch_size": 64,
       "max_epochs": 1000,
       "early_stopping_patience_validations": 10,
-      "validate_every_iterations": 150,
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_weighted_loss",
       "validation_source": "validation_subject_fold"
     },
     "bilstm": {
@@ -43,7 +46,8 @@
       "batch_size_records": 4,
       "max_epochs": 1000,
       "early_stopping_patience_validations": 10,
-      "validate_every_iterations": 10
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_macro_f1"
     },
     "resnet1d": {
       "input_channels": 1,
@@ -70,7 +74,9 @@
       "max_epochs": 40,
       "early_stopping_patience_epochs": 8,
       "class_weighting": "balanced_from_train_subjects_only",
-      "validation_source": "validation_subject_fold"
+      "validation_source": "validation_subject_fold",
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_macro_f1"
     },
     "common_tcn": {
       "hidden_dim": 128,
@@ -83,7 +89,8 @@
       "batch_size_records": 8,
       "max_epochs": 300,
       "early_stopping_patience_validations": 30,
-      "validate_every_iterations": 5,
+      "validation_schedule": "end_of_epoch",
+      "checkpoint_metric": "validation_macro_f1",
       "class_weights": [1.0, 1.0, 1.0, 1.0, 1.0]
     }
   },

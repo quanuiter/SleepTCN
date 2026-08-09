@@ -25,7 +25,9 @@ E1–E3 mới dùng cùng TCN: hidden 128, kernel 3, 6 block, dilation 1–32, d
 - `-100` chỉ dùng cho padding.
 - Mô hình trả logits; không softmax trước `CrossEntropyLoss`.
 - Tắt tăng cường chuỗi và tăng trọng số N1 trong thí nghiệm chính đầu tiên.
-- Chọn checkpoint theo F1 vĩ mô validation.
+- 15CNN chọn checkpoint theo loss validation có trọng số của từng mạng chuyên biệt.
+- ResNet, BiLSTM và TCN chọn checkpoint theo F1 vĩ mô validation.
+- Validation chạy ở cuối mỗi epoch để checkpoint `latest.pt` là ranh giới tiếp tục xác định.
 - Không hiển thị/chỉnh cấu hình theo test khi đang chạy các fold.
 - Lần chạy đầu dùng seed huấn luyện 42; xác nhận sau bằng 42, 123 và 2025.
 
@@ -37,4 +39,4 @@ Mọi bộ trích xuất và mô hình chuỗi chỉ dùng đối tượng thu�
 
 ## Trạng thái
 
-Hợp đồng dữ liệu, split, loss, tạo đặc trưng, chỉ số đánh giá và mã kiến trúc E0–E3 đã khóa trên CPU. Kiểm thử toàn tuyến nhỏ trên dữ liệu thật đã đạt. Vòng huấn luyện/checkpoint đầy đủ vẫn phải được tái cấu trúc và kiểm thử trước lần chạy GPU đầu tiên.
+Hợp đồng dữ liệu, split, loss, tạo đặc trưng, chỉ số, kiến trúc và vòng huấn luyện E0–E3 đã khóa trên CPU. Bốn smoke run dữ liệu thật cùng kiểm định artifact độc lập đã đạt. Bước tiếp theo là smoke GPU fold 0, chưa mở test.

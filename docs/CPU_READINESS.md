@@ -1,34 +1,33 @@
-# Cổng sẵn sàng CPU v1
+# Cổng sẵn sàng CPU v2
 
 ## Kết luận
 
-Phần dữ liệu, chia fold, bộ nạp, kiến trúc, mặt nạ, tạo đặc trưng và chỉ số đánh giá đã vượt qua kiểm thử CPU. Đây chưa phải bằng chứng mô hình học tốt; các giá trị loss trong smoke test chỉ chứng minh toàn tuyến có thể tính gradient hữu hạn.
+Toàn bộ phần có thể kiểm tra hợp lý không cần GPU đã đạt: dữ liệu, chia fold, bộ nạp, mô hình, vòng huấn luyện, checkpoint, tiếp tục chạy, cache đặc trưng, dự đoán và kiểm định độc lập. Bước hợp lý tiếp theo là smoke GPU, chưa phải chạy đầy đủ 10 fold.
 
 ## Lệnh kiểm tra lại
 
-Chạy từ `D:\SleepTCN` bằng PowerShell:
+Chạy trong PowerShell:
 
 ```powershell
-$env:PYTHONPATH = "D:\SleepTCN\src"
+$env:PYTHONPATH = "D:\SleepTCN;D:\SleepTCN\src"
 python -m unittest discover -s D:\SleepTCN\tests -v
-python D:\SleepTCN\scripts\cpu_contract_smoke.py --workspace D:\SleepTCN
+python D:\SleepTCN\scripts\check_environment.py --workspace D:\SleepTCN
 ```
 
-Kết quả đã quan sát ngày 2026-08-09:
+Kết quả hiện tại:
 
-- 28/28 kiểm thử đơn vị đạt.
-- Smoke test CPU đạt trên `SC4002E`.
-- Cửa sổ chuỗi gồm 9 epoch, trong đó 1 epoch `-1`; chỉ 8 epoch tham gia đánh giá/loss.
-- E0, E1, E2, E3 đều có logits đúng hình dạng, loss và gradient hữu hạn.
-- TCN có trường tiếp nhận 253 epoch và đã kiểm thử bất biến với phần đệm bên phải.
+- 47/47 kiểm thử đạt.
+- Kiểm tra môi trường CPU đạt.
+- Smoke E0–E3 trên fold 0 đạt với 2 bản ghi train và 1 bản ghi validation.
+- Mỗi smoke chỉ chạy một batch/một epoch cho từng giai đoạn.
+- Mỗi run xuất đúng 1.235 dự đoán validation của `SC4041E`.
+- Test vẫn khóa và không có tệp dự đoán test.
+- Trình kiểm định độc lập đọc lại NPZ nguồn và xác nhận từng nhãn/chỉ số epoch.
 
-## Những gì smoke test không chứng minh
+## Ý nghĩa giới hạn
 
-- Không chứng minh độ chính xác, F1 hay khả năng hội tụ.
-- Không thay thế chạy thử GPU một fold.
-- Không kiểm tra tốc độ hay dung lượng bộ nhớ GPU.
-- Không xác nhận notebook đã thực thi, vì máy hiện tại chưa có Jupyter; chính các script mà notebook gọi đã được chạy trực tiếp.
+Smoke test chỉ chứng minh mã có thể chạy xuyên suốt và artifact có tính toàn vẹn. Mô hình thường dự đoán một lớp sau một batch; accuracy/F1 của smoke hoàn toàn không phản ánh chất lượng mô hình.
 
 ## Môi trường đích
 
-Môi trường nghiên cứu chính phải dùng Python 3.11 theo `pyproject.toml`. Python 3.13 trên máy hiện tại chỉ được dùng cho kiểm tra tương thích CPU tạm thời, không phải môi trường công bố kết quả.
+Thí nghiệm chính phải dùng Python 3.11 theo `pyproject.toml`. Python 3.13 hiện tại chỉ là môi trường kiểm thử CPU tạm thời. Phiên bản PyTorch/CUDA sẽ được khóa sau khi chọn nhà cung cấp GPU để tránh tạo Dockerfile không tương thích với trình điều khiển thực tế.
