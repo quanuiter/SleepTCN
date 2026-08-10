@@ -1,0 +1,35 @@
+dataset: sleep-edf-expanded/sleep-cassette/1.0.0
+channel: EEG Fpz-Cz
+sampling_rate_hz: 100
+epoch_seconds: 30
+samples_per_epoch: 3000
+
+label_mapping:
+  Sleep stage W: 0
+  Sleep stage 1: 1
+  Sleep stage 2: 2
+  Sleep stage 3: 3
+  Sleep stage 4: 3
+  Sleep stage R: 4
+  Movement time: -1
+  Sleep stage ?: -1
+
+trim:
+  anchor_policy: true_sleep_n1_to_rem
+  wake_edge_minutes: 30
+  preserve_ignored_epochs: true
+
+variants:
+  paper_raw_v1:
+    filter: none
+    normalization: none
+  filtered_v2:
+    filter:
+      type: butterworth_bandpass
+      implementation: scipy.signal.sosfiltfilt
+      order: 4
+      low_hz: 0.5
+      high_hz: 30.0
+    clip_uv: 800.0
+    scale_factor: 100.0
+    notch_filter: none

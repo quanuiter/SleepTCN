@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "created_local_date": "2026-08-09",
+  "status": "pass",
+  "scope": "data_split_loader_models_features_masks_metrics_cpu_contract",
+  "parent_git_commit": "9ffe786fbc096c8e57beb8b23cac6f84383c9a08",
+  "note": "File hashes identify the uncommitted tree that is committed together with this provenance file.",
+  "data_contract": {
+    "preprocess_manifest_sha256": "c4a6cd95b18123453607c756031aaafe99b3e91687dbfd9a7aa9204cef0d68e3",
+    "split_manifest_sha256": "c3a8a4556dc886401781ed5f553b7109810f7569c09d8bf3b4a118c0e1948f93",
+    "split_validation_sha256": "500d266c6d69fadc864c98f8a5d1afb22bd019be82b3b97602b7bff72937f49d",
+    "subjects": 78,
+    "records": 153,
+    "outer_folds": 10,
+    "valid_epochs_per_variant": 195469,
+    "ignored_epochs_per_variant": 298
+  },
+  "verification": {
+    "unit_tests_passed": 28,
+    "unit_tests_failed": 0,
+    "cpu_contract_record": "SC4002E",
+    "cpu_contract_status": "pass",
+    "cpu_contract_output_sha256": "eb67fd32dae1fc7fa9ea82d9c6ace23286f31bbf25409e9ebabfb9117a182377",
+    "cpu_contract_output_tracked_by_git": false
+  },
+  "environment_observed": {
+    "python": "3.13.2",
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "pyedflib": "0.1.42",
+    "torch": "2.11.0+cpu",
+    "cuda_available": false,
+    "formal_experiment_python_required": "3.11"
+  },
+  "tracked_file_sha256": {
+    "configs/experiments_v1.json": "2c165e651fbbeb3abfcdad78447a8459003a6e8e3c49096c890d395b378464e5",
+    "configs/splits_v1.yaml": "8548ad0de6757152474d73c2cc3f349065966ea2f22e1538bbe05e40c9c84d23",
+    "src/sleeptcn/dataset.py": "93f454fab26296aa18f694fc149f0275991802a3a0845b65b041e60349c38b51",
+    "src/sleeptcn/splits.py": "fe3d1b99e86b8acf4062cbb9fb5bd52ba3108ad92016df48f30fd4acdd9dd68a",
+    "src/sleeptcn/models.py": "1c66089433efea81e7bc89de06d2d84b49f95efc19459bec80575294f0ca86fa",
+    "src/sleeptcn/training.py": "feabf34c0d0ebaa1fd7f42b66fa23b2ae888c02072cc83c318a00a51908e0c72",
+    "src/sleeptcn/features.py": "b7f0626775849b340e4c2b8af08486edbd210b1ad20ccd9386aa37ac5da8c53b",
+    "src/sleeptcn/metrics.py": "38f27d967dc9e3ec905cde7755c255984ecdd3fd8d391d8d0fa0e6ad8a960fc3",
+    "scripts/cpu_contract_smoke.py": "1f726a39256a61687b1a150a222525581288be47e072cf0e070518b39ac5f1f0"
+  }
+}

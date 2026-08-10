@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Dữ liệu và kết quả lớn
+data/raw/
+data/processed/
+data/cache/
+runs/
+legacy/
+*.edf
+*.npz
+*.npy
+*.pth
+*.pt
+
+# Hệ điều hành / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
