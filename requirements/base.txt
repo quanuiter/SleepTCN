@@ -8,4 +8,4 @@ pyedflib==0.1.38
 PyYAML==6.0.1
 jupyterlab==4.2.4
 pytest==8.3.2
-
+torch==3.0.3
