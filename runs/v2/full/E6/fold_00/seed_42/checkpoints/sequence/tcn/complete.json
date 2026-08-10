@@ -1,0 +1,11 @@
+{
+  "best_checkpoint_sha256": "e0b44a2815e4d108db0b1e8568aa8593b478b53d42f5c8e9cbf1a732e18bfc1a",
+  "component_seed": 42,
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "filtered_zscore_v2",
+  "outer_fold": 0,
+  "schema_version": 1,
+  "smoke": false,
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "stage": "sequence/tcn"
+}
