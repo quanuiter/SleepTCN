@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "checkpoint_sha256": "b743d185a6d9a07332430ae01db90cdd5ee025ba00014d2332fd1e4b3f949bf3",
+    "experiment_id": "E1",
+    "outer_fold": 0,
+    "role": "validation",
+    "seed": 42
+  },
+  "metrics": {
+    "accuracy": 0.4987854251012146,
+    "cohen_kappa": 0.05735071981257132,
+    "confusion_matrix": [
+      [
+        26,
+        0,
+        160,
+        14,
+        0
+      ],
+      [
+        14,
+        0,
+        149,
+        3,
+        0
+      ],
+      [
+        27,
+        0,
+        587,
+        6,
+        0
+      ],
+      [
+        4,
+        0,
+        46,
+        3,
+        0
+      ],
+      [
+        11,
+        0,
+        181,
+        4,
+        0
+      ]
+    ],
+    "macro_f1": 0.1860475335994434,
+    "n_valid_epochs": 1235,
+    "per_class": {
+      "N1": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 166
+      },
+      "N2": {
+        "f1": 0.6735513482501435,
+        "precision": 0.5227070347284061,
+        "recall": 0.9467741935483871,
+        "support": 620
+      },
+      "N3": {
+        "f1": 0.07228915662650602,
+        "precision": 0.1,
+        "recall": 0.05660377358490566,
+        "support": 53
+      },
+      "REM": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 196
+      },
+      "W": {
+        "f1": 0.1843971631205674,
+        "precision": 0.3170731707317073,
+        "recall": 0.13,
+        "support": 200
+      }
+    }
+  }
+}
