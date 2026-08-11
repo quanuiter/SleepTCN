@@ -19,8 +19,9 @@
 
 ## Chưa hoàn thành
 
-- Chạy validation-only các fold 01--09 cho E0, E1, E2, E3, E4 và E6 với training seed 42,
-  lưu timing, VRAM, cache và checkpoint cho từng run.
+- Mỗi phiên thuê GPU chạy trọn đúng một outer fold, bắt đầu fold 01: E0, E1, E2, E3, E4 và E6
+  với training seed 42; sau mỗi run lưu timing, VRAM, cache và checkpoint. Các fold 02--09 chỉ
+  chạy ở các phiên thuê tiếp theo, không cần chạy liền mạch trong một container.
 - Sau khi mọi fold validation-only hoàn chỉnh và artifact pass: mở test đúng một lần cho tập cấu
   hình đã khóa, rồi phân tích paired subject bootstrap/Wilcoxon/Holm.
 

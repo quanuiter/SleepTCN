@@ -59,7 +59,15 @@ Sau smoke đạt, chạy E0--E6 với fold 0, seed 42, bỏ `--smoke` và vẫn 
 
 ## Cổng 5: thí nghiệm chính và test
 
-Trước khi bắt đầu, chọn một tập seed áp dụng cho mọi E: tối thiểu `42`, hoặc `42, 123, 2025` cho xác nhận mạnh. Huấn luyện đủ mọi E/fold/seed trước; lịch mỗi fold/seed phải bắt đầu `E0 -> E1`, rồi E2--E6. Chỉ khi toàn bộ checkpoint đã khóa và worktree sạch mới chạy lại với `--resume --allow-test-evaluation`. Sau lần test đầu tiên, không đổi code, dữ liệu, seed hoặc siêu tham số.
+Đợt giới hạn ngân sách dùng seed huấn luyện `42` và chạy theo đơn vị **một outer fold cho mỗi phiên
+thuê GPU**. Fold tiếp theo là 01; lịch bắt buộc là `E0 -> E1`, rồi `E2 -> E3 -> E4 -> E6`.
+Không chạy E5: kiểm tra bitwise đã xác nhận E5 có dữ liệu khoa học trùng hoàn toàn E4; xem
+`data/manifests/bandpass_clip_identity_v2.json` và giao thức v2. Sau mỗi run phải kiểm định
+artifact và đồng bộ `runs/v2/` cùng `data/cache/features/v2/` sang nơi lưu bền vững.
+
+Huấn luyện đủ mọi fold đã khóa trước; chỉ khi toàn bộ checkpoint đã khóa và worktree sạch mới chạy
+lại với `--resume --allow-test-evaluation`. Sau lần test đầu tiên, không đổi code, dữ liệu, seed
+hoặc siêu tham số.
 
 ## GPU nên thuê
 
