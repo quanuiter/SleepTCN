@@ -24,9 +24,30 @@ E3−E5 là tác động của chia hằng số 100 sau khi đã giữ cố đ�
 E6−E5 là tác động của z-score theo bản ghi sau khi đã giữ cố định lọc và cắt.
 Không diễn giải E3−E2 là tác động riêng của chuẩn hóa vì phép so sánh đó thay ba thao tác.
 
+## Quyết định thực thi sau kiểm tra E4/E5 (2026-08-11)
+
+Không chạy E5 ở các outer fold 01--09. E5 fold 00 đã hoàn tất được giữ lại làm bằng chứng
+kiểm toán, nhưng E5 không được đưa vào phân tích hiệu năng hay kiểm định thống kê cuối cùng.
+
+Lý do là kiểm tra độc lập toàn bộ 153 cặp NPZ xác nhận các trường khoa học `x`, `y`,
+`valid_mask` và `original_epoch_index` của `bandpass_v2` (E4) và `bandpass_clip_v2` (E5)
+trùng **bitwise**. Hai trường khác nhau duy nhất là metadata nhận diện biến thể
+`normalization` và `preprocess_version`. Manifest tiền xử lý đồng thời ghi tổng và giá trị lớn
+nhất của `clip_fraction` đều bằng 0. Vì vậy phép cắt ±800 µV là phép đồng nhất trên dataset này;
+E5 không tạo ra một điều kiện dữ liệu khác E4 và không thể trả lời thêm câu hỏi khoa học.
+
+Bằng chứng tái lập: `data/manifests/bandpass_clip_identity_v2.json`, được tạo bởi
+`scripts/verify_variant_identity.py`. Nếu tiền xử lý, ngưỡng clip hoặc dữ liệu nguồn thay đổi,
+phải chạy lại kiểm tra này trước khi áp dụng quyết định loại E5.
+
+Đợt chạy giới hạn ngân sách dùng đúng một training seed là **42** cho E0, E1, E2, E3, E4 và E6
+trên các fold 00--09. Các seed 123 và 2025 là mở rộng xác nhận trong tương lai, không thuộc đợt
+hiện tại. Báo cáo cuối cùng phải nêu rõ giới hạn một seed; không diễn giải nó như đánh giá độ ổn
+định theo khởi tạo ngẫu nhiên.
+
 ## Bất biến thiết kế
 
-- Tất cả E0–E6 dùng đúng manifest 10-fold v2, có cùng membership seed 42.
+- Tất cả điều kiện được chạy dùng đúng manifest 10-fold v2, có cùng membership seed 42.
 - Seed chia dữ liệu luôn là 42. Seed huấn luyện không được thay đổi split.
 - Trong một đợt so sánh, mọi E dùng cùng training seed.
 - Hai đêm của cùng đối tượng luôn cùng vai trò.
@@ -37,7 +58,8 @@ Không diễn giải E3−E2 là tác động riêng của chuẩn hóa vì phé
 
 ## Seed và mức công bố
 
-- Khóa luận tối thiểu: seed huấn luyện 42 cho tất cả E0–E6.
+- Đợt hiện tại: seed huấn luyện 42 cho E0, E1, E2, E3, E4 và E6; E5 bị loại theo quyết định
+  bitwise ở trên.
 - Bản xác nhận mạnh hơn: seed 42, 123 và 2025 cho tất cả thí nghiệm được đưa vào kết luận.
 - Không được chạy một seed cho baseline và seed khác cho mô hình đề xuất rồi ghép cặp.
 

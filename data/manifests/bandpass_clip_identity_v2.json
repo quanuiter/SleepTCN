@@ -1,0 +1,1562 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-08-11T02:27:35.134223+00:00",
+  "left": {
+    "variant": "bandpass_v2",
+    "root": "data/processed/bandpass_v2"
+  },
+  "right": {
+    "variant": "bandpass_clip_v2",
+    "root": "data/processed/bandpass_clip_v2"
+  },
+  "summary": {
+    "left_file_count": 153,
+    "right_file_count": 153,
+    "common_file_count": 153,
+    "missing_from_left": [],
+    "missing_from_right": [],
+    "records_with_bitwise_equal_data": 153,
+    "all_records_data_bitwise_equal": true
+  },
+  "comparison_scope": {
+    "data_fields": [
+      "x",
+      "y",
+      "valid_mask",
+      "original_epoch_index"
+    ],
+    "note": "Variant-identifying metadata may differ by design. Every shared field is reported, while scientific data equivalence is determined from data_fields."
+  },
+  "records": [
+    {
+      "file": "SC4001E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5de1d5c8aa145b0ef2ed6b0e843f04e7ccb9c88897b27131e799c90d4c4e16e4"
+    },
+    {
+      "file": "SC4002E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "043fcb289d4368578776dacdc62dc3914e0e43f7852726ddb05e1bc4e4cf991f"
+    },
+    {
+      "file": "SC4011E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "38998beda47fe4c45ab23637674bb9911d22406430bbc93d84fe171831d5d3e7"
+    },
+    {
+      "file": "SC4012E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "aa3d8ab9b12b8415e0000de0187c32cd384e837e989600ba7912ec396d2d6824"
+    },
+    {
+      "file": "SC4021E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5a88e6cf50b6a7986127fda0def436463469e52b4409ad947279617108ca4ca7"
+    },
+    {
+      "file": "SC4022E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "2cb40d63f001b0e01b6b324fa3458b1a8c891a8345e4f1594f8ec88bf07ff0b5"
+    },
+    {
+      "file": "SC4031E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "2a21dc9cd7680cba9a3d0375c8c94d5fa286d0ebc1f9407f72b423cf0a1a20f5"
+    },
+    {
+      "file": "SC4032E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "01b87789e391eadd135086f98b3cd94fc110e8d53e50829056226e444fe20d78"
+    },
+    {
+      "file": "SC4041E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "21a5ae885bf6c3bad4fcbbe849eb9bd73da7a162ca12e8bcefd6f503286bfa4d"
+    },
+    {
+      "file": "SC4042E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "21ef2e689a9941200989fa2825aa072859c468ebbf698228188f7f0f94376993"
+    },
+    {
+      "file": "SC4051E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "9c6aef3a6716417c83f80f73d74e00d0b635892a9d3191ac54f06158271d773d"
+    },
+    {
+      "file": "SC4052E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "b086a6589a0ee7979c1138c7bdc9d35fadf4959fe596a4c92bf75a350c833540"
+    },
+    {
+      "file": "SC4061E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "b45cb40996d1a1716fa412eea763495e4ce73ed3056dc459e9b730278298755f"
+    },
+    {
+      "file": "SC4062E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6cc8be9e6f1e08c5862afdac0cdccfadd4ffaddd1cf9dca92d88c5f6f446f58d"
+    },
+    {
+      "file": "SC4071E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "d55df5263961fadadc341317588d2c3784cf69d49815c0d8af68f77f063ca32b"
+    },
+    {
+      "file": "SC4072E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "c0f1dfd4bac11b03d7568aabd174bbef82b9e1f5adba49f1cd5071a9e2ae41c6"
+    },
+    {
+      "file": "SC4081E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "93aaf3888a1e0d1f3b4d35ae7e84803686d48d160bc3e8f5d07a8b4983544c9b"
+    },
+    {
+      "file": "SC4082E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "30638a1b4335b24a923f2352e23e37c69e9dd61f00f7986868d930c1d6032b5b"
+    },
+    {
+      "file": "SC4091E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "fd0ee4a4fc4937eeb2de9066039a8264b4ca9c17607ce0fe359ae09a3e56ad81"
+    },
+    {
+      "file": "SC4092E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "f2199c63ae56f5e6869a53576cc28f642710e58c2310ca435e6c9d97e2069bc2"
+    },
+    {
+      "file": "SC4101E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "9388a259033c76fbaa2f31c3d98226356b06d96c7ae87c5b14c3adf14265d393"
+    },
+    {
+      "file": "SC4102E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "100f3d146aef5f80aa2c63aba1ab15d420422c3befe2f9bf6c30d26ebbbd14fc"
+    },
+    {
+      "file": "SC4111E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6ea0c2d7c512b8da702f842e65e149f45bd5227bae04685186334d87de364acd"
+    },
+    {
+      "file": "SC4112E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "e97cabe89f3cb769e22a62df30bc785cf31d274622ca87580e364c3b963fbaed"
+    },
+    {
+      "file": "SC4121E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6c5b3eb9c6b368bb8cf20fbebced6139524ee490d48d251bb1335e75bc372f77"
+    },
+    {
+      "file": "SC4122E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "f297abdc98e703f7d8a60be46688d23e37d9333a6cba89e6d2f9adf98f6550da"
+    },
+    {
+      "file": "SC4131E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "89e9602a52c8f393465040122a285e154ca0f063605f537c96438bcf12d9b00b"
+    },
+    {
+      "file": "SC4141E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "55e58e3a7c70f2334a0901aa5b517ce5d47506fc1577e1ff2926ec42f2f84e90"
+    },
+    {
+      "file": "SC4142E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4ac663ddc60d453ba1f87cae0507b5ab5f27ee7516813a7fcae451a0eaf44cfa"
+    },
+    {
+      "file": "SC4151E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ef463e73136c979976a0e65702f4cb75b457b21e9285bfac5965618eb6ebe012"
+    },
+    {
+      "file": "SC4152E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6a2d017e3e21c860e323081ab943b52c1e5aa6d8709a3aeb229a5fc34d387539"
+    },
+    {
+      "file": "SC4161E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "31ad4c222c99d74bd5afe0566a0728a361390e860802d3e8c5ddcf27fd19eee9"
+    },
+    {
+      "file": "SC4162E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "70262ae01bbd5038d80286a053a9f983e5038fda7f72956cd78a32b3a3e5f7d4"
+    },
+    {
+      "file": "SC4171E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "480bbcefcfbc9cfe808e05e56d38a94eee37c1a27f367c028881d92587d717c1"
+    },
+    {
+      "file": "SC4172E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "c40d9ca51695576cfc5c70159ebea5dc0d4ab67f635fcb7d496262b2e41449be"
+    },
+    {
+      "file": "SC4181E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "aba2d4e150bedd2962d09315315e821d6d2d6fd61be963db6d790a071b959423"
+    },
+    {
+      "file": "SC4182E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "66c91d26158e20423c874b9f895f1da2744ab5dfec4f7f535fea46ed7bcde6fe"
+    },
+    {
+      "file": "SC4191E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3c311d16b6b1a8a0cac2627d818c9a80558ea5001aa142bbf1920ebfb2feeda1"
+    },
+    {
+      "file": "SC4192E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "62a7e8cce6a675a2a40bef15aab74f7591f5b31423827e0f6408568f442516b8"
+    },
+    {
+      "file": "SC4201E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "b07ce98f12f24988d77b13a484908a44b0d0b03aa7105502f6605f626b9bb096"
+    },
+    {
+      "file": "SC4202E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "a32ec9968ed5bbc9b47e951037127bd2a6e56ea813c5efe0fdabe62cd18b78d1"
+    },
+    {
+      "file": "SC4211E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4f1a4155f76319820f5e203bca68a5291d1d89450e969b83c9d18f717816c501"
+    },
+    {
+      "file": "SC4212E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "57b5a500cb4d98a4b08c57e71b5ed0d7ce30affa68eba58d82cfbcbe519cceb8"
+    },
+    {
+      "file": "SC4221E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3b86dfb72477094c68683b503b40a555eb027a9152fb53bede117cfcf7290561"
+    },
+    {
+      "file": "SC4222E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "e9ffd713f2bc393d28445c5f2c5724a9fa754f1b2e6f2c50d62272a61f727c0f"
+    },
+    {
+      "file": "SC4231E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "8dbcca6aea7b8e4f8928282626a740d90b5793e2235f360f1921ba3ed617f12d"
+    },
+    {
+      "file": "SC4232E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "747238f9aefde1a598b4cbfe07eb5871c85dba2dbea767ef7d02721750b4d146"
+    },
+    {
+      "file": "SC4241E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "8837a2a67030b26065a97ea8f78321cdcf52dfe34fc8ffe6c7d11fc7b7239bf1"
+    },
+    {
+      "file": "SC4242E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "492f1b57e7572ed07216b9850f78bc35d498de02f1306b78c7aba7dc9222bc93"
+    },
+    {
+      "file": "SC4251E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "52a3bbb8d8fc3a42046f70c2e4959b871c3ccfe637333b397582a3effe5e4dc8"
+    },
+    {
+      "file": "SC4252E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4edbd0ab18f679a073f3e0b58c0cf532269807ece233b0facb0a27c3442336f1"
+    },
+    {
+      "file": "SC4261F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "2cf0cdff5d5f5dd2d24cf1ad292671af3ee713cedd745f5a92a4d55d134c79e2"
+    },
+    {
+      "file": "SC4262F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ef4884ebbaadc070c6bca81cdd8d05d886d20eae1ebfc55354caed1d0b22a578"
+    },
+    {
+      "file": "SC4271F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "b960ac1fa33a4f0354ad58fed77bbe244e63515104889bd8670375c4e63f6638"
+    },
+    {
+      "file": "SC4272F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3ee1c1da88cc287b4a2fbe59ee51460478191236869dc75d51c10a2d791fba19"
+    },
+    {
+      "file": "SC4281G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "bf1945abb4e5e588cc4612f7cb808f81e542984758718035933ca7789a6c1d43"
+    },
+    {
+      "file": "SC4282G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "881ef55d218ca00a4c8e32b4c7e38fcbceb699681ae912ede454116629364c3e"
+    },
+    {
+      "file": "SC4291G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4a0fdd467bf59a5358de82b338dff2e59ec518dacc2999e4bd1032cc91d429d1"
+    },
+    {
+      "file": "SC4292G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4d5533771914ae5b058eb6f46cf24dd7cb418957bac3501bf71c62d822ed2d80"
+    },
+    {
+      "file": "SC4301E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "04b9d075f147f52077c41d7f7b39812150448e181eaaeb466ca87a9228d03901"
+    },
+    {
+      "file": "SC4302E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "92110cd0c18205356273605f4ac00357b8f62e48b6673d5f2c0258fc725ca813"
+    },
+    {
+      "file": "SC4311E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "1d1cf153acab166e37c2468c22baae198d1bf280835b78d89cacb44562617ad4"
+    },
+    {
+      "file": "SC4312E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "415f2787ac81e6dcfe1a9f6447484b0fddb871339a1e1595b49c499421aeb610"
+    },
+    {
+      "file": "SC4321E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6bda4071b0eecff84a83801b8f6f7fbccef85bb73799446c9dde2e3a7c4408e1"
+    },
+    {
+      "file": "SC4322E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "fd20fa4830c0def5da313d3b49e98b8e65148d4c1c712c3c802f160fc98370b5"
+    },
+    {
+      "file": "SC4331F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "e39e5060b11bb77775f1d9cbb57f95d9f8fa4b17f92488c65b5628eae85fad0f"
+    },
+    {
+      "file": "SC4332F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "1272449b332a1e0728eaf9d970623905471fddc288e30f2b1747cc9edd9f782c"
+    },
+    {
+      "file": "SC4341F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "27f8d1d7d8c088d55f1189557a783095a1a5138f06e86e90ac325f2864b6d97d"
+    },
+    {
+      "file": "SC4342F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "e6f98a0a0e305854e089b5a35deeb3790e3bda6de6bb1aa47747112a5a639282"
+    },
+    {
+      "file": "SC4351F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "969df17eed6efab284b22df8c217255bc7a75bb7da25884f9ce272cebec81068"
+    },
+    {
+      "file": "SC4352F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "fc4966a63347821aa33bb660e632d07a9ff27293ce7d7a363ff639a3e123c735"
+    },
+    {
+      "file": "SC4362F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ccd2fed63e7233620d380b3a0ac892ddf098625210ab497225933378ada51688"
+    },
+    {
+      "file": "SC4371F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "54ff666349e3c97ff58030cc72f16f3a0bdaf481b12bd7326408d156587c26f0"
+    },
+    {
+      "file": "SC4372F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "455ded92d92c50b408c16055300d4fcf1cceaa509edfd569bec519e5e7b81dc6"
+    },
+    {
+      "file": "SC4381F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "30fbb3e16e193e60982d30e54c34d639ad47908f2b2c68dd0aa4b1b699e9eb2c"
+    },
+    {
+      "file": "SC4382F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4fa072c68afcf77fe5cf23eb1bac071a36358991423d8338fa690b895ca6d301"
+    },
+    {
+      "file": "SC4401E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "c2167fe0e729743071ff767bf14a637574f899144d71f8e0b1c26d37f9e784e4"
+    },
+    {
+      "file": "SC4402E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "94ad3978a53a4df8827bb06ecbf8003b9ade1835ebcbc9ee6e2f98863ad92801"
+    },
+    {
+      "file": "SC4411E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "802dda07b591a4268290482a0e5eef17ab07045d8ca06f147f37287a94bc703f"
+    },
+    {
+      "file": "SC4412E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "fe491cfafd14d80830958a4286c7dec4c8026341e95ab5141e2b518da284366f"
+    },
+    {
+      "file": "SC4421E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "77a7eebb805e0b42c3633fe38b63336e2e171a773c163b9036f30a09aff2b093"
+    },
+    {
+      "file": "SC4422E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "103a173ef71b7d41de55e3f12ae30747ecbbb08e13dc0391aa1c4281167e05e9"
+    },
+    {
+      "file": "SC4431E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3342434be81a74704e43cb7d4bf92318de5b2a07048a0b7fdcb73ab099a899db"
+    },
+    {
+      "file": "SC4432E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "749c45619dbd2015569864d68e7d763fd5bb132e2f431e6819c42c5b742bcbf2"
+    },
+    {
+      "file": "SC4441E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7fe9cfe8421797f2c2b03863724601b729a68f2934f4c37399ca8244bfbf52d0"
+    },
+    {
+      "file": "SC4442E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "0f1ef2f9a1adcd24a88c3c3cb8883ec57639cb1c14f2b49b1c446127f92a9614"
+    },
+    {
+      "file": "SC4451F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "c3afb56189f7ba06d3beade4b8345f5ffa5daafd80d7046131707247b0b14bd0"
+    },
+    {
+      "file": "SC4452F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "f9a7267dd377acd50dfb57f00ca0a2ebb17160a5b307b0812d866080c5446be7"
+    },
+    {
+      "file": "SC4461F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "8663cea6de8cf48c0a8e5ef414639d31ade2d0ab5214d134391b715910009c50"
+    },
+    {
+      "file": "SC4462F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "4679cadfe07e6422cdc0f44cf039823abdf290d781d2fcf306b40b6556838cfb"
+    },
+    {
+      "file": "SC4471F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "a5d1386bdc390d36a94af895b4b0ecec0fb56afa7086f9087fc29d27d0efb97d"
+    },
+    {
+      "file": "SC4472F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "d7327c8c6b3944874b512ab6b8c7e333f3b8a98657f67b8c166e71069d76a203"
+    },
+    {
+      "file": "SC4481F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "32c69f85b3f2a46d4fa176cdf5baefed442b48d2d8e2d5d0e21d2ba2d0e6bab5"
+    },
+    {
+      "file": "SC4482F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "b91cab99a01439c60b38cfbf785a15c271c5e57ba1f88ddd91eff823657aab56"
+    },
+    {
+      "file": "SC4491G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5fd4a75d8fef70bd330c9ec9d4c08770284e1265b1cd0271e43a87a967361b81"
+    },
+    {
+      "file": "SC4492G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "a86e8b4a8701b15563f820d943a6967ca5a0585520da9f04746063fad5b272a7"
+    },
+    {
+      "file": "SC4501E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5f22ea22a56cc2f473d3844fd9bc264bc4e1599f5dcd1066fa786db6b6e86efb"
+    },
+    {
+      "file": "SC4502E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "b00368cf3d1984437aa8fbbaf75da00966817cce2bf73db8f5fcd34a3394e5fa"
+    },
+    {
+      "file": "SC4511E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "46db59cfe1b1cb0a90d752bd4eb00f4a99db181f07157aa6f1e6964deba25ca7"
+    },
+    {
+      "file": "SC4512E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "54abd27665aea6cf668e627f3a590e82e2107824e0206c8796fe7d1d70bd8f31"
+    },
+    {
+      "file": "SC4522E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "a2962d3f7099e7ae89f95be2f8b22335b81671206c1d4f641741e5a55f535b9b"
+    },
+    {
+      "file": "SC4531E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7e99a6d5cc7fe3e235e6de12b85b068fc0247933365d0bb2fbc10a51179e9b59"
+    },
+    {
+      "file": "SC4532E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7658d896a709184b6d37e4840670b169f3dd63bfc8fd5636776f62cd2d9ef05c"
+    },
+    {
+      "file": "SC4541F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "79ba8af8b5762f198ba35065f883bbcb4791f9c7915d291ae6d2aba5f6af7f33"
+    },
+    {
+      "file": "SC4542F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "a4ba8c3cfde661f7290cf7d0070085a93799849957309d2653a445335e7e3730"
+    },
+    {
+      "file": "SC4551F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7558c622169048dd191e19c76ebc2c040d95f6164b5ec0d24b9c372c579e3006"
+    },
+    {
+      "file": "SC4552F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3fb522bc590d3e739bf649e674ea967497804df4caed5964c944042d7ffe108c"
+    },
+    {
+      "file": "SC4561F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ebaae6c21a8e8185677cb26d6e66a4620872c6feb4fa1b1bdbe2b9032baed261"
+    },
+    {
+      "file": "SC4562F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "0161c58057960ed8934ee2d199a259ac2f1dd28bd932e36867474b81329850f8"
+    },
+    {
+      "file": "SC4571F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "12c4ba72bb23f91ab2b40a55ebd6b1cd7cc613cd3afe1c055dd8008906820caf"
+    },
+    {
+      "file": "SC4572F.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "d8c698b6783b22910415260c5e34f15ad2fe23d12cbfff011b020be5d5405457"
+    },
+    {
+      "file": "SC4581G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3c1b740f5bc8addfd27b8efb399c52a52b9885f02ac44b833506dd2c572ad45d"
+    },
+    {
+      "file": "SC4582G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "defc5d954bdb9437307f0adcdeeaccd65290e30fd0ce3a9e4c83d935e6b8aa68"
+    },
+    {
+      "file": "SC4591G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "f9b4a87cebf69a4d57aea8f02bafb4b82f7d2f5c61fe66be195c0027741b47a6"
+    },
+    {
+      "file": "SC4592G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "54cd919215185b736f8fa7a5fb2e59f554946a8b9648a83eaee272eb9bebabaa"
+    },
+    {
+      "file": "SC4601E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "c892b34256038871fbe99ee6edb2c0e25b9374ddab3521b4ca284fc6aeae9c86"
+    },
+    {
+      "file": "SC4602E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "514f25bc70913dc0f0cb56b2e7f6fe133ee150d823273f5a5f5b00b5d0f4c3fc"
+    },
+    {
+      "file": "SC4611E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "2575509c1293fd93689f415365703c1df57c792d6ed0f1b8920c83e0712f9800"
+    },
+    {
+      "file": "SC4612E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "1011810937eddb0bc49af46ebde3063ccb5657fb8a458a3a6e28d418576afcee"
+    },
+    {
+      "file": "SC4621E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "435231df6192bbe1678560ddfe4bf0c7327178c540a1197df67e79dd684bc3ed"
+    },
+    {
+      "file": "SC4622E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7df029d5b2b2319b84cbecddaf9f7b693c7a42b4179048b92685aa40415b9d60"
+    },
+    {
+      "file": "SC4631E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7b8a60a30d85f2c523f362863035457f6a67e74f87c61b04d2311fa4b17e691e"
+    },
+    {
+      "file": "SC4632E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3ed5d450ec8466337883120511ab9f1628063c3ccc1ed3c3b2a05964edaa444a"
+    },
+    {
+      "file": "SC4641E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6ab9c5dd55103d8ba44fe66a1323a23ad681dc23c6e030bc3ef6287e3ac07e21"
+    },
+    {
+      "file": "SC4642E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "bb4cf0d73a70292386f99c2653cf89f8fbfb10b63693a3744373521a79c2fe40"
+    },
+    {
+      "file": "SC4651E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "cc36534cf3f9a0131c88a49e879ec94e5b2bfb22f49057f8cbc5b50366002ca1"
+    },
+    {
+      "file": "SC4652E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "11da29be653ef96946ffa51fa196ee3140ef85b75b410ed92baf4d04edd3799e"
+    },
+    {
+      "file": "SC4661E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "f98d6c3d514ce27ee900630bdb7243645cb73e19ac516faaf0aaed5d20aba3bf"
+    },
+    {
+      "file": "SC4662E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "564fed8b70e3896d6b8a6677dc2023170453247a018c493425fee43a37afddf6"
+    },
+    {
+      "file": "SC4671G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "de80b1de0d934359bbc24138d2baa9f4ccc0c86c0b45cf2e9dc378afae5ee510"
+    },
+    {
+      "file": "SC4672G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "56e8a9cac19ea893ab43ee21e2474a6712a2ee8d4dc5a103755ab3afdd52c41c"
+    },
+    {
+      "file": "SC4701E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6cb3df9043bbc2e2c8c4a6344c200a40b8c8e0a381cc16a69fe8c5b506b15a0f"
+    },
+    {
+      "file": "SC4702E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ba5b88861bbdd087e5b5cc3c7f3689066d5c9ef8f438332c85f94d00665e164d"
+    },
+    {
+      "file": "SC4711E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5f55dd483d3efb5b1111c8bbcee4a4ef4df750d93b6bf4611daef0e9ed2d5d8b"
+    },
+    {
+      "file": "SC4712E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "97b8a284ddd5ce1183e3f1e8f93d102fe4e7b4658a8b745f6bfc13496cf3a5e9"
+    },
+    {
+      "file": "SC4721E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "054dc19d37fcdae0f5d40e26962e115ccadf92174c5cfb3fe75a82f651e24d16"
+    },
+    {
+      "file": "SC4722E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6501293c0589b29e51fd0fb9363441ee35dce64984fcb7c0899fe9887d1c5ca1"
+    },
+    {
+      "file": "SC4731E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "3695a4ba56819d0d7495aaaf6dd6d17bd8774c5d5417989b3901ed0211574b40"
+    },
+    {
+      "file": "SC4732E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "18d1a3cb5b62b3731dfc4ff91d22c66d220818723bb705b1dfd7a545f79b8482"
+    },
+    {
+      "file": "SC4741E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "49fcb5bacf08b280c1eb49093225fcaec63eefcbb3ef95d217c970379b0223ab"
+    },
+    {
+      "file": "SC4742E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7437856c8ba0f2731c4da42fda019c181b004efbf94fc02c0f7ee2a1ca6bb2f6"
+    },
+    {
+      "file": "SC4751E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ee6fe5f35c76c46ba79b41ffc9ab919b83ea210ecff466487d178758c5cfb454"
+    },
+    {
+      "file": "SC4752E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5beef742a5f0a1153a797f2b194f65e6de1df4e7c476fd05889689fcc9e6defc"
+    },
+    {
+      "file": "SC4761E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "7f306f53bbe89681f81bd9882ce3d0db6cace2e6a63312a0226de8836f035123"
+    },
+    {
+      "file": "SC4762E.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "fcb6edc1d1d85c9f67844f95f08b9d2a169508d090a391df9d6dc13bdfeafa35"
+    },
+    {
+      "file": "SC4771G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "337e403913950931d20c0fdbf7caf09d4aa0aeac8c12b2954bb969d331938d5d"
+    },
+    {
+      "file": "SC4772G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "1b21e06ac4b059777e106713db7cbaeb13272b593f370b26015e83d3c976711b"
+    },
+    {
+      "file": "SC4801G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "02343c357b2cd823d3a04ec8959fdd873155054e99a1a89aec8954bea26e335b"
+    },
+    {
+      "file": "SC4802G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "0ab95031a5e8c66f64ab8a9452e85ec741cf453162274e263ad2a066a11fd028"
+    },
+    {
+      "file": "SC4811G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "5fa852744b5adb59e43708607b15d3204f5069a1603fda5333f3bff835b12911"
+    },
+    {
+      "file": "SC4812G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "da389aa1d49f3923ef8ba9b39d8c30454802947a525b0d842d618d576eeba472"
+    },
+    {
+      "file": "SC4821G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "6d00d63995a7cf7e62991b743696ba982703c4e2cd49f992f6562e2f14fe0414"
+    },
+    {
+      "file": "SC4822G.npz",
+      "data_fields_bitwise_equal": true,
+      "all_fields_bitwise_equal": false,
+      "unequal_fields": [
+        "normalization",
+        "preprocess_version"
+      ],
+      "data_sha256": "ee5885a55285b2fafd1ada00c06a8b59cc91808124c0a936463065529cdb6c30"
+    }
+  ]
+}

@@ -11,14 +11,18 @@
 - Bổ sung đo số tham số, độ trễ, thông lượng và VRAM trên cùng thiết bị.
 - Bổ sung t-SNE và Silhouette Score, có chặn trộn checkpoint/fold/seed.
 - 51 kiểm thử tự động đạt trên CPU chẩn đoán.
-- Smoke CPU v2 E0–E6 trên fold 0, seed 42 đã hoàn tất và cả bảy báo cáo kiểm định artifact đều đạt.
+- Smoke CPU/GPU v2 và một lần chạy đầy đủ validation-only trên fold 00, seed 42 cho E0–E6 đã
+  hoàn tất; toàn bộ báo cáo kiểm định artifact đều đạt. Tập test vẫn bị khóa.
+- Kiểm tra bitwise 153/153 cặp xác nhận E4 và E5 có dữ liệu khoa học giống hệt nhau; E5 được giữ
+  lại ở fold 00 để kiểm toán nhưng bị loại khỏi lịch chạy fold 01--09. Chứng cứ nằm tại
+  `data/manifests/bandpass_clip_identity_v2.json`.
 
 ## Chưa hoàn thành
 
-- Môi trường huấn luyện chính thức Python 3.10/3.11 có CUDA.
-- Smoke GPU v2 E0–E6.
-- Một fold đầy đủ để dự toán.
-- Huấn luyện toàn bộ fold/seed, mở test một lần và phân tích thống kê.
+- Chạy validation-only các fold 01--09 cho E0, E1, E2, E3, E4 và E6 với training seed 42,
+  lưu timing, VRAM, cache và checkpoint cho từng run.
+- Sau khi mọi fold validation-only hoàn chỉnh và artifact pass: mở test đúng một lần cho tập cấu
+  hình đã khóa, rồi phân tích paired subject bootstrap/Wilcoxon/Holm.
 
 Kết quả trong `runs/smoke` là lịch sử v1. Giao thức mới ghi vào `runs/v2/` và cache mới ghi vào
 `data/cache/features/v2/`, vì vậy không ghi đè bằng chứng cũ.
