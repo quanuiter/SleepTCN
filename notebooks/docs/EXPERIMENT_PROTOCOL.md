@@ -1,5 +1,8 @@
 # Giao thức thí nghiệm E0–E3 v1
 
+> **Giao thức lịch sử.** v2 đã thay thế tài liệu này. Chỉ dùng để truy vết quyết định E0--E3;
+> không dùng để lập lịch GPU hoặc mở test.
+
 ## Mục tiêu
 
 Thay từng thành phần theo chuỗi để tránh quy sai nguồn cải thiện:

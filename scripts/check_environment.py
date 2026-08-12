@@ -33,6 +33,11 @@ def main() -> int:
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--require-gpu", action="store_true")
+    parser.add_argument(
+        "--include-retired-e5",
+        action="store_true",
+        help="also require the retired bandpass_clip_v2/E5 sample",
+    )
     args = parser.parse_args()
     root = args.workspace.resolve()
     errors: list[str] = []
@@ -70,21 +75,29 @@ def main() -> int:
     if experiment_config["dataset"]["padding_label"] != -100:
         errors.append("padding_label_config")
 
-    sample_results = {}
-    for variant in (
+    active_variants = [
         "paper_raw_v1",
         "bandpass_v2",
-        "bandpass_clip_v2",
         "filtered_v2",
         "filtered_zscore_v2",
-    ):
+    ]
+    if args.include_retired_e5:
+        active_variants.insert(2, "bandpass_clip_v2")
+
+    sample_results = {}
+    for variant in active_variants:
         path = root / "data/processed" / variant / "SC4002E.npz"
-        info = inspect_record(path, variant)
-        sample_results[variant] = {
-            "record_key": info.record_key,
-            "epochs": info.epochs,
-            "ignored_epochs": info.ignored_epochs,
-        }
+        try:
+            info = inspect_record(path, variant)
+        except Exception as error:
+            errors.append(f"sample:{variant}:{type(error).__name__}")
+            sample_results[variant] = {"error": str(error), "path": str(path)}
+        else:
+            sample_results[variant] = {
+                "record_key": info.record_key,
+                "epochs": info.epochs,
+                "ignored_epochs": info.ignored_epochs,
+            }
 
     cuda_available = torch.cuda.is_available()
     if args.require_gpu and not cuda_available:

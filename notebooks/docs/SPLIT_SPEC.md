@@ -1,4 +1,7 @@
-# Đặc tả chia dữ liệu Sleep-EDF SC v1
+# Đặc tả chia dữ liệu Sleep-EDF SC
+
+Manifest đang dùng cho giao thức chính là `sleepedf_sc_10fold_seed42_v2.json`. Membership và
+thuật toán chia kế thừa v1; v2 mở rộng danh sách biến thể tương thích lên đủ năm biến thể.
 
 ## Đơn vị chia
 
@@ -32,7 +35,8 @@ Validation chỉ dùng cho early stopping/chọn checkpoint. Không điều ch�
 
 ## Khả năng so sánh
 
-Membership test khớp seed 42 của notebook 15CNN+BiLSTM lịch sử. `paper_raw_v1` và `filtered_v2` bắt buộc dùng cùng manifest.
+Membership test khớp seed 42 của notebook 15CNN+BiLSTM lịch sử. Cả năm biến thể v2 bắt buộc dùng
+cùng manifest; không sinh split riêng cho từng kiểu tiền xử lý.
 
 Số epoch hợp lệ mới thấp hơn notebook lịch sử 10 Wake: 9 ở fold hiển thị 2 và 1 ở fold hiển thị 6. Membership đối tượng không thay đổi.
 
@@ -51,5 +55,5 @@ Không tái cân bằng fold sau khi xem phân bố vì mục tiêu hiện tại
 - Hợp ba vai trò bằng đúng 78 đối tượng và 153 bản ghi.
 - Hai đêm cùng người ở cùng fold.
 - Mỗi người test đúng một lần và validation đúng một lần.
-- Cả hai biến thể có cùng record/subject aggregate và đủ năm lớp trong từng fold.
+- Cả năm biến thể có cùng record/subject aggregate và đủ năm lớp trong từng fold.
 - SHA-256 manifest phải khớp sidecar trước khi chạy.

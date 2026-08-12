@@ -1,85 +1,66 @@
-# Việc cần làm tiếp theo từ trạng thái hiện tại
+# Việc cần làm tiếp theo
 
-## Cổng 1 — hoàn tất dữ liệu loại bỏ thành phần trên CPU — ĐẠT
+Nguồn trạng thái: `STATUS_V2.md`. Runbook lệnh đầy đủ: `DOCKER_GPU_RUNBOOK.md`.
 
-Không tạo lại hoặc ghi đè `paper_raw_v1` và `filtered_v2` đã kiểm chứng. Chỉ sinh ba biến thể mới:
+## Cổng 1 — dữ liệu và split — ĐẠT
 
-```powershell
-python D:\SleepTCN\scripts\preprocess_sleepedf.py `
-  --data-dir E:\research\Dataset\physionet.org\files\sleep-edfx\1.0.0\sleep-cassette `
-  --raw-manifest D:\SleepTCN\data\manifests\raw_inventory.json `
-  --output-root D:\SleepTCN\data\processed `
-  --manifest-output D:\SleepTCN\data\manifests\preprocess_manifest_v2_ablations.json `
-  --variants bandpass_v2 bandpass_clip_v2 filtered_zscore_v2
-```
+- 765/765 NPZ hợp lệ, năm biến thể có cùng nhãn/chỉ số epoch.
+- Split 10-fold seed 42 theo đối tượng đã khóa và SHA-256 khớp sidecar.
+- E4/E5 giống bitwise; E5 bị loại khỏi fold 01--09.
 
-Kiểm định chung năm biến thể bằng cả manifest cũ và mới:
+Không tiền xử lý lại và không sửa manifest/split trong chiến dịch đang chạy.
 
-```powershell
-python D:\SleepTCN\scripts\validate_processed_dataset.py `
-  --processed-root D:\SleepTCN\data\processed `
-  --preprocess-manifest D:\SleepTCN\data\manifests\preprocess_manifest_v1.json `
-  --preprocess-manifest D:\SleepTCN\data\manifests\preprocess_manifest_v2_ablations.json `
-  --variants paper_raw_v1 bandpass_v2 bandpass_clip_v2 filtered_v2 filtered_zscore_v2 `
-  --output D:\SleepTCN\data\manifests\processed_validation_v2.json
-```
+## Cổng 2 — smoke CPU/GPU và fold dự toán — ĐẠT
 
-Đã đạt: 153 tệp mỗi biến thể, 765/765 NPZ hợp lệ, nhãn/chỉ số epoch giống tuyệt đối.
+- Smoke CPU/GPU E0--E6 fold 00 đã pass.
+- Full validation-only fold 00 E0--E6 đã pass.
+- Full validation-only fold 01 E0/E1/E2/E3/E4/E6 đã pass.
+- Test vẫn khóa.
 
-## Cổng 2 — kiểm thử mã trên CPU — ĐẠT
+## Cổng 3 — hoàn tất validation-only 10-fold — ĐANG THỰC HIỆN
 
-```powershell
-python -m pytest D:\SleepTCN\tests -q
-python D:\SleepTCN\scripts\check_environment.py `
-  --workspace D:\SleepTCN `
-  --output D:\SleepTCN\runs\v2\environment_check_cpu.json
-```
-
-Chỉ commit sau khi toàn bộ kiểm thử đạt và Git status chỉ chứa thay đổi v2 dự kiến.
-
-## Cổng 3 — smoke GPU — TIẾP THEO
-
-Đưa mã nguồn, manifest, split và cả năm thư mục `data/processed` lên máy GPU. Hướng dẫn triển khai, danh sách upload và lệnh Linux/Docker nằm trong `docs/GPU_DEPLOYMENT.md`. Chạy smoke theo thứ tự:
+Mỗi phiên thuê chạy một fold, seed huấn luyện 42, thứ tự:
 
 ```text
-E0 → E1 → E2 → E3 → E4 → E5 → E6
+E0 -> E1 -> E2 -> E3 -> E4 -> E6
 ```
 
-E1 cần E0 cùng fold và seed. Các E khác độc lập. Sau mỗi run phải chạy `validate_run_artifacts.py`.
-Không mở test. Lưu thời gian, VRAM và dung lượng ổ đĩa.
+Fold tiếp theo chưa có đủ artifact local là fold 02. Nếu fold 02 đang chạy trên Docker, chỉ đánh
+dấu hoàn tất sau khi pull về và xác nhận sáu manifest `complete`, sáu validation report
+`passed=true`, có checkpoint và `allow_test_evaluation=false`.
 
-## Cổng 4 — một fold đầy đủ để dự toán
+Không chạy E5. Không thêm `--allow-test-evaluation`. Luôn export trước khi chạy CUDA:
 
-Chạy fold 0, seed 42, không test cho E0–E6. Không dùng validation fold 0 để thay đổi riêng một mô hình.
-Nếu phát hiện lỗi kỹ thuật, sửa theo phiên bản và chạy lại mọi mô hình bị ảnh hưởng.
-
-## Cổng 5 — thí nghiệm chính
-
-Trước khi bắt đầu, quyết định một trong hai mức:
-
-- Khóa luận/kinh phí hạn chế: seed 42 cho tất cả E0–E6.
-- Xác nhận mạnh: seed 42, 123, 2025 cho tất cả thí nghiệm dùng trong kết luận.
-
-Huấn luyện và khóa checkpoint của toàn bộ fold/seed trước. Sau đó mới chạy lại cùng lệnh với
-`--resume --allow-test-evaluation`. Không xem từng test fold để sửa mô hình giữa chừng.
-
-## Cổng 6 — phân tích sau test trên CPU
-
-Chạy thống kê bắt cặp:
-
-```powershell
-python D:\SleepTCN\scripts\analyze_paired_results.py `
-  --workspace D:\SleepTCN --seed 42 `
-  --comparison E1:E0 --comparison E2:E1 --comparison E3:E2 --comparison E3:E6 `
-  --output D:\SleepTCN\runs\v2\analysis\paired_seed42.json
+```bash
+export PYTHONPATH="$PWD/src"
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
 ```
 
-Đo độ phức tạp trên chính GPU đã dùng báo cáo:
+Sau mỗi fold, commit/push có chọn lọc sáu thư mục fold và monitoring; không commit
+`data/cache/`. Lặp lại tới fold 09.
 
-```powershell
-python D:\SleepTCN\scripts\benchmark_model_complexity.py `
-  --device cuda --output D:\SleepTCN\runs\v2\analysis\complexity_gpu.json
-```
+Song song, xử lý nợ lưu trữ fold 00: checkpoint local hiện là 54 Git LFS pointer chứ chưa phải
+blob PyTorch. Không cần dừng các fold validation mới vì metrics/report fold 00 vẫn nguyên vẹn,
+nhưng phải `git lfs pull` và `git lfs fsck` hoặc phục hồi backup trước khi mở test.
 
-Chạy `analyze_feature_space.py` riêng cho thư mục cache test của 15CNN và ResNet. Không trộn extractor,
-fold hoặc seed trong cùng một hình. t-SNE là mô tả; Silhouette và kết quả phân loại vẫn là bằng chứng chính.
+## Cổng 4 — khóa checkpoint và mở test một lần — CHƯA ĐƯỢC PHÉP
+
+Điều kiện vào cổng:
+
+- Fold 00--09 đầy đủ cho E0/E1/E2/E3/E4/E6, seed 42.
+- Mọi validation report pass và test chưa từng được mở.
+- Code/config/split được khóa; không còn quyết định mô hình dựa trên validation.
+- Tất cả checkpoint, đặc biệt fold 00, đã được hydrate và kiểm tra SHA-256; không còn LFS pointer
+  chưa có blob.
+
+Khi đạt, chạy lại từng run với `--resume --allow-test-evaluation` để tạo dự đoán test từ
+checkpoint đã chọn. Không sửa gì sau khi xem test.
+
+## Cổng 5 — phân tích và báo cáo — CHƯA THỰC HIỆN
+
+- Ghép test prediction theo subject/record/original epoch index.
+- So sánh chính: E1−E0, E2−E1, E3−E2, E3−E6.
+- Bootstrap ghép cặp theo cụm đối tượng 10.000 lần, Wilcoxon hai phía và Holm.
+- Báo cáo Macro-F1 chính; accuracy, kappa, precision/recall/F1 từng lớp là phụ.
+- Đo tham số, thời gian, throughput và VRAM trên cùng môi trường GPU.
+- Nêu rõ giới hạn chỉ dùng một training seed 42 và chỉ đánh giá in-domain Sleep-EDF.

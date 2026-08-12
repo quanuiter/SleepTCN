@@ -56,6 +56,11 @@ hiện tại. Báo cáo cuối cùng phải nêu rõ giới hạn một seed; kh
 - Sau khi mở test, không thay siêu tham số, biến thể tiền xử lý hoặc tiêu chí chọn checkpoint.
 - Mỗi lỗi khoa học làm thay đổi kết quả phải tăng phiên bản giao thức và chạy lại mọi E bị ảnh hưởng.
 
+`SleepTCN` là TCN 1D không nhân quả: convolution theo chuỗi epoch dùng padding đối xứng, nên mỗi
+dự đoán có ngữ cảnh quá khứ và tương lai trong receptive field. Đây là đối chiếu chức năng phù hợp
+với BiLSTM hai chiều cho bài toán chấm điểm toàn đêm offline; không được mô tả là TCN 2D hoặc mô
+hình causal/thời gian thực. ResNet-1D xử lý waveform 3.000 mẫu bên trong từng epoch.
+
 ## Seed và mức công bố
 
 - Đợt hiện tại: seed huấn luyện 42 cho E0, E1, E2, E3, E4 và E6; E5 bị loại theo quyết định
@@ -81,3 +86,12 @@ zero-shot SHHS hoặc thực tế lâm sàng cho tới khi có giao thức SHHS 
 
 “Đơn giản hóa” chỉ được dùng theo nghĩa giảm số mô hình/giai đoạn vận hành. E2–E6 có nhiều tham số
 hơn E0 nên không được gọi là parameter-efficient hay mô hình nhẹ nếu chưa có bằng chứng khác.
+
+## Quan hệ với paper gốc
+
+E0 là tái triển khai trung thành về kiến trúc 15CNN tách rời + BiLSTM, kênh Fpz-Cz, epoch 30 giây
+và các hyperparameter chính. Đây không phải tái tạo bitwise/nguyên xi: paper dùng MATLAB, không
+công bố code/seed, validation cadence khác và kết quả headline 87,02%/82,09% được báo cáo trên
+Sleep-EDF-13, trong khi chiến dịch này dùng Sleep-EDF-18 SC 153 bản ghi với validation theo đối
+tượng chặt hơn. Vì vậy không dùng con số headline của paper làm ngưỡng bắt buộc cho E0. E1--E6
+là ablation mới của dự án, không phải experiment được paper công bố.

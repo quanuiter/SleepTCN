@@ -1,5 +1,8 @@
 # Trạng thái dự án
 
+> **Hồ sơ lịch sử v1.** Nội dung này phản ánh mốc E0--E3 trước giao thức v2. Trạng thái hiện hành
+> và bước tiếp theo nằm trong `STATUS_V2.md` và `NEXT_STEPS.md`.
+
 ## Đã hoàn thành
 
 - [x] Kiểm kê 153 cặp PSG/Hypnogram của 78 đối tượng và mã băm nguồn.

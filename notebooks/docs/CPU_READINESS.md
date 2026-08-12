@@ -1,8 +1,11 @@
 # Cổng sẵn sàng CPU v2
 
+> **Hồ sơ lịch sử.** Cổng này đã đạt trước khi mở chiến dịch GPU. Trạng thái hiện hành nằm trong
+> `STATUS_V2.md`; không dùng câu “bước tiếp theo là smoke GPU” bên dưới để lập lịch hiện tại.
+
 ## Kết luận
 
-Toàn bộ phần có thể kiểm tra hợp lý không cần GPU đã đạt: dữ liệu, chia fold, bộ nạp, mô hình, vòng huấn luyện, checkpoint, tiếp tục chạy, cache đặc trưng, dự đoán và kiểm định độc lập. Bước hợp lý tiếp theo là smoke GPU, chưa phải chạy đầy đủ 10 fold.
+Toàn bộ phần có thể kiểm tra hợp lý không cần GPU đã đạt: dữ liệu, chia fold, bộ nạp, mô hình, vòng huấn luyện, checkpoint, tiếp tục chạy, cache đặc trưng, dự đoán và kiểm định độc lập. Smoke GPU được thực hiện sau mốc tài liệu này và hiện đã đạt.
 
 ## Lệnh kiểm tra lại
 
@@ -16,7 +19,7 @@ python D:\SleepTCN\scripts\check_environment.py --workspace D:\SleepTCN
 
 Kết quả hiện tại:
 
-- 47/47 kiểm thử đạt.
+- 47/47 kiểm thử v1 tại thời điểm cổng này đạt; bộ v2 sau đó được mở rộng thành 51 test case.
 - Kiểm tra môi trường CPU đạt.
 - Smoke E0–E3 trên fold 0 đạt với 2 bản ghi train và 1 bản ghi validation.
 - Mỗi smoke chỉ chạy một batch/một epoch cho từng giai đoạn.
@@ -28,6 +31,7 @@ Kết quả hiện tại:
 
 Smoke test chỉ chứng minh mã có thể chạy xuyên suốt và artifact có tính toàn vẹn. Mô hình thường dự đoán một lớp sau một batch; accuracy/F1 của smoke hoàn toàn không phản ánh chất lượng mô hình.
 
-## Môi trường đích
+## Môi trường đích đã sử dụng sau cổng này
 
-Thí nghiệm chính phải dùng Python 3.11 theo `pyproject.toml`. Python 3.13 hiện tại chỉ là môi trường kiểm thử CPU tạm thời. Phiên bản PyTorch/CUDA sẽ được khóa sau khi chọn nhà cung cấp GPU để tránh tạo Dockerfile không tương thích với trình điều khiển thực tế.
+Thí nghiệm GPU đã dùng Python 3.10.13, PyTorch 2.5.1+cu121 và Tesla V100. `pyproject.toml` cho
+phép Python >=3.10,<3.12; Python 3.10 và 3.11 đều hợp lệ.

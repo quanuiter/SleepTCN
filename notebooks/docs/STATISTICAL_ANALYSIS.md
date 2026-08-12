@@ -20,7 +20,19 @@ bootstrap và phân bố lớp, không dùng riêng p-value.
 3. E3−E2: gói tiền xử lý hoàn chỉnh so với raw.
 4. E3−E6: chia hằng số bảo toàn biên độ so với z-score.
 
-Áp dụng Holm cho bốn p-value này. E4−E2, E5−E4, E3−E5 và E6−E5 là phân tích cơ chế thứ cấp.
+Áp dụng Holm cho bốn p-value này. E4−E2 là phân tích cơ chế thứ cấp đã định trước.
+
+E5−E4, E3−E5 và E6−E5 không còn là phép kiểm định hiệu năng: kiểm tra trước khi tiếp tục chiến
+dịch cho thấy E5 và E4 có dữ liệu khoa học trùng bitwise trên toàn bộ 153 bản ghi. Kết luận về
+clipping được báo cáo trực tiếp từ kiểm tra dữ liệu (`clip_fraction=0`), không tạo p-value từ một
+điều kiện trùng lặp. E3−E4 và E6−E4 có thể dùng mô tả cơ chế đổi thang nếu cần, nhưng không thêm
+vào nhóm bốn giả thuyết chính sau khi đã khóa protocol.
+
+## Thời điểm thực hiện
+
+Chưa chạy phân tích suy luận trên các metrics validation fold 00/01. Chỉ chạy kế hoạch này sau khi
+đủ 10 fold, checkpoint đã khóa và test được mở đúng một lần. Seed huấn luyện hiện tại chỉ là 42;
+báo cáo phải nêu đây là giới hạn về độ ổn định theo khởi tạo ngẫu nhiên.
 
 ## Điều không được làm
 

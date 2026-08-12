@@ -114,7 +114,7 @@ PY
 Kết quả phải có `cuda available: True` và tên GPU đã thuê. Nếu `False`, dừng lại; không chạy
 pipeline bằng CPU trên Docker GPU.
 
-## 4. Kiểm tra môi trường và đặt biến môi trường bắt buộc
+## 4. Kiểm tra môi trường và đặt biến môi trường chuẩn
 
 Mỗi terminal mới cần kích hoạt venv và các biến này:
 
@@ -126,8 +126,9 @@ export PYTHONPATH="$PWD/src"
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 ```
 
-`CUBLAS_WORKSPACE_CONFIG` phải được export **trước mọi lệnh Python dùng CUDA**. Nó tránh warning
-CuBLAS không deterministic và giữ điều kiện tái lập nhất quán giữa các fold.
+Từ fold 02 trở đi, `CUBLAS_WORKSPACE_CONFIG` là điều kiện vận hành đã khóa và phải được export
+**trước mọi lệnh Python dùng CUDA**. Nó loại cảnh báo cuBLAS và tăng khả năng tái lập bitwise.
+Thiếu biến này không làm một run đã hoàn tất trở thành sai khoa học; vì vậy fold 00/01 vẫn hợp lệ.
 
 Sau đó chạy kiểm tra hợp đồng:
 
@@ -138,7 +139,9 @@ python scripts/check_environment.py \
   --output runs/v2/environment_check_gpu.json
 ```
 
-Chỉ tiếp tục khi báo `PASS`. Nếu báo `BadZipFile`, upload lại tệp NPZ bị báo lỗi trước khi chạy.
+Mặc định lệnh kiểm tra bốn biến thể của sáu experiment đang hoạt động. Chỉ dùng thêm
+`--include-retired-e5` khi muốn audit lại E5 và đã upload `bandpass_clip_v2`. Chỉ tiếp tục khi
+báo `PASS`. Nếu báo `BadZipFile`, upload lại tệp NPZ bị báo lỗi trước khi chạy.
 
 ## 5. Chạy một fold đầy đủ, validation-only
 
@@ -313,6 +316,21 @@ git push origin run-in-docker
 Sau push, ở máy cá nhân chạy `git pull` trên branch `run-in-docker`, rồi kiểm tra đủ sáu
 `run_manifest.json` và `validation_report.json`. Có thể tắt Docker khi commit đã push thành công.
 
+Repository hiện có `.gitattributes` gán `*.pt` cho Git LFS. Nếu máy Docker đã cài Git LFS, phải
+chạy thêm `git lfs push --all origin run-in-docker` và `git lfs fsck`; nếu không dùng Git LFS,
+kiểm tra checkpoint được lưu trực tiếp là file nhị phân vài MB chứ không phải pointer ASCII
+130--132 byte. Tuyệt đối không coi commit pointer là backup hoàn chỉnh nếu blob LFS chưa được đẩy.
+
+Kiểm tra nhanh sau khi pull về máy cá nhân:
+
+```bash
+find runs/v2/full -path '*/fold_02/seed_42/checkpoints/*.pt' \
+  -o -path '*/fold_02/seed_42/checkpoints/*/*.pt' | xargs -r file
+```
+
+Checkpoint thật được nhận diện là Zip archive/PyTorch data và có kích thước hàng chục KB đến vài
+MB. Nếu là `ASCII text` chứa `git-lfs.github.com/spec`, cần hydrate Git LFS trước khi xóa Docker.
+
 ## 9. Nguyên tắc không được thay đổi
 
 - Không chạy E5 ở fold 01--09: nó trùng dữ liệu E4 bitwise, đã có chứng cứ trong
@@ -320,6 +338,7 @@ Sau push, ở máy cá nhân chạy `git pull` trên branch `run-in-docker`, r�
 - Không thêm `--allow-test-evaluation` cho tới khi tất cả fold validation-only đã hoàn tất và
   protocol được khóa.
 - Không đổi code, config, biến thể dữ liệu, seed hoặc split giữa các fold.
-- Không resume một run bắt đầu khi chưa export `CUBLAS_WORKSPACE_CONFIG`; chạy lại run đó từ đầu
-  mà không dùng `--resume`.
-- Chạt xong sau đó phải push artifact trước khi tắt Docker.
+- Từ fold 02 trở đi phải export `CUBLAS_WORKSPACE_CONFIG` trước khi bắt đầu hoặc resume. Nếu phát
+  hiện thiếu biến khi run đang dở, ưu tiên dừng và chạy lại run đó từ đầu để log điều kiện sạch;
+  đây là quy tắc nhất quán vận hành, không phải tuyên bố rằng kết quả thiếu biến luôn vô hiệu.
+- Chạy xong phải push artifact và pull/audit trên máy cá nhân trước khi tắt Docker.
