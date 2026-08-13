@@ -1,5 +1,10 @@
 # Trạng thái giao thức v2
 
+> **Cập nhật 2026-08-14 sau Gate 5:** Gate 4 đã mở test đúng một lần và đạt 60/60 run. Gate 5 đã
+> hoàn tất phân tích thống kê bắt cặp trên 78 đối tượng. Báo cáo hiện hành là
+> `GATE5_STATISTICAL_RESULTS.md`; các đoạn “test chưa mở” bên dưới chỉ mô tả ảnh chụp kiểm toán trước
+> Gate 4 và được giữ lại làm lịch sử.
+
 Ngày audit gần nhất: **2026-08-14**.
 
 Nhánh được kiểm toán: `run-in-docker`.

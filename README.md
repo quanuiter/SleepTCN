@@ -1,5 +1,9 @@
 # SleepTCN
 
+> **Trạng thái 2026-08-14:** Gate 4 đã hoàn tất 60/60 đánh giá test và Gate 5 đã hoàn tất phân tích
+> thống kê bắt cặp. Xem `notebooks/docs/GATE5_STATISTICAL_RESULTS.md`. Bước tiếp theo là Gate 6:
+> benchmark có kiểm soát và phân tích không gian đặc trưng; không chạy lại test hoặc thay đổi E0–E6.
+
 Workspace nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể
 tiền xử lý trên Sleep-EDF Expanded — Sleep Cassette.
 

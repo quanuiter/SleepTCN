@@ -1,5 +1,10 @@
 # Việc cần làm tiếp theo
 
+> **Cập nhật 2026-08-14:** Gate 4 và Gate 5 đã hoàn tất. Không chạy lại test hoặc thay đổi E0–E6.
+> Bước đang hoạt động là Gate 6: benchmark có kiểm soát và phân tích không gian đặc trưng. Xem kết quả
+> chính thức tại `GATE5_STATISTICAL_RESULTS.md`. Phần Gate 4–5 bên dưới được giữ lại để truy vết kế hoạch
+> đã thực hiện.
+
 Nguồn bằng chứng: `VALIDATION_AUDIT_10FOLD.md`.
 
 Giao thức thống kê: `STATISTICAL_ANALYSIS.md`.
