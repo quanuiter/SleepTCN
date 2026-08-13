@@ -1,0 +1,11 @@
+{
+  "best_checkpoint_sha256": "937c76ac69daeddde722460823c2e22b984cb7798408b2cb1b23ed59d536e378",
+  "component_seed": 56,
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "paper_raw_v1",
+  "outer_fold": 5,
+  "schema_version": 1,
+  "smoke": false,
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "stage": "cnn15/N_REM"
+}
