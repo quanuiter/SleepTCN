@@ -8,6 +8,9 @@
 > **Cập nhật Gate 6:** đếm tham số và phân tích không gian đặc trưng 10-fold đã hoàn tất. Chỉ còn chạy
 > benchmark CUDA ba vòng và kiểm định artifact theo `GATE6_PROTOCOL_AND_RUNBOOK.md`.
 
+> **Cập nhật cuối Gate 6:** benchmark CUDA đã hoàn tất và kiểm định đạt. Bước đang hoạt động là Gate 7:
+> đóng gói bảng/hình, viết khóa luận/bài báo và lập ma trận bằng chứng–tuyên bố. Không chạy lại test.
+
 Nguồn bằng chứng: `VALIDATION_AUDIT_10FOLD.md`.
 
 Giao thức thống kê: `STATISTICAL_ANALYSIS.md`.

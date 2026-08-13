@@ -1,5 +1,8 @@
 # Gate 6 — kết quả phần CPU và trạng thái benchmark GPU
 
+> **Cập nhật:** benchmark GPU sau đó đã hoàn tất và Gate 6 đã đóng. Tài liệu này giữ lại ảnh chụp phần
+> CPU; kết quả hiện hành nằm tại `GATE6_FINAL_RESULTS.md`.
+
 Ngày thực hiện: **2026-08-14**. Commit giao thức/mã: `bfe0ba3`.
 
 ## Trạng thái

@@ -8,6 +8,10 @@
 > latency/throughput/VRAM trên một GPU. Xem `notebooks/docs/GATE6_CPU_RESULTS.md` và
 > `notebooks/docs/GATE6_PROTOCOL_AND_RUNBOOK.md`.
 
+> **Gate 6 đã hoàn tất:** benchmark GPU và bộ kiểm định tổng hợp đều đạt. ResNet-1D + TCN nhanh hơn E0
+> khoảng 3,76× nhưng có 4,37× số tham số và peak VRAM cao hơn 28,4%. Xem
+> `notebooks/docs/GATE6_FINAL_RESULTS.md`.
+
 Workspace nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể
 tiền xử lý trên Sleep-EDF Expanded — Sleep Cassette.
 

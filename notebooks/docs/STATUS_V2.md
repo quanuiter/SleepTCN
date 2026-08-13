@@ -8,6 +8,10 @@
 > **Cập nhật Gate 6:** phần CPU đã đạt: tham số từ checkpoint thật và phân tích E1/E2 trên 10 fold.
 > Latency/throughput/peak VRAM vẫn chờ đo trên cùng một GPU. Xem `GATE6_CPU_RESULTS.md`.
 
+> **Gate 6 đã ĐẠT:** benchmark Tesla V100 hoàn tất và báo cáo kiểm định tổng hợp trả `status: passed`.
+> ResNet-1D + TCN nhanh hơn E0 khoảng 3,76× nhưng tăng tham số 4,37× và peak VRAM 28,4%. Bước tiếp
+> theo là Gate 7 — chuẩn bị bảng/hình và bản thảo. Xem `GATE6_FINAL_RESULTS.md`.
+
 Ngày audit gần nhất: **2026-08-14**.
 
 Nhánh được kiểm toán: `run-in-docker`.
