@@ -1,0 +1,26 @@
+{
+  "condition": "CN",
+  "manifest_sha256": "03948279863b8795f35f734f6b49c77a2eb3ed10d5322fa1b2bf5e8265b2be77",
+  "outer_fold": 6,
+  "passed": true,
+  "replacement_mean_sha256": "9548ad6d2e2012ce659760ab785585d1813954e81da7aaa27256a5e1d47f73f1",
+  "roles": {
+    "test": {
+      "metrics_sha256": "7baa9edf4bc7fba70a9ee3f8b56494ca978d8f8a949b2a8c46b40aee2a6fe2db",
+      "prediction_sha256": "97a75d94705c22e690513b04348565f518c03b8c3f9839a2f313773fa1dd4199",
+      "records": 16,
+      "valid_epochs": 21158
+    },
+    "validation": {
+      "metrics_sha256": "4a5daa96634e130bfef9e17c8750741d4caccd56fbddd1624f91ab95e62f82fa",
+      "prediction_sha256": "79453a8810fa707dd84df44cc4f81ab119baf1b5655d6e208b78bf1c9dc3a2b7",
+      "records": 16,
+      "valid_epochs": 20962
+    }
+  },
+  "schema_version": 1,
+  "seed": 42,
+  "sequence_checkpoint_sha256": "5de71a76fe642e4ffb62f7118f47e95bf66e3a3d7bc1fa1d56674e06635e3f81",
+  "smoke": false,
+  "status": "complete"
+}
