@@ -5,6 +5,9 @@
 > `GATE5_STATISTICAL_RESULTS.md`; các đoạn “test chưa mở” bên dưới chỉ mô tả ảnh chụp kiểm toán trước
 > Gate 4 và được giữ lại làm lịch sử.
 
+> **Cập nhật Gate 6:** phần CPU đã đạt: tham số từ checkpoint thật và phân tích E1/E2 trên 10 fold.
+> Latency/throughput/peak VRAM vẫn chờ đo trên cùng một GPU. Xem `GATE6_CPU_RESULTS.md`.
+
 Ngày audit gần nhất: **2026-08-14**.
 
 Nhánh được kiểm toán: `run-in-docker`.

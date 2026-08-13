@@ -96,6 +96,13 @@ Sau đó phân tích không gian đặc trưng:
 ```bash
 python scripts/analyze_feature_space.py \
   --workspace /workspace/SleepTCN \
+  --mode prepare \
+  --seed 42 \
+  --sample-per-class-per-fold 200 \
+  --sample-manifest runs/v2/analysis/gate6_feature_samples_seed42.json
+
+python scripts/analyze_feature_space.py \
+  --workspace /workspace/SleepTCN \
   --mode analyze \
   --sample-manifest runs/v2/analysis/gate6_feature_samples_seed42.json \
   --output-dir runs/v2/analysis/gate6_feature_space \
@@ -118,3 +125,6 @@ python scripts/validate_gate6_artifacts.py \
 ```
 
 Chỉ lưu Git khi báo cáo trả `status: passed`. Không commit dữ liệu processed, cache hoặc checkpoint mới.
+Không commit `gate6_feature_samples_seed42.json` hoặc `tsne_points.csv` vì hai tệp chứa khóa
+đối tượng/bản ghi/epoch; chúng phải được giữ cục bộ và có thể tái tạo đúng từ seed đã khóa. Chỉ commit
+báo cáo tổng hợp, hình không định danh, log và báo cáo kiểm định.

@@ -5,6 +5,9 @@
 > chính thức tại `GATE5_STATISTICAL_RESULTS.md`. Phần Gate 4–5 bên dưới được giữ lại để truy vết kế hoạch
 > đã thực hiện.
 
+> **Cập nhật Gate 6:** đếm tham số và phân tích không gian đặc trưng 10-fold đã hoàn tất. Chỉ còn chạy
+> benchmark CUDA ba vòng và kiểm định artifact theo `GATE6_PROTOCOL_AND_RUNBOOK.md`.
+
 Nguồn bằng chứng: `VALIDATION_AUDIT_10FOLD.md`.
 
 Giao thức thống kê: `STATISTICAL_ANALYSIS.md`.

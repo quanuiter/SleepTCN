@@ -4,6 +4,10 @@
 > thống kê bắt cặp. Xem `notebooks/docs/GATE5_STATISTICAL_RESULTS.md`. Bước tiếp theo là Gate 6:
 > benchmark có kiểm soát và phân tích không gian đặc trưng; không chạy lại test hoặc thay đổi E0–E6.
 
+> **Cập nhật Gate 6:** phần CPU (tham số, Silhouette 10-fold và t-SNE) đã hoàn tất; chỉ còn benchmark
+> latency/throughput/VRAM trên một GPU. Xem `notebooks/docs/GATE6_CPU_RESULTS.md` và
+> `notebooks/docs/GATE6_PROTOCOL_AND_RUNBOOK.md`.
+
 Workspace nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể
 tiền xử lý trên Sleep-EDF Expanded — Sleep Cassette.
 
