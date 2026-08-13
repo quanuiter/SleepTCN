@@ -1,5 +1,5 @@
 {
-  "allow_test_evaluation": false,
+  "allow_test_evaluation": true,
   "config_path": "configs/experiments_v2.json",
   "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
   "data_variant": "filtered_zscore_v2",
@@ -9,12 +9,30 @@
   "git_commit": "a437da339622d2ab52cd143db96a0be639579451",
   "git_dirty": false,
   "metrics_roles": [
-    "validation"
+    "validation",
+    "test"
   ],
   "outer_fold": 7,
   "resume": false,
   "role_records": {
-    "test": "locked_until_best_checkpoint",
+    "test": [
+      "SC4061E",
+      "SC4062E",
+      "SC4111E",
+      "SC4112E",
+      "SC4381F",
+      "SC4382F",
+      "SC4501E",
+      "SC4502E",
+      "SC4551F",
+      "SC4552F",
+      "SC4711E",
+      "SC4712E",
+      "SC4721E",
+      "SC4722E",
+      "SC4761E",
+      "SC4762E"
+    ],
     "train": [
       "SC4001E",
       "SC4002E",
@@ -164,5 +182,10 @@
   "smoke": false,
   "split_path": "data/splits/sleepedf_sc_10fold_seed42_v2.json",
   "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
-  "status": "complete"
+  "status": "complete",
+  "test_evaluation": {
+    "campaign_schema_version": 1,
+    "selection": "prelocked_best_checkpoint",
+    "source_git_commit": "deca796c444b7811ce7e94040487365846ff1d55"
+  }
 }
