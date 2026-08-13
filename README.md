@@ -1,58 +1,62 @@
 # SleepTCN
 
-Workspace nghiên cứu tái triển khai ZleepAnlystNet và đánh giá các thay đổi TCN, ResNet-1D và
+Workspace nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể
 tiền xử lý trên Sleep-EDF Expanded — Sleep Cassette.
 
-## Giao thức đang hoạt động
+## Trạng thái hiện tại
 
 Giao thức chính thức là **v2**, training seed `42`, split 10-fold cố định theo đối tượng. Sáu
-điều kiện còn hoạt động là E0, E1, E2, E3, E4 và E6. E5 chỉ được chạy ở fold 00 và sau đó bị
-loại vì toàn bộ dữ liệu khoa học của E5 trùng bitwise với E4.
+điều kiện đang hoạt động là E0, E1, E2, E3, E4 và E6. E5 chỉ được chạy ở fold 00 rồi bị loại vì
+dữ liệu khoa học của E5 trùng bitwise với E4.
 
-Trạng thái đã kiểm chứng trong bản repository hiện tại:
+Chiến dịch full validation-only đã hoàn tất và được kiểm toán:
 
-- Dữ liệu: 765/765 NPZ của năm biến thể hợp lệ.
-- Smoke CPU/GPU v2: hoàn tất.
-- Full validation-only: fold 00 và fold 01 hoàn tất, artifact đều đạt, test vẫn khóa.
-- Fold 02--09: chưa có artifact hoàn tất trong bản local hiện tại.
+- 10 fold × 6 thí nghiệm = 60 full run.
+- 60/60 manifest `complete` và validation report `passed=true`.
+- Đủ checkpoint, prediction và metrics validation; SHA-256 đã được kiểm tra.
+- 78/78 đối tượng được phủ đúng một lần ở vai trò validation.
+- Test vẫn khóa và chưa có test artifact.
+
+Bước hiện tại là khóa checkpoint và chuẩn bị runbook mở test một lần. Không thay đổi mô hình,
+config, split, preprocessing hoặc seed dựa trên kết quả validation.
 
 Đọc theo thứ tự:
 
-1. `notebooks/docs/STATUS_V2.md` — trạng thái có bằng chứng và phần còn lại.
-2. `notebooks/docs/EXPERIMENT_PROTOCOL_V2.md` — câu hỏi nghiên cứu và bất biến thiết kế.
-3. `notebooks/docs/WORKFLOW.md` — checklist toàn dự án.
-4. `notebooks/docs/DOCKER_GPU_RUNBOOK.md` — lệnh chuẩn cho mỗi phiên thuê GPU.
-5. `notebooks/docs/STATISTICAL_ANALYSIS.md` — phân tích chỉ thực hiện sau khi mở test.
+1. `notebooks/docs/STATUS_V2.md` — trạng thái hiện tại.
+2. `notebooks/docs/VALIDATION_AUDIT_10FOLD.md` — bằng chứng kiểm toán 60 run.
+3. `notebooks/docs/EXPERIMENT_PROTOCOL_V2.md` — thiết kế thí nghiệm đã khóa.
+4. `notebooks/docs/NEXT_STEPS.md` — các cổng công việc còn lại.
+5. `notebooks/docs/STATISTICAL_ANALYSIS.md` — kế hoạch phân tích sau khi mở test.
 
-Các tài liệu `STATUS.md`, `EXPERIMENT_PROTOCOL.md` và `CPU_READINESS.md` là hồ sơ lịch sử v1;
-không dùng chúng để quyết định bước chạy hiện tại.
+Các tài liệu `STATUS.md`, `EXPERIMENT_PROTOCOL.md` và `CPU_READINESS.md` là hồ sơ lịch sử v1,
+không dùng để quyết định bước chạy hiện tại.
 
 ## Phạm vi đã khóa
 
 - Sleep-EDF Expanded 1.0.0, phân tập Sleep Cassette (`SC`).
 - 78 đối tượng, 153 PSG và 153 Hypnogram.
 - EEG Fpz-Cz, 100 Hz, epoch 30 giây, năm lớp W/N1/N2/N3/REM.
-- Movement/Unknown được giữ trong chuỗi với nhãn `-1` và bị mask khỏi loss/metrics.
+- Movement/Unknown giữ trong chuỗi với nhãn `-1` và bị mask khỏi loss/metrics.
 - Train/validation/test chia theo đối tượng; hai đêm cùng người luôn cùng vai trò.
-- Test chưa được đánh giá và không được mở cho tới khi đủ các fold validation-only.
+- E0--E6 chỉ hỗ trợ kết luận in-domain trên Sleep-EDF.
 
 ## Thư mục
 
 ```text
-configs/          Cấu hình đã khóa; không sửa giữa chiến dịch fold
-data/manifests/   Provenance và báo cáo kiểm định dữ liệu
+configs/          Cấu hình đã khóa
+data/manifests/   Nguồn gốc và báo cáo kiểm định dữ liệu
 data/splits/      Manifest 10-fold và SHA-256
-data/processed/   Mảng NPZ lớn, không lưu Git
-notebooks/docs/   Protocol, trạng thái và runbook
-runs/v2/          Checkpoint, dự đoán và metrics được chọn để lưu Git
-scripts/          CLI tiền xử lý, chạy, kiểm định và phân tích
+data/processed/   NPZ lớn, không lưu Git
+notebooks/docs/   Giao thức, trạng thái, audit và runbook
+runs/v2/          Checkpoint, prediction và metrics đã kiểm định
+scripts/          CLI tiền xử lý, huấn luyện, kiểm định và phân tích
 src/sleeptcn/     Mã nguồn dùng chung
 tests/            Kiểm thử tự động
 ```
 
 ## Quy tắc bất biến
 
-- Không sửa dữ liệu EDF nguồn hoặc cấu hình thí nghiệm giữa các fold.
-- Không dùng `--allow-test-evaluation` trong giai đoạn hiện tại.
-- Mỗi run full phải có worktree sạch, manifest `complete` và validation report `passed=true`.
-- Chỉ lưu có chọn lọc artifact đã kiểm định; không commit `data/cache/`.
+- Không sửa dữ liệu, config hoặc split sau khi validation-only đã khóa.
+- Không mở test trước khi runbook test-unlock được rà soát.
+- Sau lần test đầu tiên, không thay đổi phương pháp dựa trên kết quả test.
+- Không commit `data/cache/` hoặc dataset lớn.

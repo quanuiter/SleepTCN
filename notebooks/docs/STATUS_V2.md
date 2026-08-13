@@ -1,86 +1,86 @@
 # Trạng thái giao thức v2
 
-Ngày audit gần nhất: **2026-08-12**. Trạng thái dưới đây chỉ ghi nhận những gì có bằng chứng trong
-bản repository local hiện tại; tiến trình đang chạy trên Docker nhưng chưa pull về không được tính
-là hoàn tất.
+Ngày audit gần nhất: **2026-08-14**.
 
-## Đã hoàn thành và kiểm chứng
+Nhánh được kiểm toán: `run-in-docker`.
 
-### Dữ liệu và split
+Commit: `b4ce94cb3b4f1d5d03e44b8c5287137cfa771767`.
 
-- Kiểm kê 153 cặp PSG/Hypnogram của 78 đối tượng, kèm SHA-256 nguồn và audit metadata EDF.
-- Sinh đủ năm biến thể, tổng 765 NPZ: `paper_raw_v1`, `bandpass_v2`, `bandpass_clip_v2`,
-  `filtered_v2`, `filtered_zscore_v2`.
-- `processed_validation_v2.json` xác nhận 765/765 file hợp lệ, 0 lỗi file, 0 lỗi toàn cục.
-- Mỗi biến thể có 195.767 epoch, gồm 195.469 epoch hợp lệ và 298 Movement/Unknown.
-- Split v2 có 10 outer run theo đối tượng; test là fold `i`, validation là fold `(i+1) mod 10`,
-  train là tám fold còn lại. SHA-256 manifest khớp sidecar:
+## Tóm tắt
+
+| Cổng | Trạng thái |
+|---|---|
+| Dữ liệu và split | ĐẠT |
+| Smoke CPU/GPU | ĐẠT |
+| Full validation-only 10-fold | ĐẠT — 60/60 run |
+| Khóa checkpoint và mở test một lần | SẴN SÀNG CHUẨN BỊ, CHƯA MỞ TEST |
+| Phân tích thống kê và báo cáo cuối | CHƯA THỰC HIỆN |
+
+## Dữ liệu và split
+
+- Sleep-EDF Expanded, phân tập Sleep Cassette: 78 đối tượng, 153 PSG và 153 Hypnogram.
+- Năm biến thể đã được sinh và kiểm định, tổng cộng 765 NPZ.
+- Mỗi biến thể có 195.767 epoch, gồm 195.469 epoch hợp lệ và 298 Movement/Unknown bị mask khỏi
+  loss/metrics.
+- Split v2 gồm 10 outer run theo đối tượng; hai đêm của cùng người luôn cùng vai trò.
+- 78/78 đối tượng xuất hiện đúng một lần ở validation trên 10 fold.
+- Split SHA-256:
   `6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de`.
-- Kiểm tra bitwise 153/153 cặp xác nhận E4 và E5 có `x`, `y`, `valid_mask`,
-  `original_epoch_index` giống hệt nhau; `clip_fraction=0` cho mọi bản ghi.
+- E4 và E5 giống bitwise ở các trường khoa học trên 153/153 bản ghi; E5 bị loại khỏi fold 01--09.
 
-### Mã và cổng kỹ thuật
+Không tiền xử lý lại, không sửa manifest/split và không phục hồi E5 vào nhóm so sánh hiệu năng.
 
-- 51 test case tồn tại trong bộ kiểm thử v2; lần xác nhận CPU trước đây đã đạt 51/51.
-- Smoke CPU và GPU v2 E0--E6 fold 00, seed 42 đã hoàn tất và artifact pass.
-- Runner khóa test khỏi quá trình fit, hỗ trợ checkpoint `latest.pt`/`best.pt`, resume tại cuối
-  epoch và từ chối full run khi worktree bẩn.
-- Môi trường GPU đã dùng: Python 3.10.13, PyTorch 2.5.1+cu121, CUDA wheel 12.1, Tesla V100
-  PCIe 16 GB. Kiểm tra môi trường GPU đã PASS.
+## Mã và môi trường
 
-### Full validation-only
+- Bộ kiểm thử v2 từng đạt 51/51 trong lần xác nhận CPU trước chiến dịch GPU.
+- Smoke CPU/GPU E0--E6 fold 00 đã đạt.
+- Môi trường GPU đã dùng: Python 3.10.13, PyTorch 2.5.1+cu121 và Tesla V100 PCIe 16 GB.
+- Từ fold 02 trở đi đã khóa `CUBLAS_WORKSPACE_CONFIG=:4096:8` trong runbook.
+- Config SHA-256 chung:
+  `1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b`.
+- Runner SHA-256 chung:
+  `12245ec0d2fe51a0843ed873d3080f752db23621c6e2b583bba4922be9be9a39`.
 
-| Fold | Experiment có artifact | Trạng thái | Test |
-|---|---|---|---|
-| 00 | E0, E1, E2, E3, E4, E5, E6 | tất cả `complete`, report `passed=true` | khóa |
-| 01 | E0, E1, E2, E3, E4, E6 | tất cả `complete`, report `passed=true` | khóa |
-| 02--09 | chưa có đủ artifact trong bản local | chưa xác nhận | khóa |
+## Full validation-only 10-fold
 
-Fold 00 giữ E5 làm bằng chứng kiểm toán. Theo quyết định protocol ngày 2026-08-11, không chạy E5
-ở fold 01--09 và không đưa E5 vào kiểm định hiệu năng cuối cùng.
+Sáu thí nghiệm đang hoạt động là E0, E1, E2, E3, E4 và E6; training seed duy nhất là `42`.
 
-Các run fold 00/01 dùng cùng config SHA-256
-`1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b`, cùng split SHA-256
-và cùng runner code SHA-256
-`12245ec0d2fe51a0843ed873d3080f752db23621c6e2b583bba4922be9be9a39`.
-Commit Git giữa một số run khác nhau do cập nhật tài liệu/dependency/artifact; code runner và config
-được ghi trong manifest vẫn giống nhau.
+| Fold | E0 | E1 | E2 | E3 | E4 | E6 | Test |
+|---:|---|---|---|---|---|---|---|
+| 00 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 01 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 02 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 03 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 04 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 05 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 06 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 07 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 08 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+| 09 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
 
-Tình trạng checkpoint local khác nhau giữa hai fold:
+Kết quả kiểm toán tổng thể:
 
-- Fold 01: 50 file `.pt` là checkpoint nhị phân thật; SHA-256 của checkpoint sequence, manifest,
-  prediction và metrics đều khớp validation report.
-- Fold 00: 54 file `.pt` hiện là Git LFS pointer, chưa được hydrate trên máy local này. OID/size
-  trong pointer của checkpoint sequence khớp SHA-256/metadata đã ghi, còn manifest, prediction,
-  metrics và validation report đều khớp byte hiện tại. Kết quả fold 00 vẫn hợp lệ, nhưng chưa thể
-  resume/mở test từ máy local cho tới khi blob LFS thật được pull hoặc phục hồi từ bản backup.
+- 60/60 manifest `complete` và được tạo từ worktree sạch.
+- 60/60 validation report `passed=true`.
+- 60/60 run chỉ có validation metrics; không có test prediction/metrics.
+- Prediction của sáu E trong từng fold ghép cặp đúng theo bản ghi, epoch gốc và nhãn thật.
+- Tính lại metrics từ prediction khớp tuyệt đối tệp metrics đã lưu.
+- 250 `best.pt` và 250 `latest.pt` đọc được là checkpoint nhị phân thật.
+- SHA-256 của 250/250 checkpoint tốt nhất khớp `complete.json`.
 
-## Lưu ý audit
+Báo cáo chi tiết: `VALIDATION_AUDIT_10FOLD.md`.
 
-- Trường `status` trong `configs/experiments_v2.json` vẫn có chuỗi lịch sử
-  `gpu_smoke_pending`. Không sửa riêng trường này trong chiến dịch hiện tại vì mọi thay đổi config
-  sẽ đổi SHA-256 và làm các fold sau không còn cùng cấu hình với fold 00/01. Trạng thái vận hành
-  hiện tại lấy từ tài liệu này và artifact, không lấy từ trường mô tả đó.
-- Fold 01 có thể đã phát cảnh báo cuBLAS deterministic. Cảnh báo không làm run sai: dữ liệu,
-  split, code, checkpoint và artifact đều hợp lệ. Từ fold 02 trở đi luôn export
-  `CUBLAS_WORKSPACE_CONFIG=:4096:8` trước khi khởi động Python CUDA để tăng khả năng tái lập.
-- Lần audit này không chạy lại pytest trên máy local vì environment hiện tại chưa cài PyTorch và
-  package `sleeptcn`; đây là thiếu dependency của máy audit, không phải test failure của code.
-- `data/cache/features/v2/` là cache tái tạo được và không được commit. Resume trong cùng máy cần
-  checkpoint; nếu chuyển máy mà không mang cache, feature sẽ được trích xuất lại từ checkpoint.
-- Bản local hiện giữ bốn thư mục dữ liệu hoạt động; `bandpass_clip_v2` đã được đổi tên/đưa ra khỏi
-  đường dẫn hoạt động sau khi E5 bị loại. Manifest kiểm định 765 file và báo cáo bitwise là bằng
-  chứng của lần sinh đầy đủ trước đó. `check_environment.py` mặc định kiểm tra bốn biến thể hoạt
-  động; dùng `--include-retired-e5` chỉ khi cần audit lại E5.
+## Lưu ý diễn giải
 
-## Bước hiện tại
+- Trung bình validation chỉ dùng kiểm tra tính hợp lý, không phải kết quả cuối.
+- Không chạy kiểm định thống kê trên 10 giá trị fold như 10 mẫu độc lập.
+- Không thay đổi mô hình hoặc siêu tham số dựa trên validation sau khi cổng này được khóa.
+- Chỉ dùng một training seed 42; đây là giới hạn phải nêu trong khóa luận/bài báo.
+- E0--E6 trên Sleep-EDF chỉ cho phép kết luận in-domain, chưa chứng minh domain shift hoặc zero-shot.
+- Monitoring thời gian không đầy đủ ở một số fold; benchmark tốc độ phải được đo lại có kiểm soát.
 
-1. Hoàn tất và pull về fold 02 cho E0, E1, E2, E3, E4, E6; chạy validation artifact sau từng E.
-2. Audit fold 02 giống bảng trên rồi mới chuyển lần lượt sang fold 03--09, mỗi phiên thuê một fold.
-3. Trước khi mở test, cài Git LFS trên một máy, pull/`git lfs fsck` checkpoint fold 00 và xác nhận
-   các file `.pt` là blob PyTorch thật, không còn là pointer 130--132 byte. Nếu blob remote thiếu,
-   phục hồi checkpoint fold 00 từ backup Docker/USB hoặc chạy lại fold đó.
-4. Chỉ sau khi đủ 10 fold validation-only và mọi report pass mới khóa checkpoint cuối cùng và mở
-   test đúng một lần bằng `--resume --allow-test-evaluation`.
-5. Sau test: ghép dự đoán out-of-fold theo đối tượng, chạy bootstrap/Wilcoxon/Holm, benchmark tài
-   nguyên và viết báo cáo. Không thay đổi code/config dựa trên test.
+## Trạng thái hiện tại
+
+Cổng validation-only đã đóng và đạt. Test **chưa mở**. Bước kế tiếp là chuẩn bị runbook mở test
+một lần từ checkpoint đã khóa, rà soát cơ chế giữ worktree sạch và kiểm định test artifact. Chỉ
+sau khi runbook đó được duyệt mới chạy `--resume --allow-test-evaluation`.
