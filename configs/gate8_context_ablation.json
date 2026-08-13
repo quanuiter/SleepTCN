@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "status": "preregistered_before_gate8_training",
+  "gate": "GATE_8_CONTEXT_GROUP_ABLATION",
+  "dataset": "sleep-edf-expanded/sleep-cassette/1.0.0",
+  "source_experiment": "E1",
+  "source_extractor_experiment": "E0",
+  "source_reference_commit": "3e50bb6",
+  "seed": 42,
+  "outer_folds": 10,
+  "conditions": {
+    "CP": {
+      "retained_groups": ["C", "P"],
+      "masked_groups": ["N"]
+    },
+    "CN": {
+      "retained_groups": ["C", "N"],
+      "masked_groups": ["P"]
+    },
+    "C": {
+      "retained_groups": ["C"],
+      "masked_groups": ["P", "N"]
+    }
+  },
+  "feature_contract": {
+    "total_dimension": 75,
+    "group_slices": {
+      "C": [0, 25],
+      "P": [25, 50],
+      "N": [50, 75]
+    },
+    "masking_method": "per_dimension_valid_train_epoch_mean",
+    "fit_replacement_on": "training_role_only_with_labels_0_to_4",
+    "apply_same_replacement_to": ["train", "validation", "test"],
+    "preserve_input_dimension": true
+  },
+  "model_contract": {
+    "architecture": "common_tcn_from_experiments_v2",
+    "initialization_seed": 42,
+    "checkpoint_metric": "validation_macro_f1",
+    "test_during_training": false
+  },
+  "test_gate": {
+    "required_completed_validation_runs": 30,
+    "unlock_confirmation": "OPEN-GATE8-LOCKED-TEST-ONCE",
+    "resume_supported": true
+  },
+  "analysis": {
+    "reference_condition": "FULL_CPN_REUSE_E1",
+    "primary_comparison": "FULL_CPN-C",
+    "primary_metric": "transition_radius_1_macro_f1",
+    "key_secondary_comparisons": ["FULL_CPN-CP", "FULL_CPN-CN"],
+    "transition_anchor": "first_epoch_of_new_stage_after_consecutive_valid_label_change",
+    "primary_transition_radius_epochs": 1,
+    "sensitivity_transition_radius_epochs": 2,
+    "unknown_or_movement_breaks_sequence": true,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2028,
+    "uncertainty": "paired_subject_cluster_bootstrap_percentile_95ci",
+    "supporting_test": "paired_subject_wilcoxon_two_sided",
+    "multiplicity": "holm_over_three_transition_radius_1_comparisons",
+    "supporting_metrics": [
+      "overall_macro_f1",
+      "overall_accuracy",
+      "n1_f1",
+      "n1_recall",
+      "transition_n1_recall",
+      "stable_n1_recall",
+      "transition_radius_2_macro_f1",
+      "W_N1_transition_macro_f1",
+      "N1_N2_transition_macro_f1",
+      "N1_REM_transition_macro_f1",
+      "N2_N3_transition_macro_f1"
+    ]
+  },
+  "claim_boundary": {
+    "allowed": "conditional_incremental_predictive_value_given_C_and_the_locked_TCN",
+    "forbidden": [
+      "percentage_of_information",
+      "causal_importance",
+      "global_feature_importance",
+      "confirmatory_claim_based_on_posthoc_protocol"
+    ]
+  }
+}
