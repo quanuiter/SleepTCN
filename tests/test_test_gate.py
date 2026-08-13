@@ -1,4 +1,5 @@
 import unittest
+import tempfile
 from pathlib import Path
 
 from sleeptcn.test_gate import (
@@ -6,12 +7,22 @@ from sleeptcn.test_gate import (
     TestTarget,
     _allowed_resume_paths,
     _status_path,
+    _text_sha256_lf,
     _unlocked_manifest,
     campaign_targets,
 )
 
 
 class TestGateContractTests(unittest.TestCase):
+    def test_json_hash_is_stable_across_lf_and_crlf(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lf = root / "lf.json"
+            crlf = root / "crlf.json"
+            lf.write_bytes(b'{\n  "value": 1\n}\n')
+            crlf.write_bytes(b'{\r\n  "value": 1\r\n}\r\n')
+            self.assertEqual(_text_sha256_lf(lf), _text_sha256_lf(crlf))
+
     def test_campaign_is_exactly_six_experiments_by_ten_folds(self) -> None:
         targets = campaign_targets()
         self.assertEqual(len(targets), 60)

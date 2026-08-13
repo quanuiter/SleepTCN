@@ -7,6 +7,7 @@ artifacts are immutable by the time the test gate is opened.
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -133,6 +134,12 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _text_sha256_lf(path: Path) -> str:
+    """Hash JSON provenance canonically when Git checked it out as CRLF."""
+    payload = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def _baseline_entry(workspace: Path, target: TestTarget, seed: int) -> dict[str, Any]:
     run_root = _run_root(workspace, target, seed)
     manifest_path = run_root / "run_manifest.json"
@@ -160,16 +167,21 @@ def _baseline_entry(workspace: Path, target: TestTarget, seed: int) -> dict[str,
     if not report.get("passed") or set(report.get("roles", {})) != {"validation"}:
         raise ValueError(f"{target.key}: independent validation did not pass")
     stored_report = _read_json(report_path)
-    if stored_report != report:
+    portable_report = json.loads(json.dumps(report))
+    portable_report["manifest_sha256"] = _text_sha256_lf(manifest_path)
+    portable_report["roles"]["validation"]["metrics_sha256"] = _text_sha256_lf(
+        run_root / "metrics" / "validation.json"
+    )
+    if stored_report != portable_report:
         raise ValueError(f"{target.key}: stored validation report is stale")
     return {
         "state": "pending",
-        "run_manifest_sha256": sha256_file(manifest_path),
-        "validation_report_sha256": sha256_file(report_path),
+        "run_manifest_sha256": _text_sha256_lf(manifest_path),
+        "validation_report_sha256": _text_sha256_lf(report_path),
         "validation_prediction_sha256": sha256_file(
             run_root / "predictions" / "validation.npz"
         ),
-        "validation_metrics_sha256": sha256_file(
+        "validation_metrics_sha256": _text_sha256_lf(
             run_root / "metrics" / "validation.json"
         ),
         "sequence_checkpoint_sha256": manifest["sequence_checkpoint_sha256"],
@@ -199,13 +211,16 @@ def _assert_baseline_unchanged(
     workspace: Path, target: TestTarget, seed: int, entry: dict[str, Any]
 ) -> None:
     run_root = _run_root(workspace, target, seed)
-    checks = {
-        "validation_prediction_sha256": run_root / "predictions" / "validation.npz",
-        "validation_metrics_sha256": run_root / "metrics" / "validation.json",
-    }
-    for key, path in checks.items():
-        if sha256_file(path) != entry[key]:
-            raise ValueError(f"{target.key}: immutable validation artifact changed: {path.name}")
+    prediction_path = run_root / "predictions" / "validation.npz"
+    metric_path = run_root / "metrics" / "validation.json"
+    if sha256_file(prediction_path) != entry["validation_prediction_sha256"]:
+        raise ValueError(
+            f"{target.key}: immutable validation artifact changed: {prediction_path.name}"
+        )
+    if _text_sha256_lf(metric_path) != entry["validation_metrics_sha256"]:
+        raise ValueError(
+            f"{target.key}: immutable validation artifact changed: {metric_path.name}"
+        )
 
 
 def _load_extractor(context: RunContext) -> tuple[str, Any, str]:
