@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 from scipy.stats import wilcoxon
 
-from .metrics import compute_metrics
+from .metrics import compute_metrics, confusion_matrix_5, metrics_from_confusion
 
 
 @dataclass(frozen=True)
@@ -82,7 +82,24 @@ def paired_cluster_bootstrap(
     assert_paired(proposed, reference)
     proposed, reference = proposed.sorted(), reference.sorted()
     subjects = np.unique(proposed.subject_id)
-    blocks = [np.flatnonzero(proposed.subject_id == subject) for subject in subjects]
+    proposed_confusions = np.stack(
+        [
+            confusion_matrix_5(
+                proposed.true_label[proposed.subject_id == subject],
+                proposed.predicted_label[proposed.subject_id == subject],
+            )
+            for subject in subjects
+        ]
+    )
+    reference_confusions = np.stack(
+        [
+            confusion_matrix_5(
+                reference.true_label[reference.subject_id == subject],
+                reference.predicted_label[reference.subject_id == subject],
+            )
+            for subject in subjects
+        ]
+    )
     observed = float(
         compute_metrics(proposed.true_label, proposed.predicted_label)[metric]
         - compute_metrics(reference.true_label, reference.predicted_label)[metric]
@@ -90,15 +107,10 @@ def paired_cluster_bootstrap(
     rng = np.random.default_rng(seed)
     differences = np.empty(resamples, dtype=np.float64)
     for index in range(resamples):
-        sampled = rng.integers(0, len(blocks), size=len(blocks))
-        positions = np.concatenate([blocks[item] for item in sampled])
+        sampled = rng.integers(0, len(subjects), size=len(subjects))
         differences[index] = float(
-            compute_metrics(
-                proposed.true_label[positions], proposed.predicted_label[positions]
-            )[metric]
-            - compute_metrics(
-                reference.true_label[positions], reference.predicted_label[positions]
-            )[metric]
+            metrics_from_confusion(proposed_confusions[sampled].sum(axis=0))[metric]
+            - metrics_from_confusion(reference_confusions[sampled].sum(axis=0))[metric]
         )
     low, high = np.quantile(differences, [0.025, 0.975])
     return {
