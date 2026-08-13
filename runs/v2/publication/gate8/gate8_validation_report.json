@@ -1,0 +1,63 @@
+{
+  "claims": {
+    "claims": 12,
+    "passed": true,
+    "statuses": {
+      "C01": "supported",
+      "C02": "supported",
+      "C03": "not_supported",
+      "C04": "not_supported",
+      "C05": "supported_with_tradeoff",
+      "C06": "contradicted_by_measurement",
+      "C07": "not_evaluated",
+      "C08": "limited",
+      "C09": "not_supported",
+      "C10": "withdrawn_unsupported",
+      "C11": "not_established",
+      "C12": "supported"
+    }
+  },
+  "figures": {
+    "passed": true,
+    "png_bytes": {
+      "figure_context_ablation_effects.png": 68694,
+      "figure_feature_silhouette.png": 178085,
+      "figure_performance_speed_tradeoff.png": 92724,
+      "figure_primary_effects.png": 67817
+    }
+  },
+  "manifest": {
+    "git_commit": "82bd73a0a828eae5fd8fbb0d58c799e97b4813cd",
+    "passed": true,
+    "verified_outputs": {
+      "ablation_comparisons_csv": "e9792f4cb282bcc4b4c7ccdcabe842dc9b1c5de4910b88c63f259c641436418b",
+      "ablation_csv": "84595a5094220920b95e7742cfed0f969d22a24c2cd2ec543b3b6c16a3c2fe40",
+      "ablation_figure": "65b50818d80353393a1a7704f7a8b242775b75687ff4c3c2b68a4d71817cc3e1",
+      "author_checklist": "d6a94e8ef9e377486835ec56b04f18e04558668dbe2868a052c19441606a29e4",
+      "comparisons_csv": "4eed4f196070af214388fc13c0e1c672caa7fdcb2b20e3959e5acf19a25c4221",
+      "complexity_csv": "f0c2571e890cdf83dbd8a514e48b297ab82a2b852aaaf88965bf1636e6459562",
+      "evidence_json": "04c0a81021812c3f7285e3ce202a1cbd39d56080d890bb95d7d161dc3f4c2109",
+      "evidence_markdown": "bf6c692fdb1ec75cc8cd5938842f5afd67c0f4511fed1bc801252cb8c6e08f1a",
+      "manuscript_draft": "b942118a7f5595c5ee672b3974bae7c62bc81a4a16db47bd19e3a7eb9a59d493",
+      "performance_csv": "c337c6b517153b4cbd74d14a33efc26d6a0d0f9cae9ade1eb1f986ed0a4bd7dc",
+      "primary_effects_figure": "3d18838163d5e8b18d46423320e5e9a04efa8fcd00803a2cfd3cfcaf69134a64",
+      "silhouette_csv": "d516e2ad8a9b88a87766e1f212ffbcaaf35ed9e06c35eafadfe47eeee8434865",
+      "silhouette_figure": "2dbfff5ba7eb163fe748750cbd12a2f9e0c487de928e2dcebea674acb377f589",
+      "tables_markdown": "170cf951a7137e0e0774fed61e28a1f8ff184bfb615d17e81e0da4e48bad5d1a",
+      "tradeoff_figure": "2b06425d4fa2fcad3aac679abe4c39f58cb0af20bcfb6752084ea75c8de070ee"
+    }
+  },
+  "manuscript": {
+    "passed": true,
+    "required_sections": 10
+  },
+  "schema_version": 1,
+  "scope": "Gate8_final_publication_package",
+  "status": "passed",
+  "tables": {
+    "experiments": 6,
+    "gate8_comparisons": 3,
+    "gate8_conditions": 4,
+    "passed": true
+  }
+}

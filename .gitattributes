@@ -8,3 +8,4 @@
 
 # Publication manifests lock exact SHA-256 bytes; do not normalize line endings.
 runs/v2/publication/gate7/** -text
+runs/v2/publication/gate8/** -text
