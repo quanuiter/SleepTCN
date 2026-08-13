@@ -1,103 +1,86 @@
-# Trạng thái giao thức v2
+# Trạng thái cuối giao thức v2
 
-> **Gate 7 đã ĐẠT (2026-08-14):** sáu cấu hình × 10 fold đã được tổng hợp thành bảng, hình và bản thảo;
-> ma trận tám phát biểu đã khóa phần được phép/không được phép kết luận. Gói tại
-> `runs/v2/publication/gate7/` đã qua kiểm định SHA-256. Xem `GATE7_FINAL_RESULTS.md`. Phần thực nghiệm chính
-> seed 42 trên Sleep-EDF đã khép kín.
+Ngày khóa: **2026-08-14**
 
-> **Cập nhật 2026-08-14 sau Gate 5:** Gate 4 đã mở test đúng một lần và đạt 60/60 run. Gate 5 đã
-> hoàn tất phân tích thống kê bắt cặp trên 78 đối tượng. Báo cáo hiện hành là
-> `GATE5_STATISTICAL_RESULTS.md`; các đoạn “test chưa mở” bên dưới chỉ mô tả ảnh chụp kiểm toán trước
-> Gate 4 và được giữ lại làm lịch sử.
+Nhánh: `run-in-docker`
 
-> **Cập nhật Gate 6:** phần CPU đã đạt: tham số từ checkpoint thật và phân tích E1/E2 trên 10 fold.
-> Latency/throughput/peak VRAM vẫn chờ đo trên cùng một GPU. Xem `GATE6_CPU_RESULTS.md`.
+Commit artifact Gate 8: `e3681a3`
 
-> **Gate 6 đã ĐẠT:** benchmark Tesla V100 hoàn tất và báo cáo kiểm định tổng hợp trả `status: passed`.
-> ResNet-1D + TCN nhanh hơn E0 khoảng 3,76× nhưng tăng tham số 4,37× và peak VRAM 28,4%. Bước tiếp
-> theo là Gate 7 — chuẩn bị bảng/hình và bản thảo. Xem `GATE6_FINAL_RESULTS.md`.
+Trạng thái: **HOÀN TẤT ĐẾN GATE 8 — DỪNG**
 
-Ngày audit gần nhất: **2026-08-14**.
+## Tổng quan
 
-Nhánh được kiểm toán: `run-in-docker`.
+| Cổng | Trạng thái | Bằng chứng chính |
+|---:|---|---|
+| 1 | ĐẠT | 765 NPZ, split 10-fold theo đối tượng, không rò rỉ |
+| 2 | ĐẠT | smoke CPU/GPU, checkpoint và resume |
+| 3 | ĐẠT | 60/60 run validation-only |
+| 4 | ĐẠT | 60/60 test prediction mở đúng một lần |
+| 5 | ĐẠT | bootstrap cụm và Wilcoxon bắt cặp, 78 đối tượng |
+| 6 | ĐẠT | tham số, V100 latency/throughput/VRAM, Silhouette 10 fold |
+| 7 | ĐẠT | bảng, hình, bản thảo và ma trận bằng chứng |
+| 8 | ĐẠT | 30/30 ablation validation và 30/30 test |
 
-Commit: `b4ce94cb3b4f1d5d03e44b8c5287137cfa771767`.
+Không còn bước huấn luyện hoặc đánh giá GPU nào trong giao thức v2 hiện tại.
 
-## Tóm tắt
+## Dữ liệu và thiết kế thực nghiệm
 
-| Cổng | Trạng thái |
-|---|---|
-| Dữ liệu và split | ĐẠT |
-| Smoke CPU/GPU | ĐẠT |
-| Full validation-only 10-fold | ĐẠT — 60/60 run |
-| Khóa checkpoint và mở test một lần | SẴN SÀNG CHUẨN BỊ, CHƯA MỞ TEST |
-| Phân tích thống kê và báo cáo cuối | CHƯA THỰC HIỆN |
-
-## Dữ liệu và split
-
-- Sleep-EDF Expanded, phân tập Sleep Cassette: 78 đối tượng, 153 PSG và 153 Hypnogram.
-- Năm biến thể đã được sinh và kiểm định, tổng cộng 765 NPZ.
-- Mỗi biến thể có 195.767 epoch, gồm 195.469 epoch hợp lệ và 298 Movement/Unknown bị mask khỏi
-  loss/metrics.
-- Split v2 gồm 10 outer run theo đối tượng; hai đêm của cùng người luôn cùng vai trò.
-- 78/78 đối tượng xuất hiện đúng một lần ở validation trên 10 fold.
+- Sleep-EDF Expanded, Sleep Cassette: 78 đối tượng và 153 bản ghi.
+- 195.767 epoch/bộ biến thể; 195.469 epoch nhãn hợp lệ và 298 Movement/Unknown bị mask.
 - Split SHA-256:
   `6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de`.
-- E4 và E5 giống bitwise ở các trường khoa học trên 153/153 bản ghi; E5 bị loại khỏi fold 01--09.
+- Hai đêm của cùng đối tượng luôn nằm cùng vai trò; mỗi đối tượng xuất hiện đúng một lần ở test
+  out-of-fold.
+- Seed huấn luyện duy nhất: 42.
+- Sáu cấu hình chính: E0, E1, E2, E3, E4 và E6. E5 bị loại vì dữ liệu khoa học trùng bitwise E4.
 
-Không tiền xử lý lại, không sửa manifest/split và không phục hồi E5 vào nhóm so sánh hiệu năng.
+Thiết kế này đã khắc phục lỗ hổng so sánh khác split/khác seed: mọi so sánh chính dùng cùng subject,
+bản ghi, epoch gốc và nhãn thật.
 
-## Mã và môi trường
+## Gate 4–7: kết quả chính
 
-- Bộ kiểm thử v2 từng đạt 51/51 trong lần xác nhận CPU trước chiến dịch GPU.
-- Smoke CPU/GPU E0--E6 fold 00 đã đạt.
-- Môi trường GPU đã dùng: Python 3.10.13, PyTorch 2.5.1+cu121 và Tesla V100 PCIe 16 GB.
-- Từ fold 02 trở đi đã khóa `CUBLAS_WORKSPACE_CONFIG=:4096:8` trong runbook.
-- Config SHA-256 chung:
-  `1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b`.
-- Runner SHA-256 chung:
-  `12245ec0d2fe51a0843ed873d3080f752db23621c6e2b583bba4922be9be9a39`.
+- E0/E1/E2/E3/E4/E6 có Macro-F1 lần lượt khoảng `0,7754`, `0,7802`, `0,7835`, `0,7904`,
+  `0,7891`, `0,7691`.
+- E3−E6: `+0,021319`, CI 95% `[0,012179; 0,030698]`, p Holm `0,001185`.
+- E1−E0 và E2−E1 chưa có ý nghĩa sau hiệu chỉnh Holm.
+- E2 nhanh hơn E0 `3,757×`, nhưng có `4,366×` tham số và peak allocated VRAM `1,284×`.
+- Silhouette E2 thấp hơn E1 ở 10/10 fold; không có bằng chứng rằng embedding ResNet phân tách lớp
+  Euclid tốt hơn softmax 15CNN.
 
-## Full validation-only 10-fold
+## Gate 8: ablation C/P/N
 
-Sáu thí nghiệm đang hoạt động là E0, E1, E2, E3, E4 và E6; training seed duy nhất là `42`.
+Gate 8 tái sử dụng Full CPN của E1 và huấn luyện 30 TCN mới: CP, CN và C trên 10 fold. Tất cả giữ
+đầu vào 75 chiều; nhóm bị loại được thay bằng trung bình từng chiều chỉ tính từ epoch train hợp lệ.
 
-| Fold | E0 | E1 | E2 | E3 | E4 | E6 | Test |
-|---:|---|---|---|---|---|---|---|
-| 00 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 01 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 02 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 03 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 04 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 05 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 06 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 07 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 08 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
-| 09 | đạt | đạt | đạt | đạt | đạt | đạt | khóa |
+Kiểm toán local cuối cùng:
 
-Kết quả kiểm toán tổng thể:
+- 30 checkpoint;
+- 30 vector trung bình train;
+- 30 prediction validation và 30 prediction test;
+- campaign validation/test hoàn tất;
+- mọi mã băm khớp manifest;
+- kết quả `GATE_8_LOCAL_AUDIT_PASSED`.
 
-- 60/60 manifest `complete` và được tạo từ worktree sạch.
-- 60/60 validation report `passed=true`.
-- 60/60 run chỉ có validation metrics; không có test prediction/metrics.
-- Prediction của sáu E trong từng fold ghép cặp đúng theo bản ghi, epoch gốc và nhãn thật.
-- Tính lại metrics từ prediction khớp tuyệt đối tệp metrics đã lưu.
-- 250 `best.pt` và 250 `latest.pt` đọc được là checkpoint nhị phân thật.
-- SHA-256 của 250/250 checkpoint tốt nhất khớp `complete.json`.
+| So sánh vùng chuyển pha ±1 | Δ Macro-F1 | CI 95% | p Holm |
+|---|---:|---:|---:|
+| Full CPN − C | 0,000953 | [−0,004588; 0,006568] | 1,000 |
+| Full CPN − CP | 0,002369 | [−0,002990; 0,007714] | 1,000 |
+| Full CPN − CN | 0,001160 | [−0,003918; 0,006490] | 1,000 |
 
-Báo cáo chi tiết: `VALIDATION_AUDIT_10FOLD.md`.
+Kết luận hợp lệ: chưa quan sát thấy đóng góp dự báo tăng thêm có ý nghĩa thống kê của P/N đối với
+Macro-F1 vùng chuyển pha trong pipeline và seed hiện tại. Không được suy ra P/N vô dụng, chỉ chứa một
+tỷ lệ thông tin nào đó, hoặc Full CPN tương đương các ablation.
 
-## Lưu ý diễn giải
+## Ranh giới kết luận cuối
 
-- Trung bình validation chỉ dùng kiểm tra tính hợp lý, không phải kết quả cuối.
-- Không chạy kiểm định thống kê trên 10 giá trị fold như 10 mẫu độc lập.
-- Không thay đổi mô hình hoặc siêu tham số dựa trên validation sau khi cổng này được khóa.
-- Chỉ dùng một training seed 42; đây là giới hạn phải nêu trong khóa luận/bài báo.
-- E0--E6 trên Sleep-EDF chỉ cho phép kết luận in-domain, chưa chứng minh domain shift hoặc zero-shot.
-- Monitoring thời gian không đầy đủ ở một số fold; benchmark tốc độ phải được đo lại có kiểm soát.
+- Chỉ áp dụng in-domain trên Sleep-EDF Expanded và một seed 42.
+- “Đơn giản hóa” là giảm số mô hình thành phần/vận hành, không phải tiết kiệm tham số hoặc VRAM.
+- Chưa có SHHS, zero-shot, domain shift, đa kênh hoặc xác nhận lâm sàng.
+- Không có kiểm định tương đương hoặc không thua kém với biên định trước.
+- Gate 8 là phân tích cơ chế bổ sung được thiết kế sau khi đã xem E0–E6; không trình bày như xác nhận
+  độc lập hoàn toàn.
 
-## Trạng thái hiện tại
+## Trạng thái dừng
 
-Cổng validation-only đã đóng và đạt. Test **chưa mở**. Bước kế tiếp là chuẩn bị runbook mở test
-một lần từ checkpoint đã khóa, rà soát cơ chế giữ worktree sạch và kiểm định test artifact. Chỉ
-sau khi runbook đó được duyệt mới chạy `--resume --allow-test-evaluation`.
+Giao thức v2 được đóng tại Gate 8. Không chạy thêm seed, fold, test hoặc mô hình trong phạm vi hiện
+tại. Nếu nghiên cứu được tiếp tục, phải tạo giao thức và campaign mới; xem `NEXT_STEPS.md`.

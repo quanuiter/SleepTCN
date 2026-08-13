@@ -1,97 +1,51 @@
-# Việc cần làm tiếp theo
+# Trạng thái dừng và điều kiện tiếp tục
 
-> **Gate 7 đã ĐẠT (2026-08-14):** gói công bố và bản thảo đã được tạo, khóa SHA-256 và kiểm định. Phần thực
-> nghiệm chính seed 42 trên Sleep-EDF đã kết thúc; không chạy lại E0–E6. Việc kế tiếp là biên tập học thuật,
-> bổ sung trích dẫn và duyệt tuyên bố theo `GATE7_FINAL_RESULTS.md`. Thực nghiệm nhiều seed hoặc dữ liệu ngoài
-> miền phải là chiến dịch mới, đăng ký trước và tách khỏi kết quả hiện tại.
+Ngày cập nhật: **2026-08-14**
 
-> **Cập nhật 2026-08-14:** Gate 4 và Gate 5 đã hoàn tất. Không chạy lại test hoặc thay đổi E0–E6.
-> Bước đang hoạt động là Gate 6: benchmark có kiểm soát và phân tích không gian đặc trưng. Xem kết quả
-> chính thức tại `GATE5_STATISTICAL_RESULTS.md`. Phần Gate 4–5 bên dưới được giữ lại để truy vết kế hoạch
-> đã thực hiện.
+Trạng thái hiện tại: **DỪNG SAU GATE 8**
 
-> **Cập nhật Gate 6:** đếm tham số và phân tích không gian đặc trưng 10-fold đã hoàn tất. Chỉ còn chạy
-> benchmark CUDA ba vòng và kiểm định artifact theo `GATE6_PROTOCOL_AND_RUNBOOK.md`.
+## Không còn bước đang chờ
 
-> **Cập nhật cuối Gate 6:** benchmark CUDA đã hoàn tất và kiểm định đạt. Bước đang hoạt động là Gate 7:
-> đóng gói bảng/hình, viết khóa luận/bài báo và lập ma trận bằng chứng–tuyên bố. Không chạy lại test.
+Gate 1–8 đã hoàn tất, kết quả đã được đẩy lên GitHub và kiểm toán lại trên máy cục bộ. Không cần thuê
+GPU, huấn luyện thêm, mở test lại hoặc tiền xử lý lại Sleep-EDF cho giao thức v2.
 
-Nguồn bằng chứng: `VALIDATION_AUDIT_10FOLD.md`.
+Các runbook cũ được giữ làm hồ sơ tái lập. Những câu “bước tiếp theo” trong tài liệu Gate 1–7 mô tả
+trạng thái tại thời điểm lịch sử, không phải công việc đang chờ.
 
-Giao thức thống kê: `STATISTICAL_ANALYSIS.md`.
+## Công việc không tính là thực nghiệm mới
 
-## Cổng 1 — dữ liệu và split — ĐẠT
+Khi viết khóa luận/bài báo từ kết quả hiện có, có thể tiếp tục mà không thay đổi artifact:
 
-- 765/765 NPZ đã được kiểm định.
-- Split 10-fold seed 42 theo đối tượng đã khóa.
-- E4/E5 giống bitwise; E5 bị loại khỏi fold 01--09.
+1. Bổ sung trích dẫn từ paper gốc và tài liệu phương pháp chính thức.
+2. Chuyển bản thảo sang mẫu của trường, tạp chí hoặc hội nghị.
+3. Chỉnh thuật ngữ, caption, số thứ tự bảng/hình và văn phong.
+4. Đối chiếu mọi phát biểu với `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md`.
+5. Không sửa số liệu sinh tự động bằng cách chép tay.
 
-Không tiền xử lý lại và không sửa manifest/split.
+## Nếu mở một nghiên cứu mới trong tương lai
 
-## Cổng 2 — smoke CPU/GPU — ĐẠT
+Hai hướng có cơ sở nhưng **không thuộc Gate 1–8**:
 
-- Smoke CPU/GPU E0--E6 fold 00 đã đạt.
-- Trình chạy, checkpoint, resume và kiểm định artifact đã qua cổng kỹ thuật.
+### A. Xác nhận nhiều seed
 
-## Cổng 3 — full validation-only 10-fold — ĐẠT
+- Đăng ký trước seed, tiêu chí chính, biên tương đương/không thua kém nếu có và ngân sách tính toán.
+- Chạy cùng split cho mọi mô hình.
+- Phân biệt biến thiên giữa đối tượng với biến thiên do khởi tạo/huấn luyện.
+- Không trộn kết quả mới vào p-value hoặc Holm family cũ.
 
-- Đủ 60/60 run của E0, E1, E2, E3, E4 và E6 trên fold 00--09, seed 42.
-- Tất cả validation report đạt; test vẫn khóa.
-- Đủ và kiểm tra SHA-256 của checkpoint.
-- Không chạy thêm fold, không thay siêu tham số và không chọn lại mô hình.
+### B. Đánh giá ngoài miền trên SHHS
 
-## Cổng 4 — khóa checkpoint và mở test một lần — BƯỚC KẾ TIẾP
+- Tạo giao thức riêng cho chọn mẫu, kênh EEG, chuyển 125→100 Hz và ánh xạ nhãn.
+- Tách rõ zero-shot khỏi fine-tuning/domain adaptation.
+- Khóa checkpoint Sleep-EDF trước khi xem SHHS test.
+- Báo cáo đồng thời khác biệt montage, thiết bị và quần thể; không quy mọi suy giảm cho một nguyên nhân.
 
-Trước khi thuê GPU hoặc chạy test:
+Chỉ bắt đầu một trong hai hướng sau khi có mục tiêu nghiên cứu, tài nguyên và giao thức được duyệt.
 
-1. Ghi nhận commit khóa chứa báo cáo audit và tài liệu trạng thái cập nhật.
-2. Tạo runbook test-unlock riêng; không tái sử dụng nguyên vòng lặp validation.
-3. Kiểm tra cách trình chạy cập nhật manifest để worktree không bị bẩn và chặn run kế tiếp.
-4. Chạy thử logic kiểm tra trên bản sao/fixture không chứa test prediction thật nếu cần.
-5. Chốt danh sách 60 run và bốn so sánh chính trước khi thấy test.
-6. Xác nhận không còn quyết định mô hình, preprocessing, seed hoặc thống kê chưa được khóa.
+## Điều không được làm
 
-Khi các điều kiện trên đạt, chạy từng run từ checkpoint đã chọn bằng:
-
-```text
---resume --allow-test-evaluation
-```
-
-Mục tiêu của lần chạy này chỉ là sinh prediction/metrics test; không huấn luyện hoặc chọn
-checkpoint lại. Sau test đầu tiên, không sửa code, config, split, dữ liệu, seed, checkpoint hoặc
-giả thuyết dựa trên kết quả test.
-
-## Cổng 5 — phân tích thống kê
-
-Sau khi đủ test prediction của 60 run:
-
-1. Ghép prediction out-of-fold; mỗi đối tượng chỉ lấy từ fold mà họ là test.
-2. Bắt buộc khớp `(subject_id, record_key, original_epoch_index)` và nhãn thật giữa hai mô hình.
-3. Chạy bốn so sánh chính đã định trước:
-   - E1 − E0: TCN so với BiLSTM.
-   - E2 − E1: ResNet-1D so với 15CNN khi dùng chung TCN.
-   - E3 − E2: gói tiền xử lý hoàn chỉnh so với raw.
-   - E3 − E6: chia hằng số bảo toàn biên độ so với z-score.
-4. Bootstrap ghép cặp theo cụm đối tượng 10.000 lần để lấy hiệu ứng và CI 95%.
-5. Wilcoxon signed-rank hai phía trên Macro-F1 từng đối tượng.
-6. Hiệu chỉnh Holm cho bốn p-value chính.
-7. Báo cáo thắng/hòa/thua theo đối tượng và chỉ số từng lớp, đặc biệt N1.
-
-E4 − E2 là phân tích cơ chế thứ cấp. Không tạo p-value E5 − E4 vì hai điều kiện dữ liệu trùng
-bitwise.
-
-## Cổng 6 — benchmark và bằng chứng bổ sung
-
-- Chạy `scripts/benchmark_model_complexity.py` trên cùng một GPU cho E0, E1 và E2--E6.
-- Báo cáo số tham số, latency trung vị/p95, throughput và peak VRAM.
-- Không dùng monitoring thiếu của chiến dịch huấn luyện để tuyên bố tốc độ chính thức.
-- Chạy phân tích không gian đặc trưng bằng `scripts/analyze_feature_space.py` sau khi chọn rõ
-  checkpoint/fold/role; t-SNE chỉ mô tả, Silhouette là số định lượng hỗ trợ.
-
-## Cổng 7 — viết khóa luận hoặc bài báo
-
-- Dùng Macro-F1 làm chỉ số chính; Accuracy và kappa là phụ.
-- Mô tả “đơn giản hóa” theo số mô hình/giai đoạn vận hành, không gọi E2--E6 tiết kiệm tham số.
-- Nêu rõ chỉ dùng một training seed 42.
-- Không tuyên bố domain shift, zero-shot SHHS hoặc giá trị lâm sàng từ kết quả Sleep-EDF này.
-- Nếu mở rộng SHHS hoặc multi-modal, xây dựng giao thức riêng sau khi hoàn tất báo cáo in-domain.
+- Không mở lại test Sleep-EDF để điều chỉnh mô hình.
+- Không gọi các mô hình tương đương chỉ vì p-value lớn.
+- Không dùng Gate 8 để nói P/N “chỉ chứa 12% thông tin” hoặc “không có thông tin”.
+- Không tuyên bố SHHS, zero-shot, domain shift hoặc giá trị lâm sàng khi chưa có thực nghiệm.
+- Không đưa dataset hoặc cache đặc trưng lên kho Git.
