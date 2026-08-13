@@ -1,5 +1,10 @@
 # Trạng thái giao thức v2
 
+> **Gate 7 đã ĐẠT (2026-08-14):** sáu cấu hình × 10 fold đã được tổng hợp thành bảng, hình và bản thảo;
+> ma trận tám phát biểu đã khóa phần được phép/không được phép kết luận. Gói tại
+> `runs/v2/publication/gate7/` đã qua kiểm định SHA-256. Xem `GATE7_FINAL_RESULTS.md`. Phần thực nghiệm chính
+> seed 42 trên Sleep-EDF đã khép kín.
+
 > **Cập nhật 2026-08-14 sau Gate 5:** Gate 4 đã mở test đúng một lần và đạt 60/60 run. Gate 5 đã
 > hoàn tất phân tích thống kê bắt cặp trên 78 đối tượng. Báo cáo hiện hành là
 > `GATE5_STATISTICAL_RESULTS.md`; các đoạn “test chưa mở” bên dưới chỉ mô tả ảnh chụp kiểm toán trước

@@ -1,5 +1,10 @@
 # Việc cần làm tiếp theo
 
+> **Gate 7 đã ĐẠT (2026-08-14):** gói công bố và bản thảo đã được tạo, khóa SHA-256 và kiểm định. Phần thực
+> nghiệm chính seed 42 trên Sleep-EDF đã kết thúc; không chạy lại E0–E6. Việc kế tiếp là biên tập học thuật,
+> bổ sung trích dẫn và duyệt tuyên bố theo `GATE7_FINAL_RESULTS.md`. Thực nghiệm nhiều seed hoặc dữ liệu ngoài
+> miền phải là chiến dịch mới, đăng ký trước và tách khỏi kết quả hiện tại.
+
 > **Cập nhật 2026-08-14:** Gate 4 và Gate 5 đã hoàn tất. Không chạy lại test hoặc thay đổi E0–E6.
 > Bước đang hoạt động là Gate 6: benchmark có kiểm soát và phân tích không gian đặc trưng. Xem kết quả
 > chính thức tại `GATE5_STATISTICAL_RESULTS.md`. Phần Gate 4–5 bên dưới được giữ lại để truy vết kế hoạch

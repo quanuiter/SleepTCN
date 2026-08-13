@@ -1,5 +1,9 @@
 # SleepTCN
 
+> **Gate 7 đã hoàn tất (2026-08-14):** gói bảng, hình, ma trận bằng chứng–tuyên bố và bản thảo tiếng Việt đã
+> được tạo tái lập từ các artifact Gate 5–6 và qua kiểm định độc lập. Không huấn luyện hay mở test lại. Xem
+> `notebooks/docs/GATE7_FINAL_RESULTS.md` và `runs/v2/publication/gate7/`.
+
 > **Trạng thái 2026-08-14:** Gate 4 đã hoàn tất 60/60 đánh giá test và Gate 5 đã hoàn tất phân tích
 > thống kê bắt cặp. Xem `notebooks/docs/GATE5_STATISTICAL_RESULTS.md`. Bước tiếp theo là Gate 6:
 > benchmark có kiểm soát và phân tích không gian đặc trưng; không chạy lại test hoặc thay đổi E0–E6.
