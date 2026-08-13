@@ -5,3 +5,6 @@
 *.sh text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
+
+# Publication manifests lock exact SHA-256 bytes; do not normalize line endings.
+runs/v2/publication/gate7/** -text
