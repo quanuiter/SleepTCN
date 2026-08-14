@@ -43,6 +43,9 @@ bản ghi, epoch gốc và nhãn thật.
   `0,7891`, `0,7691`.
 - E3−E6: `+0,021319`, CI 95% `[0,012179; 0,030698]`, p Holm `0,001185`.
 - E1−E0 và E2−E1 chưa có ý nghĩa sau hiệu chỉnh Holm.
+- Đối chiếu hậu nghiệm E3−E0: `+0,015024`, CI 95% `[0,005746; 0,025871]`, Wilcoxon
+  `p=0,012321`, thắng/hòa/thua `49/0/29`. Đây là bằng chứng hỗ trợ toàn pipeline E3 trong chiến dịch
+  hiện tại, không thuộc bốn giả thuyết chính đã định trước và không tách được đóng góp từng thành phần.
 - E2 nhanh hơn E0 `3,757×`, nhưng có `4,366×` tham số và peak allocated VRAM `1,284×`.
 - Silhouette E2 thấp hơn E1 ở 10/10 fold; không có bằng chứng rằng embedding ResNet phân tách lớp
   Euclid tốt hơn softmax 15CNN.
@@ -79,8 +82,15 @@ tỷ lệ thông tin nào đó, hoặc Full CPN tương đương các ablation.
 - Không có kiểm định tương đương hoặc không thua kém với biên định trước.
 - Gate 8 là phân tích cơ chế bổ sung được thiết kế sau khi đã xem E0–E6; không trình bày như xác nhận
   độc lập hoàn toàn.
+- E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của kết quả MATLAB
+  trong bài báo gốc.
+- Kiểm toán kho NPZ cục bộ còn 459/765 mã băm toàn tệp lệch manifest lịch sử ở ba biến thể, dù các
+  kiểm tra nội dung khoa học đã đạt. Chưa tuyên bố tái lập byte-theo-byte cho kho tiền xử lý cho đến khi
+  tái sinh từ dữ liệu thô hoặc lập manifest nội dung chuẩn mới trong môi trường đã khóa.
 
 ## Trạng thái dừng
 
-Giao thức v2 được đóng tại Gate 8. Không chạy thêm seed, fold, test hoặc mô hình trong phạm vi hiện
-tại. Nếu nghiên cứu được tiếp tục, phải tạo giao thức và campaign mới; xem `NEXT_STEPS.md`.
+Giao thức v2 được đóng tại Gate 8. Báo cáo 26 trang trong `Reports/output/pdf/` đã tích hợp kết quả
+Gate 1–8, bảng độ trung thực E0, đối chiếu hậu nghiệm E3−E0 và các giới hạn truy nguyên. Không chạy
+thêm seed, fold, test hoặc mô hình trong phạm vi hiện tại. Nếu nghiên cứu được tiếp tục, phải tạo giao
+thức và campaign mới; xem `NEXT_STEPS.md`.

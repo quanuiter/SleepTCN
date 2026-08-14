@@ -1,0 +1,10 @@
+\section{Kết luận}
+\label{sec:conclusion}
+
+Nghiên cứu đã hoàn tất một chiến dịch tám cổng từ kiểm định dữ liệu đến phân tích cơ chế trên Sleep-EDF Expanded. Thiết kế v2 dùng cùng split theo 78 đối tượng, cùng seed 42 và cùng tập test cho sáu cấu hình, nhờ đó các chênh lệch có thể được phân tích bắt cặp. Toàn bộ 60 run chính và 30 run Gate 8 có checkpoint, prediction, metrics và mã băm truy nguyên.
+
+E3 đạt \mf\ ngoài fold mô tả cao nhất, 0,7904. Bằng chứng xác nhận mạnh nhất là E3 cao hơn E6 0,0213, CI 95\% $[0,0122;0,0307]$ và $p$ Holm 0,0012, cho thấy cách đổi thang biên độ là yếu tố đáng chú ý trong giao thức hiện tại. Đối chiếu hậu nghiệm E3--E0 cho $\Delta=0,0150$, CI 95\% $[0,0057;0,0259]$ và $p$ Wilcoxon 0,0123, hỗ trợ toàn bộ pipeline E3 cao hơn mốc E0 trong chiến dịch hiện tại; vì không được định trước và gộp nhiều thay đổi, kết quả này không xác nhận nguyên nhân thuộc về thành phần riêng nào. Mức tăng E1--E0 và E2--E1 chưa có ý nghĩa sau Holm, nên chưa thể khẳng định TCN hoặc ResNet-1D cải thiện \mf. ResNet-1D--TCN vẫn có lợi ích vận hành: giảm số mô hình thành phần và tăng tốc forward khoảng 3,76 lần, nhưng đánh đổi bằng 4,37 lần số tham số và peak VRAM cao hơn 28,4\%.
+
+Silhouette không hỗ trợ giả thuyết embedding ResNet tách lớp tốt hơn. Gate 8 cũng chưa tìm thấy lợi ích tăng thêm có ý nghĩa của P/N tại vùng chuyển pha, nhưng không chứng minh các nhóm này vô dụng hoặc các cấu hình tương đương. Do đó, báo cáo rút lại cách diễn giải ``12\% thông tin'' và thay bằng hiệu ứng, khoảng tin cậy và giới hạn mô hình.
+
+Kết luận cuối cùng chỉ áp dụng cho Sleep-EDF Expanded và một seed. Nghiên cứu chưa thiết lập tương đương hoặc không thua kém vì không có biên định trước; đồng thời kiểm toán kho NPZ cục bộ còn một khoảng trống truy nguyên mã băm toàn tệp cần xử lý trước khi công bố gói dữ liệu dẫn xuất. SHHS, khả năng zero-shot, dịch chuyển miền, đa kênh, nhiều seed và giá trị lâm sàng vẫn là câu hỏi mở. Điểm mạnh của dự án không phải một tuyên bố vượt trội tuyệt đối, mà là quy trình so sánh công bằng, artifact có thể kiểm toán và cách trình bày minh bạch các đánh đổi cũng như kết quả không xác nhận giả thuyết.

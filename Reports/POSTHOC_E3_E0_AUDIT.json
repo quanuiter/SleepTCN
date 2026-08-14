@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "status": "audited_existing_locked_predictions",
+  "analysis_label": "posthoc_audit_not_prespecified",
+  "dataset": "Sleep-EDF Expanded Sleep Cassette",
+  "training_seed": 42,
+  "comparison": "E3-E0",
+  "metric": "overall_macro_f1",
+  "paired_unit": "subject",
+  "subjects": 78,
+  "estimate": {
+    "difference": 0.015023963840380072,
+    "ci95_cluster_bootstrap": [
+      0.005745641315159875,
+      0.025870953490063932
+    ],
+    "bootstrap_repeats": 10000,
+    "bootstrap_seed": 2026,
+    "wilcoxon_two_sided_p": 0.012320538582053335,
+    "wins_ties_losses": [49, 0, 29]
+  },
+  "multiplicity_context": {
+    "original_prespecified_family_size": 4,
+    "belongs_to_original_family": false,
+    "reference_holm_p_if_appended_as_fifth_test": 0.04928215432821334,
+    "warning": "The reference Holm value does not make this post-hoc comparison prespecified or confirmatory."
+  },
+  "allowed_interpretation": "The complete E3 pipeline outperformed the adjusted E0 reference within the current paired seed-42 campaign.",
+  "not_supported": [
+    "causal attribution to ResNet-1D, TCN, or preprocessing alone",
+    "equivalence or non-inferiority",
+    "robustness across training seeds",
+    "generalization beyond Sleep-EDF Expanded"
+  ],
+  "source_scope": "Locked out-of-fold test predictions already validated at Gates 4-5; analysis uses the same subject-cluster bootstrap and subject-level Wilcoxon conventions as Gate 5."
+}

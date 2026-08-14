@@ -1,0 +1,50 @@
+\section{Tiền xử lý tín hiệu}
+\label{sec:preprocessing}
+
+\subsection{Đọc và căn chỉnh dữ liệu}
+
+Mỗi cặp PSG--Hypnogram được kiểm tra mã băm nguồn trước khi xử lý. Tín hiệu vật lý Fpz-Cz được đọc theo hệ số hiệu chuẩn trong EDF, chuyển sang $\mu$V và chia thành epoch cố định 3.000 mẫu. Nhãn được trải theo thời lượng annotation rồi căn với PSG. Mỗi NPZ lưu tín hiệu, nhãn, mặt nạ hợp lệ, chỉ số epoch gốc, mã đối tượng/bản ghi, tên nguồn, mã băm, cấu hình tiền xử lý và thống kê cắt.
+
+Tệp được ghi qua tệp tạm rồi thay thế nguyên tử để tránh artifact dở dang. Năm biến thể, mỗi biến thể 153 bản ghi, tạo tổng cộng 765 NPZ đã được kiểm tra lại độc lập.
+
+\subsection{Các biến thể dữ liệu}
+
+\begin{table}[H]
+\centering
+\caption{Các biến thể tiền xử lý trong giao thức v2}
+\label{tab:preprocessing_variants}
+\begin{tabularx}{\textwidth}{lYYY}
+\toprule
+\textbf{Biến thể} & \textbf{Lọc} & \textbf{Cắt biên độ} & \textbf{Đổi thang} \\
+\midrule
+\code{paper\_raw\_v1} & Không & Không & Không \\
+\code{bandpass\_v2} & Butterworth bậc 4, 0,5--30 Hz & Không & Không \\
+\code{bandpass\_clip\_v2} & Butterworth bậc 4, 0,5--30 Hz & $\pm800\,\mu$V & Không \\
+\code{filtered\_v2} & Butterworth bậc 4, 0,5--30 Hz & $\pm800\,\mu$V & Chia 100 \\
+\code{filtered\_zscore\_v2} & Butterworth bậc 4, 0,5--30 Hz & $\pm800\,\mu$V & z-score theo bản ghi \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Lọc được áp dụng lên tín hiệu liên tục trước khi chia epoch bằng \code{scipy.signal.sosfiltfilt}, tức lọc hai chiều không lệch pha. Thiết kế này phù hợp đánh giá ngoại tuyến nhưng không áp dụng trực tiếp cho hệ thống nhân quả thời gian thực. Không thêm notch 50 Hz vì 50 Hz nằm ngoài dải thông 0,5--30 Hz và đúng tần số Nyquist của tín hiệu 100 Hz.
+
+Với \code{filtered\_v2}, phép đổi thang là
+
+\begin{equation}
+ x' = \frac{\operatorname{clip}(x_f,-800,800)}{100},
+\end{equation}
+
+trong đó $x_f$ là tín hiệu sau lọc. Với \code{filtered\_zscore\_v2}, trung bình và độ lệch chuẩn được tính trên toàn bản ghi sau lọc/cắt, không phụ thuộc nhãn:
+
+\begin{equation}
+ x' = \frac{x_f-\mu_{record}}{\sigma_{record}+\varepsilon}.
+\end{equation}
+
+\subsection{Kiểm tra phép cắt biên độ}
+
+Kiểm tra 153/153 cặp NPZ cho thấy \code{bandpass\_v2} và \code{bandpass\_clip\_v2} trùng bitwise ở các trường khoa học; tỷ lệ mẫu bị cắt bằng 0. Vì thế E5 không tạo điều kiện dữ liệu mới và bị loại khỏi fold 01--09. Không tạo $p$-value E5--E4 vì so sánh hai đầu vào giống hệt nhau không trả lời thêm câu hỏi khoa học.
+
+\subsection{Kiểm định đầu ra tiền xử lý}
+
+Gate 1 xác nhận mọi biến thể có cùng nhãn, mặt nạ và chỉ số epoch gốc; không có tệp lỗi; tổng số epoch và phân bố lớp khớp giữa các biến thể. Mã băm manifest và mã băm nguồn được ghi lại để phát hiện thay đổi âm thầm. Dữ liệu mới không bị sửa để ép khớp chênh lệch 10 epoch Wake trong notebook lịch sử, vì NPZ lịch sử không còn đủ để chứng minh nguyên nhân tuyệt đối.
+

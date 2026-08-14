@@ -1,0 +1,56 @@
+\section{Dữ liệu và phép chia thực nghiệm}
+\label{sec:dataset}
+
+\subsection{Sleep-EDF Expanded, phân tập Sleep Cassette}
+
+Sleep-EDF Expanded phiên bản 1.0.0 là bộ dữ liệu đa ký giấc ngủ công khai trên PhysioNet~\cite{kemp2000sleepEDF,physionetSleepEDF}. Nghiên cứu chỉ dùng phân tập Sleep Cassette (SC): 153 bản ghi của 78 đối tượng; 75 người có hai đêm và 3 người có một đêm. Kênh đầu vào là EEG Fpz-Cz, tần số lấy mẫu 100 Hz. Mỗi epoch dài 30 giây nên có 3.000 mẫu.
+
+Nhãn gốc được chấm theo R\&K. Báo cáo dùng ánh xạ năm lớp phổ biến: W$\to$0, stage 1$\to$N1, stage 2$\to$N2, stage 3 và 4$\to$N3, R$\to$REM. Movement và Unknown được gán $-1$, giữ tại đúng vị trí chuỗi nhưng che khỏi hàm mất mát và chỉ số. Việc gộp stage 3/4 chỉ là ánh xạ nhãn; không được mô tả là dữ liệu gốc đã được chấm lại theo AASM.
+
+\begin{table}[H]
+\centering
+\caption{Phân bố nhãn sau cắt cửa sổ, giống nhau ở mọi biến thể dữ liệu}
+\label{tab:label_distribution}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Nhãn} & \textbf{Số epoch} & \textbf{Tỷ lệ trong 195.469 epoch hợp lệ} \\
+\midrule
+W & 65.941 & 33,73\% \\
+N1 & 21.522 & 11,01\% \\
+N2 & 69.132 & 35,37\% \\
+N3 & 13.039 & 6,67\% \\
+REM & 25.835 & 13,22\% \\
+\midrule
+Movement/Unknown & 298 & Không tính \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sau tiền xử lý, mỗi biến thể có 195.767 epoch, gồm 195.469 epoch hợp lệ và 298 epoch bị che. N1 và N3 ít hơn rõ rệt so với W/N2, vì vậy \mf\ và F1 từng lớp được ưu tiên hơn chỉ báo cáo độ chính xác.
+
+\subsection{Cắt cửa sổ và bảo toàn trục thời gian}
+
+Cửa sổ được neo bởi epoch ngủ thật đầu/cuối trong N1, N2, N3 hoặc REM, rồi giữ tối đa 60 epoch Wake ở mỗi phía, tương ứng 30 phút. Annotation phải liên tục từ thời điểm 0 và có thời lượng là bội dương của 30 giây. Nếu annotation dài hơn PSG, chỉ phần dư cuối bị cắt và được ghi vào siêu dữ liệu; annotation ngắn hơn PSG làm quy trình dừng. Movement/Unknown nằm trong cửa sổ vẫn được giữ nên chỉ số epoch gốc và ngữ cảnh thời gian không bị dịch.
+
+\subsection{Chia 10 fold theo đối tượng}
+
+Đơn vị độc lập là đối tượng, không phải epoch hoặc bản ghi. Danh sách 78 mã đối tượng được sắp xếp, hoán vị bằng \code{numpy.random.default\_rng(seed=42)} và chia thành 10 fold bằng \code{numpy.array\_split}. Kích thước fold là $[8,8,8,8,8,8,8,8,7,7]$ đối tượng.
+
+Với outer fold $i$:
+
+\begin{equation}
+ \mathcal{D}_{test}=F_i,\qquad
+ \mathcal{D}_{val}=F_{(i+1)\bmod 10},\qquad
+ \mathcal{D}_{train}=\bigcup_{j\notin\{i,(i+1)\bmod 10\}}F_j.
+\end{equation}
+
+Hai đêm của cùng một người luôn cùng vai trò. Mỗi người xuất hiện đúng một lần ở test ngoài fold và đúng một lần ở validation. Manifest \code{sleepedf\_sc\_10fold\_seed42\_v2.json} là nguồn chân lý; notebook và runner không tự tạo lại fold.
+
+\subsection{Phòng tránh rò rỉ dữ liệu}
+
+Chia ngẫu nhiên theo epoch có thể đưa các đoạn lân cận hoặc hai đêm của cùng người vào cả train và test, làm kết quả lạc quan giả tạo. Giao thức v2 kiểm tra giao nhau theo đối tượng và bản ghi, tính đầy đủ của 78 đối tượng/153 bản ghi, sự đồng nhất khóa \code{(subject\_id, record\_key, original\_epoch\_index)} và mã băm manifest. Cùng manifest được dùng cho tất cả cấu hình và biến thể tiền xử lý. Đây là điều kiện để bootstrap và Wilcoxon được thực hiện bắt cặp theo cùng người.
+
+\subsection{Giới hạn dữ liệu}
+
+SC không đại diện cho toàn bộ quần thể lâm sàng. Nghiên cứu chỉ dùng một montage, một cơ sở dữ liệu và nhãn của một người chấm cho mỗi bản ghi. Do đó, kết quả không được khái quát sang SHHS, thiết bị đeo, bệnh nhân rối loạn giấc ngủ hoặc dữ liệu đa trung tâm nếu chưa có chiến dịch xác nhận riêng.
+

@@ -1,0 +1,77 @@
+\section{Phương pháp và thiết kế thực nghiệm}
+\label{sec:methodology}
+
+\subsection{Các cấu hình E0--E6}
+
+\begin{table}[H]
+\centering
+\caption{Thiết kế loại bỏ thành phần trong giao thức v2}
+\label{tab:experiments}
+\begin{tabularx}{\textwidth}{lYYY}
+\toprule
+\textbf{Mã} & \textbf{Dữ liệu} & \textbf{Bộ trích xuất} & \textbf{Mô hình chuỗi / mục đích} \\
+\midrule
+E0 & \code{paper\_raw\_v1} & 15CNN & BiLSTM; mốc tham chiếu đã sửa thiết kế \\
+E1 & \code{paper\_raw\_v1} & 15CNN của E0 & TCN; E1--E0 cô lập mô hình chuỗi \\
+E2 & \code{paper\_raw\_v1} & ResNet-1D & TCN; E2--E1 cô lập bộ trích xuất \\
+E3 & \code{filtered\_v2} & ResNet-1D & TCN; E3--E2 đo gói tiền xử lý \\
+E4 & \code{bandpass\_v2} & ResNet-1D & TCN; E4--E2 đo riêng lọc dải \\
+E5 & \code{bandpass\_clip\_v2} & ResNet-1D & TCN; loại vì đầu vào trùng E4 \\
+E6 & \code{filtered\_zscore\_v2} & ResNet-1D & TCN; E3--E6 so đổi thang \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+E0 là mốc tái hiện đã hiệu chỉnh, không phải bản sao bitwise hoặc tái lập định lượng trực tiếp của mã MATLAB gốc. Bài báo gốc báo cáo cấu hình Fpz--Cz trên Sleep-EDF-18, còn chiến dịch v2 dùng Sleep-EDF Expanded SC với 78 đối tượng. Giao thức v2 chia train/validation theo đối tượng, che Movement/Unknown thay vì đổi thành Wake và chạy bằng PyTorch với checkpoint truy nguyên. Vì vậy E0 là đối chứng nội bộ công bằng cho E1--E6, không phải phép kiểm tra xem có khôi phục chính xác từng con số của bài báo gốc hay không. E1 tái sử dụng đúng 15 bộ trích xuất tốt nhất của E0 cùng fold và seed, nhờ đó E1--E0 chỉ thay mô hình chuỗi.
+
+\subsection{Huấn luyện hai giai đoạn}
+
+15CNN dùng Adam, learning rate $10^{-3}$, batch 64, tối đa 1.000 epoch và dừng sớm sau 10 lần validation không cải thiện loss có trọng số. ResNet-1D dùng AdamW, learning rate $10^{-3}$, weight decay $10^{-4}$, batch 64 epoch, tối đa 40 epoch và patience 8 theo \mf\ validation. Trọng số lớp của ResNet chỉ được tính từ đối tượng train.
+
+Sau khi bộ trích xuất hoàn tất, trọng số được khóa và đặc trưng được lưu theo từng bản ghi. BiLSTM dùng Adam, learning rate $10^{-2}$, batch 4 bản ghi; TCN dùng Adam, learning rate $5\times10^{-4}$, batch 8 bản ghi. Cả hai chọn checkpoint tốt nhất bằng \mf\ validation. Tập test không xuất hiện trong API huấn luyện.
+
+Movement/Unknown có nhãn $-1$ trong dữ liệu và được chuyển thành nhãn padding $-100$ ở batch; masked cross-entropy bỏ các vị trí này khỏi gradient. Vị trí vẫn tồn tại trong chuỗi để không làm dịch ngữ cảnh.
+
+\subsection{Quy trình kiểm định Gate 1--8}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.55cm and 0.65cm,
+  box/.style={draw,rounded corners,align=center,minimum width=2.55cm,minimum height=1.05cm,fill=blue!5},
+  arrow/.style={-{Latex[length=2mm]},thick}
+]
+\node[box] (g1) {Gate 1\\Dữ liệu và split};
+\node[box,right=of g1] (g2) {Gate 2\\Smoke và resume};
+\node[box,right=of g2] (g3) {Gate 3\\60 validation run};
+\node[box,right=of g3] (g4) {Gate 4\\Mở test một lần};
+\node[box,below=of g4] (g5) {Gate 5\\Thống kê bắt cặp};
+\node[box,left=of g5] (g6) {Gate 6\\Tốc độ và đặc trưng};
+\node[box,left=of g6] (g7) {Gate 7\\Gói công bố};
+\node[box,left=of g7] (g8) {Gate 8\\Ablation C/P/N};
+\draw[arrow] (g1)--(g2); \draw[arrow] (g2)--(g3); \draw[arrow] (g3)--(g4);
+\draw[arrow] (g4)--(g5); \draw[arrow] (g5)--(g6); \draw[arrow] (g6)--(g7); \draw[arrow] (g7)--(g8);
+\end{tikzpicture}
+\caption{Chuỗi cổng kiểm định. Gate 8 là phân tích cơ chế bổ sung sau khi kết quả chính đã được khóa.}
+\label{fig:gate_flow}
+\end{figure}
+
+Gate 2 chỉ kiểm tra khả năng chạy xuyên suốt, checkpoint, tiếp tục chạy và tính toàn vẹn artifact; chỉ số smoke không dùng đánh giá mô hình. Gate 3 khóa 60 checkpoint tốt nhất từ $6\times10$ lần chạy validation-only. Gate 4 chỉ suy luận test từ các checkpoint này sau câu xác nhận bắt buộc; mỗi artifact test được kiểm định ngay sau khi sinh. Gate 5 mới thực hiện suy luận thống kê.
+
+\subsection{Phân tích thống kê Gate 5}
+
+\mf\ gộp trên toàn bộ dự đoán test ngoài fold là hiệu ứng mô tả chính. Khoảng tin cậy 95\% cho chênh lệch được tính bằng bootstrap bắt cặp theo cụm đối tượng 10.000 lần, seed 2026~\cite{efron1994bootstrap}. Mỗi lần lấy mẫu giữ toàn bộ epoch của người được chọn. Kiểm định hạng có dấu Wilcoxon hai phía dùng \mf\ từng đối tượng~\cite{wilcoxon1945}. Holm hiệu chỉnh đúng bốn so sánh định trước: E1--E0, E2--E1, E3--E2 và E3--E6~\cite{holm1979}. Đối chiếu trực tiếp E3--E0 chỉ được đặt ra sau khi đã xem kết quả nên được ghi riêng là hậu nghiệm; nó dùng cùng bootstrap cụm và Wilcoxon nhưng không được nhập ngược vào nhóm giả thuyết xác nhận ban đầu.
+
+E4--E2 là phân tích cơ chế thứ cấp và không thuộc họ Holm. Mười fold không được xem là 10 mẫu độc lập; đơn vị suy luận là 78 đối tượng.
+
+\subsection{Benchmark và không gian đặc trưng Gate 6}
+
+Benchmark dùng checkpoint fold 00, seed 42 trên Tesla V100-PCIE-16GB. Input float32 có dạng $(1,100,1,3000)$. Mỗi cấu hình được đo trong ba vòng xáo thứ tự; mỗi vòng có 20 lượt làm nóng và 100 lượt forward có đồng bộ CUDA. Phạm vi không gồm I/O, tiền xử lý, cache hoặc huấn luyện.
+
+Phân tích đặc trưng so sánh E1 và E2 trên cùng epoch test: mỗi fold lấy 200 epoch mỗi lớp, chuẩn hóa bằng StandardScaler và giảm còn 20 chiều bằng PCA trước khi tính Silhouette. Mọi phép biến đổi được fit riêng trong từng fold và biểu diễn. t-SNE chỉ dùng minh họa; kết luận định lượng dựa trên Silhouette bắt cặp.
+
+\subsection{Ablation C/P/N Gate 8}
+
+Gate 8 giữ nguyên đầu vào 75 chiều và kiến trúc TCN của E1. Full CPN tái sử dụng dự đoán E1. Với C, CP và CN, nhóm bị loại được thay bằng trung bình từng chiều chỉ tính từ epoch train hợp lệ trong fold. Cùng vector được áp dụng cho train, validation và test; validation/test không tham gia ước lượng.
+
+Tiêu chí chính là \mf\ tại vùng $\pm1$ epoch quanh chuyển pha nhãn hợp lệ liên tiếp. Khoảng Movement/Unknown làm đứt chuỗi. Ba so sánh Full CPN--C, Full CPN--CP và Full CPN--CN dùng bootstrap cụm 10.000 lần, Wilcoxon theo đối tượng và Holm. Gate này chỉ đo hiệu ứng dự báo tăng thêm có điều kiện; không đo ``phần trăm thông tin'' hay quan hệ nhân quả.

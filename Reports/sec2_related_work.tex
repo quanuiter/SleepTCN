@@ -1,0 +1,30 @@
+\section{Nghiên cứu liên quan và mốc tham chiếu}
+\label{sec:related_work}
+
+\subsection{Mô hình phân giai đoạn giấc ngủ từ EEG}
+
+Các phương pháp ban đầu thường trích xuất thủ công đặc trưng miền thời gian, tần số hoặc thời gian--tần số rồi đưa vào bộ phân loại. Học sâu thay thế một phần quá trình này bằng bộ trích xuất đặc trưng học trực tiếp từ tín hiệu. DeepSleepNet kết hợp CNN hai nhánh và BiLSTM, đồng thời sử dụng huấn luyện theo giai đoạn để học cả hình thái epoch và quan hệ chuỗi~\cite{supratak2017deepsleepnet}. AttnSleep kết hợp cơ chế chú ý với mô hình theo thời gian~\cite{eldele2021attnsleep}; SleepTransformer khai thác self-attention cho mô hình hóa chuỗi và khả năng giải thích~\cite{phan2022sleeptransformer}.
+
+Các con số giữa công trình không được so sánh trực tiếp nếu khác phân tập, kênh EEG, quy tắc cắt Wake, phép chia đối tượng hoặc cách gộp dự đoán. Do đó, báo cáo này không dùng bảng xếp hạng xuyên bài báo để chứng minh ưu thế. So sánh chính chỉ diễn ra giữa các cấu hình E0--E6 trong cùng giao thức.
+
+\subsection{ZleepAnlystNet}
+
+ZleepAnlystNet được công bố trên \textit{Scientific Reports} năm 2024~\cite{jadhav2024zleepanlystnet}. Phương pháp gồm hai giai đoạn được huấn luyện tách biệt:
+
+\begin{enumerate}
+  \item \textbf{Trích xuất đặc trưng:} ba nhóm CNN P, C và N lần lượt nhận tín hiệu epoch trước, hiện tại và sau, nhưng mục tiêu đều là nhãn của epoch hiện tại. Mỗi nhóm gồm năm CNN chuyên biệt cho W, N1, N2, N3 và REM. Mỗi CNN xuất năm xác suất, tạo vector 75 chiều cho một epoch.
+  \item \textbf{Phân loại chuỗi:} chuỗi vector 75 chiều của bản ghi được đưa vào BiLSTM 128 đơn vị ẩn và lớp phân loại năm lớp.
+\end{enumerate}
+
+Mỗi CNN có hai khối tích chập với kernel 55 và 25, sau đó là hai lớp kết nối đầy đủ. Các mạng dùng trọng số mất mát khác nhau để nhấn mạnh từng lớp. Bài báo gốc báo cáo tổng khoảng 248.500 tham số và dùng phép chia theo đối tượng. Trên phân tập SC gồm 153 bản ghi của 78 người, bài báo gọi phiên bản này là Sleep-EDF-18 và dùng 10 fold~\cite{jadhav2024zleepanlystnet}.
+
+\subsection{Khoảng trống được kiểm tra}
+
+Ba giả thuyết thiết kế cần được tách riêng. Thứ nhất, TCN có thể xử lý chuỗi song song bằng tích chập giãn~\cite{bai2018tcn}, nhưng điều đó không tự động suy ra \mf\ cao hơn BiLSTM. Thứ hai, kết nối dư giúp huấn luyện CNN sâu hơn~\cite{he2016resnet}, nhưng embedding nhiều chiều hơn không mặc nhiên tốt hơn 75 xác suất đã được giám sát trực tiếp. Thứ ba, lọc và chuẩn hóa có thể thay đổi phân phối đầu vào, nhưng tác động của từng thao tác phải được đo bằng cấu hình chỉ khác đúng thành phần cần khảo sát.
+
+Gate 5 xử lý hai khoảng trống đầu bằng so sánh E1--E0 và E2--E1. Gate 5 cũng kiểm tra tiền xử lý qua E3--E2, E4--E2 và E3--E6. Gate 6 đo đánh đổi vận hành và hình học đặc trưng. Gate 8 thay thế cách diễn giải tầm quan trọng đặc trưng dễ thiên lệch bằng loại bỏ nhóm có kiểm soát.
+
+\subsection{Nguyên tắc diễn giải}
+
+Không bác bỏ giả thuyết không không chứng minh hai mô hình tương đương. Muốn kết luận tương đương hoặc không thua kém cần xác định biên có ý nghĩa trước khi xem dữ liệu và dùng kiểm định tương ứng. Giao thức hiện tại không có biên này; vì vậy các kết quả không có ý nghĩa thống kê được diễn đạt là ``chưa đủ bằng chứng về khác biệt'', không phải ``hai cấu hình tương đương''.
+

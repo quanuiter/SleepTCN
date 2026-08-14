@@ -1,0 +1,70 @@
+\appendix
+\section{Phụ lục tái lập và truy nguyên}
+\label{sec:reproducibility}
+
+\subsection{Nguồn chân lý của số liệu}
+
+\begin{table}[H]
+\centering
+\caption{Bản đồ kết quả tới artifact máy đọc}
+\label{tab:artifact_map}
+\begin{tabularx}{\textwidth}{lY}
+\toprule
+\textbf{Nội dung} & \textbf{Artifact} \\
+\midrule
+Dữ liệu đã xử lý & \code{data/manifests/processed\_validation\_v2.json} \\
+Split đối tượng & \code{data/splits/sleepedf\_sc\_10fold\_seed42\_v2.json} \\
+Chiến dịch test & \code{runs/v2/test\_campaign\_seed42.json} \\
+Thống kê Gate 5 & \code{runs/v2/analysis/gate5\_paired\_results\_seed42.json} \\
+Đối chiếu hậu nghiệm E3--E0 & \code{Reports/POSTHOC\_E3\_E0\_AUDIT.json} \\
+Benchmark Gate 6 & \code{runs/v2/analysis/gate6\_latency\_fold00\_seed42.json} \\
+Không gian đặc trưng & \path{runs/v2/analysis/gate6_feature_space/feature_space_report.json} \\
+Ablation Gate 8 & \code{runs/v2/gate8/analysis\_seed42.json} \\
+Gói công bố cuối & \path{runs/v2/publication/gate8/publication_manifest.json} \\
+Biên tuyên bố & \code{runs/v2/publication/gate8/CLAIM\_EVIDENCE\_MATRIX.md} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Mã băm split là {\ttfamily\small\seqsplit{6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de}}. Báo cáo Gate 5 có SHA-256 tái chạy giống lần đầu: {\ttfamily\small\seqsplit{40eb9fa3f6ec3c775b8838304647a27dd1743d1e22f059ce07f8397bf301fc3c}}. Benchmark JSON Gate 6 có SHA-256 {\ttfamily\small\seqsplit{e1cdba979d9f434bb19803ea5341052239f0e98c89f1bff95c21287e99d81cc7}}.
+
+\subsection{Lệnh kiểm tra gói Gate 8}
+
+\begin{lstlisting}[language=bash]
+export PYTHONPATH="$PWD/src"
+python scripts/validate_gate8_artifacts.py \
+  --package-dir runs/v2/publication/gate8 \
+  --output runs/v2/publication/gate8/gate8_validation_report.json
+python -m pytest -q tests
+\end{lstlisting}
+
+Khi kiểm tra lại, không chạy huấn luyện và không tạo lại prediction test. Trình kiểm định chỉ đọc artifact đã khóa, đối chiếu lược đồ, độ phủ, khóa bắt cặp và SHA-256.
+
+\subsection{Khoảng trống truy nguyên của kho NPZ cục bộ}
+
+Lần kiểm toán nội dung gần nhất xác nhận đủ 765 tệp, đúng số bản ghi/đối tượng/epoch, nhãn, chỉ số epoch, hình dạng và các quan hệ biến đổi số. Tuy nhiên, mã băm SHA-256 toàn tệp của 459 tệp thuộc \code{bandpass\_v2}, \code{bandpass\_clip\_v2} và \code{filtered\_zscore\_v2} không khớp manifest lịch sử; 306 tệp của hai biến thể còn lại khớp. Sai khác có thể do tuần tự hóa lại kho NPZ hoặc môi trường thư viện, nhưng chưa đủ bằng chứng để khẳng định nguyên nhân. Các mảng E4/E5 vẫn trùng bitwise 153/153 và các kiểm tra nội dung không phát hiện sai khác khoa học có ý nghĩa.
+
+Vì dữ liệu thô không còn tại đường dẫn đã ghi trong môi trường kiểm toán và manifest run chưa khóa mã băm nội dung của tệp tiền xử lý, báo cáo không tuyên bố kho cục bộ hiện tại giống byte-theo-byte với kho dùng khi huấn luyện. Trước khi phát hành dữ liệu dẫn xuất, cần tái sinh từ dữ liệu thô trong môi trường đã khóa hoặc lập một manifest chuẩn mới kèm phiên bản thư viện và mã băm nội dung mảng.
+
+\subsection{Biên câu chữ khoa học}
+
+\begin{table}[H]
+\centering
+\caption{Tóm tắt câu chữ được phép và không được phép}
+\label{tab:claim_boundaries}
+\begin{tabularx}{\textwidth}{YY}
+\toprule
+\textbf{Được phép} & \textbf{Không được phép} \\
+\midrule
+E3 có \mf\ mô tả cao nhất trong sáu cấu hình & E3 là mô hình tốt nhất nói chung \\
+E3 tốt hơn E6 trong giao thức hiện tại & Chuẩn hóa giải quyết dịch chuyển miền \\
+Hậu nghiệm: toàn pipeline E3 cao hơn E0 trong chiến dịch seed 42 & E3--E0 là giả thuyết xác nhận định trước hoặc chỉ ra thành phần gây cải thiện \\
+ResNet-1D--TCN ít mô hình thành phần và forward nhanh hơn & Mô hình nhẹ hoặc tiết kiệm tham số \\
+E1/E2 tăng mô tả nhẹ nhưng chưa đủ bằng chứng & TCN/ResNet vượt trội có ý nghĩa \\
+Silhouette E2 thấp hơn E1 theo phép đo đã khóa & ResNet luôn tạo đặc trưng kém hơn \\
+Chưa thấy lợi ích tăng thêm có ý nghĩa của P/N & P/N vô dụng hoặc chỉ có 12\% thông tin \\
+Chưa kiểm định tương đương & Các cấu hình tương đương \\
+Kết quả in-domain, seed 42 & Đã chứng minh SHHS, zero-shot hoặc lâm sàng \\
+\bottomrule
+\end{tabularx}
+\end{table}

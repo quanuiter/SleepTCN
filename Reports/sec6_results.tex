@@ -1,0 +1,238 @@
+\section{Kết quả Gate 1--8}
+\label{sec:results}
+
+\subsection{Tổng quan trạng thái}
+
+\begin{table}[H]
+\centering
+\caption{Tóm tắt bằng chứng qua tám cổng kiểm định}
+\label{tab:gate_summary}
+\begin{tabularx}{\textwidth}{C{1.1cm}C{1.6cm}Y}
+\toprule
+\textbf{Gate} & \textbf{Trạng thái} & \textbf{Bằng chứng đạt} \\
+\midrule
+1 & Đạt & 765 NPZ; 153 bản ghi/biến thể; split 10 fold không giao nhau \\
+2 & Đạt & Smoke CPU/GPU, checkpoint, resume và kiểm định artifact \\
+3 & Đạt & 60/60 lần chạy validation-only hoàn tất và giữ test khóa \\
+4 & Đạt & 60/60 dự đoán và chỉ số test sinh đúng một chiến dịch \\
+5 & Đạt & Bootstrap cụm và Wilcoxon bắt cặp trên 78 đối tượng \\
+6 & Đạt & Số tham số, benchmark V100 và Silhouette 10 fold \\
+7 & Đạt & Bảng, hình, bản thảo và ma trận tuyên bố--bằng chứng \\
+8 & Đạt & 30/30 ablation validation, 30/30 test và kiểm toán mã băm \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Gate 1: dữ liệu, tiền xử lý và split}
+
+Gate 1 kiểm tra đủ năm biến thể, tổng 765 tệp. Mỗi biến thể có 153 bản ghi, 78 đối tượng, 195.767 epoch, trong đó 195.469 epoch hợp lệ và 298 Movement/Unknown. Không có tệp lỗi. Nhãn, mặt nạ và chỉ số epoch gốc khớp giữa năm biến thể. Manifest split có SHA-256 \code{6bc7ad74...de}; mỗi đối tượng test đúng một lần và validation đúng một lần.
+
+E4/E5 trùng bitwise ở 153/153 bản ghi và \code{clip\_fraction=0}. Kết quả này làm phép cắt $\pm800\,\mu$V không quan sát được trên Sleep-EDF hiện tại; nó không chứng minh phép cắt vô dụng trên dữ liệu khác.
+
+\subsubsection{Độ trung thực của mốc E0 so với bài báo gốc}
+
+\begin{table}[H]
+\centering
+\caption{Đối chiếu mô tả bài báo gốc và E0 v2; hai cột không cùng quần thể và giao thức}
+\label{tab:e0_fidelity}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Chỉ số} & \textbf{Bài báo gốc, Fpz--Cz} & \textbf{E0 v2} \\
+\midrule
+Số epoch được đánh giá & 195.479 & 195.469 \\
+Accuracy & 0,8409 & 0,826233 \\
+Macro-F1 & 0,7826 & 0,775419 \\
+$\kappa$ Cohen & 0,7790 & 0,761431 \\
+F1 N1 & 0,4831 & 0,500915 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Các số ở cột bài báo gốc lấy từ Hình 3C cho Sleep-EDF-18, Fpz--Cz~\cite{jadhav2024zleepanlystnet}. E0 v2 dùng tập Sleep-EDF Expanded SC 78 đối tượng và quy tắc nhãn/split đã hiệu chỉnh, nên bảng chỉ kiểm tra mức độ gần về mô tả, không phải kiểm định tái lập trực tiếp. Chênh lệch mẫu số đánh giá và chỉ số xác nhận rằng không được gọi E0 là bản sao số học của bài báo. Vai trò đúng của E0 là đối chứng nội bộ đã khóa, dùng cùng người, cùng fold và cùng seed với E1--E6.
+
+\subsection{Gate 2: khả năng chạy và phục hồi}
+
+Smoke chạy xuyên suốt các giai đoạn trích xuất, tạo cache, huấn luyện chuỗi, dự đoán validation và kiểm định độc lập. Cơ chế \code{latest.pt}/\code{best.pt}, tiếp tục từ epoch hoàn tất gần nhất và từ chối metadata sai đều đạt. Test không được sinh trong smoke. Vì mỗi giai đoạn chỉ chạy một batch hoặc một epoch, chỉ số smoke không có ý nghĩa về chất lượng dự đoán.
+
+\subsection{Gate 3: chiến dịch validation-only}
+
+Sáu cấu hình E0, E1, E2, E3, E4 và E6 hoàn tất 10 fold, tổng 60 lần chạy. Mỗi run có manifest sạch, checkpoint, prediction validation, metrics và báo cáo kiểm định khớp SHA-256. Cùng fold, sáu cấu hình có khóa epoch và nhãn thật giống nhau. Bảng~\ref{tab:validation_descriptive} chỉ mô tả quá trình chọn checkpoint, không dùng để kết luận cuối.
+
+\begin{table}[H]
+\centering
+\caption{Kết quả validation mô tả trung bình trên 10 fold}
+\label{tab:validation_descriptive}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Cấu hình} & \textbf{\mf\ trung bình $\pm$ SD} & \textbf{Accuracy} & \textbf{$\kappa$} \\
+\midrule
+E0 & $0,7833\pm0,0315$ & 0,8353 & 0,7727 \\
+E1 & $0,7869\pm0,0267$ & 0,8379 & 0,7763 \\
+E2 & $0,7918\pm0,0228$ & 0,8415 & 0,7810 \\
+E3 & $0,7930\pm0,0242$ & 0,8410 & 0,7808 \\
+E4 & $0,7925\pm0,0276$ & 0,8424 & 0,7822 \\
+E6 & $0,7732\pm0,0368$ & 0,8287 & 0,7642 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Gate 4: mở tập test đã khóa}
+
+Sau khi đủ 60 run validation-only, dry-run trả \code{status=prepared} và \code{target\_count=60}. Chiến dịch test chỉ nạp \code{best.pt}, không huấn luyện hoặc chọn lại checkpoint. Kết quả cuối gồm 60 prediction test và 60 metrics test; mỗi cấu hình phủ đúng 153 bản ghi, 78 đối tượng và 195.469 epoch hợp lệ. Dữ liệu bắt cặp giữa các cấu hình đạt kiểm tra toàn vẹn.
+
+\subsection{Gate 5: hiệu năng ngoài fold và thống kê bắt cặp}
+
+\begin{table}[H]
+\centering
+\caption{Hiệu năng test ngoài fold gộp}
+\label{tab:test_performance}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{E} & \textbf{\mf} & \textbf{Accuracy} & \textbf{$\kappa$} & \textbf{F1 N1} \\
+\midrule
+E0 & 0,775419 & 0,826233 & 0,761431 & 0,500915 \\
+E1 & 0,780230 & 0,831482 & 0,768301 & 0,511469 \\
+E2 & 0,783481 & 0,834061 & 0,771642 & 0,518029 \\
+E3 & \textbf{0,790443} & \textbf{0,836266} & \textbf{0,775381} & \textbf{0,527597} \\
+E4 & 0,789067 & 0,835954 & 0,774558 & 0,527007 \\
+E6 & 0,769124 & 0,822969 & 0,757320 & 0,512397 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+E3 có giá trị mô tả cao nhất, nhưng thứ hạng này không tự tạo bằng chứng thống kê. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước.
+
+\begin{table}[H]
+\centering
+\caption{So sánh bắt cặp chính trên \mf\ test}
+\label{tab:primary_stats}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrl}
+\toprule
+\textbf{So sánh} & \textbf{$\Delta$ \mf} & \textbf{CI 95\% bootstrap} & \textbf{$p$ Wilcoxon} & \textbf{$p$ Holm} & \textbf{Thắng/Hòa/Thua} \\
+\midrule
+E1--E0 & 0,004811 & $[-0,000915;\ 0,010193]$ & 0,034064 & 0,102193 & 51/0/27 \\
+E2--E1 & 0,003251 & $[-0,002370;\ 0,008808]$ & 0,051777 & 0,103554 & 44/0/34 \\
+E3--E2 & 0,006962 & $[0,000305;\ 0,014520]$ & 0,898933 & 0,898933 & 37/0/41 \\
+E3--E6 & \textbf{0,021319} & $\mathbf{[0,012179;\ 0,030698]}$ & 0,000296 & \textbf{0,001185} & 49/0/29 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/gate8_primary_effects.png}
+\caption{Chênh lệch \mf\ và khoảng tin cậy bootstrap cụm theo đối tượng. Trục hoành dùng điểm phần trăm.}
+\label{fig:primary_effects}
+\end{figure}
+
+E1--E0 và E2--E1 có mức tăng mô tả nhỏ, nhưng CI chứa 0 và $p$ Holm lớn hơn 0,05. Vì vậy chưa đủ bằng chứng rằng TCN tốt hơn BiLSTM hoặc ResNet-1D tốt hơn 15CNN về \mf. E3--E2 có CI gộp vừa dương nhưng chỉ 37/78 người tăng, median chênh lệch theo người âm và Wilcoxon không có ý nghĩa; lợi ích không đồng đều theo đối tượng. E3--E6 là kết quả nhất quán nhất theo cả bootstrap và Wilcoxon-Holm.
+
+\begin{table}[H]
+\centering
+\caption{Đối chiếu hậu nghiệm toàn pipeline E3 với mốc E0}
+\label{tab:posthoc_e3_e0}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{So sánh} & \textbf{$\Delta$ \mf} & \textbf{CI 95\% bootstrap} & \textbf{$p$ Wilcoxon} & \textbf{Thắng/Hòa/Thua} \\
+\midrule
+E3--E0 & 0,015024 & $[0,005746;\ 0,025871]$ & 0,012321 & 49/0/29 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Đây là phân tích \emph{hậu nghiệm}, không thuộc bốn đối chiếu xác nhận ở Bảng~\ref{tab:primary_stats}. Nếu chỉ tham khảo phép Holm khi ghép nó thành so sánh thứ năm với bốn so sánh cũ, $p$ hiệu chỉnh là 0,049282; con số này không biến giả thuyết hậu nghiệm thành giả thuyết định trước. Kết quả hỗ trợ rằng toàn bộ pipeline E3 cao hơn E0 trong chiến dịch seed 42 hiện tại. Vì E3 và E0 đồng thời khác mô hình chuỗi, bộ trích xuất và tiền xử lý, đối chiếu này không xác định thành phần nào gây ra chênh lệch, không chứng minh ưu thế trên quần thể khác và không phải kiểm định tương đương hoặc không thua kém.
+
+Chênh lệch F1 E3--E6 theo lớp lần lượt là W $+0,00255$, N1 $+0,01520$, N2 $+0,01295$, N3 $+0,06278$ và REM $+0,01311$. E4--E2, phân tích thứ cấp riêng lọc dải, có $\Delta=0,005586$, CI $[-0,001699;0,013618]$, $p=0,902877$ và thắng/thua 38/40; chưa có bằng chứng về cải thiện đồng đều.
+
+\subsection{Gate 6: độ phức tạp và tốc độ}
+
+\begin{table}[H]
+\centering
+\caption{Benchmark forward trên Tesla V100, 100 epoch mỗi lượt}
+\label{tab:complexity}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{E} & \textbf{Tham số} & \textbf{Độ trễ trung vị (ms)} & \textbf{p95 (ms)} & \textbf{Epoch/s} & \textbf{Peak MiB} & \textbf{Nhanh hơn E0} \\
+\midrule
+E0 & 248.630 & 13,4315 & 15,4400 & 7.445 & 58,81 & 1,00$\times$ \\
+E1 & 640.950 & 12,5111 & 13,6892 & 7.993 & 60,31 & 1,07$\times$ \\
+E2 & 1.085.578 & 3,5750 & 3,6531 & 27.972 & 75,54 & 3,76$\times$ \\
+E3 & 1.085.578 & 3,5687 & 3,6813 & 28.021 & 75,54 & 3,76$\times$ \\
+E4 & 1.085.578 & 3,5739 & 3,6427 & 27.980 & 75,54 & 3,76$\times$ \\
+E6 & 1.085.578 & 3,5756 & 3,6426 & 27.967 & 75,54 & 3,76$\times$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/gate8_performance_speed_tradeoff.png}
+\caption{Đánh đổi giữa \mf, độ trễ và số tham số. Diện tích điểm tỷ lệ với số tham số.}
+\label{fig:tradeoff}
+\end{figure}
+
+ResNet-1D--TCN giảm từ 16 xuống 2 mô hình thành phần và nhanh hơn E0 khoảng 3,76 lần. Đổi lại, số tham số tăng 4,37 lần và peak VRAM tăng 28,4\%. Vì vậy kết quả hỗ trợ ``gọn hơn về vận hành'', không hỗ trợ ``mô hình nhẹ'' hoặc ``tiết kiệm tham số''.
+
+\subsection{Gate 6: không gian đặc trưng}
+
+Silhouette E2 thấp hơn E1 trong 10/10 fold. Chênh lệch E2--E1 trung bình là $-0,107851$, trung vị $-0,110025$ và khoảng quan sát $[-0,152622;-0,060811]$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/gate8_feature_silhouette.png}
+\caption{Silhouette bắt cặp E1/E2 sau StandardScaler và PCA 20 chiều.}
+\label{fig:silhouette}
+\end{figure}
+
+Phép đo này không hỗ trợ giả thuyết rằng embedding ResNet có cụm Euclid tách biệt hơn softmax 15CNN. Nó cũng không chứng minh 15CNN tốt hơn cho dự đoán chuỗi, vì TCN có thể khai thác thông tin không biểu hiện dưới dạng cụm compact.
+
+\subsection{Gate 7: gói công bố và truy nguyên}
+
+Gate 7 không huấn luyện hoặc mở lại test. Cổng này sinh bảng CSV, hình, bản thảo tiếng Việt, ma trận tuyên bố--bằng chứng, manifest SHA-256 và trình kiểm định độc lập từ artifact Gate 5--6. Việc tách dữ liệu máy đọc khỏi văn bản giúp ngăn chép sai số và cho phép xây lại gói công bố.
+
+\subsection{Gate 8: ablation nhóm C/P/N}
+
+Gate 8 hoàn tất 30/30 lần huấn luyện validation và 30/30 lần suy luận test cho C, CP và CN; Full CPN tái sử dụng E1. Mỗi điều kiện phủ 78 đối tượng, 153 bản ghi và 195.469 epoch hợp lệ.
+
+\begin{table}[H]
+\centering
+\caption{Kết quả mô tả ablation C/P/N}
+\label{tab:gate8_descriptive}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Điều kiện} & \textbf{\mf\ toàn bộ} & \textbf{F1 N1} & \textbf{Recall N1} & \textbf{\mf\ chuyển pha} & \textbf{Recall N1 chuyển pha} \\
+\midrule
+Full CPN & 0,780230 & 0,511469 & 0,503531 & 0,620055 & 0,483989 \\
+C & 0,777477 & 0,501071 & 0,499907 & 0,619102 & 0,480828 \\
+CP & 0,777733 & 0,502185 & 0,499257 & 0,617686 & 0,480163 \\
+CN & 0,781585 & 0,505505 & 0,493867 & 0,618895 & 0,472428 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{So sánh chính tại vùng chuyển pha $\pm1$ epoch}
+\label{tab:gate8_stats}
+\begin{tabular}{lrrrl}
+\toprule
+\textbf{So sánh} & \textbf{$\Delta$ \mf} & \textbf{CI 95\%} & \textbf{$p$ Holm} & \textbf{Thắng/Hòa/Thua} \\
+\midrule
+Full CPN--C & 0,000953 & $[-0,004588;0,006568]$ & 1,000 & 36/0/42 \\
+Full CPN--CP & 0,002369 & $[-0,002990;0,007714]$ & 1,000 & 41/0/37 \\
+Full CPN--CN & 0,001160 & $[-0,003918;0,006490]$ & 1,000 & 38/0/40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/gate8_context_ablation_effects.png}
+\caption{Hiệu ứng ablation C/P/N tại vùng chuyển pha và CI bootstrap theo đối tượng.}
+\label{fig:gate8_effects}
+\end{figure}
+
+Cả ba CI chứa 0, $p$ Holm đều bằng 1 và số người thắng/thua không nhất quán. Do đó chưa quan sát thấy lợi ích tăng thêm có ý nghĩa của P/N cho \mf\ vùng chuyển pha trong thiết kế hiện tại. Kết quả không chứng minh P/N vô dụng, không đo phần trăm thông tin và không thiết lập tương đương giữa các điều kiện.

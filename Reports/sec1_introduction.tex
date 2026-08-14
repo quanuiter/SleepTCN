@@ -1,0 +1,44 @@
+\section{Giới thiệu}
+\label{sec:introduction}
+
+Phân giai đoạn giấc ngủ là quá trình gán nhãn cho từng đoạn tín hiệu 30 giây dựa trên đa ký giấc ngủ. Trong thực hành, các giai đoạn thường được quy về năm lớp: thức (W), N1, N2, N3 và chuyển động mắt nhanh (REM). Việc chấm thủ công cần chuyên môn và vẫn tồn tại bất đồng giữa người chấm; chương trình độ tin cậy liên chấm của AASM ghi nhận mức đồng thuận trung bình 82,6\%, trong đó N1 có mức thấp nhất 63,0\%~\cite{rosenberg2013aasm}. Vì vậy, mô hình tự động cần được đánh giá không chỉ bằng độ chính xác tổng thể mà còn bằng chỉ số cân bằng lớp, độ bất định và mức ổn định theo đối tượng.
+
+ZleepAnlystNet là một kiến trúc hai giai đoạn cho EEG đơn kênh: 15 CNN chuyên biệt tạo đặc trưng xác suất, sau đó BiLSTM phân loại chuỗi~\cite{jadhav2024zleepanlystnet}. Kiến trúc có ít tham số so với nhiều mô hình cùng thời, nhưng việc huấn luyện và vận hành 15 bộ trích xuất riêng biệt làm tăng số thành phần cần quản lý. Dự án SleepTCN khảo sát khả năng thay thế từng thành phần bằng TCN và ResNet-1D, đồng thời kiểm tra vai trò của tiền xử lý. Tuy nhiên, một so sánh có giá trị chỉ có thể được thiết lập khi các cấu hình dùng cùng đối tượng trong từng fold, cùng seed, cùng tập kiểm tra và cùng quy tắc chọn checkpoint.
+
+\subsection{Vấn đề của bản thực nghiệm lịch sử}
+
+Bản báo cáo trước đây tổng hợp kết quả từ các notebook có phép chia và seed khác nhau, đồng thời đưa vào một số kết quả SHHS chưa thuộc chiến dịch đã kiểm định. Cách tổng hợp đó không bảo đảm so sánh bắt cặp và không cho phép thực hiện kiểm định theo cùng đối tượng. Ngoài ra, các phát biểu ``nhanh hơn 8,2 lần'', ``đóng góp 12\% thông tin'' và ``embedding tốt hơn'' chưa có phép đo kiểm soát tương ứng.
+
+Giao thức v2 được xây dựng để sửa những điểm này. Mọi cấu hình chính dùng cùng manifest 10 fold theo đối tượng, seed huấn luyện 42, cùng khóa epoch và cùng chiến dịch mở test một lần. Những kết quả lịch sử không đáp ứng điều kiện trên chỉ được xem là tài liệu tham khảo, không tham gia kết luận.
+
+\subsection{Câu hỏi nghiên cứu}
+
+Nghiên cứu trả lời năm câu hỏi:
+
+\begin{enumerate}
+  \item Khi giữ nguyên dữ liệu và 15CNN, thay BiLSTM bằng TCN có cải thiện \mf\ hay không?
+  \item Khi giữ nguyên dữ liệu và TCN, thay 15CNN bằng ResNet-1D có cải thiện \mf\ hay không?
+  \item Lọc dải và cách đổi thang biên độ ảnh hưởng thế nào đến hiệu năng?
+  \item Việc giảm số mô hình thành phần đánh đổi thế nào với độ trễ, thông lượng, số tham số và bộ nhớ GPU?
+  \item Các nhóm đặc trưng từ epoch hiện tại (C), trước (P) và sau (N) mang lại lợi ích dự báo tăng thêm nào tại vùng chuyển pha?
+\end{enumerate}
+
+\subsection{Đóng góp và phạm vi}
+
+Các đóng góp có bằng chứng của nghiên cứu gồm:
+
+\begin{itemize}
+  \item một quy trình tiền xử lý có truy nguyên nguồn, giữ nguyên trục thời gian và kiểm định 765 tệp NPZ;
+  \item một thiết kế 10 fold bắt cặp theo 78 đối tượng, không trộn đêm của cùng người giữa các vai trò;
+  \item 60 lần chạy xác thực và 60 lần suy luận test từ checkpoint đã khóa cho sáu cấu hình;
+  \item phân tích bootstrap cụm bắt cặp, Wilcoxon theo đối tượng và hiệu chỉnh Holm;
+  \item benchmark trên cùng GPU và phân tích Silhouette theo cùng epoch;
+  \item thí nghiệm loại bỏ nhóm C/P/N với đầu vào và số tham số TCN không đổi.
+\end{itemize}
+
+Phạm vi kết luận chỉ bao gồm Sleep-EDF Expanded, kênh Fpz-Cz và một seed huấn luyện. Nghiên cứu chưa đánh giá SHHS, dịch chuyển miền, đa kênh, nhiều seed hay giá trị lâm sàng. ``Đơn giản hơn'' trong báo cáo chỉ có nghĩa là ít mô hình thành phần hơn, không đồng nghĩa với ít tham số hoặc ít bộ nhớ hơn.
+
+\subsection{Cấu trúc báo cáo}
+
+Phần~\ref{sec:related_work} trình bày công trình liên quan và mốc ZleepAnlystNet. Phần~\ref{sec:dataset} mô tả dữ liệu và phép chia. Phần~\ref{sec:preprocessing} và~\ref{sec:background} trình bày tiền xử lý cùng nền tảng kiến trúc. Phần~\ref{sec:methodology} đặc tả E0--E6, quy trình Gate và thống kê. Phần~\ref{sec:results} báo cáo kết quả lần lượt từ Gate 1 đến Gate 8. Cuối cùng, Phần~\ref{sec:discussion} và~\ref{sec:conclusion} thảo luận ý nghĩa, giới hạn và kết luận.
+

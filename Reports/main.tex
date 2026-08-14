@@ -1,0 +1,114 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese,english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage{seqsplit}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+
+\geometry{top=2.3cm,bottom=2.3cm,left=2.5cm,right=2.5cm}
+\setstretch{1.15}
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0.25em}
+\setlist{nosep,leftmargin=1.8em}
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.18}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\definecolor{linkblue}{RGB}{18,82,148}
+\definecolor{codegray}{RGB}{245,245,245}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  citecolor=linkblue,
+  urlcolor=linkblue,
+  pdftitle={Tái hiện ZleepAnlystNet và đánh giá ResNet-1D--TCN trên Sleep-EDF Expanded},
+  pdfauthor={Ngô Nhật Quân; Phạm Thái Sơn}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{SleepTCN -- Báo cáo Gate 1--8}
+\fancyhead[R]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codegray},
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false
+}
+
+\newcommand{\mf}{\ensuremath{\mathrm{Macro\mbox{-}F1}}}
+\newcommand{\ci}{\ensuremath{\mathrm{CI}_{95\%}}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\listtablename}{Danh mục bảng}
+\renewcommand{\listfigurename}{Danh mục hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\refname}{Tài liệu tham khảo}
+\hypersetup{pageanchor=false}
+\input{cover.tex}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\listoftables
+\listoffigures
+\newpage
+
+\section*{Tóm tắt}
+\addcontentsline{toc}{section}{Tóm tắt}
+Nghiên cứu này xây dựng lại một quy trình phân loại tự động năm giai đoạn giấc ngủ từ EEG đơn kênh trên phân tập Sleep Cassette của Sleep-EDF Expanded. Mốc tham chiếu E0 giữ kiến trúc ZleepAnlystNet gồm 15 CNN và BiLSTM nhưng hiệu chỉnh thiết kế thực nghiệm; do khác tập đối tượng, xử lý nhãn và phần mềm, E0 không phải bản sao định lượng của kết quả MATLAB trong bài báo gốc. Các cấu hình E1--E6 lần lượt cô lập thay đổi mô hình chuỗi, bộ trích xuất đặc trưng và tiền xử lý. Toàn bộ sáu cấu hình chính dùng cùng phép chia 10 fold theo 78 đối tượng, cùng seed huấn luyện 42 và cùng 195.469 epoch hợp lệ. Tập kiểm tra bị khóa trong huấn luyện và chỉ được mở một lần sau khi 60/60 lần chạy xác thực hoàn tất.
+
+Kết quả ngoài fold cho thấy E3 có \mf\ mô tả cao nhất, 0,7904. So với E6, E3 tăng 0,0213 với \ci=[0,0122; 0,0307] và $p$ sau hiệu chỉnh Holm bằng 0,0012. Một đối chiếu hậu nghiệm E3--E0 trên cùng 78 đối tượng cho chênh lệch 0,0150, \ci=[0,0057; 0,0259] và $p$ Wilcoxon bằng 0,0123; kết quả hỗ trợ toàn bộ pipeline E3 trong chiến dịch hiện tại nhưng không phải giả thuyết xác nhận đã định trước và không tách được đóng góp riêng của từng thành phần. Trái lại, E1--E0 và E2--E1 chỉ tăng nhẹ và chưa đủ bằng chứng sau hiệu chỉnh đa kiểm định. ResNet-1D--TCN giảm số mô hình thành phần từ 16 xuống 2 và suy luận nhanh hơn E0 khoảng 3,76 lần trên Tesla V100, nhưng có số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Silhouette của E2 thấp hơn E1 trong cả 10 fold; Gate 8 cũng chưa tìm thấy lợi ích tăng thêm có ý nghĩa của P/N cho \mf\ vùng chuyển pha.
+
+Kết luận được giới hạn ở Sleep-EDF Expanded và một seed huấn luyện. Nghiên cứu không chứng minh ResNet-1D hoặc TCN vượt trội về \mf, không chứng minh các cấu hình tương đương, và chưa đánh giá SHHS hay dịch chuyển miền. Đóng góp có cơ sở nhất là một thiết kế thực nghiệm bắt cặp, có kiểm toán artifact, cùng bằng chứng định lượng về đánh đổi giữa hiệu năng, tốc độ và tài nguyên.
+
+\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; mạng tích chập theo thời gian; Sleep-EDF Expanded; thí nghiệm loại bỏ thành phần; kiểm định bắt cặp.
+
+\clearpage
+\pagenumbering{arabic}
+\input{sec1_introduction.tex}
+\input{sec2_related_work.tex}
+\input{sec3_dataset.tex}
+\input{sec5_preprocessing.tex}
+\input{sec5b_background.tex}
+\input{sec4_methodology.tex}
+\input{sec6_results.tex}
+\input{sec7_discussion.tex}
+\input{sec8_conclusion.tex}
+\input{sec9_reproducibility.tex}
+
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\end{document}
