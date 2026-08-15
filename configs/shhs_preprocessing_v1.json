@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "status": "locked_before_pilot_preprocessing",
+  "dataset": "SHHS Visit 1",
+  "selection_seed": 42,
+  "selection_manifest_sha256": "d88e91c96926091f5eebbb47db851235b48d2a9b5fb9a620c7e55db2b0157b24",
+  "technical_audit_sha256": "70a04049972d32912bffec55c820ffd1416ddd586a2bc83e878b3cab481f1bed",
+  "source": {
+    "edf_channel": "EEG",
+    "montage": "C4-A1",
+    "physical_unit": "uV",
+    "sampling_rate_hz": 125.0,
+    "epoch_seconds": 30
+  },
+  "resampling": {
+    "target_sampling_rate_hz": 100.0,
+    "implementation": "scipy.signal.resample_poly",
+    "up": 4,
+    "down": 5,
+    "window": ["kaiser", 5.0],
+    "padtype": "constant",
+    "scope": "continuous_record_before_epoching_and_variant_processing",
+    "anti_aliasing": true
+  },
+  "label_mapping": {
+    "0": 0,
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 3,
+    "5": 4,
+    "6": -1,
+    "9": -1
+  },
+  "evaluation_window": {
+    "policy": "true_sleep_n1_to_rem",
+    "wake_edge_minutes": 30,
+    "preserve_ignored_epochs_inside_window": true,
+    "label_dependent": true,
+    "interpretation": "benchmark_window_only_not_deployable_inference"
+  },
+  "checkpoint_compatible_variants": {
+    "paper_raw_v1": {
+      "checkpoint_experiment": "E0",
+      "after_mandatory_resampling": "no_bandpass_no_normalization"
+    },
+    "filtered_v2": {
+      "checkpoint_experiment": "E3",
+      "bandpass_hz": [0.5, 30.0],
+      "butterworth_order": 4,
+      "clip_uv": 800.0,
+      "scale_factor": 100.0
+    },
+    "filtered_zscore_v2": {
+      "checkpoint_experiment": "E6",
+      "bandpass_hz": [0.5, 30.0],
+      "butterworth_order": 4,
+      "clip_uv": 800.0,
+      "normalization": "per_record_full_record_after_filter_clip"
+    }
+  },
+  "roles": {
+    "primary": {
+      "adaptation": 5,
+      "validation": 15,
+      "test": 180
+    },
+    "reserve": 20,
+    "reserve_used": 0
+  },
+  "leakage_controls": {
+    "subject_roles_immutable": true,
+    "test_labels_for_model_selection": false,
+    "test_data_for_normalization_fit": "per_record_label_independent_only",
+    "fine_tuning_on_test": false
+  },
+  "claim_boundary": {
+    "zero_shot": "locked Sleep-EDF checkpoints with no SHHS weight update",
+    "adaptation": "only the five adaptation subjects in a separately locked stage",
+    "forbidden": [
+      "using validation or test subjects for weight updates",
+      "choosing preprocessing after viewing SHHS model performance",
+      "claiming clinical generalization from this limited sample"
+    ]
+  }
+}

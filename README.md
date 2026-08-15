@@ -3,10 +3,10 @@
 Kho nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể tiền xử lý
 trên Sleep-EDF Expanded — Sleep Cassette.
 
-> **Trạng thái cuối tại Gate 8 (2026-08-14):** toàn bộ chiến dịch chính E0–E6 và ablation nhóm đặc
-> trưng C/P/N đã hoàn tất, mở test đúng quy trình, phân tích bắt cặp và kiểm toán artifact. Dự án dừng
-> tại đây; không có chiến dịch GPU nào đang chờ chạy. Xem `notebooks/docs/GATE8_FINAL_RESULTS.md`,
-> `notebooks/docs/STATUS_V2.md` và `runs/v2/publication/gate8/`.
+> **Trạng thái ngày 2026-08-15:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích
+> thành phần E1/E2 và đối chiếu hậu nghiệm E3−E2 đều đã hoàn tất. Không có chiến dịch GPU nào đang
+> chờ chạy. Xem `notebooks/docs/STATUS_V2.md`, `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` và báo cáo
+> tại `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
 ## Kết quả chính
 
@@ -19,6 +19,12 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 - Gate 8 không tìm thấy bằng chứng thống kê rằng P/N mang lại lợi ích tăng thêm cho Macro-F1 vùng
   chuyển pha khi đã có C và TCN cố định. Kết quả này không chứng minh tương đương và không cho phép
   diễn giải thành “phần trăm thông tin”.
+- Zero-shot SHHS1 dùng 180 đối tượng và 169.012 epoch: E3−E0 đạt `+0,041219`, CI 95%
+  `[0,031367; 0,051196]`; E3−E6 đạt `+0,027359`, CI `[0,018172; 0,036979]`.
+- Phân tích thành phần SHHS cho E1−E0 `+0,006515`, nhưng E2−E1 `-0,012800`.
+- Đối chiếu hậu nghiệm E3−E2 trên SHHS đạt `+0,047504`, CI `[0,037242; 0,057923]`, E3 thắng
+  `147/180` đối tượng. Kết quả hỗ trợ toàn chế độ tiền xử lý E3 so với raw trên mẫu đã mở, không phải
+  xác nhận độc lập hoặc tác động riêng của một thao tác.
 
 ## Trạng thái các cổng
 
@@ -37,9 +43,11 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 
 1. `notebooks/docs/STATUS_V2.md` — trạng thái cuối và phạm vi đã hoàn thành.
 2. `notebooks/docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
-3. `runs/v2/publication/gate8/MANUSCRIPT_DRAFT_VI.md` — bản thảo tích hợp Gate 1–8.
-4. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
-5. `notebooks/docs/NEXT_STEPS.md` — trạng thái dừng và điều kiện nếu mở nghiên cứu mới.
+3. `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
+4. `notebooks/docs/SHHS_E3_E2_PAIRED_RESULTS.md` — đối chiếu tiền xử lý E3−E2.
+5. `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` — báo cáo LaTeX hoàn chỉnh.
+6. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
+7. `notebooks/docs/NEXT_STEPS.md` — trạng thái dừng và điều kiện nếu mở nghiên cứu mới.
 
 Các tài liệu không có hậu tố `V2`, cùng các runbook của Gate đã qua, là hồ sơ lịch sử để truy nguyên;
 không dùng các câu “bước tiếp theo” trong đó để lập lịch hiện tại.
@@ -50,7 +58,8 @@ không dùng các câu “bước tiếp theo” trong đó để lập lịch h
 - Năm lớp W/N1/N2/N3/REM; Movement/Unknown giữ vị trí thời gian nhưng bị mask khỏi loss/metrics.
 - Train/validation/test tách theo đối tượng; hai đêm của cùng người luôn cùng vai trò.
 - Chỉ một seed huấn luyện 42: chưa định lượng biến thiên do khởi tạo.
-- Chưa đánh giá SHHS, zero-shot, domain shift, đa kênh hoặc giá trị lâm sàng.
+- Đã đánh giá zero-shot giới hạn trên 180 đối tượng SHHS1; chưa đại diện toàn bộ SHHS, chưa thích nghi
+  miền, đa kênh hoặc xác nhận lâm sàng.
 - Không có kiểm định tương đương hoặc không thua kém.
 
 ## Cấu trúc thư mục
@@ -73,4 +82,5 @@ tests/            Kiểm thử tự động
 - Không gọi `p > 0,05` là bằng chứng tương đương.
 - Không gọi ablation C/P/N là phép đo phần trăm thông tin hay quan hệ nhân quả.
 - Không đưa dataset hoặc `data/cache/` lên kho Git.
-- Mọi mở rộng nhiều seed hoặc SHHS phải là giao thức mới, tách khỏi kết quả Gate 1–8.
+- Mọi mở rộng nhiều seed, thích nghi SHHS hoặc cohort xác nhận mới phải là giao thức riêng, tách khỏi
+  kết quả Gate 1–8 và các phân tích SHHS đã đóng.

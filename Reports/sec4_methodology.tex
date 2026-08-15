@@ -75,3 +75,21 @@ Phân tích đặc trưng so sánh E1 và E2 trên cùng epoch test: mỗi fold 
 Gate 8 giữ nguyên đầu vào 75 chiều và kiến trúc TCN của E1. Full CPN tái sử dụng dự đoán E1. Với C, CP và CN, nhóm bị loại được thay bằng trung bình từng chiều chỉ tính từ epoch train hợp lệ trong fold. Cùng vector được áp dụng cho train, validation và test; validation/test không tham gia ước lượng.
 
 Tiêu chí chính là \mf\ tại vùng $\pm1$ epoch quanh chuyển pha nhãn hợp lệ liên tiếp. Khoảng Movement/Unknown làm đứt chuỗi. Ba so sánh Full CPN--C, Full CPN--CP và Full CPN--CN dùng bootstrap cụm 10.000 lần, Wilcoxon theo đối tượng và Holm. Gate này chỉ đo hiệu ứng dự báo tăng thêm có điều kiện; không đo ``phần trăm thông tin'' hay quan hệ nhân quả.
+
+\subsection{Giao thức SHHS1 zero-shot sau Gate 8}
+
+Chiến dịch SHHS là giao thức riêng, không được nhập ngược vào Gate 1--8. Toàn bộ checkpoint Sleep-EDF đã khóa trước khi suy luận SHHS. Với mỗi E0, E3 và E6, outer fold $f$ dùng đúng bộ trích xuất và mô hình chuỗi \code{best.pt} của fold $f$; không dùng \code{latest.pt}, không xếp hạng fold theo SHHS và không trộn thành phần giữa fold. E0 cần 15 CNN cùng một BiLSTM mỗi fold; E3/E6 cần một ResNet-1D cùng một TCN mỗi fold.
+
+Mỗi fold sinh xác suất softmax cho toàn bộ epoch. Xác suất cuối của một epoch là
+
+\begin{equation}
+ \bar{p}(y=k\mid x)=\frac{1}{10}\sum_{f=0}^{9}p_f(y=k\mid x),
+\end{equation}
+
+với phép cộng theo thứ tự fold 00--09 bằng bộ tích lũy float64. Nhãn cuối là $\arg\max_k\bar{p}$; nếu hòa thì chọn chỉ số lớp nhỏ hơn. Cách này dùng đủ 10 mô hình ngoài miền và tránh chọn một fold thuận lợi sau khi xem SHHS.
+
+Validation gồm 15 đối tượng và chỉ dùng làm cổng kỹ thuật: kiểm tra tải checkpoint, hash, căn chỉnh epoch và phép tổ hợp. Test 180 đối tượng chỉ được mở sau khi cổng validation đạt; không có cập nhật gradient hoặc điều chỉnh giao thức dựa trên test.
+
+Tiêu chí chính đã định trước là trung bình \mf\ theo đối tượng. Hai so sánh chính là E3--E0 và E3--E6. Khoảng tin cậy percentile 95\% được tính bằng bootstrap cụm bắt cặp 10.000 lần, seed 2030: mỗi lần lấy lại mẫu 180 đối tượng và giữ nguyên toàn bộ epoch của người được chọn. Wilcoxon hạng có dấu hai phía dùng \mf\ từng đối tượng; Holm hiệu chỉnh đúng hai so sánh. \mf\ gộp theo epoch, accuracy, $\kappa$, F1/recall từng lớp và \mf\ tại vùng $\pm1$ epoch quanh chuyển pha thật liên tiếp là chỉ số hỗ trợ, không thay thế tiêu chí chính.
+
+Sau chiến dịch chính, E1 và E2 được suy luận theo một giao thức thành phần riêng đã khóa trước lần suy luận của hai cấu hình này. E1--E0 và E2--E1 dùng cùng 180 đối tượng, cùng khóa epoch và Holm trên đúng hai đối chiếu. Khi các thống kê riêng E2/E3 đã được quan sát, một giao thức hậu nghiệm tiếp tục khóa nguồn artifact theo SHA-256 rồi tính duy nhất E3--E2. Phân tích này dùng trung bình chênh lệch \mf\ theo đối tượng, bootstrap cụm 10.000 lần với seed 2032 và Wilcoxon hai phía. Vì chỉ có một đối chiếu hậu nghiệm nên không thêm hiệu chỉnh đa kiểm định; điều này không nâng nó thành giả thuyết xác nhận định trước. E3--E2 đo toàn bộ chế độ tiền xử lý đầu-cuối của E3 so với raw dưới cùng họ ResNet-1D--TCN, không nhận dạng riêng tác động của lọc dải, cắt biên độ hoặc chia 100.

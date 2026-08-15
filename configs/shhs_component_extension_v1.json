@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "locked_before_component_inference",
+  "analysis_scope": "prespecified_secondary_external_analysis_on_previously_opened_shhs1_test_cohort",
+  "dataset": "SHHS Visit 1",
+  "selection_seed": 42,
+  "training_seed": 42,
+  "experiments": {
+    "E1": {
+      "data_variant": "paper_raw_v1",
+      "extractor": "the same fold-specific 15-CNN checkpoints used by E0",
+      "sequence_model": "fold-specific common TCN",
+      "contrast": "E1-E0 estimates the sequence-model change from BiLSTM to TCN"
+    },
+    "E2": {
+      "data_variant": "paper_raw_v1",
+      "extractor": "fold-specific ResNet-1D",
+      "sequence_model": "fold-specific common TCN",
+      "contrast": "E2-E1 estimates the feature-pipeline change from 15-CNN outputs to ResNet-1D embeddings under the common TCN family"
+    }
+  },
+  "reference_artifacts": {
+    "experiment": "E0",
+    "campaign": "SHHS zero-shot v1 test",
+    "protocol_sha256": "165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93",
+    "run_manifest_sha256": "f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf",
+    "test_gate_sha256": "51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646"
+  },
+  "checkpoint_policy": {
+    "outer_folds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "checkpoint_filename": "best.pt",
+    "use_latest_checkpoint": false,
+    "rank_or_select_fold_by_validation_metric": false,
+    "mix_components_between_folds": false,
+    "use_all_folds": true
+  },
+  "ensemble": {
+    "per_fold_transform": "softmax_logits",
+    "aggregation": "arithmetic_mean_probability",
+    "accumulator_dtype": "float64",
+    "fold_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "prediction": "argmax_mean_probability",
+    "tie_break": "lowest_class_index"
+  },
+  "roles": {
+    "validation": 15,
+    "test": 180,
+    "adaptation_and_reserve_excluded": true,
+    "zero_shot_weight_updates": 0,
+    "complete_all_locked_comparisons_regardless_of_intermediate_results": true
+  },
+  "metrics": {
+    "primary": "subject_macro_f1",
+    "primary_comparisons": ["E1-E0", "E2-E1"],
+    "direction": "proposed_minus_reference",
+    "uncertainty": "paired_subject_cluster_bootstrap_95ci",
+    "supporting_test": "paired_subject_wilcoxon_two_sided",
+    "multiple_testing": "holm_over_two_primary_comparisons",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2031,
+    "superiority_rule": "bootstrap_ci95_low_gt_0_and_holm_adjusted_p_lt_0.05"
+  },
+  "preprocessing_provenance": {
+    "config_sha256": "7ce889234401da4b398b80d3b92c9275211c4d418de367a8413ddf6606f0e89e",
+    "manifest_sha256": "f8c8adcd35c4c4f82e7995d4f18c231e3f5f863cd1e5c7beb93fdcafa50223fb",
+    "validation_sha256": "2c4a842831279f03b494461f817cf79dd9ca3e6ebe57894448c48477ea945592"
+  },
+  "execution": {
+    "device": "cpu",
+    "gradient_enabled": false,
+    "model_mode": "eval",
+    "deterministic_algorithms": true
+  },
+  "interpretation": {
+    "design_strength": "locked before the first SHHS E1/E2 inference",
+    "limitation": "the 180-subject SHHS test cohort was previously opened for E0/E3/E6",
+    "allowed": [
+      "paired E1-E0 and E2-E1 performance differences on the fixed 180-subject SHHS1 cohort",
+      "secondary evidence about whether the component contrasts transfer outside Sleep-EDF"
+    ],
+    "forbidden": [
+      "independent replication on a never-opened SHHS cohort",
+      "universal superiority of TCN or ResNet",
+      "clinical validation",
+      "equivalence or non-inferiority",
+      "using validation or test outcomes to alter checkpoints, preprocessing, metrics, or comparisons"
+    ]
+  }
+}

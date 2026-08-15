@@ -22,11 +22,25 @@ Không gian đặc trưng & \path{runs/v2/analysis/gate6_feature_space/feature_s
 Ablation Gate 8 & \code{runs/v2/gate8/analysis\_seed42.json} \\
 Gói công bố cuối & \path{runs/v2/publication/gate8/publication_manifest.json} \\
 Biên tuyên bố & \code{runs/v2/publication/gate8/CLAIM\_EVIDENCE\_MATRIX.md} \\
+Giao thức zero-shot SHHS & \code{configs/shhs\_zero\_shot\_v1.json} \\
+Cổng test SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json} \\
+Phân tích bắt cặp SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_v1/analysis/zero_shot_analysis.json} \\
+Giao thức thành phần SHHS & \code{configs/shhs\_component\_extension\_v1.json} \\
+Cổng test thành phần SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/test_gate.json} \\
+Phân tích thành phần SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_components_v1/analysis/component_analysis.json} \\
+Giao thức hậu nghiệm E3--E2 & \code{configs/shhs\_e3\_e2\_paired\_v1.json} \\
+Kiểm toán E3--E2 & \code{Reports/SHHS\_E3\_E2\_PAIRED\_AUDIT.json} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 Mã băm split là {\ttfamily\small\seqsplit{6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de}}. Báo cáo Gate 5 có SHA-256 tái chạy giống lần đầu: {\ttfamily\small\seqsplit{40eb9fa3f6ec3c775b8838304647a27dd1743d1e22f059ce07f8397bf301fc3c}}. Benchmark JSON Gate 6 có SHA-256 {\ttfamily\small\seqsplit{e1cdba979d9f434bb19803ea5341052239f0e98c89f1bff95c21287e99d81cc7}}.
+
+Manifest test SHHS có SHA-256 {\ttfamily\small\seqsplit{f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf}}; cổng test có SHA-256 {\ttfamily\small\seqsplit{51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646}}. Phân tích bắt cặp được chạy lại byte-giống-hệt với SHA-256 {\ttfamily\small\seqsplit{83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df}}. Các artifact này chứa dữ liệu chịu điều kiện NSRR nên nằm ngoài Git; báo cáo chỉ công bố thống kê tổng hợp và mã băm.
+
+Phần bổ sung E1/E2 có inventory SHA-256 {\ttfamily\small\seqsplit{0f33782e6ff2ed0455695c97bca3cc1f8a9e881ba97e38d413a7deaf204d1e3a}}, manifest test {\ttfamily\small\seqsplit{064a7c1ca586e0f19bfa753017edd5ba2a5be1b8476b9767e69ce46d8e12f174}}, cổng test {\ttfamily\small\seqsplit{fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c}} và phân tích byte-giống-hệt {\ttfamily\small\seqsplit{39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c}}.
+
+Đối chiếu hậu nghiệm E3--E2 khóa chính xác bốn artifact nguồn bằng SHA-256, kiểm tra lại cổng test và căn chỉnh đủ 180 đối tượng/169.012 epoch trước khi tính. Bản kiểm toán trong Git và bản ngoài kho được chạy lại byte-giống-hệt với SHA-256 {\ttfamily\small\seqsplit{a493384440f469d9f22d36f8f8b9306e743efe537b46b87cfaf104bcc80a6f15}}.
 
 \subsection{Lệnh kiểm tra gói Gate 8}
 
@@ -39,6 +53,40 @@ python -m pytest -q tests
 \end{lstlisting}
 
 Khi kiểm tra lại, không chạy huấn luyện và không tạo lại prediction test. Trình kiểm định chỉ đọc artifact đã khóa, đối chiếu lược đồ, độ phủ, khóa bắt cặp và SHA-256.
+
+Phân tích SHHS có thể tái chạy mà không suy luận lại:
+
+\begin{lstlisting}[language=bash]
+python scripts/analyze_shhs_zero_shot.py \
+  --run-manifest E:/research/Dataset/SHHS_v1/zero_shot_v1/test/run_manifest.json \
+  --test-gate E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json \
+  --protocol configs/shhs_zero_shot_v1.json \
+  --output E:/research/Dataset/SHHS_v1/zero_shot_v1/analysis/zero_shot_analysis.json
+\end{lstlisting}
+
+Phân tích thành phần có thể tái chạy từ prediction đã khóa mà không suy luận lại:
+
+\begin{lstlisting}[language=bash]
+python scripts/analyze_shhs_component_extension.py \
+  --component-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/run_manifest.json \
+  --component-test-gate E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/test_gate.json \
+  --reference-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_v1/test/run_manifest.json \
+  --reference-test-gate E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json \
+  --protocol configs/shhs_component_extension_v1.json \
+  --output E:/research/Dataset/SHHS_v1/zero_shot_components_v1/analysis/component_analysis.json
+\end{lstlisting}
+
+Đối chiếu E3--E2 cũng chỉ đọc prediction đã khóa:
+
+\begin{lstlisting}[language=bash]
+python scripts/analyze_shhs_e3_e2.py \
+  --e3-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_v1/test/run_manifest.json \
+  --e3-test-gate E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json \
+  --e2-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/run_manifest.json \
+  --e2-test-gate E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/test_gate.json \
+  --protocol configs/shhs_e3_e2_paired_v1.json \
+  --output Reports/SHHS_E3_E2_PAIRED_AUDIT.json
+\end{lstlisting}
 
 \subsection{Khoảng trống truy nguyên của kho NPZ cục bộ}
 
@@ -60,11 +108,15 @@ E3 có \mf\ mô tả cao nhất trong sáu cấu hình & E3 là mô hình tốt 
 E3 tốt hơn E6 trong giao thức hiện tại & Chuẩn hóa giải quyết dịch chuyển miền \\
 Hậu nghiệm: toàn pipeline E3 cao hơn E0 trong chiến dịch seed 42 & E3--E0 là giả thuyết xác nhận định trước hoặc chỉ ra thành phần gây cải thiện \\
 ResNet-1D--TCN ít mô hình thành phần và forward nhanh hơn & Mô hình nhẹ hoặc tiết kiệm tham số \\
-E1/E2 tăng mô tả nhẹ nhưng chưa đủ bằng chứng & TCN/ResNet vượt trội có ý nghĩa \\
+Trên Sleep-EDF, E1/E2 tăng mô tả nhẹ nhưng chưa đủ bằng chứng & TCN/ResNet vượt trội in-domain có ý nghĩa \\
+Trên mẫu SHHS đã dùng, E1 cao hơn E0 theo phân tích thứ cấp khóa trước suy luận E1/E2 & TCN luôn tốt hơn BiLSTM hoặc đây là cohort xác nhận độc lập \\
+Trên mẫu SHHS đã dùng, E2 thấp hơn E1 & ResNet luôn kém hơn 15CNN \\
+Hậu nghiệm: E3 cao hơn E2 trên mẫu SHHS đã mở & Đây là xác nhận độc lập hoặc một thao tác tiền xử lý riêng gây toàn bộ hiệu ứng \\
 Silhouette E2 thấp hơn E1 theo phép đo đã khóa & ResNet luôn tạo đặc trưng kém hơn \\
 Chưa thấy lợi ích tăng thêm có ý nghĩa của P/N & P/N vô dụng hoặc chỉ có 12\% thông tin \\
 Chưa kiểm định tương đương & Các cấu hình tương đương \\
-Kết quả in-domain, seed 42 & Đã chứng minh SHHS, zero-shot hoặc lâm sàng \\
+Kết quả Sleep-EDF in-domain, seed 42 & TCN/ResNet riêng lẻ vượt trội có ý nghĩa \\
+E3 cao hơn E0/E6 trên mẫu SHHS1 zero-shot đã khóa & Đã giải quyết domain shift hoặc xác nhận lâm sàng \\
 \bottomrule
 \end{tabularx}
 \end{table}

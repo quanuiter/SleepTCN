@@ -1,12 +1,12 @@
-# Trạng thái cuối giao thức v2
+# Trạng thái dự án: Gate 1--8 và SHHS zero-shot
 
-Ngày khóa: **2026-08-14**
+Ngày cập nhật: **2026-08-15**
 
 Nhánh: `run-in-docker`
 
 Commit artifact Gate 8: `e3681a3`
 
-Trạng thái: **HOÀN TẤT ĐẾN GATE 8 — DỪNG**
+Trạng thái: **GATE 1--8, SHHS ZERO-SHOT V1, PHÂN TÍCH E1/E2 VÀ E3−E2 ĐÃ HOÀN TẤT**
 
 ## Tổng quan
 
@@ -21,7 +21,8 @@ Trạng thái: **HOÀN TẤT ĐẾN GATE 8 — DỪNG**
 | 7 | ĐẠT | bảng, hình, bản thảo và ma trận bằng chứng |
 | 8 | ĐẠT | 30/30 ablation validation và 30/30 test |
 
-Không còn bước huấn luyện hoặc đánh giá GPU nào trong giao thức v2 hiện tại.
+Không còn bước huấn luyện hoặc đánh giá GPU nào trong giao thức v2. Chiến dịch SHHS riêng đã hoàn tất
+suy luận trên CPU và không sửa artifact Gate 1--8.
 
 ## Dữ liệu và thiết kế thực nghiệm
 
@@ -74,11 +75,52 @@ Kết luận hợp lệ: chưa quan sát thấy đóng góp dự báo tăng thê
 Macro-F1 vùng chuyển pha trong pipeline và seed hiện tại. Không được suy ra P/N vô dụng, chỉ chứa một
 tỷ lệ thông tin nào đó, hoặc Full CPN tương đương các ablation.
 
+## Chiến dịch SHHS1 zero-shot
+
+- 220/220 EDF và XML đạt kiểm định kỹ thuật; 200 đối tượng chính được tiền xử lý, 20 reserve không dùng.
+- 15 validation và 180 test; test có 169.012 epoch hợp lệ.
+- E0, E3 và E6 đều dùng đủ 10 checkpoint fold tương ứng; không chọn một fold tốt nhất.
+- Validation gate: 450 dự đoán theo fold, 45 tổ hợp, 0 lỗi.
+- Test gate: 5.400 dự đoán theo fold, 540 tổ hợp, 0 lỗi.
+- Suy luận test bằng CPU mất khoảng 111,5 phút.
+
+| Cấu hình | Macro-F1 trung bình đối tượng | Macro-F1 gộp | Accuracy | Kappa |
+|---|---:|---:|---:|---:|
+| E0 | 0,5268 | 0,5761 | 0,6648 | 0,5339 |
+| E3 | **0,5680** | **0,6099** | **0,7016** | **0,5801** |
+| E6 | 0,5407 | 0,5732 | 0,6742 | 0,5408 |
+
+So sánh chính bắt cặp trên 180 đối tượng:
+
+- E3-E0: +0,0412, CI 95% [0,0314; 0,0512], p Holm 2,65e-13, thắng/hòa/thua 138/0/42.
+- E3-E6: +0,0274, CI 95% [0,0182; 0,0370], p Holm 1,87e-08, thắng/hòa/thua 125/0/55.
+
+Kết luận: E3 cao hơn E0 và E6 trong mẫu SHHS1 đã khóa theo giao thức zero-shot này. Không quy nguyên
+nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang toàn bộ SHHS hay thực hành lâm sàng.
+
+### Phân tích bổ sung E1/E2 trên cùng 180 đối tượng
+
+- Test: 3.600 dự đoán fold, 360 ensemble, 169.012 epoch; Gate độc lập `PASSED`, 0 lỗi.
+- E1--E0: `+0,00651`, CI 95% `[+0,00192; +0,01087]`, p Holm `0,00325`, thắng/thua `108/72`.
+- E2--E1: `-0,01280`, CI 95% `[-0,02209; -0,00350]`, p Holm `0,01005`, thắng/thua `80/100`.
+- Kết luận: có bằng chứng thứ cấp rằng E1 cao hơn E0 trên mẫu SHHS này; giả thuyết E2 cao hơn E1 bị
+  bác bỏ theo hướng quan sát. Cohort đã được mở trước cho E0/E3/E6 nên không gọi đây là xác nhận độc lập.
+
+### Phân tích bắt cặp hậu nghiệm E3−E2 trên SHHS1
+
+- Dùng đúng 180 đối tượng, 169.012 epoch và dự đoán tổ hợp 10 fold đã khóa; không huấn luyện lại.
+- Macro-F1 trung bình theo đối tượng: `+0,04750`, CI 95% `[+0,03724; +0,05792]`.
+- Wilcoxon hai phía `p=2,35e-17`; trung vị `+0,04194`; thắng/hòa/thua `147/0/33`.
+- Macro-F1 gộp `+0,04304`, F1 N1 `+0,06183`, recall N1 `+0,19095` và Macro-F1 chuyển pha `+0,04700`; tất cả CI 95% hoàn toàn dương.
+- Kết luận: toàn bộ chế độ tiền xử lý đầu-cuối E3 cao hơn raw E2 trên mẫu và giao thức này. Vì thống kê riêng E2/E3 đã được xem trước, đây là bằng chứng hậu nghiệm mạnh chứ không phải xác nhận độc lập trên cohort chưa mở; không quy hiệu ứng cho riêng lọc, cắt biên độ hoặc chia 100.
+
 ## Ranh giới kết luận cuối
 
-- Chỉ áp dụng in-domain trên Sleep-EDF Expanded và một seed 42.
+- Kết luận in-domain áp dụng cho Sleep-EDF Expanded seed 42; kết luận ngoài miền chỉ áp dụng cho mẫu
+  180 đối tượng SHHS1, montage và giao thức zero-shot đã khóa.
 - “Đơn giản hóa” là giảm số mô hình thành phần/vận hành, không phải tiết kiệm tham số hoặc VRAM.
-- Chưa có SHHS, zero-shot, domain shift, đa kênh hoặc xác nhận lâm sàng.
+- Đã có đánh giá SHHS1 zero-shot giới hạn; chưa có thích nghi miền, đa kênh, nhiều seed hoặc xác nhận
+  lâm sàng.
 - Không có kiểm định tương đương hoặc không thua kém với biên định trước.
 - Gate 8 là phân tích cơ chế bổ sung được thiết kế sau khi đã xem E0–E6; không trình bày như xác nhận
   độc lập hoàn toàn.
@@ -90,7 +132,7 @@ tỷ lệ thông tin nào đó, hoặc Full CPN tương đương các ablation.
 
 ## Trạng thái dừng
 
-Giao thức v2 được đóng tại Gate 8. Báo cáo 26 trang trong `Reports/output/pdf/` đã tích hợp kết quả
-Gate 1–8, bảng độ trung thực E0, đối chiếu hậu nghiệm E3−E0 và các giới hạn truy nguyên. Không chạy
-thêm seed, fold, test hoặc mô hình trong phạm vi hiện tại. Nếu nghiên cứu được tiếp tục, phải tạo giao
-thức và campaign mới; xem `NEXT_STEPS.md`.
+Giao thức v2 được đóng tại Gate 8; zero-shot v1, phần bổ sung E1/E2 và đối chiếu E3−E2 cũng đã đóng. Không
+chạy thêm seed, fold hoặc mở lại test trong hai chiến dịch này. Nếu tiếp tục bằng adaptation/fine-tuning,
+phải tạo giao thức mới, chỉ dùng tập adaptation đã khóa và giữ nguyên kết luận zero-shot; xem
+`NEXT_STEPS.md`.

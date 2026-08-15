@@ -50,7 +50,14 @@ Hai đêm của cùng một người luôn cùng vai trò. Mỗi người xuất
 
 Chia ngẫu nhiên theo epoch có thể đưa các đoạn lân cận hoặc hai đêm của cùng người vào cả train và test, làm kết quả lạc quan giả tạo. Giao thức v2 kiểm tra giao nhau theo đối tượng và bản ghi, tính đầy đủ của 78 đối tượng/153 bản ghi, sự đồng nhất khóa \code{(subject\_id, record\_key, original\_epoch\_index)} và mã băm manifest. Cùng manifest được dùng cho tất cả cấu hình và biến thể tiền xử lý. Đây là điều kiện để bootstrap và Wilcoxon được thực hiện bắt cặp theo cùng người.
 
+\subsection{Mẫu xác nhận ngoài miền SHHS Visit 1}
+
+Chiến dịch ngoài miền dùng một mẫu SHHS Visit 1 được chọn bằng seed 42 trước khi xem hiệu năng mô hình. Điều kiện chọn chỉ dựa trên tính sẵn có và chất lượng kỹ thuật, không dùng kết cục lâm sàng hoặc phân bố nhãn. Danh sách gồm 5 đối tượng adaptation, 15 validation, 180 test và 20 reserve; 220/220 cặp EDF--Profusion XML vượt kiểm định kỹ thuật, không cần thay reserve. Phép zero-shot chỉ dùng 15 validation và 180 test; adaptation và reserve không tham gia cập nhật trọng số hoặc chỉ số báo cáo.
+
+Kênh SHHS là EEG C4--A1 ở 125 Hz, khác montage Fpz--Cz và tần số 100 Hz của Sleep-EDF. Tín hiệu được đổi mẫu 125$\to$100 Hz bằng \code{resample\_poly} trước khi chia epoch 30 giây. Nhãn Profusion được ánh xạ $0\to$W, $1\to$N1, $2\to$N2, $3/4\to$N3, $5\to$REM$; 6/9\to-1$. Cửa sổ giữ từ epoch ngủ đầu đến cuối cộng tối đa 30 phút Wake mỗi phía, giống quy tắc benchmark Sleep-EDF. Ba nhánh đầu vào tương thích checkpoint là E0 \code{paper\_raw\_v1}, E3 \code{filtered\_v2} và E6 \code{filtered\_zscore\_v2}.
+
+Tiền xử lý chính tạo 600 NPZ cho 200 đối tượng, mỗi nhánh có 187.258 epoch, gồm 187.255 hợp lệ và 3 bị che. Tập test có 169.012 epoch hợp lệ với phân bố W/N1/N2/N3/REM lần lượt 36.983/7.002/76.287/22.806/25.934. Artifact chứa ID đối tượng và dữ liệu dẫn xuất được giữ ngoài Git theo điều kiện sử dụng NSRR; báo cáo chỉ công bố số tổng hợp và SHA-256.
+
 \subsection{Giới hạn dữ liệu}
 
-SC không đại diện cho toàn bộ quần thể lâm sàng. Nghiên cứu chỉ dùng một montage, một cơ sở dữ liệu và nhãn của một người chấm cho mỗi bản ghi. Do đó, kết quả không được khái quát sang SHHS, thiết bị đeo, bệnh nhân rối loạn giấc ngủ hoặc dữ liệu đa trung tâm nếu chưa có chiến dịch xác nhận riêng.
-
+SC không đại diện cho toàn bộ quần thể lâm sàng. Mẫu SHHS1 bổ sung bằng chứng ngoài miền nhưng chỉ gồm 180 đối tượng test từ một quy trình chọn mẫu giới hạn, một kênh EEG và nhãn của một nguồn chấm. Vì vậy kết quả không được khái quát sang toàn bộ hơn 6.000 bản ghi SHHS, thiết bị đeo, dữ liệu đa trung tâm hoặc thực hành lâm sàng.

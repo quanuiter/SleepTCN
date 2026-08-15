@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "status": "zero_shot_test_and_paired_analysis_complete",
+  "dataset": "SHHS Visit 1",
+  "selection_seed": 42,
+  "target_subjects": 200,
+  "reserve_subjects": 20,
+  "roles": {
+    "adaptation": 5,
+    "validation": 15,
+    "test": 180,
+    "reserve": 20
+  },
+  "pilot_subjects": 10,
+  "pilot_roles": {
+    "adaptation": 5,
+    "validation": 5
+  },
+  "pilot_technical_audit": {
+    "status": "passed",
+    "subjects": 10,
+    "edf_files": 10,
+    "profusion_xml_files": 10,
+    "valid_five_class_epochs": 9893,
+    "excluded_epochs": 0,
+    "selection_manifest_sha256": "d88e91c96926091f5eebbb47db851235b48d2a9b5fb9a620c7e55db2b0157b24",
+    "audit_report_sha256": "932278c4bdda9cb45b8bcb7e66129436bfcf6e320aaedde21184672b52592bf4",
+    "report_stored_outside_git": true
+  },
+  "selected_technical_audit": {
+    "status": "passed",
+    "subjects": 220,
+    "edf_files": 220,
+    "profusion_xml_files": 220,
+    "valid_five_class_epochs": 224511,
+    "excluded_epochs": 3,
+    "excluded_raw_stage_counts": {
+      "9": 3
+    },
+    "roles": {
+      "adaptation": {"expected": 5, "passed": 5, "failed": 0},
+      "validation": {"expected": 15, "passed": 15, "failed": 0},
+      "test": {"expected": 180, "passed": 180, "failed": 0},
+      "reserve": {"expected": 20, "passed": 20, "failed": 0}
+    },
+    "reserve_replacements_required": 0,
+    "audit_report_sha256": "70a04049972d32912bffec55c820ffd1416ddd586a2bc83e878b3cab481f1bed",
+    "report_stored_outside_git": true
+  },
+  "primary_preprocessing": {
+    "status": "passed",
+    "subjects": 200,
+    "roles": {
+      "adaptation": 5,
+      "validation": 15,
+      "test": 180
+    },
+    "reserve_subjects_processed": 0,
+    "variants": ["paper_raw_v1", "filtered_v2", "filtered_zscore_v2"],
+    "outputs": 600,
+    "epochs_per_variant": 187258,
+    "valid_epochs_per_variant": 187255,
+    "ignored_epochs_per_variant": 3,
+    "valid_epochs_by_role": {
+      "adaptation": 4120,
+      "validation": 14123,
+      "test": 169012
+    },
+    "label_counts": {
+      "ignored": 3,
+      "W": 41024,
+      "N1": 7935,
+      "N2": 83620,
+      "N3": 25646,
+      "REM": 29030
+    },
+    "numeric_audit": {
+      "E3_to_E6_reconstruction_max_abs_error": 0.0000019073486328125,
+      "subjects_with_nonzero_clip_fraction": 0,
+      "filtered_v2_global_range": [-3.0854225158691406, 3.2133901119232178]
+    },
+    "environment": {
+      "python": "3.11.9",
+      "numpy": "1.26.4",
+      "scipy": "1.13.1",
+      "pyedflib": "0.1.38",
+      "freeze_sha256": "bad9d30e431b9d9e0650ab7a4cd2e16c918c3cb9bd2a18faa08e1db7584a8a8d"
+    },
+    "provenance_sha256": {
+      "locked_config": "7ce889234401da4b398b80d3b92c9275211c4d418de367a8413ddf6606f0e89e",
+      "implementation_module": "2ee82c5779e9af206d748d0878e5e5b90dd838fa7f7c67fea4e450e213b1f969",
+      "runner": "176374bb66065f73bb810e74dbe68ab6f632eb147fbfa055eb0e6c737ab3503f",
+      "validator": "2baef91977c6382128cf83e1f2796d792dec1175ab18977f305f280bb4262b44",
+      "preprocess_manifest": "f8c8adcd35c4c4f82e7995d4f18c231e3f5f863cd1e5c7beb93fdcafa50223fb",
+      "validation_report": "2c4a842831279f03b494461f817cf79dd9ca3e6ebe57894448c48477ea945592"
+    },
+    "artifacts_stored_outside_git": true
+  },
+  "zero_shot_evaluation": {
+    "status": "passed",
+    "device": "cpu",
+    "experiments": ["E0", "E3", "E6"],
+    "outer_folds_per_experiment": 10,
+    "checkpoint_policy": "fold-specific best.pt, probability ensemble over all ten folds",
+    "validation_subjects": 15,
+    "test_subjects": 180,
+    "test_valid_epochs": 169012,
+    "test_fold_prediction_artifacts": 5400,
+    "test_ensemble_artifacts": 540,
+    "test_gate_status": "passed",
+    "test_gate_errors": 0,
+    "test_run_manifest_sha256": "f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf",
+    "test_gate_sha256": "51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646",
+    "paired_analysis_sha256": "83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df",
+    "primary_results": {
+      "E3_minus_E0": {
+        "mean_subject_macro_f1_difference": 0.04121906860604663,
+        "ci95": [0.03136712869029308, 0.05119588294845184],
+        "wilcoxon_p_holm": 2.645810763217184e-13,
+        "wins_ties_losses": [138, 0, 42]
+      },
+      "E3_minus_E6": {
+        "mean_subject_macro_f1_difference": 0.027358750267265,
+        "ci95": [0.018171836067387738, 0.036979227246468106],
+        "wilcoxon_p_holm": 1.866334797109308e-08,
+        "wins_ties_losses": [125, 0, 55]
+      }
+    },
+    "artifacts_stored_outside_git": true
+  },
+  "eligibility": {
+    "visit": 1,
+    "id_column": "nsrrid",
+    "quality_column": "overall_shhs1",
+    "accepted_quality_values": [3, 4, 5, 6, 7],
+    "selection_uses_clinical_outcomes": false,
+    "technical_exclusion_only_after_download": true
+  },
+  "download": {
+    "edf_folder": "shhs/polysomnography/edfs/shhs1",
+    "annotation_folder": "shhs/polysomnography/annotations-events-profusion/shhs1",
+    "token_must_be_entered_interactively": true,
+    "raw_data_must_remain_outside_git": true
+  },
+  "locked_comparisons": [
+    "Z0-E3 minus Z0-E0",
+    "Z0-E3 minus Z0-E6",
+    "A5-E3 minus Z0-E3"
+  ]
+}

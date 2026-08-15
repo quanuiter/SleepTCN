@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "status": "locked_posthoc_before_paired_computation",
+  "analysis_scope": "posthoc_paired_external_analysis_on_previously_opened_shhs1_test_cohort",
+  "dataset": "SHHS Visit 1",
+  "subjects": 180,
+  "valid_epochs": 169012,
+  "comparison": "E3-E2",
+  "estimand": "mean paired subject-level macro_f1 difference",
+  "pipeline_definition": {
+    "E2": "paper_raw_v1 -> ResNet-1D -> TCN",
+    "E3": "filtered_v2 (0.5-30 Hz band-pass, clip at +/-800 uV, divide by 100) -> ResNet-1D -> TCN",
+    "interpretation": "effect of the complete end-to-end E3 preprocessing regime relative to raw input under the same model family"
+  },
+  "source_artifacts": {
+    "E3_run_manifest_sha256": "f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf",
+    "E3_test_gate_sha256": "51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646",
+    "E2_run_manifest_sha256": "064a7c1ca586e0f19bfa753017edd5ba2a5be1b8476b9767e69ce46d8e12f174",
+    "E2_test_gate_sha256": "fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c"
+  },
+  "metrics": {
+    "primary": "subject_macro_f1",
+    "direction": "E3_minus_E2",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2032,
+    "uncertainty": "paired_subject_cluster_percentile_bootstrap_95ci",
+    "supporting_test": "paired_subject_wilcoxon_two_sided",
+    "multiple_testing": "none_single_posthoc_comparison",
+    "supporting_metrics": [
+      "pooled_macro_f1",
+      "pooled_accuracy",
+      "pooled_cohen_kappa",
+      "n1_f1",
+      "n1_recall",
+      "transition_radius_1_macro_f1"
+    ],
+    "supporting_evidence_rule": "primary_ci95_low_gt_0_and_unadjusted_p_lt_0.05"
+  },
+  "claim_boundary": {
+    "known_before_lock": "separate marginal E2 and E3 SHHS summaries had already been inspected",
+    "allowed": [
+      "paired E3-E2 effect estimate on the fixed 180-subject SHHS1 cohort",
+      "supporting evidence about the complete E3 preprocessing regime relative to raw input",
+      "comparison with the already completed Sleep-EDF E3-E2 analysis"
+    ],
+    "forbidden": [
+      "independent confirmation on an untouched cohort",
+      "causal attribution to band-pass filtering, clipping, or division by 100 separately",
+      "universal superiority across datasets, montages, populations, or training seeds",
+      "clinical validation"
+    ]
+  }
+}

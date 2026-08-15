@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "analysis_scope": "posthoc_paired_external_analysis_on_previously_opened_shhs1_test_cohort",
+  "subjects": 180,
+  "valid_epochs": 169012,
+  "experiments": [
+    "E3",
+    "E2"
+  ],
+  "primary_estimand": "mean paired subject-level macro_f1 difference",
+  "primary_uncertainty": "paired_subject_cluster_percentile_bootstrap_95ci",
+  "supporting_test": "paired_subject_wilcoxon_two_sided",
+  "multiplicity": "none_single_posthoc_comparison",
+  "bootstrap_resamples": 10000,
+  "bootstrap_seed": 2032,
+  "source_sha256": {
+    "protocol": "6d83e5395d7e660003c84785c4590c32d0fb6ecb9437c162870a76bbdef474a4",
+    "E3_run_manifest": "f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf",
+    "E3_test_gate": "51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646",
+    "E2_run_manifest": "064a7c1ca586e0f19bfa753017edd5ba2a5be1b8476b9767e69ce46d8e12f174",
+    "E2_test_gate": "fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c"
+  },
+  "descriptive": {
+    "E3": {
+      "subject_macro_f1_mean": 0.5680269986766403,
+      "pooled": {
+        "n_valid_epochs": 169012,
+        "accuracy": 0.7016010697465269,
+        "macro_f1": 0.609888602120497,
+        "cohen_kappa": 0.5800586269995739,
+        "confusion_matrix": [
+          [
+            29638,
+            4481,
+            1171,
+            21,
+            1672
+          ],
+          [
+            874,
+            3807,
+            601,
+            3,
+            1717
+          ],
+          [
+            2348,
+            5947,
+            56063,
+            324,
+            11605
+          ],
+          [
+            78,
+            39,
+            16674,
+            5888,
+            127
+          ],
+          [
+            655,
+            784,
+            1311,
+            1,
+            23183
+          ]
+        ],
+        "per_class": {
+          "W": {
+            "precision": 0.882267138987289,
+            "recall": 0.8013952356488117,
+            "f1": 0.8398889140784402,
+            "support": 36983
+          },
+          "N1": {
+            "precision": 0.25282241997609245,
+            "recall": 0.5437017994858612,
+            "f1": 0.3451495920217588,
+            "support": 7002
+          },
+          "N2": {
+            "precision": 0.7394223160116065,
+            "recall": 0.7348958538151978,
+            "f1": 0.7371521363250868,
+            "support": 76287
+          },
+          "N3": {
+            "precision": 0.9440436107102774,
+            "recall": 0.25817767254231344,
+            "f1": 0.40546775470853563,
+            "support": 22806
+          },
+          "REM": {
+            "precision": 0.6052370509607352,
+            "recall": 0.8939230353975476,
+            "f1": 0.7217846134686635,
+            "support": 25934
+          }
+        }
+      },
+      "transition_radius_1": {
+        "n_valid_epochs": 44744,
+        "accuracy": 0.5289871267655999,
+        "macro_f1": 0.46892742743451865,
+        "cohen_kappa": 0.3642107129097659,
+        "confusion_matrix": [
+          [
+            5021,
+            2135,
+            648,
+            21,
+            1045
+          ],
+          [
+            735,
+            3191,
+            478,
+            3,
+            1247
+          ],
+          [
+            751,
+            3247,
+            11562,
+            89,
+            2574
+          ],
+          [
+            33,
+            29,
+            6855,
+            554,
+            92
+          ],
+          [
+            154,
+            337,
+            602,
+            0,
+            3341
+          ]
+        ],
+        "per_class": {
+          "W": {
+            "precision": 0.750074693755602,
+            "recall": 0.566065388951522,
+            "f1": 0.6452068876895399,
+            "support": 8870
+          },
+          "N1": {
+            "precision": 0.3569750531379349,
+            "recall": 0.564379200565971,
+            "f1": 0.4373329678613033,
+            "support": 5654
+          },
+          "N2": {
+            "precision": 0.5739389426656739,
+            "recall": 0.6344729188388301,
+            "f1": 0.6026897414512093,
+            "support": 18223
+          },
+          "N3": {
+            "precision": 0.8305847076461769,
+            "recall": 0.07325135528229539,
+            "f1": 0.13462940461725395,
+            "support": 7563
+          },
+          "REM": {
+            "precision": 0.40257862393059407,
+            "recall": 0.7534957149300857,
+            "f1": 0.5247781355532867,
+            "support": 4434
+          }
+        }
+      }
+    },
+    "E2": {
+      "subject_macro_f1_mean": 0.5205232394289516,
+      "pooled": {
+        "n_valid_epochs": 169012,
+        "accuracy": 0.6656154592573308,
+        "macro_f1": 0.5668469040122773,
+        "cohen_kappa": 0.5326857524519978,
+        "confusion_matrix": [
+          [
+            26904,
+            4174,
+            1066,
+            17,
+            4822
+          ],
+          [
+            811,
+            2470,
+            645,
+            2,
+            3074
+          ],
+          [
+            2375,
+            3500,
+            52923,
+            182,
+            17307
+          ],
+          [
+            112,
+            28,
+            16527,
+            5693,
+            446
+          ],
+          [
+            439,
+            262,
+            726,
+            0,
+            24507
+          ]
+        ],
+        "per_class": {
+          "W": {
+            "precision": 0.87803922848471,
+            "recall": 0.7274693778222426,
+            "f1": 0.7956938365077488,
+            "support": 36983
+          },
+          "N1": {
+            "precision": 0.23672608778991758,
+            "recall": 0.3527563553270494,
+            "f1": 0.2833218628125717,
+            "support": 7002
+          },
+          "N2": {
+            "precision": 0.7361970870950242,
+            "recall": 0.6937354988399071,
+            "f1": 0.7143358483944552,
+            "support": 76287
+          },
+          "N3": {
+            "precision": 0.9658975229046488,
+            "recall": 0.24962729106375514,
+            "f1": 0.39672473867595814,
+            "support": 22806
+          },
+          "REM": {
+            "precision": 0.4886155195789138,
+            "recall": 0.9449757075653582,
+            "f1": 0.6441582336706531,
+            "support": 25934
+          }
+        }
+      },
+      "transition_radius_1": {
+        "n_valid_epochs": 44744,
+        "accuracy": 0.49099320579295547,
+        "macro_f1": 0.4219242370897202,
+        "cohen_kappa": 0.3188057137014503,
+        "confusion_matrix": [
+          [
+            4212,
+            1741,
+            835,
+            17,
+            2065
+          ],
+          [
+            686,
+            2183,
+            549,
+            1,
+            2235
+          ],
+          [
+            692,
+            1988,
+            11290,
+            61,
+            4192
+          ],
+          [
+            36,
+            15,
+            6718,
+            488,
+            306
+          ],
+          [
+            116,
+            112,
+            410,
+            0,
+            3796
+          ]
+        ],
+        "per_class": {
+          "W": {
+            "precision": 0.7335423197492164,
+            "recall": 0.474859075535513,
+            "f1": 0.5765124555160143,
+            "support": 8870
+          },
+          "N1": {
+            "precision": 0.3614836893525418,
+            "recall": 0.38609833746020517,
+            "f1": 0.3733857863679125,
+            "support": 5654
+          },
+          "N2": {
+            "precision": 0.5701444298555701,
+            "recall": 0.6195467266641058,
+            "f1": 0.5938198553583169,
+            "support": 18223
+          },
+          "N3": {
+            "precision": 0.8606701940035273,
+            "recall": 0.06452465952664287,
+            "f1": 0.12004920049200492,
+            "support": 7563
+          },
+          "REM": {
+            "precision": 0.30141337144672065,
+            "recall": 0.8561118628777628,
+            "f1": 0.44585388771435275,
+            "support": 4434
+          }
+        }
+      }
+    }
+  },
+  "comparison": {
+    "comparison": "E3-E2",
+    "primary_mean_subject_macro_f1": {
+      "observed_difference": 0.04750375924768875,
+      "ci95_low": 0.03724226145425389,
+      "ci95_high": 0.05792305914761307
+    },
+    "supporting_subject_wilcoxon": {
+      "statistic": 2212.0,
+      "p_value": 2.3464168828554416e-17,
+      "median_subject_difference": 0.041942953704381836,
+      "wins": 147,
+      "ties": 0,
+      "losses": 33
+    },
+    "secondary_pooled_macro_f1": {
+      "observed_difference": 0.04304169810821967,
+      "ci95_low": 0.03249029143228083,
+      "ci95_high": 0.053637520805484756
+    },
+    "secondary_pooled_accuracy": {
+      "observed_difference": 0.03598561048919613,
+      "ci95_low": 0.02541892818162113,
+      "ci95_high": 0.047004958858980074
+    },
+    "secondary_pooled_cohen_kappa": {
+      "observed_difference": 0.047372874547576105,
+      "ci95_low": 0.03382457385014716,
+      "ci95_high": 0.061186826552452424
+    },
+    "supporting_n1_f1": {
+      "observed_difference": 0.06182772920918711,
+      "ci95_low": 0.0380794137607669,
+      "ci95_high": 0.08571776807519127
+    },
+    "supporting_n1_recall": {
+      "observed_difference": 0.19094544415881176,
+      "ci95_low": 0.15125104360470407,
+      "ci95_high": 0.22966092028038929
+    },
+    "supporting_transition_radius_1_macro_f1": {
+      "observed_difference": 0.04700319034479844,
+      "ci95_low": 0.03790099064261245,
+      "ci95_high": 0.05661190571828066
+    },
+    "decision": "supporting_evidence_on_opened_shhs_sample"
+  },
+  "claim_boundary": {
+    "known_before_lock": "separate marginal E2 and E3 SHHS summaries had already been inspected",
+    "allowed": [
+      "paired E3-E2 effect estimate on the fixed 180-subject SHHS1 cohort",
+      "supporting evidence about the complete E3 preprocessing regime relative to raw input",
+      "comparison with the already completed Sleep-EDF E3-E2 analysis"
+    ],
+    "forbidden": [
+      "independent confirmation on an untouched cohort",
+      "causal attribution to band-pass filtering, clipping, or division by 100 separately",
+      "universal superiority across datasets, montages, populations, or training seeds",
+      "clinical validation"
+    ]
+  }
+}

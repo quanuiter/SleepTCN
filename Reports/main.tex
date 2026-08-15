@@ -43,13 +43,13 @@
   linkcolor=linkblue,
   citecolor=linkblue,
   urlcolor=linkblue,
-  pdftitle={Tái hiện ZleepAnlystNet và đánh giá ResNet-1D--TCN trên Sleep-EDF Expanded},
+  pdftitle={Tái hiện ZleepAnlystNet, đánh giá ResNet-1D--TCN và zero-shot trên SHHS1},
   pdfauthor={Ngô Nhật Quân; Phạm Thái Sơn}
 }
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{SleepTCN -- Báo cáo Gate 1--8}
+\fancyhead[L]{SleepTCN -- Gate 1--8 và SHHS1 zero-shot}
 \fancyhead[R]{\nouppercase{\leftmark}}
 \fancyfoot[C]{\thepage}
 \setlength{\headheight}{14pt}
@@ -89,11 +89,11 @@
 \addcontentsline{toc}{section}{Tóm tắt}
 Nghiên cứu này xây dựng lại một quy trình phân loại tự động năm giai đoạn giấc ngủ từ EEG đơn kênh trên phân tập Sleep Cassette của Sleep-EDF Expanded. Mốc tham chiếu E0 giữ kiến trúc ZleepAnlystNet gồm 15 CNN và BiLSTM nhưng hiệu chỉnh thiết kế thực nghiệm; do khác tập đối tượng, xử lý nhãn và phần mềm, E0 không phải bản sao định lượng của kết quả MATLAB trong bài báo gốc. Các cấu hình E1--E6 lần lượt cô lập thay đổi mô hình chuỗi, bộ trích xuất đặc trưng và tiền xử lý. Toàn bộ sáu cấu hình chính dùng cùng phép chia 10 fold theo 78 đối tượng, cùng seed huấn luyện 42 và cùng 195.469 epoch hợp lệ. Tập kiểm tra bị khóa trong huấn luyện và chỉ được mở một lần sau khi 60/60 lần chạy xác thực hoàn tất.
 
-Kết quả ngoài fold cho thấy E3 có \mf\ mô tả cao nhất, 0,7904. So với E6, E3 tăng 0,0213 với \ci=[0,0122; 0,0307] và $p$ sau hiệu chỉnh Holm bằng 0,0012. Một đối chiếu hậu nghiệm E3--E0 trên cùng 78 đối tượng cho chênh lệch 0,0150, \ci=[0,0057; 0,0259] và $p$ Wilcoxon bằng 0,0123; kết quả hỗ trợ toàn bộ pipeline E3 trong chiến dịch hiện tại nhưng không phải giả thuyết xác nhận đã định trước và không tách được đóng góp riêng của từng thành phần. Trái lại, E1--E0 và E2--E1 chỉ tăng nhẹ và chưa đủ bằng chứng sau hiệu chỉnh đa kiểm định. ResNet-1D--TCN giảm số mô hình thành phần từ 16 xuống 2 và suy luận nhanh hơn E0 khoảng 3,76 lần trên Tesla V100, nhưng có số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Silhouette của E2 thấp hơn E1 trong cả 10 fold; Gate 8 cũng chưa tìm thấy lợi ích tăng thêm có ý nghĩa của P/N cho \mf\ vùng chuyển pha.
+Kết quả ngoài fold cho thấy E3 có \mf\ mô tả cao nhất, 0,7904. So với E6, E3 tăng 0,0213 với \ci=[0,0122; 0,0307] và $p$ sau hiệu chỉnh Holm bằng 0,0012. Một đối chiếu hậu nghiệm E3--E0 trên cùng 78 đối tượng cho chênh lệch 0,0150, \ci=[0,0057; 0,0259] và $p$ Wilcoxon bằng 0,0123; kết quả hỗ trợ toàn bộ pipeline E3 trong chiến dịch hiện tại nhưng không phải giả thuyết xác nhận đã định trước và không tách được đóng góp riêng của từng thành phần. Trên Sleep-EDF, E1--E0 và E2--E1 chỉ tăng nhẹ và chưa đủ bằng chứng sau hiệu chỉnh đa kiểm định. ResNet-1D--TCN giảm số mô hình thành phần từ 16 xuống 2 và suy luận nhanh hơn E0 khoảng 3,76 lần trên Tesla V100, nhưng có số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Silhouette của E2 thấp hơn E1 trong cả 10 fold; Gate 8 cũng chưa tìm thấy lợi ích tăng thêm có ý nghĩa của P/N cho \mf\ vùng chuyển pha.
 
-Kết luận được giới hạn ở Sleep-EDF Expanded và một seed huấn luyện. Nghiên cứu không chứng minh ResNet-1D hoặc TCN vượt trội về \mf, không chứng minh các cấu hình tương đương, và chưa đánh giá SHHS hay dịch chuyển miền. Đóng góp có cơ sở nhất là một thiết kế thực nghiệm bắt cặp, có kiểm toán artifact, cùng bằng chứng định lượng về đánh đổi giữa hiệu năng, tốc độ và tài nguyên.
+Một chiến dịch riêng sau Gate 8 đánh giá zero-shot trên mẫu SHHS1 đã khóa gồm 180 đối tượng và 169.012 epoch hợp lệ. Mỗi cấu hình dùng đủ 10 checkpoint theo fold và tổ hợp bằng trung bình xác suất; 5.400 dự đoán theo fold cùng 540 tổ hợp qua cổng kiểm định với 0 lỗi. Theo tiêu chí chính là trung bình \mf\ theo đối tượng, E3 cao hơn E0 0,0412, \ci=[0,0314;0,0512], $p$ Holm $<10^{-12}$; E3 cũng cao hơn E6 0,0274, \ci=[0,0182;0,0370], $p$ Holm $<10^{-7}$. Phân tích E1/E2 được khóa trước suy luận hai cấu hình trên cùng cohort cho E1--E0 $+0,00651$, \ci=[0,00192;0,01087], $p$ Holm 0,00325, còn E2--E1 $-0,01280$, \ci=[-0,02209;-0,00350], $p$ Holm 0,01005. Đối chiếu hậu nghiệm E3--E2 trên SHHS cho $+0,04750$, \ci=[0,03724;0,05792], Wilcoxon $p=2,35\times10^{-17}$ và thắng/hòa/thua 147/0/33; gói tiền xử lý E3 vì vậy có bằng chứng hỗ trợ mạnh về lợi ích chuyển miền so với đầu vào thô, nhưng chưa tách được tác động riêng của lọc, cắt biên độ và chia 100. Cohort đã được mở trước nên các phân tích bổ sung không phải tái lập độc lập trên dữ liệu chưa xem; nghiên cứu cũng không thiết lập tương đương hay xác nhận lâm sàng.
 
-\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; mạng tích chập theo thời gian; Sleep-EDF Expanded; thí nghiệm loại bỏ thành phần; kiểm định bắt cặp.
+\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; mạng tích chập theo thời gian; Sleep-EDF Expanded; SHHS; zero-shot; kiểm định bắt cặp.
 
 \clearpage
 \pagenumbering{arabic}

@@ -27,3 +27,14 @@ legacy/
 Thumbs.db
 .idea/
 .vscode/
+
+# Tệp tạm khi biên dịch LaTeX; PDF bàn giao trong Reports/output/pdf vẫn được lưu
+Reports/*.aux
+Reports/*.bbl
+Reports/*.blg
+Reports/*.lof
+Reports/*.log
+Reports/*.lot
+Reports/*.out
+Reports/*.toc
+Reports/main.pdf

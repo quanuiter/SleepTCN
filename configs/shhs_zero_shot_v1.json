@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "locked_before_validation_inference",
+  "dataset": "SHHS Visit 1",
+  "selection_seed": 42,
+  "training_seed": 42,
+  "experiments": {
+    "E0": {
+      "data_variant": "paper_raw_v1",
+      "extractor": "15 fold-specific CNNs",
+      "sequence_model": "fold-specific BiLSTM"
+    },
+    "E3": {
+      "data_variant": "filtered_v2",
+      "extractor": "fold-specific ResNet-1D",
+      "sequence_model": "fold-specific TCN"
+    },
+    "E6": {
+      "data_variant": "filtered_zscore_v2",
+      "extractor": "fold-specific ResNet-1D",
+      "sequence_model": "fold-specific TCN"
+    }
+  },
+  "checkpoint_policy": {
+    "outer_folds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "checkpoint_filename": "best.pt",
+    "use_latest_checkpoint": false,
+    "rank_or_select_fold_by_validation_metric": false,
+    "mix_components_between_folds": false,
+    "use_all_folds": true,
+    "reason": "SHHS is external to every Sleep-EDF fold; all ten locked models are ensembled without post-hoc fold selection"
+  },
+  "ensemble": {
+    "per_fold_transform": "softmax_logits",
+    "aggregation": "arithmetic_mean_probability",
+    "accumulator_dtype": "float64",
+    "fold_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "prediction": "argmax_mean_probability",
+    "tie_break": "lowest_class_index"
+  },
+  "roles": {
+    "adaptation": 5,
+    "validation": 15,
+    "test": 180,
+    "reserve": 20,
+    "zero_shot_weight_updates": 0,
+    "validation_gate_before_test": true,
+    "test_open_once_after_validation_gate": true
+  },
+  "metrics": {
+    "primary": "subject_macro_f1",
+    "secondary": [
+      "pooled_macro_f1",
+      "accuracy",
+      "cohen_kappa",
+      "per_class_f1",
+      "per_class_recall",
+      "transition_macro_f1"
+    ],
+    "primary_comparisons": ["E3-E0", "E3-E6"],
+    "uncertainty": "paired_subject_cluster_bootstrap_95ci",
+    "supporting_test": "paired_subject_wilcoxon_two_sided",
+    "multiple_testing": "holm_over_two_primary_comparisons",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2030
+  },
+  "preprocessing_provenance": {
+    "config_sha256": "7ce889234401da4b398b80d3b92c9275211c4d418de367a8413ddf6606f0e89e",
+    "manifest_sha256": "f8c8adcd35c4c4f82e7995d4f18c231e3f5f863cd1e5c7beb93fdcafa50223fb",
+    "validation_sha256": "2c4a842831279f03b494461f817cf79dd9ca3e6ebe57894448c48477ea945592"
+  },
+  "execution": {
+    "device": "cpu",
+    "torch_version": "2.5.1",
+    "gradient_enabled": false,
+    "model_mode": "eval",
+    "deterministic_algorithms": true,
+    "cpu_threads_recorded_at_runtime": true
+  },
+  "claim_boundary": {
+    "allowed": "zero-shot performance of locked Sleep-EDF checkpoints on the locked SHHS1 sample under cross-dataset and cross-montage shift",
+    "forbidden": [
+      "clinical validation",
+      "equivalence or non-inferiority without a pre-specified margin",
+      "domain adaptation during the zero-shot stage",
+      "selecting a favorable fold after viewing SHHS performance"
+    ]
+  }
+}
