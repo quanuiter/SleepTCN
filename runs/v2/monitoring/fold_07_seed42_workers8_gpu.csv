@@ -1,2 +1,0 @@
-timestamp, name, utilization.gpu [%], utilization.memory [%], memory.used [MiB], memory.total [MiB], temperature.gpu
-2026/08/13 04:28:13.237, Tesla V100-PCIE-16GB, 0 %, 0 %, 0 MiB, 16384 MiB, 42
