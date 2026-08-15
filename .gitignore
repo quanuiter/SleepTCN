@@ -38,3 +38,9 @@ Reports/*.lot
 Reports/*.out
 Reports/*.toc
 Reports/main.pdf
+Reports/paper/*.aux
+Reports/paper/*.bbl
+Reports/paper/*.blg
+Reports/paper/*.log
+Reports/paper/*.out
+Reports/paper/main.pdf
