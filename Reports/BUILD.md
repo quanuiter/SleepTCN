@@ -46,5 +46,5 @@ Không thay số liệu trong bảng bằng kết quả lịch sử từ noteboo
 4. PDF được kết xuất thành ảnh và kiểm tra tràn lề, bảng, hình, dấu tiếng Việt và số trang.
 5. Số liệu SHHS khớp phân tích SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`; không công bố ID đối tượng.
 6. Số liệu phân tích thành phần khớp SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
-7. Số liệu hậu nghiệm E3--E2 khớp SHA-256 `a493384440f469d9f22d36f8f8b9306e743efe537b46b87cfaf104bcc80a6f15` và luôn được ghi rõ là phân tích trên cohort đã mở.
+7. Số liệu hậu nghiệm E3--E2 khớp SHA-256 `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a` và luôn được ghi rõ là phân tích trên cohort đã mở.
 8. Bộ kiểm thử lõi dùng `pytest`; 28 test xuất bản Gate 6--8 có thể chạy trực tiếp bằng `unittest` trong môi trường có `matplotlib`.

@@ -38,5 +38,5 @@ Các kết quả riêng của E2 và E3 trên cùng 180 đối tượng đã đ�
 Nguồn kiểm toán:
 
 - `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`
-- SHA-256: `a493384440f469d9f22d36f8f8b9306e743efe537b46b87cfaf104bcc80a6f15`
+- SHA-256: `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a`
 - Giao thức: `configs/shhs_e3_e2_paired_v1.json`
