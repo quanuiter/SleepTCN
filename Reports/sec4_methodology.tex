@@ -64,6 +64,8 @@ Gate 2 chỉ kiểm tra khả năng chạy xuyên suốt, checkpoint, tiếp t�
 
 E4--E2 là phân tích cơ chế thứ cấp và không thuộc họ Holm. Mười fold không được xem là 10 mẫu độc lập; đơn vị suy luận là 78 đối tượng.
 
+Sau khi kết quả seed 42 đã được quan sát, toàn bộ 60 lượt chạy được lặp lại với seed 123 trên đúng manifest split, sáu cấu hình, quy tắc chọn checkpoint và khóa epoch. Test seed 123 tiếp tục bị khóa đến khi đủ 60 lượt validation rồi được mở bằng chiến dịch riêng. Bootstrap, Wilcoxon và Holm được tính lại hoàn toàn trong seed 123; không gộp dự đoán hoặc $p$-value giữa hai seed. Vì lựa chọn chạy lần lặp này xảy ra sau kết quả chính, nó được định danh là phân tích độ nhạy sau giao thức, nhằm kiểm tra khả năng lặp lại của hướng hiệu ứng. Hai seed cố định cũng không được xem là mẫu ngẫu nhiên để ước lượng phân phối hiệu năng qua mọi khởi tạo.
+
 \subsection{Benchmark và không gian đặc trưng Gate 6}
 
 Benchmark dùng checkpoint fold 00, seed 42 trên Tesla V100-PCIE-16GB. Input float32 có dạng $(1,100,1,3000)$. Mỗi cấu hình được đo trong ba vòng xáo thứ tự; mỗi vòng có 20 lượt làm nóng và 100 lượt forward có đồng bộ CUDA. Phạm vi không gồm I/O, tiền xử lý, cache hoặc huấn luyện.

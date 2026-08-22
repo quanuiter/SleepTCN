@@ -88,8 +88,9 @@ Kết quả này trực tiếp khắc phục hạn chế của phát biểu feat
 - “Không khác biệt có ý nghĩa” đồng nghĩa với “hai mô hình giống nhau”.
 - Kết luận nhân quả hoặc khái quát sang mô hình/dataset khác.
 
-Không có kiểm định tương đương hoặc không thua kém với biên định trước. Chỉ một seed huấn luyện cũng
-không cho phép định lượng độ ổn định theo khởi tạo.
+Không có kiểm định tương đương hoặc không thua kém với biên định trước. Gate 8 chỉ dùng seed 42 nên
+không tự định lượng độ ổn định theo khởi tạo. Chiến dịch chính E0--E6 về sau đã được lặp với seed 123,
+nhưng lần lặp đó không bao gồm 30 mô hình ablation C/CP/CN của Gate 8.
 
 ## Nguồn tái lập
 
@@ -100,4 +101,5 @@ không cho phép định lượng độ ổn định theo khởi tạo.
 - Kết quả máy đọc: `runs/v2/gate8/analysis_seed42.json`.
 - Gói công bố cuối: `runs/v2/publication/gate8/`.
 
-Gate 8 được đóng tại đây; không mở sang SHHS hoặc nhiều seed trong phạm vi hiện tại.
+Gate 8 được đóng tại đây; không mở sang SHHS hoặc nhiều seed. Các chiến dịch SHHS và độ nhạy seed 123
+được quản lý như giao thức riêng, không nhập ngược vào kết luận Gate 8.

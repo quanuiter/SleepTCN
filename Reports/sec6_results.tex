@@ -100,7 +100,7 @@ E6 & 0,769124 & 0,822969 & 0,757320 & 0,512397 \\
 \end{tabular}
 \end{table}
 
-E3 có giá trị mô tả cao nhất, nhưng thứ hạng này không tự tạo bằng chứng thống kê. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước.
+E3 có giá trị mô tả cao nhất trong chiến dịch chính seed 42, nhưng thứ hạng này không tự tạo bằng chứng thống kê. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước.
 
 \begin{table}[H]
 \centering
@@ -126,7 +126,48 @@ E3--E6 & \textbf{0,021319} & $\mathbf{[0,012179;\ 0,030698]}$ & 0,000296 & \text
 \label{fig:primary_effects}
 \end{figure}
 
-E1--E0 và E2--E1 có mức tăng mô tả nhỏ, nhưng CI chứa 0 và $p$ Holm lớn hơn 0,05. Vì vậy chưa đủ bằng chứng rằng TCN tốt hơn BiLSTM hoặc ResNet-1D tốt hơn 15CNN về \mf. E3--E2 có CI gộp vừa dương nhưng chỉ 37/78 người tăng, median chênh lệch theo người âm và Wilcoxon không có ý nghĩa; lợi ích không đồng đều theo đối tượng. E3--E6 là kết quả nhất quán nhất theo cả bootstrap và Wilcoxon-Holm.
+E1--E0 và E2--E1 có mức tăng mô tả nhỏ, nhưng CI chứa 0 và $p$ Holm lớn hơn 0,05. Vì vậy chưa đủ bằng chứng rằng TCN tốt hơn BiLSTM hoặc ResNet-1D tốt hơn 15CNN về \mf. E3--E2 có CI gộp vừa dương nhưng chỉ 37/78 người tăng, median chênh lệch theo người âm và Wilcoxon không có ý nghĩa; lợi ích không đồng đều theo đối tượng. Trong seed 42, E3--E6 là kết quả nhất quán nhất theo cả bootstrap và Wilcoxon-Holm.
+
+\subsubsection{Phân tích độ nhạy sau giao thức với seed 123}
+
+Chiến dịch seed 123 hoàn tất 60/60 lượt validation và 60/60 lượt test. Mỗi cấu hình vẫn phủ đúng 153 bản ghi, 78 đối tượng và 195.469 epoch hợp lệ; trình kiểm định sâu xác nhận đủ prediction, metrics, checkpoint và căn chỉnh bắt cặp cho cả 60 lượt. Bảng~\ref{tab:seed_sensitivity_models} và~\ref{tab:seed_sensitivity_contrasts} đối chiếu hai seed mà không gộp phép kiểm định.
+
+\begin{table}[H]
+\centering
+\caption{\mf\ test ngoài fold của hai seed cố định}
+\label{tab:seed_sensitivity_models}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Cấu hình} & \textbf{Seed 42 (chính)} & \textbf{Seed 123 (độ nhạy)} \\
+\midrule
+E0 & 0,775419 & 0,775457 \\
+E1 & 0,780230 & 0,777645 \\
+E2 & 0,783481 & 0,782787 \\
+E3 & \textbf{0,790443} & \textbf{0,788265} \\
+E4 & 0,789067 & 0,788673 \\
+E6 & 0,769124 & 0,778016 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Độ nhạy của bốn đối chiếu chính; Holm được tính riêng trong từng seed}
+\label{tab:seed_sensitivity_contrasts}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{So sánh} & \textbf{$\Delta_{42}$ [CI]} & \textbf{$p_{Holm,42}$} & \textbf{$\Delta_{123}$ [CI]} & \textbf{$p_{Holm,123}$} \\
+\midrule
+E1--E0 & 0,004811 $[-0,000915;0,010193]$ & 0,1022 & 0,002188 $[-0,002870;0,007043]$ & 0,9130 \\
+E2--E1 & 0,003251 $[-0,002370;0,008808]$ & 0,1036 & 0,005143 $[-0,000571;0,011292]$ & 0,2400 \\
+E3--E2 & 0,006962 $[0,000305;0,014520]$ & 0,8989 & 0,005478 $[-0,002611;0,015796]$ & 0,9130 \\
+E3--E6 & 0,021319 $[0,012179;0,030698]$ & 0,0012 & 0,010249 $[0,002435;0,017989]$ & 0,1313 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối chiếu duy nhất có CI bootstrap hoàn toàn dương trong cả hai lần chạy; seed 42 đạt ý nghĩa Wilcoxon sau Holm, còn seed 123 giữ CI dương nhưng p Holm cao hơn. Vì vậy kết quả củng cố độ ổn định về hướng và độ lớn của hiệu ứng E3--E6, trong khi độ mạnh suy luận phụ thuộc vào seed. Kết quả E1--E0 và E2--E1 vẫn chưa đủ bằng chứng ở seed 123. Phân tích này diễn ra sau khi xem seed 42 và chỉ gồm hai seed cố định, nên được dùng như đánh giá độ nhạy chứ không phải ước lượng phân phối biến thiên do khởi tạo.
 
 \begin{table}[H]
 \centering
@@ -320,7 +361,7 @@ E2--E1 & \textbf{$-0,01280$} & $\mathbf{[-0,02209;-0,00350]}$ & $-0,00429$ & 80/
 \end{tabular}}
 \end{table}
 
-E1--E0 thỏa đồng thời điều kiện CI chính hoàn toàn dương và Wilcoxon có ý nghĩa sau Holm. Hiệu ứng nhỏ và lợi ích tại vùng chuyển pha chưa chắc chắn: $\Delta=0,00288$, CI $[-0,00297;0,00850]$. Giả thuyết E2 cao hơn E1 không đạt; chênh lệch quan sát có hướng ngược lại và cũng âm ở \mf\ gộp lẫn vùng chuyển pha. Vì 180 đối tượng này đã được mở trước cho E0/E3/E6, phân tích được mô tả là bằng chứng ngoại miền thứ cấp khóa trước suy luận E1/E2, không phải tái lập độc lập trên cohort chưa mở.
+E1--E0 thỏa đồng thời điều kiện CI chính hoàn toàn dương và Wilcoxon có ý nghĩa sau Holm. Hiệu ứng nhỏ và lợi ích tại vùng chuyển pha chưa chắc chắn: $\Delta=0,00288$, CI $[-0,00297;0,00850]$. Giả thuyết E2 cao hơn E1 không đạt; chênh lệch quan sát có hướng ngược lại và cũng âm ở \mf\ gộp lẫn vùng chuyển pha. Vì 180 đối tượng này đã được mở trước cho E0/E3/E6, phân tích được mô tả là bằng chứng ngoại miền thứ cấp khóa trước suy luận E1/E2 trên cùng cohort.
 
 \subsection{Đối chiếu hậu nghiệm E3--E2 trên SHHS1}
 

@@ -17,6 +17,7 @@ PDF bàn giao được lưu tại `Reports/output/pdf/SleepTCN_Scientific_Articl
 - Bốn so sánh Sleep-EDF định trước là E1--E0, E2--E1, E3--E2 và E3--E6.
 - E3--E0 trên Sleep-EDF và E3--E2 trên SHHS1 luôn phải ghi là hậu nghiệm.
 - Phân tích E1/E2 trên SHHS1 là bằng chứng thứ cấp vì cohort đã được mở cho E0/E3/E6.
+- Seed 42 là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức trên cùng split. Hai seed được báo cáo riêng và không gộp p-value.
 - Không tuyên bố tương đương, không thua kém, P/N vô dụng, ResNet luôn tốt hơn, hoặc mô hình tiết kiệm tham số.
 
 ## Kiểm tra trước khi nộp

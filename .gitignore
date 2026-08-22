@@ -14,7 +14,32 @@ venv/
 data/raw/
 data/processed/
 data/cache/
-runs/
+# Mặc định bỏ toàn bộ run/checkpoint lớn. Chỉ giữ lại các tóm tắt và gói công bố
+# nhẹ cần để kiểm thử một checkout sạch và truy nguyên các con số trong báo cáo.
+runs/*
+!runs/v2/
+runs/v2/*
+!runs/v2/analysis/
+runs/v2/analysis/*
+!runs/v2/analysis/gate5_paired_results_seed42.json
+!runs/v2/analysis/gate5_paired_results_seed123.json
+!runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json
+!runs/v2/analysis/gate6_latency_fold00_seed42.json
+!runs/v2/analysis/gate6_parameters_fold00_seed42.json
+!runs/v2/analysis/gate6_validation_report.json
+!runs/v2/analysis/gate6_feature_space/
+!runs/v2/analysis/gate6_feature_space/**
+!runs/v2/gate8/
+runs/v2/gate8/*
+!runs/v2/gate8/analysis_seed42.json
+!runs/v2/gate8/validation_campaign_seed42.json
+!runs/v2/gate8/test_campaign_seed42.json
+!runs/v2/publication/
+runs/v2/publication/*
+!runs/v2/publication/gate7/
+!runs/v2/publication/gate7/**
+!runs/v2/publication/gate8/
+!runs/v2/publication/gate8/**
 legacy/
 *.edf
 *.npz

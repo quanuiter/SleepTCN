@@ -1,5 +1,9 @@
 # Gate 7 — gói công bố và bản thảo khoa học
 
+> Lưu ý trạng thái (2026-08-22): tài liệu này đóng băng kết luận tại thời điểm Gate 7, khi mới có seed 42
+> và chưa có SHHS. Kết quả seed 123 và SHHS về sau không nhập ngược vào Gate 7; xem `STATUS_V2.md` và
+> `MULTISEED_SENSITIVITY_RESULTS.md` để biết phạm vi hiện hành.
+
 Ngày khóa: **2026-08-14**  
 Nhánh: `run-in-docker`  
 Trạng thái: **ĐẠT**

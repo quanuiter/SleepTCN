@@ -1,5 +1,9 @@
 # Kết quả Gate 6 — độ phức tạp, tốc độ và không gian đặc trưng
 
+> Lưu ý trạng thái (2026-08-22): đây là bản đóng băng tại Gate 6. Sau đó dự án đã hoàn tất Gate 7--8,
+> SHHS1 zero-shot và một lần lặp đủ 60 lượt với seed 123; xem `STATUS_V2.md`. Các số benchmark Gate 6
+> vẫn chỉ thuộc checkpoint seed 42 và Tesla V100.
+
 Ngày hoàn tất: **2026-08-14**.
 
 ## Trạng thái kiểm định

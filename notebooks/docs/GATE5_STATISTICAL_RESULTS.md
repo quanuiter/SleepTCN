@@ -82,7 +82,7 @@ Không được kết luận:
 - Không khẳng định độ ổn định theo random seed vì huấn luyện chính thức mới dùng seed 42.
 - Không gọi ResNet-1D + TCN là tiết kiệm tham số trước khi benchmark độ phức tạp được hoàn tất.
 
-## Bước tiếp theo
+## Bước tiếp theo tại thời điểm đóng Gate 5
 
 Gate 5 đã hoàn tất. Công việc tiếp theo là Gate 6:
 
@@ -90,5 +90,8 @@ Gate 5 đã hoàn tất. Công việc tiếp theo là Gate 6:
 2. phân tích không gian đặc trưng với quy tắc lấy mẫu được định trước, t-SNE/UMAP để mô tả và
    Silhouette Score để hỗ trợ định lượng;
 3. tạo bảng và hình cho khóa luận từ báo cáo JSON đã khóa;
-4. nếu ngân sách cho phép, đăng ký trước và chạy thêm seed 123/2025 như thí nghiệm độ ổn định riêng,
-   không trộn với kết quả seed 42 hiện tại.
+4. nếu ngân sách cho phép, chạy thêm seed như thí nghiệm độ ổn định riêng, không trộn với kết quả seed 42.
+
+Cập nhật ngày 2026-08-22: Gate 6--8 đã hoàn tất và một chiến dịch đủ 60 lượt với seed 123 đã được chạy
+sau giao thức. Kết quả đối chiếu nằm tại `MULTISEED_SENSITIVITY_RESULTS.md`; seed 123 không được xem là
+xác nhận độc lập và các phép kiểm định của hai seed không được gộp.

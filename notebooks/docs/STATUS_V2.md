@@ -1,12 +1,12 @@
-# Trạng thái dự án: Gate 1--8 và SHHS zero-shot
+# Trạng thái dự án: Gate 1--8, SHHS zero-shot và độ nhạy hai seed
 
-Ngày cập nhật: **2026-08-15**
+Ngày cập nhật: **2026-08-22**
 
 Nhánh: `run-in-docker`
 
 Commit artifact Gate 8: `e3681a3`
 
-Trạng thái: **GATE 1--8, SHHS ZERO-SHOT V1, PHÂN TÍCH E1/E2 VÀ E3−E2 ĐÃ HOÀN TẤT**
+Trạng thái: **GATE 1--8, SHHS ZERO-SHOT V1, E1/E2, E3−E2 VÀ ĐỘ NHẠY SEED 42/123 ĐÃ HOÀN TẤT**
 
 ## Tổng quan
 
@@ -32,7 +32,8 @@ suy luận trên CPU và không sửa artifact Gate 1--8.
   `6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de`.
 - Hai đêm của cùng đối tượng luôn nằm cùng vai trò; mỗi đối tượng xuất hiện đúng một lần ở test
   out-of-fold.
-- Seed huấn luyện duy nhất: 42.
+- Seed 42 là chiến dịch chính Gate 1--8. Seed 123 lặp lại đủ 60 run và 60 test prediction trên cùng
+  split/cấu hình sau khi kết quả seed 42 đã được quan sát; vì vậy nó là phân tích độ nhạy sau giao thức.
 - Sáu cấu hình chính: E0, E1, E2, E3, E4 và E6. E5 bị loại vì dữ liệu khoa học trùng bitwise E4.
 
 Thiết kế này đã khắc phục lỗ hổng so sánh khác split/khác seed: mọi so sánh chính dùng cùng subject,
@@ -50,6 +51,23 @@ bản ghi, epoch gốc và nhãn thật.
 - E2 nhanh hơn E0 `3,757×`, nhưng có `4,366×` tham số và peak allocated VRAM `1,284×`.
 - Silhouette E2 thấp hơn E1 ở 10/10 fold; không có bằng chứng rằng embedding ResNet phân tách lớp
   Euclid tốt hơn softmax 15CNN.
+
+## Phân tích độ nhạy seed 42/123
+
+Seed 123 có đủ 60/60 checkpoint, validation prediction, test prediction, metrics và báo cáo kiểm định;
+60/60 run đã được kiểm tra lại với cả vai trò validation và test. Mỗi seed giữ CI, Wilcoxon và Holm
+riêng; không gộp p-value và không xem hai seed cố định là mẫu ngẫu nhiên của mọi khởi tạo.
+
+| So sánh | Seed 42: Δ [CI 95%], p Holm | Seed 123: Δ [CI 95%], p Holm |
+|---|---|---|
+| E1−E0 | +0,004811 [−0,000915; 0,010193], 0,102193 | +0,002188 [−0,002870; 0,007043], 0,913000 |
+| E2−E1 | +0,003251 [−0,002370; 0,008808], 0,103554 | +0,005143 [−0,000571; 0,011292], 0,239975 |
+| E3−E2 | +0,006962 [0,000305; 0,014520], 0,898933 | +0,005478 [−0,002611; 0,015796], 0,913000 |
+| E3−E6 | +0,021319 [0,012179; 0,030698], 0,001185 | +0,010249 [0,002435; 0,017989], 0,131289 |
+
+Cả bốn hiệu ứng giữ hướng dương. E3−E6 là đối chiếu duy nhất có CI bootstrap hoàn toàn dương ở cả
+hai seed, nhưng chỉ seed 42 đạt ý nghĩa Wilcoxon sau Holm. Kết luận đúng là hướng hiệu ứng lặp lại,
+không phải ý nghĩa thống kê đã lặp lại qua seed. Xem `MULTISEED_SENSITIVITY_RESULTS.md`.
 
 ## Gate 8: ablation C/P/N
 
@@ -116,11 +134,12 @@ nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang to�
 
 ## Ranh giới kết luận cuối
 
-- Kết luận in-domain áp dụng cho Sleep-EDF Expanded seed 42; kết luận ngoài miền chỉ áp dụng cho mẫu
+- Kết luận xác nhận in-domain ban đầu áp dụng cho Sleep-EDF Expanded seed 42; seed 123 cung cấp bằng
+  chứng độ nhạy sau giao thức trên cùng dữ liệu. Kết luận ngoài miền chỉ áp dụng cho mẫu
   180 đối tượng SHHS1, montage và giao thức zero-shot đã khóa.
 - “Đơn giản hóa” là giảm số mô hình thành phần/vận hành, không phải tiết kiệm tham số hoặc VRAM.
-- Đã có đánh giá SHHS1 zero-shot giới hạn; chưa có thích nghi miền, đa kênh, nhiều seed hoặc xác nhận
-  lâm sàng.
+- Đã có đánh giá SHHS1 zero-shot giới hạn và hai seed Sleep-EDF cố định; chưa có thích nghi miền, đa
+  kênh, đủ số seed để mô hình hóa biến thiên khởi tạo hoặc xác nhận lâm sàng.
 - Không có kiểm định tương đương hoặc không thua kém với biên định trước.
 - Gate 8 là phân tích cơ chế bổ sung được thiết kế sau khi đã xem E0–E6; không trình bày như xác nhận
   độc lập hoàn toàn.
@@ -132,7 +151,7 @@ nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang to�
 
 ## Trạng thái dừng
 
-Giao thức v2 được đóng tại Gate 8; zero-shot v1, phần bổ sung E1/E2 và đối chiếu E3−E2 cũng đã đóng. Không
-chạy thêm seed, fold hoặc mở lại test trong hai chiến dịch này. Nếu tiếp tục bằng adaptation/fine-tuning,
+Giao thức v2 được đóng tại Gate 8; zero-shot v1, phần bổ sung E1/E2, đối chiếu E3−E2 và độ nhạy
+seed 42/123 cũng đã đóng. Không mở lại test hoặc thay đổi giả thuyết của các chiến dịch này. Nếu tiếp tục bằng adaptation/fine-tuning,
 phải tạo giao thức mới, chỉ dùng tập adaptation đã khóa và giữ nguyên kết luận zero-shot; xem
 `NEXT_STEPS.md`.
