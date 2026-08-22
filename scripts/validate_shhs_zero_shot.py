@@ -31,6 +31,7 @@ def main() -> int:
     allowed_experiment_sets = {
         tuple(EXPERIMENT_VARIANTS),
         ("E1", "E2"),
+        ("E0", "E2", "E3", "E4", "E6"),
     }
     if experiments not in allowed_experiment_sets:
         raise ValueError(f"Unsupported zero-shot experiment set: {experiments}")

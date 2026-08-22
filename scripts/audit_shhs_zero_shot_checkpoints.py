@@ -1,4 +1,8 @@
-"""Audit fold-specific E0/E3/E6 checkpoints before SHHS zero-shot inference."""
+"""Audit fold-specific SHHS zero-shot checkpoints before inference.
+
+By default this preserves the locked E0/E3/E6 audit.  ``--experiments`` can
+select the same generic audit for a separately locked extension campaign.
+"""
 
 from __future__ import annotations
 
@@ -16,7 +20,9 @@ from sleeptcn.features import expected_15cnn_keys
 
 EXPERIMENTS = {
     "E0": {"variant": "paper_raw_v1", "extractor": "cnn15", "sequence": "bilstm"},
+    "E2": {"variant": "paper_raw_v1", "extractor": "resnet1d", "sequence": "tcn"},
     "E3": {"variant": "filtered_v2", "extractor": "resnet1d", "sequence": "tcn"},
+    "E4": {"variant": "bandpass_v2", "extractor": "resnet1d", "sequence": "tcn"},
     "E6": {"variant": "filtered_zscore_v2", "extractor": "resnet1d", "sequence": "tcn"},
 }
 
@@ -91,8 +97,13 @@ def validate_checkpoint(
     }
 
 
-def audit_fold(workspace: Path, experiment: str, fold: int, seed: int) -> dict[str, Any]:
-    spec = EXPERIMENTS[experiment]
+def audit_fold(
+    workspace: Path,
+    experiment: str,
+    fold: int,
+    seed: int,
+    spec: dict[str, str],
+) -> dict[str, Any]:
     root = workspace / "runs" / "v2" / "full" / experiment / f"fold_{fold:02d}" / f"seed_{seed}"
     manifest = read_json(root / "run_manifest.json")
     expected_manifest = {
@@ -188,19 +199,29 @@ def main() -> int:
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--experiments",
+        nargs="+",
+        choices=tuple(EXPERIMENTS),
+        default=("E0", "E3", "E6"),
+        help="Experiments to audit; defaults to the locked primary E0/E3/E6 set.",
+    )
     args = parser.parse_args()
     workspace = args.workspace.resolve()
     protocol_raw = args.protocol.read_bytes()
     protocol = json.loads(protocol_raw.decode("utf-8"))
     if protocol.get("status") != "locked_before_validation_inference":
         raise ValueError("Zero-shot protocol is not locked")
-    if tuple(protocol["experiments"]) != tuple(EXPERIMENTS):
+    selected_experiments = tuple(args.experiments)
+    if len(selected_experiments) != len(set(selected_experiments)):
+        raise ValueError("Duplicate experiment in --experiments")
+    if tuple(protocol["experiments"]) != selected_experiments:
         raise ValueError("Zero-shot experiment order differs from implementation")
     if protocol["checkpoint_policy"]["outer_folds"] != list(range(10)):
         raise ValueError("Zero-shot protocol does not require all ten folds")
     folds = [
-        audit_fold(workspace, experiment, fold, args.seed)
-        for experiment in EXPERIMENTS
+        audit_fold(workspace, experiment, fold, args.seed, EXPERIMENTS[experiment])
+        for experiment in selected_experiments
         for fold in range(10)
     ]
     checkpoint_entries = [entry for fold in folds for entry in fold["checkpoints"]]
@@ -216,7 +237,7 @@ def main() -> int:
         "seed": args.seed,
         "selection_policy": "all_10_folds_no_ranking_probability_ensemble",
         "summary": {
-            "experiments": len(EXPERIMENTS),
+            "experiments": len(selected_experiments),
             "folds_per_experiment": 10,
             "fold_sets": len(folds),
             "best_checkpoints": len(checkpoint_entries),
@@ -226,7 +247,7 @@ def main() -> int:
                     for fold in folds
                     if fold["experiment"] == experiment
                 )
-                for experiment in EXPERIMENTS
+                for experiment in selected_experiments
             },
             "checkpoint_bytes": sum(entry["bytes"] for entry in checkpoint_entries),
             "unique_checkpoint_hashes": len({entry["sha256"] for entry in checkpoint_entries}),

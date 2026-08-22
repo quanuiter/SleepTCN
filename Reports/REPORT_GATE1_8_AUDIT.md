@@ -2,7 +2,7 @@
 
 Ngày cập nhật: 2026-08-22
 
-Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; chiến dịch SHHS1 zero-shot bằng checkpoint seed 42; phân tích thành phần E1/E2 và đối chiếu hậu nghiệm E3−E2; nhánh `run-in-docker`.
+Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch SHHS1 zero-shot bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4; nhánh `run-in-docker`.
 
 ## Nguồn bằng chứng khóa
 
@@ -17,6 +17,7 @@ Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau gia
 - SHHS1: test gate SHA-256 `51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646` và phân tích bắt cặp SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`.
 - Thành phần SHHS1: test gate SHA-256 `fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c` và phân tích byte-giống-hệt SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
 - E3−E2 trên SHHS1: `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`, SHA-256 `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a`; bốn artifact nguồn được khóa bằng SHA-256.
+- Extension E4 seed 123 trên SHHS1: test gate SHA-256 `9dbd4fd3183bdc7b14861be3bf8baa97b6002ae7a8f89a710cdcc68bb17a37c4`, run manifest SHA-256 `0d568fa3d33f2830c5e4a56f7188bdccc53a571cd7962310aa05a5a44aa7a5e7`, phân tích bắt cặp SHA-256 `8563eefe1ea72d5e5ab552fd770568cceeecbb87e1715a94ee25b8cb9b4792fe` và chẩn đoán SHA-256 `91100ee7837cc67b93a0697292ac1c94e2db231eb3263b2cda2154813e2b7f81`.
 
 Mã băm SHA-256 của manifest split là
 `6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de`.
@@ -24,8 +25,8 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Các phép kiểm tra tài liệu
 
-- Biên dịch theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex` thành công.
-- Báo cáo dài gồm 35 trang và bản thảo bài báo gồm 9 trang; đã dựng đủ 44/44 trang thành PNG ở 120 dpi, rà soát trực quan toàn bộ và kiểm tra riêng các trang chứa bảng độ nhạy seed 123, kết luận và phụ lục tái lập ở độ phân giải gốc.
+- Bản PDF lịch sử đã từng biên dịch theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; sau khi tích hợp extension E4, nguồn đã qua kiểm tra cân bằng dấu ngoặc và tham chiếu `\input`, nhưng chưa thể biên dịch lại trên máy hiện tại vì MiKTeX chưa hoàn tất cấu hình và bị từ chối quyền ghi registry.
+- Bản PDF lịch sử gồm 35 trang và bản thảo bài báo lịch sử gồm 9 trang đã được rà soát trực quan. Do nguồn vừa bổ sung extension E4, số trang và ảnh rà soát phải được tạo lại sau khi môi trường LaTeX được cấu hình.
 - Không có tham chiếu hoặc trích dẫn chưa xác định, nhãn trùng, hộp tràn lề hay trang bị cắt.
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
@@ -46,21 +47,22 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Gate 8 không tìm thấy bằng chứng rằng nhóm P/N cải thiện Macro-F1 tại vùng chuyển pha; kết quả này không chứng minh P/N vô dụng, không định lượng “phần trăm thông tin”, và không chứng minh tương đương.
 - Silhouette thấp hơn của E2 không chứng minh ResNet-1D vô ích; nó chỉ bác bỏ giả thuyết đơn giản rằng embedding E2 tách lớp tuyến tính tốt hơn logits E1 dưới phép đo đã khóa.
 - Benchmark Gate 6 đo suy luận forward đã khóa, không gồm I/O, tiền xử lý hoặc huấn luyện; vì vậy không được diễn giải thành tốc độ huấn luyện.
-- Chiến dịch SHHS riêng đã đạt: 180 test, 169.012 epoch hợp lệ, 5.400 dự đoán theo fold, 540 tổ hợp và 0 lỗi cổng test.
+- Chiến dịch SHHS chính đã đạt: 180 test, 169.012 epoch hợp lệ, 5.400 dự đoán theo fold, 540 tổ hợp và 0 lỗi cổng test.
 - E3--E0 zero-shot tăng 0,041219 Macro-F1 trung bình theo đối tượng, CI 95% [0,031367; 0,051196], p Holm `2,65e-13`, thắng/hòa/thua 138/0/42.
 - E3--E6 zero-shot tăng 0,027359, CI [0,018172; 0,036979], p Holm `1,87e-08`, thắng/hòa/thua 125/0/55.
 - Hai kết quả SHHS cho phép kết luận E3 tốt hơn E0/E6 trên mẫu đã khóa, không cho phép quy nguyên nhân riêng cho kiến trúc/tiền xử lý hoặc tuyên bố xác nhận lâm sàng.
+- Extension seed 123 đã đạt 180 test, 169.012 epoch hợp lệ, 9.000 dự đoán theo fold, 900 tổ hợp và 0 lỗi cổng test. E4 đạt Macro-F1 theo đối tượng 0,5732; cao hơn E2 `+0,032320`, CI `[0,023649;0,041035]`, p Holm `7,40e-13`, thắng/hòa/thua `135/1/44`; cao hơn E3 theo hướng E4 `+0,009820`, CI `[0,007298;0,012503]`, p Holm `1,89e-10`. Đây là bằng chứng bắt cặp mở rộng trên cùng cohort, không phải kiểm định tương đương/không thua kém, không tách nhân quả của riêng band-pass.
 - E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của bài báo MATLAB gốc. Báo cáo đã bổ sung bảng đối chiếu trực tiếp và nêu rõ khác quần thể/giao thức.
 - Tái kiểm toán kho NPZ cục bộ ghi nhận 459/765 mã băm toàn tệp lệch manifest lịch sử ở ba biến thể, trong khi kiểm tra nhãn, chỉ số, hình dạng và quan hệ biến đổi số đều đạt. Do chưa truy cập lại được dữ liệu thô và manifest run không khóa mã băm nội dung đầu vào, chưa được tuyên bố tái lập byte-theo-byte cho kho tiền xử lý cục bộ.
 
 ## Trạng thái
 
-Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, phân tích E1/E2 và E3−E2; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng viết khóa luận. Báo cáo đã chứng minh được giá trị của toàn pipeline E3 trong giao thức Sleep-EDF/SHHS đã khóa, cùng các đánh đổi vận hành; các tuyên bố tương đương/không thua kém, suy rộng toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
+Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, extension E4, phân tích E1/E2 và E3−E2; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng viết khóa luận sau khi dựng lại PDF. Báo cáo có bằng chứng cho lợi ích của các pipeline trong những giao thức SHHS đã chạy và các đánh đổi vận hành; các tuyên bố tương đương/không thua kém, suy rộng toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
 
-PDF bàn giao mới: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
+PDF bàn giao trước khi tích hợp extension: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` (không dùng làm bản cuối cho nguồn hiện tại).
 
-SHA-256 báo cáo dài: `f865b1735a00844678d88c82aa9229f551718b4e997011d18c789947ab156c8b`.
+SHA-256 báo cáo dài lịch sử: `f865b1735a00844678d88c82aa9229f551718b4e997011d18c789947ab156c8b`.
 
-PDF bài báo: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
+PDF bài báo trước khi tích hợp extension: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf` (không dùng làm bản cuối cho nguồn hiện tại).
 
-SHA-256 bài báo: `d2328af451f49db097acbe9febd2a35bb8fe78a2c2923fc2e3cd2b408daeaedc`.
+SHA-256 bài báo lịch sử: `d2328af451f49db097acbe9febd2a35bb8fe78a2c2923fc2e3cd2b408daeaedc`.

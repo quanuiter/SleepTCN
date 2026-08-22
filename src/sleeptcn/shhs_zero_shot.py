@@ -219,10 +219,14 @@ def inventory_fold(inventory: dict[str, Any], experiment: str, fold: int) -> dic
 
 
 def load_fold_models(
-    workspace: Path, experiment: str, fold: int, inventory: dict[str, Any]
+    workspace: Path,
+    experiment: str,
+    fold: int,
+    inventory: dict[str, Any],
+    checkpoint_seed: int = 42,
 ) -> tuple[str, Any, str, torch.nn.Module, str, str]:
     context = build_context(
-        workspace, experiment, fold, 42, "cpu", smoke=False,
+        workspace, experiment, fold, checkpoint_seed, "cpu", smoke=False,
         allow_test_evaluation=True, num_workers=0, resume=True
     )
     extractor_kind, extractor, extractor_hash = _load_extractor(context)
@@ -398,6 +402,7 @@ def run_role(
     expected_protocol_status: str = "locked_before_validation_inference",
     expected_inventory_checkpoints: int = 200,
     test_confirmation: str = TEST_CONFIRMATION,
+    checkpoint_seed: int = 42,
 ) -> dict[str, Any]:
     if threads <= 0 or batch_size <= 0:
         raise ValueError("threads and batch_size must be positive")
@@ -450,7 +455,7 @@ def run_role(
         for fold in FOLDS:
             fold_info = inventory_fold(inventory, experiment, fold)
             extractor_kind, extractor, extractor_hash, sequence, sequence_kind, sequence_hash = load_fold_models(
-                workspace, experiment, fold, inventory
+                workspace, experiment, fold, inventory, checkpoint_seed
             )
             for index, record in enumerate(loaded_records, start=1):
                 path = fold_artifact_path(output_root, role, experiment, fold, record.record_key)
@@ -464,7 +469,7 @@ def run_role(
                     "experiment": experiment,
                     "data_variant": variant,
                     "outer_fold": fold,
-                    "seed": 42,
+                    "seed": checkpoint_seed,
                     "role": role,
                     "record_key": record.record_key,
                     "subject_id": record.subject_id,
