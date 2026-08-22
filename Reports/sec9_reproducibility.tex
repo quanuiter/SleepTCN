@@ -16,6 +16,9 @@ Dữ liệu đã xử lý & \code{data/manifests/processed\_validation\_v2.json}
 Split đối tượng & \code{data/splits/sleepedf\_sc\_10fold\_seed42\_v2.json} \\
 Chiến dịch test & \code{runs/v2/test\_campaign\_seed42.json} \\
 Thống kê Gate 5 & \code{runs/v2/analysis/gate5\_paired\_results\_seed42.json} \\
+Chiến dịch test độ nhạy & \code{runs/v2/test\_campaign\_seed123.json} \\
+Thống kê seed 123 & \code{runs/v2/analysis/gate5\_paired\_results\_seed123.json} \\
+Đối chiếu hai seed & \path{runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json} \\
 Đối chiếu hậu nghiệm E3--E0 & \code{Reports/POSTHOC\_E3\_E0\_AUDIT.json} \\
 Benchmark Gate 6 & \code{runs/v2/analysis/gate6\_latency\_fold00\_seed42.json} \\
 Không gian đặc trưng & \path{runs/v2/analysis/gate6_feature_space/feature_space_report.json} \\
@@ -34,7 +37,7 @@ Kiểm toán E3--E2 & \code{Reports/SHHS\_E3\_E2\_PAIRED\_AUDIT.json} \\
 \end{tabularx}
 \end{table}
 
-Mã băm split là {\ttfamily\small\seqsplit{6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de}}. Báo cáo Gate 5 có SHA-256 tái chạy giống lần đầu: {\ttfamily\small\seqsplit{40eb9fa3f6ec3c775b8838304647a27dd1743d1e22f059ce07f8397bf301fc3c}}. Benchmark JSON Gate 6 có SHA-256 {\ttfamily\small\seqsplit{e1cdba979d9f434bb19803ea5341052239f0e98c89f1bff95c21287e99d81cc7}}.
+Mã băm split là {\ttfamily\small\seqsplit{6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de}}. Artifact Gate 5 seed 42 và seed 123 dùng trong đối chiếu hiện tại lần lượt có SHA-256 {\ttfamily\small\seqsplit{ee6302f5ebb9781406c3a77b45c631a17b7dab5889420e6730d5b50524767cb0}} và {\ttfamily\small\seqsplit{ea669e1f869f4234f1c887ae6e1490870597470d59c1ab58e67f1ac029263980}}. Báo cáo đối chiếu hai seed có SHA-256 {\ttfamily\small\seqsplit{a9b2ef93aa9af937ecb7bfc41d6bc8eae5db78344188be647533616c9c3e9fee}}. Benchmark JSON Gate 6 có SHA-256 {\ttfamily\small\seqsplit{e1cdba979d9f434bb19803ea5341052239f0e98c89f1bff95c21287e99d81cc7}}.
 
 Manifest test SHHS có SHA-256 {\ttfamily\small\seqsplit{f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf}}; cổng test có SHA-256 {\ttfamily\small\seqsplit{51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646}}. Phân tích bắt cặp được chạy lại byte-giống-hệt với SHA-256 {\ttfamily\small\seqsplit{83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df}}. Các artifact này chứa dữ liệu chịu điều kiện NSRR nên nằm ngoài Git; báo cáo chỉ công bố thống kê tổng hợp và mã băm.
 
@@ -53,6 +56,17 @@ python -m pytest -q tests
 \end{lstlisting}
 
 Khi kiểm tra lại, không chạy huấn luyện và không tạo lại prediction test. Trình kiểm định chỉ đọc artifact đã khóa, đối chiếu lược đồ, độ phủ, khóa bắt cặp và SHA-256.
+
+Phân tích độ nhạy hai seed chỉ đọc hai báo cáo Gate 5 đã khóa:
+
+\begin{lstlisting}[language=bash]
+python scripts/analyze_seed_sensitivity.py \
+  --seed42-report runs/v2/analysis/gate5_paired_results_seed42.json \
+  --seed123-report runs/v2/analysis/gate5_paired_results_seed123.json \
+  --output runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json
+\end{lstlisting}
+
+Script kiểm tra cùng split, cùng sáu cấu hình, đủ 78 đối tượng/153 bản ghi/195.469 epoch và cùng họ bốn đối chiếu. Nó giữ thống kê từng seed riêng biệt, không gộp $p$-value và không xem hai seed cố định là mẫu ngẫu nhiên.
 
 Phân tích SHHS có thể tái chạy mà không suy luận lại:
 
@@ -105,7 +119,7 @@ Vì dữ liệu thô không còn tại đường dẫn đã ghi trong môi trư�
 \textbf{Được phép} & \textbf{Không được phép} \\
 \midrule
 E3 có \mf\ mô tả cao nhất trong sáu cấu hình & E3 là mô hình tốt nhất nói chung \\
-E3 tốt hơn E6 trong giao thức hiện tại & Chuẩn hóa giải quyết dịch chuyển miền \\
+E3--E6 dương và CI dương ở cả hai seed; Holm chỉ đạt ở seed 42 & Ý nghĩa thống kê đã lặp lại qua seed hoặc chuẩn hóa giải quyết dịch chuyển miền \\
 Hậu nghiệm: toàn pipeline E3 cao hơn E0 trong chiến dịch seed 42 & E3--E0 là giả thuyết xác nhận định trước hoặc chỉ ra thành phần gây cải thiện \\
 ResNet-1D--TCN ít mô hình thành phần và forward nhanh hơn & Mô hình nhẹ hoặc tiết kiệm tham số \\
 Trên Sleep-EDF, E1/E2 tăng mô tả nhẹ nhưng chưa đủ bằng chứng & TCN/ResNet vượt trội in-domain có ý nghĩa \\
@@ -115,7 +129,7 @@ Hậu nghiệm: E3 cao hơn E2 trên mẫu SHHS đã mở & Đây là xác nhậ
 Silhouette E2 thấp hơn E1 theo phép đo đã khóa & ResNet luôn tạo đặc trưng kém hơn \\
 Chưa thấy lợi ích tăng thêm có ý nghĩa của P/N & P/N vô dụng hoặc chỉ có 12\% thông tin \\
 Chưa kiểm định tương đương & Các cấu hình tương đương \\
-Kết quả Sleep-EDF in-domain, seed 42 & TCN/ResNet riêng lẻ vượt trội có ý nghĩa \\
+Kết quả Sleep-EDF in-domain gồm seed 42 chính và seed 123 độ nhạy & Hai seed là mẫu đại diện mọi khởi tạo hoặc là xác nhận độc lập \\
 E3 cao hơn E0/E6 trên mẫu SHHS1 zero-shot đã khóa & Đã giải quyết domain shift hoặc xác nhận lâm sàng \\
 \bottomrule
 \end{tabularx}

@@ -39,10 +39,11 @@ Các đóng góp có bằng chứng của nghiên cứu gồm:
   \item thí nghiệm loại bỏ nhóm C/P/N với đầu vào và số tham số TCN không đổi;
   \item một chiến dịch SHHS1 riêng gồm tiền xử lý có truy nguyên, tổ hợp đủ 10 fold và phân tích bắt cặp trên 180 đối tượng zero-shot;
   \item một phân tích bổ sung E1/E2 khóa trước suy luận hai cấu hình, có cổng artifact riêng và ranh giới rõ rằng cohort đã được mở trước cho E0/E3/E6.
-  \item một phân tích bắt cặp hậu nghiệm E3--E2 có khóa SHA-256 nguồn, định lượng hiệu ứng toàn gói tiền xử lý trên cùng 180 đối tượng và công khai giới hạn không phải cohort xác nhận độc lập.
+  \item một phân tích bắt cặp E3--E2 có khóa SHA-256 nguồn, định lượng hiệu ứng toàn gói tiền xử lý trên cùng 180 đối tượng và công khai rõ phạm vi suy rộng của kết quả.
+  \item một lần lặp đầy đủ 60 lượt chạy với seed 123 trên đúng split và cấu hình, được phân tích riêng như kiểm tra độ nhạy sau giao thức và không gộp $p$-value với seed 42.
 \end{itemize}
 
-Kết luận in-domain chỉ bao gồm Sleep-EDF Expanded, kênh Fpz-Cz và một seed huấn luyện. Kết luận ngoài miền chỉ bao gồm mẫu 180 đối tượng SHHS1 đã khóa, kênh EEG C4--A1 và giao thức zero-shot không cập nhật trọng số. Phân tích E1/E2 được khóa trước suy luận hai cấu hình nhưng không phải cohort xác nhận độc lập vì cùng 180 đối tượng đã được mở cho E0/E3/E6. Đối chiếu E3--E2 còn được đặt ra sau khi đã xem thống kê riêng của hai cấu hình nên chỉ là bằng chứng hậu nghiệm trên mẫu này. Nghiên cứu chưa đánh giá đa kênh, nhiều seed, thích nghi miền hay giá trị lâm sàng. ``Đơn giản hơn'' trong báo cáo chỉ có nghĩa là ít mô hình thành phần hơn, không đồng nghĩa với ít tham số hoặc ít bộ nhớ hơn.
+Kết luận in-domain chỉ bao gồm Sleep-EDF Expanded, kênh Fpz-Cz và hai seed huấn luyện cố định. Seed 42 là chiến dịch chính; seed 123 được thực hiện sau khi đã xem kết quả chính để đánh giá độ nhạy và khả năng lặp lại của hướng hiệu ứng. Kết luận ngoài miền chỉ bao gồm mẫu 180 đối tượng SHHS1 đã khóa, kênh EEG C4--A1, checkpoint seed 42 và giao thức zero-shot không cập nhật trọng số. Phân tích E1/E2 được khóa trước suy luận hai cấu hình trên cùng cohort đã dùng cho E0/E3/E6 nên được trình bày là bằng chứng thứ cấp. Đối chiếu E3--E2 là phân tích bổ sung trên mẫu này. Nghiên cứu chưa đánh giá đa kênh, một chiến dịch đa seed đăng ký trước, thích nghi miền hay giá trị lâm sàng. ``Đơn giản hơn'' trong báo cáo chỉ có nghĩa là ít mô hình thành phần hơn, không đồng nghĩa với ít tham số hoặc ít bộ nhớ hơn.
 
 \subsection{Cấu trúc báo cáo}
 

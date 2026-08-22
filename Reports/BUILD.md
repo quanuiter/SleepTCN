@@ -19,6 +19,8 @@ Biên bản kiểm định nội dung và bố cục nằm tại `REPORT_GATE1_8
 ## Nguồn số liệu bắt buộc
 
 - `../runs/v2/analysis/gate5_paired_results_seed42.json`
+- `../runs/v2/analysis/gate5_paired_results_seed123.json`
+- `../runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json`
 - `../runs/v2/analysis/gate6_validation_report.json`
 - `../runs/v2/gate8/analysis_seed42.json`
 - `../runs/v2/publication/gate8/publication_manifest.json`
@@ -48,3 +50,4 @@ Không thay số liệu trong bảng bằng kết quả lịch sử từ noteboo
 6. Số liệu phân tích thành phần khớp SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
 7. Số liệu hậu nghiệm E3--E2 khớp SHA-256 `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a` và luôn được ghi rõ là phân tích trên cohort đã mở.
 8. Bộ kiểm thử lõi dùng `pytest`; 28 test xuất bản Gate 6--8 có thể chạy trực tiếp bằng `unittest` trong môi trường có `matplotlib`.
+9. Seed 42 luôn được ghi là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức. Báo cáo riêng từng seed và không gộp p-value.

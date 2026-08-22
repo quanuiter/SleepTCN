@@ -1,4 +1,4 @@
-# Các notebook hiện có
+# Vai trò của các notebook
 
 ```text
 00_kiem_tra_moi_truong.ipynb       # kiểm tra workspace và môi trường
@@ -6,12 +6,11 @@
 20_chay_thu_gpu.ipynb              # smoke GPU có kiểm soát
 ```
 
-Smoke GPU đã hoàn tất. Trên Docker mới, chỉ cần chạy `00` nếu muốn xem/ghi báo cáo môi trường;
-không cần chạy lại `20` cho mỗi fold. Notebook không thay thế sáu full run đang hoạt động
-E0/E1/E2/E3/E4/E6 và không được dùng để mở test. Có thể bỏ qua notebook hoàn toàn và chạy CLI
-trong `docs/DOCKER_GPU_RUNBOOK.md`; đây là cách dễ ghi log và tiếp tục bằng `--resume` hơn.
+Toàn bộ smoke GPU, 10 fold, hai chiến dịch seed 42/123, Gate 1--8 và test đã hoàn tất. Ba notebook
+trên chỉ còn vai trò kiểm tra môi trường hoặc minh họa hợp đồng CPU/GPU; chúng không phải nguồn kết
+quả cuối và không cần chạy lại để tái tạo các bảng hiện tại.
 
 `10_kiem_thu_hop_dong_cpu.ipynb` chỉ dành cho kiểm tra CPU, không cần chạy lại trên GPU.
 
-Notebook chỉ điều phối và trình bày. Mã dùng chung nằm trong `src/sleeptcn`; runner chính thức là
-`scripts/run_experiment.py`, còn `scripts/validate_run_artifacts.py` phải chạy sau mỗi run.
+Notebook chỉ điều phối và trình bày. Mã dùng chung nằm trong `src/sleeptcn`; kết quả hiện hành được
+truy nguyên từ artifact trong `runs/v2`, còn trạng thái chính thức nằm tại `docs/STATUS_V2.md`.

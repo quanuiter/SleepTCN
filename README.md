@@ -3,17 +3,20 @@
 Kho nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể tiền xử lý
 trên Sleep-EDF Expanded — Sleep Cassette.
 
-> **Trạng thái ngày 2026-08-15:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích
-> thành phần E1/E2 và đối chiếu hậu nghiệm E3−E2 đều đã hoàn tất. Không có chiến dịch GPU nào đang
+> **Trạng thái ngày 2026-08-22:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích
+> thành phần E1/E2, đối chiếu hậu nghiệm E3−E2 và phân tích độ nhạy seed 42/123 đều đã hoàn tất. Không có chiến dịch GPU nào đang
 > chờ chạy. Xem `notebooks/docs/STATUS_V2.md`, `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` và báo cáo
 > tại `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
 ## Kết quả chính
 
 - Sleep-EDF Expanded: 78 đối tượng, 153 bản ghi và 195.469 epoch hợp lệ.
-- Sáu cấu hình E0, E1, E2, E3, E4 và E6 dùng cùng split 10-fold theo đối tượng, seed huấn luyện 42.
+- Sáu cấu hình E0, E1, E2, E3, E4 và E6 dùng cùng split 10-fold theo đối tượng. Seed 42 là chiến dịch
+  chính Gate 1--8; seed 123 là lần lặp đầy đủ sau giao thức để đánh giá độ nhạy theo khởi tạo.
 - E3 đạt Macro-F1 mô tả cao nhất, `0,790443`; E3−E6 đạt chênh lệch `0,021319`, CI 95%
   `[0,012179; 0,030698]`, p Holm `0,001185`.
+- Ở seed 123, E3−E6 vẫn dương `+0,010249`, CI `[0,002435; 0,017989]`, nhưng p Holm `0,131289`.
+  Hướng hiệu ứng lặp lại, còn ý nghĩa sau hiệu chỉnh Holm thì không.
 - ResNet-1D–TCN nhanh hơn E0 khoảng `3,76×` trong benchmark V100 đã khóa, nhưng có `4,37×` số tham
   số và peak VRAM cao hơn `28,4%`.
 - Gate 8 không tìm thấy bằng chứng thống kê rằng P/N mang lại lợi ích tăng thêm cho Macro-F1 vùng
@@ -22,9 +25,9 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 - Zero-shot SHHS1 dùng 180 đối tượng và 169.012 epoch: E3−E0 đạt `+0,041219`, CI 95%
   `[0,031367; 0,051196]`; E3−E6 đạt `+0,027359`, CI `[0,018172; 0,036979]`.
 - Phân tích thành phần SHHS cho E1−E0 `+0,006515`, nhưng E2−E1 `-0,012800`.
-- Đối chiếu hậu nghiệm E3−E2 trên SHHS đạt `+0,047504`, CI `[0,037242; 0,057923]`, E3 thắng
-  `147/180` đối tượng. Kết quả hỗ trợ toàn chế độ tiền xử lý E3 so với raw trên mẫu đã mở, không phải
-  xác nhận độc lập hoặc tác động riêng của một thao tác.
+- Đối chiếu E3−E2 trên SHHS đạt `+0,047504`, CI `[0,037242; 0,057923]`, E3 thắng `147/180`
+  đối tượng. Kết quả cung cấp bằng chứng mạnh cho toàn chế độ tiền xử lý E3 so với raw trên mẫu
+  hiện tại; ba thao tác vẫn chưa được tách riêng về nhân quả.
 
 ## Trạng thái các cổng
 
@@ -45,19 +48,23 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 2. `notebooks/docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
 3. `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
 4. `notebooks/docs/SHHS_E3_E2_PAIRED_RESULTS.md` — đối chiếu tiền xử lý E3−E2.
-5. `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` — báo cáo LaTeX hoàn chỉnh.
-6. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
-7. `notebooks/docs/NEXT_STEPS.md` — trạng thái dừng và điều kiện nếu mở nghiên cứu mới.
+5. `notebooks/docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
+6. `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` — báo cáo LaTeX hoàn chỉnh.
+7. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
+8. `notebooks/docs/NEXT_STEPS.md` — trạng thái dừng và điều kiện nếu mở nghiên cứu mới.
 
-Các tài liệu không có hậu tố `V2`, cùng các runbook của Gate đã qua, là hồ sơ lịch sử để truy nguyên;
-không dùng các câu “bước tiếp theo” trong đó để lập lịch hiện tại.
+`STATUS_V2.md` và `NEXT_STEPS.md` là hai nguồn duy nhất cho trạng thái và kế hoạch hiện hành. Các
+runbook còn lại mô tả cách tái tạo một cổng cụ thể; các bước tuần tự bên trong không phải danh sách
+công việc đang chờ ở thời điểm hiện tại.
 
 ## Phạm vi và giới hạn
 
 - Sleep-EDF Expanded 1.0.0, Sleep Cassette, EEG Fpz-Cz 100 Hz, epoch 30 giây.
 - Năm lớp W/N1/N2/N3/REM; Movement/Unknown giữ vị trí thời gian nhưng bị mask khỏi loss/metrics.
 - Train/validation/test tách theo đối tượng; hai đêm của cùng người luôn cùng vai trò.
-- Chỉ một seed huấn luyện 42: chưa định lượng biến thiên do khởi tạo.
+- Có hai seed huấn luyện cố định 42 và 123 trên Sleep-EDF. Seed 123 được chạy sau khi đã xem kết quả
+  seed 42; phân tích này đánh giá khả năng lặp lại của hướng hiệu ứng và độ nhạy, chưa đủ để ước lượng
+  toàn bộ phân phối biến thiên do khởi tạo.
 - Đã đánh giá zero-shot giới hạn trên 180 đối tượng SHHS1; chưa đại diện toàn bộ SHHS, chưa thích nghi
   miền, đa kênh hoặc xác nhận lâm sàng.
 - Không có kiểm định tương đương hoặc không thua kém.
@@ -82,5 +89,5 @@ tests/            Kiểm thử tự động
 - Không gọi `p > 0,05` là bằng chứng tương đương.
 - Không gọi ablation C/P/N là phép đo phần trăm thông tin hay quan hệ nhân quả.
 - Không đưa dataset hoặc `data/cache/` lên kho Git.
-- Mọi mở rộng nhiều seed, thích nghi SHHS hoặc cohort xác nhận mới phải là giao thức riêng, tách khỏi
+- Mọi mở rộng thêm seed, thích nghi SHHS hoặc cohort xác nhận mới phải là giao thức riêng, tách khỏi
   kết quả Gate 1–8 và các phân tích SHHS đã đóng.

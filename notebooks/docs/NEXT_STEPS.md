@@ -1,18 +1,19 @@
 # Trạng thái dừng và điều kiện tiếp tục
 
-Ngày cập nhật: **2026-08-15**
+Ngày cập nhật: **2026-08-22**
 
-Trạng thái hiện tại: **DỪNG SAU GATE 8, SHHS ZERO-SHOT V1, PHÂN TÍCH E1/E2 VÀ E3−E2**
+Trạng thái hiện tại: **DỪNG SAU GATE 8, SHHS ZERO-SHOT V1, E1/E2, E3−E2 VÀ ĐỘ NHẠY SEED 42/123**
 
 ## Không còn bước đang chờ
 
-Gate 1–8, chiến dịch SHHS1 zero-shot, phân tích E1/E2 và đối chiếu hậu nghiệm E3−E2 đã hoàn tất. Không cần thuê GPU, huấn luyện thêm, mở lại test
+Gate 1–8, chiến dịch SHHS1 zero-shot, phân tích E1/E2, đối chiếu hậu nghiệm E3−E2 và lần lặp đầy đủ
+seed 123 đã hoàn tất. Không cần thuê GPU, huấn luyện thêm, mở lại test
 Sleep-EDF/SHHS hoặc tiền xử lý lại dữ liệu cho các kết luận hiện tại.
 
-Kết quả bổ sung đã làm rõ hai câu hỏi thành phần với chi phí CPU: E1 cao hơn E0 một lượng nhỏ nhưng có
-bằng chứng bắt cặp; E2 không cao hơn E1 và chênh lệch quan sát có hướng ngược lại. Không chạy thêm seed
-chỉ để cố đảo kết quả. Nếu cần xác nhận độc lập nghiêm ngặt, phải dùng cohort chưa mở hoặc nghiên cứu
-nhiều seed được đăng ký trước như một chiến dịch mới.
+Seed 123 giữ hướng dương của bốn đối chiếu Sleep-EDF, nhưng E3−E6 không còn đạt ý nghĩa sau Holm
+(`p=0,131289`) dù CI bootstrap vẫn hoàn toàn dương. Hai seed cố định làm rõ độ nhạy tốt hơn một seed,
+nhưng chưa đủ để ước lượng phân phối biến thiên do khởi tạo. Không chạy thêm seed chỉ để cố đạt hoặc đảo
+ngưỡng ý nghĩa. Nếu mở rộng, phải khóa trước danh sách seed và phân tích như một chiến dịch mới.
 
 E3−E2 trên SHHS cho bằng chứng hỗ trợ mạnh về lợi ích của toàn chế độ tiền xử lý E3 so với raw, nhưng
 không được đổi nhãn thành xác nhận độc lập vì các thống kê riêng của hai cấu hình trên cohort này đã được
@@ -36,9 +37,10 @@ Khi viết khóa luận/bài báo từ kết quả hiện có, có thể tiếp 
 
 Hai hướng có cơ sở nhưng **không thuộc Gate 1–8**:
 
-### A. Xác nhận nhiều seed
+### A. Mở rộng độ nhạy nhiều seed
 
-- Đăng ký trước seed, tiêu chí chính, biên tương đương/không thua kém nếu có và ngân sách tính toán.
+- Seed 42 và 123 đã hoàn tất; nếu thêm seed, đăng ký trước toàn bộ danh sách còn lại, tiêu chí chính,
+  biên tương đương/không thua kém nếu có và ngân sách tính toán.
 - Chạy cùng split cho mọi mô hình.
 - Phân biệt biến thiên giữa đối tượng với biến thiên do khởi tạo/huấn luyện.
 - Không trộn kết quả mới vào p-value hoặc Holm family cũ.

@@ -1,5 +1,9 @@
 # Giao thức thí nghiệm v2 — thiết kế công bằng và loại bỏ thành phần
 
+> Tài liệu này là giao thức gốc của chiến dịch chính seed 42 và được giữ để truy nguyên quyết định trước
+> khi mở test. Seed 123 được chạy sau giao thức như phân tích độ nhạy, không được hồi tố thành một phần
+> của tập seed xác nhận định trước; xem `MULTISEED_SENSITIVITY_RESULTS.md`.
+
 ## Câu hỏi nghiên cứu
 
 1. TCN thay BiLSTM có cải thiện khi giữ nguyên 15CNN và dữ liệu hay không?
