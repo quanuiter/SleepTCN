@@ -1,0 +1,44 @@
+\subsection{Mở rộng band-pass E4 trên SHHS với seed 123}
+\label{sec:shhs_seed123_extension}
+
+Để đánh giá riêng chế độ band-pass trong khả năng chuyển miền, một extension
+được khóa trên cùng 180 đối tượng SHHS và dùng cùng seed 123 cho E0, E2, E3,
+E4 và E6. Không có huấn luyện hoặc cập nhật trọng số trên SHHS. Chiến dịch
+hoàn tất 9.000 prediction theo fold và 900 ensemble prediction; test gate đạt
+với 0 lỗi.
+
+\begin{table}[H]
+\centering
+\caption{Kết quả mô tả của extension E4 trên SHHS1}
+\label{tab:shhs_seed123_extension}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{E} & \textbf{\mf\ đối tượng} & \textbf{\mf\ gộp} & \textbf{Accuracy} & \textbf{$\kappa$} \\
+\midrule
+E0 & 0,5303 & 0,5785 & 0,6738 & 0,5420 \\
+E2 & 0,5409 & 0,5858 & 0,6874 & 0,5597 \\
+E3 & 0,5634 & 0,6031 & 0,7003 & 0,5772 \\
+E4 & \textbf{0,5732} & \textbf{0,6147} & \textbf{0,7064} & \textbf{0,5869} \\
+E6 & 0,5503 & 0,5865 & 0,6873 & 0,5552 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+E4 cao hơn E2 với chênh lệch \mf\ trung bình theo đối tượng 0,0323, CI
+95\% $[0,0236;0,0410]$, Wilcoxon--Holm $p=7,40\times10^{-13}$ và
+thắng/hòa/thua 135/1/44. E3 thấp hơn E4 0,0098 điểm, CI
+$[-0,0125;-0,0073]$, $p=1,89\times10^{-10}$; do đó trong extension này,
+band-pass không chia 100 cho kết quả chuyển miền tốt hơn biến thể có chia
+100. E3 vẫn cao hơn E6 0,0131 điểm, CI $[0,0023;0,0239]$, $p=0,0085$, và
+cao hơn E0 0,0331 điểm, CI $[0,0225;0,0438]$, $p=5,19\times10^{-9}$.
+
+E4 có F1 N1 gộp 0,3492 và Macro-F1 vùng chuyển pha 0,4711, đều là giá trị
+cao nhất trong extension. E6 có recall N1 cao hơn (0,5880) nhưng F1 N1 thấp
+hơn E4 (0,3275), cho thấy recall đơn lẻ không phản ánh đầy đủ sự cân bằng
+precision--recall.
+
+Các đối chiếu E4--E2 và E3--E4 là bằng chứng bổ sung trên cùng cohort, không
+phải kiểm định tương đương hoặc không thua kém và không quy kết nhân quả cho
+một thao tác riêng. Kết quả cho thấy lựa chọn thang biên độ là yếu tố quan
+trọng của khả năng chuyển miền trong pipeline hiện tại.

@@ -277,6 +277,7 @@ def summarize_output(path: Path, variant: str) -> dict[str, Any]:
             "epochs": int(len(y)),
             "valid_epochs": int(np.sum(y >= 0)),
             "ignored_epochs": int(np.sum(y == -1)),
+            "clip_fraction": float(npz["clip_fraction"].item()),
             "label_counts": {
                 str(label): int(counts.get(label, 0)) for label in (-1, 0, 1, 2, 3, 4)
             },

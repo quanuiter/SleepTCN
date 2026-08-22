@@ -37,6 +37,11 @@ Biên bản kiểm định nội dung và bố cục nằm tại `REPORT_GATE1_8
 - `../configs/shhs_e3_e2_paired_v1.json`
 - `SHHS_E3_E2_PAIRED_AUDIT.json`
 - `../notebooks/docs/SHHS_E3_E2_PAIRED_RESULTS.md`
+- `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/test/test_gate.json`
+- `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/test/run_manifest.json`
+- `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/analysis/bandpass_extension_analysis.json`
+- `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/analysis/diagnostics.json`
+- `SHHS_SEED123_E4_EXTENSION.md`
 
 Không thay số liệu trong bảng bằng kết quả lịch sử từ notebook cũ. Mọi thay đổi ở Tóm tắt, Kết luận hoặc slide phải đối chiếu `../runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md`.
 
@@ -46,8 +51,8 @@ Không thay số liệu trong bảng bằng kết quả lịch sử từ noteboo
 2. Không còn các tuyên bố lịch sử: nhanh hơn 8,2 lần, P/N đóng góp 12% thông tin, hoặc ResNet/TCN riêng lẻ vượt trội có ý nghĩa.
 3. Số liệu E0--E6 và Gate 8 khớp gói công bố Gate 8.
 4. PDF được kết xuất thành ảnh và kiểm tra tràn lề, bảng, hình, dấu tiếng Việt và số trang.
-5. Số liệu SHHS khớp phân tích SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`; không công bố ID đối tượng.
+5. Số liệu SHHS chính khớp phân tích SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`; extension E4 seed 123 khớp test gate SHA-256 `9dbd4fd3183bdc7b14861be3bf8baa97b6002ae7a8f89a710cdcc68bb17a37c4` và phân tích SHA-256 `8563eefe1ea72d5e5ab552fd770568cceeecbb87e1715a94ee25b8cb9b4792fe`; không công bố ID đối tượng.
 6. Số liệu phân tích thành phần khớp SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
-7. Số liệu hậu nghiệm E3--E2 khớp SHA-256 `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a` và luôn được ghi rõ là phân tích trên cohort đã mở.
+7. Số liệu hậu nghiệm E3--E2 khớp SHA-256 `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a` và luôn được ghi rõ là phân tích trên cohort đã mở. Extension E4 cũng được ghi rõ là phân tích mở rộng trên cùng cohort, không phải cohort mới hoàn toàn.
 8. Bộ kiểm thử lõi dùng `pytest`; 28 test xuất bản Gate 6--8 có thể chạy trực tiếp bằng `unittest` trong môi trường có `matplotlib`.
 9. Seed 42 luôn được ghi là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức. Báo cáo riêng từng seed và không gộp p-value.

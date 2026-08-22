@@ -1,0 +1,21 @@
+\subsection{Diễn giải extension E4 trên SHHS}
+
+Extension seed 123 bổ sung một đối chiếu trực tiếp giữa E4 và E2 khi giữ
+ResNet-1D--TCN, đồng thời đặt E4 cạnh E3 và E6 trên cùng 180 đối tượng. E4
+cao hơn E2 với CI hoàn toàn dương và thắng 135/180 đối tượng, cung cấp bằng
+chứng rằng band-pass-only có lợi cho chuyển miền trong pipeline này. E4 cũng
+cao hơn E3; vì E3 và E4 chỉ khác chế độ đổi thang sau band-pass trong cấu hình
+SHHS này, kết quả cho thấy chia 100 không phải lựa chọn tối ưu cho cohort
+SHHS seed 123.
+
+Kết quả này không phủ nhận kết quả seed 42: seed 42 không có E4 SHHS, nhưng
+E3 vẫn cao hơn E0 và E6. Cách đọc phù hợp là E3 và E4 đều cải thiện so với
+raw ở các đối chiếu tương ứng, còn thứ hạng giữa E3 và E4 phụ thuộc vào chế độ
+đổi thang và seed. Vì extension được thực hiện trên cohort đã mở trước đó,
+đây là bằng chứng mở rộng bắt cặp có kiểm soát, không phải một mẫu SHHS mới
+hoàn toàn chưa quan sát.
+
+Ở mức lớp, E4 có F1 N1 và Macro-F1 vùng chuyển pha cao nhất trong extension.
+Điều này làm cho kết quả có ý nghĩa thực dụng hơn một thứ hạng Macro-F1 đơn
+thuần, nhưng chưa đủ để kết luận mô hình đã giải quyết triệt để N1 hoặc có
+giá trị lâm sàng.
