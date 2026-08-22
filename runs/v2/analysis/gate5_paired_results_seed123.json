@@ -1,0 +1,1065 @@
+{
+  "input_coverage": {
+    "E0": {
+      "combined_prediction_sha256": "10ad82e319880b45df16e569652b32fc4f3f517101eb2459b5af820b9b3fbbf5",
+      "fold_prediction_sha256": {
+        "fold_00": "6f3fb9bdb9a1ad7565d86a4bcfcff15125beb8ad979ce1dded73ea60c8240f77",
+        "fold_01": "38f5fa893a2839c52881f8dc7cc26a555e91f832cb448e10eb978c2fd2e2020d",
+        "fold_02": "20f3df7adf5939cde5259193f3f386e6947dbd6b7bf3d715f23300b8738dd9e3",
+        "fold_03": "935a6b8e0e8de8ef999a7acd73912319e69d4b30c63b8cf26a074a2f8cc5928e",
+        "fold_04": "0dc585dff12b20bee9a7dd75362e28e1af528c119d71786a94da2abceb5d1f7f",
+        "fold_05": "f9277ff3e438221bd8499e2f6f6bab711a9fe1243094a2149a08dfe321526371",
+        "fold_06": "09e2d621f7a68eaff899e876e663146dddcf0529d2bfdce669db8d2e0aebcdca",
+        "fold_07": "6b3f98ce13da15a547c77c6528d63d2e99b3586966aeb4e8a8ce868081903b28",
+        "fold_08": "873ac0c6b390ce4905759818413189dd758b37dbaf85a4ef2757fb0b2aadbf09",
+        "fold_09": "bc99cb0f78ff4b75c24d59299fbfcac5336ff00cbd87ed7374690738981ba3c3"
+      },
+      "records": 153,
+      "subjects": 78,
+      "valid_epochs": 195469
+    },
+    "E1": {
+      "combined_prediction_sha256": "e3c892656f6633c843881622ab56c9d5e2a62c1dd36cd2ce725b41d421ed71fe",
+      "fold_prediction_sha256": {
+        "fold_00": "74f2acb88385c8cae87d6eebed175fc557e8b718d6fade365241c5bdb1cbdc96",
+        "fold_01": "65e298519ba346ff04764345859f70dfb0cc1eb52a5a0bc4e4559ba6c841c10a",
+        "fold_02": "06e10c269cb54c8bcf07174104aae4334ad1fc6052cd231fc17a1dac4b2958a1",
+        "fold_03": "fa07e77f2edb7874c20df024a6676651921b21cb828689f0d271707c344d9826",
+        "fold_04": "37ed142ecc456d02c1ae0e8b0caf8f8ea92c6d3f0cec3d6a186dd9c9fee7a385",
+        "fold_05": "3c50aa5da1b9400eaeb3ef029047808e8d2904229b6df04ff1f2fbc7983eabf2",
+        "fold_06": "7a81ce99ffed323d25c0e5a75178123cf87f8655070261793ac71ef1945b6020",
+        "fold_07": "82271aff316aea3a45e0e8a47bf04762c92759bac8f72cb00cbd4d3add35886b",
+        "fold_08": "2c2ca36fbd26d3534b50fd10864cf46d9229cd5d2a66f96424c6dd4fa66eccfc",
+        "fold_09": "9549c290bddc8bf52306bb23db8820d2e12972032b1bb494048727015d9b10f1"
+      },
+      "records": 153,
+      "subjects": 78,
+      "valid_epochs": 195469
+    },
+    "E2": {
+      "combined_prediction_sha256": "05a1be05cc00b6df607a3bfafcf1f0c85fc761392434156643e4fc36bd5268f8",
+      "fold_prediction_sha256": {
+        "fold_00": "194f6894e5c9662df7328e6a8dedafe04e367766886a750a0d2f1afd125ce338",
+        "fold_01": "62cd25fd6feb0e4c51c68f3ef4ee3f271fc70004c5b83a5a6fb2bf7c8ac339eb",
+        "fold_02": "628630b008c5e2fafe775b6fc5ac1969ff444df3ac9ec1cdc09f18a179772a8c",
+        "fold_03": "fc7ec0d5aea356335fa26ee931e20b472fd2474fa0bcda03bbd5b9c8c6ef0507",
+        "fold_04": "ff224c87846ad795eeab8860c61dda6108a96e15c7e7509bd48a3eabac9af505",
+        "fold_05": "11193eb8a6d50f7cbaacb8aa302661c6cdf74cd778380c5b90941be7853ca7a2",
+        "fold_06": "8a5f128cc66060cf9e68ec514d30f81e1404c69efc00f133b5ee8fcd4a50ff25",
+        "fold_07": "73ae87468940c3db6feac53bd36f731a48fb4c455f59bec2ca70703fcd0f4bb7",
+        "fold_08": "3188874477a4cd5b006ad9afa97f8b74f1303de824943075feafd5fe746c22f4",
+        "fold_09": "914983acaa120b14c32eb584eaa446196847890d35c35ea2bbb076c5f346c564"
+      },
+      "records": 153,
+      "subjects": 78,
+      "valid_epochs": 195469
+    },
+    "E3": {
+      "combined_prediction_sha256": "1952e3b647b54f504a00dc34a74cda4c0d01ce341e3742aa7d9c4c8cba9468c6",
+      "fold_prediction_sha256": {
+        "fold_00": "56de9eb25bba4bea3790c63ad519c5bf1aec78a62e4ec055dd9a73edb69fcdfd",
+        "fold_01": "b6f5cb526042f951518e1299dfe6f3be10c5c171115fbf79a460009c34fda228",
+        "fold_02": "d5f1df9776493dc381961e3e9e48249928c01bea0e64aabcde6e79890f465db1",
+        "fold_03": "5e0639379c25a431e120d32c7fbeb1745e3235ebd67f85ba90107eba2e484a0b",
+        "fold_04": "b70927bad66ac616ae9ae18eb13356ee86512534f300b1e27b71e6a8e649fd4a",
+        "fold_05": "f7c2c59e06485f82b6b1084105bfc95075b86ca8c1001e8e54be80d056e28adb",
+        "fold_06": "ed6237dbfdcfa13a0a2e4aff5dd869ed15de244368e4459e2c6f03b0b895cd1e",
+        "fold_07": "65a19e9296e935e2009d8de80afc04497c34272d009963eff86829e35fd3e979",
+        "fold_08": "bf8982bfde0d1cb0255dcbb9f4da165bf84e16db60f5c798216555ebe7e4da20",
+        "fold_09": "b94187dd19a3aa11f7b0aeb288da898861d994bcc503692647f96efd558b0993"
+      },
+      "records": 153,
+      "subjects": 78,
+      "valid_epochs": 195469
+    },
+    "E4": {
+      "combined_prediction_sha256": "4aaceb7dbe474d127b50d9cc6b3a36af5875110f42afe032c963116d2e041fca",
+      "fold_prediction_sha256": {
+        "fold_00": "d5cb4ce3a225bfa1256374c7e89cb718bd3bc58b9052459a9f51e0b8c30297ae",
+        "fold_01": "b8c6f1f677450d0e95c37c3ce33533d576fd8cfd8d78b8bafbf7f9485decd0ea",
+        "fold_02": "87dac6ccdb128a25c9d39a3873b0630b685bf5e3d6e9b15b8dec67c12b179081",
+        "fold_03": "30217da83bdb7543840e204d19817e0ae39dc8c49e4a2f3a159e8ae0b0e8273d",
+        "fold_04": "c326e5062a85643f981d91e217db45a4efcc5a6251bcf2d7aa53895809c127ca",
+        "fold_05": "b1ce884e169e413d8e2b0671668b1603771426f40c9491bfaf5f440f160142fd",
+        "fold_06": "07149096a532bddc5e4637c0c232f2a945e3c2cc25023e651d85525db6273c0c",
+        "fold_07": "d4111017365e2f827f8d8d937c57677f25bcf2e7ec15e051b140436942c877de",
+        "fold_08": "a99c40e54ed53ebd58a38f61be32dc87f7ce76d1fabc6dc57472042e8fc0fb8e",
+        "fold_09": "ee69fd85b70f2e8ab8cea6534346cb7fe46f918a7e844b06a0a48b3512ae691b"
+      },
+      "records": 153,
+      "subjects": 78,
+      "valid_epochs": 195469
+    },
+    "E6": {
+      "combined_prediction_sha256": "a66a1bff405bc211ce07d97120e813e714136fa76992387bc394c1241819261b",
+      "fold_prediction_sha256": {
+        "fold_00": "87f46af8bf9d8d5f94f5f646b2624930f42ab88fcd523829c3b866464704b78f",
+        "fold_01": "8f8d51c076e6fe3d59ea2e7cbfc15d28a0cc093da8f947fefb85cf2829a6ae0d",
+        "fold_02": "90b72147d0aadbd449909b281c0c62082a21a3f35622af597d60e52ca5e6592c",
+        "fold_03": "6b12140e6f60e32b9adf5c3eb5794ffe87d0fc516f752aa78ac9fb6fa5a6fb84",
+        "fold_04": "bed0ad254d18e05cff5e226f167f10b8c39df6c01a10922ee62da369a64bb0bc",
+        "fold_05": "66698e6544406d8890ca7b552d407f2bcf6d953d959e0688a71733d5271c4279",
+        "fold_06": "82099e2b7c43b5fed2f88d2e9f438b9a970f0346e8bb3d802609c2dbcae5b2f2",
+        "fold_07": "5b99346fbf8074761d23b7f38b4f065cebf86d3c853d1d983907442fe9e5ae7f",
+        "fold_08": "59ddaa32525a44113cab3906735b902709b278ff6a7021898cc6dd5c5e85afba",
+        "fold_09": "6c755cdadfdd8ea34e988d540784673a8e5523216e57c3a898b432f0942bca13"
+      },
+      "records": 153,
+      "subjects": 78,
+      "valid_epochs": 195469
+    }
+  },
+  "multiplicity": "holm_on_four_primary_comparisons_only",
+  "primary_effect": "paired_difference_in_pooled_out_of_fold_macro_f1",
+  "primary_results": [
+    {
+      "cluster_bootstrap_macro_f1": {
+        "ci95_high": 0.007042565253872076,
+        "ci95_low": -0.0028701253387139495,
+        "observed_difference": 0.002187653947016588,
+        "resamples": 10000,
+        "seed": 2026
+      },
+      "comparison": "E1-E0",
+      "descriptive": {
+        "difference_proposed_minus_reference": {
+          "accuracy": 0.0008441236206252478,
+          "cohen_kappa": 0.0016093473829174032,
+          "macro_f1": 0.002187653947016588,
+          "per_class_f1": {
+            "N1": 0.011238958561435641,
+            "N2": -0.0006420868420023984,
+            "N3": -0.0036786858365410735,
+            "REM": 0.004709036773630437,
+            "W": -0.0006889529214396672
+          }
+        },
+        "proposed": {
+          "accuracy": 0.8290265975679008,
+          "cohen_kappa": 0.7647458000703582,
+          "confusion_matrix": [
+            [
+              60697,
+              3884,
+              668,
+              34,
+              658
+            ],
+            [
+              3487,
+              10684,
+              5159,
+              118,
+              2074
+            ],
+            [
+              591,
+              4814,
+              59066,
+              2140,
+              2521
+            ],
+            [
+              51,
+              58,
+              2654,
+              10262,
+              14
+            ],
+            [
+              630,
+              1546,
+              2159,
+              160,
+              21340
+            ]
+          ],
+          "macro_f1": 0.7776446243363677,
+          "per_class": {
+            "N1": {
+              "f1": 0.5026818481227064,
+              "precision": 0.5091013056323264,
+              "recall": 0.49642226558869995,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8508621558939194,
+              "precision": 0.8473589074111267,
+              "recall": 0.8543944916970433,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.7969556944821964,
+              "precision": 0.8071417335221016,
+              "recall": 0.7870235447503643,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8138514930780673,
+              "precision": 0.8020445747359717,
+              "recall": 0.8260112250822528,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9238719301049492,
+              "precision": 0.9272946712295282,
+              "recall": 0.9204743634461109,
+              "support": 65941
+            }
+          }
+        },
+        "reference": {
+          "accuracy": 0.8281824739472755,
+          "cohen_kappa": 0.7631364526874408,
+          "confusion_matrix": [
+            [
+              60770,
+              4202,
+              460,
+              28,
+              481
+            ],
+            [
+              3532,
+              10395,
+              5733,
+              101,
+              1761
+            ],
+            [
+              477,
+              4391,
+              59607,
+              2185,
+              2472
+            ],
+            [
+              45,
+              102,
+              2534,
+              10349,
+              9
+            ],
+            [
+              692,
+              1692,
+              2538,
+              150,
+              20763
+            ]
+          ],
+          "macro_f1": 0.7754569703893511,
+          "per_class": {
+            "N1": {
+              "f1": 0.4914428895612708,
+              "precision": 0.5001924742565682,
+              "recall": 0.4829941455255088,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8515042427359218,
+              "precision": 0.8410514730782256,
+              "recall": 0.8622201006769658,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8006343803187375,
+              "precision": 0.8076953094513385,
+              "recall": 0.7936958355702124,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8091424563044368,
+              "precision": 0.8146825708231971,
+              "recall": 0.8036771821172828,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9245608830263888,
+              "precision": 0.9275596800781488,
+              "recall": 0.9215814136879938,
+              "support": 65941
+            }
+          }
+        }
+      },
+      "proposed": "E1",
+      "reference": "E0",
+      "subject_wilcoxon_macro_f1": {
+        "holm_adjusted_p_value": 0.9129999546048087,
+        "holm_family_size": 4,
+        "losses": 38,
+        "median_subject_difference": 0.0008528523600769278,
+        "metric": "macro_f1",
+        "p_value": 0.4564999773024043,
+        "statistic": 1391.0,
+        "subjects": 78,
+        "ties": 0,
+        "wins": 40
+      }
+    },
+    {
+      "cluster_bootstrap_macro_f1": {
+        "ci95_high": 0.011292447759448139,
+        "ci95_low": -0.0005710117072760202,
+        "observed_difference": 0.00514276059874208,
+        "resamples": 10000,
+        "seed": 2026
+      },
+      "comparison": "E2-E1",
+      "descriptive": {
+        "difference_proposed_minus_reference": {
+          "accuracy": 0.002240764520205274,
+          "cohen_kappa": 0.0030458591950522917,
+          "macro_f1": 0.00514276059874208,
+          "per_class_f1": {
+            "N1": 0.0177040401950177,
+            "N2": -0.0008366772595742589,
+            "N3": 0.004860891404915857,
+            "REM": 0.00653091981138243,
+            "W": -0.0025453711580311067
+          }
+        },
+        "proposed": {
+          "accuracy": 0.831267362088106,
+          "cohen_kappa": 0.7677916592654105,
+          "confusion_matrix": [
+            [
+              61382,
+              3585,
+              458,
+              41,
+              475
+            ],
+            [
+              3786,
+              11085,
+              4770,
+              132,
+              1749
+            ],
+            [
+              1051,
+              5053,
+              58384,
+              2337,
+              2307
+            ],
+            [
+              98,
+              45,
+              2373,
+              10505,
+              18
+            ],
+            [
+              989,
+              1313,
+              2253,
+              149,
+              21131
+            ]
+          ],
+          "macro_f1": 0.7827873849351098,
+          "per_class": {
+            "N1": {
+              "f1": 0.5203858883177241,
+              "precision": 0.5258289454959442,
+              "recall": 0.5150543629774185,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8500254786343452,
+              "precision": 0.8555936574928925,
+              "recall": 0.8445293062547011,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8018165858871122,
+              "precision": 0.7980097234883015,
+              "recall": 0.8056599432471815,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8203824128894497,
+              "precision": 0.8228582554517134,
+              "recall": 0.8179214244242307,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9213265589469181,
+              "precision": 0.9119840727424003,
+              "recall": 0.9308624376336422,
+              "support": 65941
+            }
+          }
+        },
+        "reference": {
+          "accuracy": 0.8290265975679008,
+          "cohen_kappa": 0.7647458000703582,
+          "confusion_matrix": [
+            [
+              60697,
+              3884,
+              668,
+              34,
+              658
+            ],
+            [
+              3487,
+              10684,
+              5159,
+              118,
+              2074
+            ],
+            [
+              591,
+              4814,
+              59066,
+              2140,
+              2521
+            ],
+            [
+              51,
+              58,
+              2654,
+              10262,
+              14
+            ],
+            [
+              630,
+              1546,
+              2159,
+              160,
+              21340
+            ]
+          ],
+          "macro_f1": 0.7776446243363677,
+          "per_class": {
+            "N1": {
+              "f1": 0.5026818481227064,
+              "precision": 0.5091013056323264,
+              "recall": 0.49642226558869995,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8508621558939194,
+              "precision": 0.8473589074111267,
+              "recall": 0.8543944916970433,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.7969556944821964,
+              "precision": 0.8071417335221016,
+              "recall": 0.7870235447503643,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8138514930780673,
+              "precision": 0.8020445747359717,
+              "recall": 0.8260112250822528,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9238719301049492,
+              "precision": 0.9272946712295282,
+              "recall": 0.9204743634461109,
+              "support": 65941
+            }
+          }
+        }
+      },
+      "proposed": "E2",
+      "reference": "E1",
+      "subject_wilcoxon_macro_f1": {
+        "holm_adjusted_p_value": 0.23997498848157595,
+        "holm_family_size": 4,
+        "losses": 34,
+        "median_subject_difference": 0.004768723615446946,
+        "metric": "macro_f1",
+        "p_value": 0.07999166282719199,
+        "statistic": 1189.0,
+        "subjects": 78,
+        "ties": 0,
+        "wins": 44
+      }
+    },
+    {
+      "cluster_bootstrap_macro_f1": {
+        "ci95_high": 0.015796378921472353,
+        "ci95_low": -0.0026108533780162535,
+        "observed_difference": 0.005477892629173753,
+        "resamples": 10000,
+        "seed": 2026
+      },
+      "comparison": "E3-E2",
+      "descriptive": {
+        "difference_proposed_minus_reference": {
+          "accuracy": 0.003386726283963193,
+          "cohen_kappa": 0.005281570791643486,
+          "macro_f1": 0.005477892629173753,
+          "per_class_f1": {
+            "N1": 0.0015668847838729016,
+            "N2": 0.0010900455929351294,
+            "N3": 0.007067197379209689,
+            "REM": 0.010183392768606914,
+            "W": 0.007481942621243687
+          }
+        },
+        "proposed": {
+          "accuracy": 0.8346540883720692,
+          "cohen_kappa": 0.773073230057054,
+          "confusion_matrix": [
+            [
+              61006,
+              3979,
+              479,
+              45,
+              432
+            ],
+            [
+              3356,
+              11472,
+              4977,
+              105,
+              1612
+            ],
+            [
+              480,
+              5372,
+              58501,
+              2269,
+              2510
+            ],
+            [
+              40,
+              65,
+              2337,
+              10562,
+              35
+            ],
+            [
+              541,
+              1548,
+              2043,
+              95,
+              21608
+            ]
+          ],
+          "macro_f1": 0.7882652775642836,
+          "per_class": {
+            "N1": {
+              "f1": 0.521952773101597,
+              "precision": 0.5113210911035835,
+              "recall": 0.5330359632004461,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8511155242272803,
+              "precision": 0.856066259859227,
+              "recall": 0.8462217207660707,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8088837832663219,
+              "precision": 0.8077393698378709,
+              "recall": 0.810031444129151,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8305658056580566,
+              "precision": 0.8248272702981257,
+              "recall": 0.8363847493710084,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9288085015681617,
+              "precision": 0.9324855173257112,
+              "recall": 0.925160370634355,
+              "support": 65941
+            }
+          }
+        },
+        "reference": {
+          "accuracy": 0.831267362088106,
+          "cohen_kappa": 0.7677916592654105,
+          "confusion_matrix": [
+            [
+              61382,
+              3585,
+              458,
+              41,
+              475
+            ],
+            [
+              3786,
+              11085,
+              4770,
+              132,
+              1749
+            ],
+            [
+              1051,
+              5053,
+              58384,
+              2337,
+              2307
+            ],
+            [
+              98,
+              45,
+              2373,
+              10505,
+              18
+            ],
+            [
+              989,
+              1313,
+              2253,
+              149,
+              21131
+            ]
+          ],
+          "macro_f1": 0.7827873849351098,
+          "per_class": {
+            "N1": {
+              "f1": 0.5203858883177241,
+              "precision": 0.5258289454959442,
+              "recall": 0.5150543629774185,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8500254786343452,
+              "precision": 0.8555936574928925,
+              "recall": 0.8445293062547011,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8018165858871122,
+              "precision": 0.7980097234883015,
+              "recall": 0.8056599432471815,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8203824128894497,
+              "precision": 0.8228582554517134,
+              "recall": 0.8179214244242307,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9213265589469181,
+              "precision": 0.9119840727424003,
+              "recall": 0.9308624376336422,
+              "support": 65941
+            }
+          }
+        }
+      },
+      "proposed": "E3",
+      "reference": "E2",
+      "subject_wilcoxon_macro_f1": {
+        "holm_adjusted_p_value": 0.9129999546048087,
+        "holm_family_size": 4,
+        "losses": 38,
+        "median_subject_difference": 0.0003729654983143371,
+        "metric": "macro_f1",
+        "p_value": 0.616676870328875,
+        "statistic": 1440.0,
+        "subjects": 78,
+        "ties": 0,
+        "wins": 40
+      }
+    },
+    {
+      "cluster_bootstrap_macro_f1": {
+        "ci95_high": 0.017988702085386447,
+        "ci95_low": 0.0024353544754641076,
+        "observed_difference": 0.010248973340809764,
+        "resamples": 10000,
+        "seed": 2026
+      },
+      "comparison": "E3-E6",
+      "descriptive": {
+        "difference_proposed_minus_reference": {
+          "accuracy": 0.0035708987102813783,
+          "cohen_kappa": 0.005102978079258302,
+          "macro_f1": 0.010248973340809764,
+          "per_class_f1": {
+            "N1": 0.006786352376888072,
+            "N2": 0.004633032382356683,
+            "N3": 0.042353171021423885,
+            "REM": -5.912196768154132e-05,
+            "W": -0.002468567108939057
+          }
+        },
+        "proposed": {
+          "accuracy": 0.8346540883720692,
+          "cohen_kappa": 0.773073230057054,
+          "confusion_matrix": [
+            [
+              61006,
+              3979,
+              479,
+              45,
+              432
+            ],
+            [
+              3356,
+              11472,
+              4977,
+              105,
+              1612
+            ],
+            [
+              480,
+              5372,
+              58501,
+              2269,
+              2510
+            ],
+            [
+              40,
+              65,
+              2337,
+              10562,
+              35
+            ],
+            [
+              541,
+              1548,
+              2043,
+              95,
+              21608
+            ]
+          ],
+          "macro_f1": 0.7882652775642836,
+          "per_class": {
+            "N1": {
+              "f1": 0.521952773101597,
+              "precision": 0.5113210911035835,
+              "recall": 0.5330359632004461,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8511155242272803,
+              "precision": 0.856066259859227,
+              "recall": 0.8462217207660707,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8088837832663219,
+              "precision": 0.8077393698378709,
+              "recall": 0.810031444129151,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8305658056580566,
+              "precision": 0.8248272702981257,
+              "recall": 0.8363847493710084,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9288085015681617,
+              "precision": 0.9324855173257112,
+              "recall": 0.925160370634355,
+              "support": 65941
+            }
+          }
+        },
+        "reference": {
+          "accuracy": 0.8310831896617878,
+          "cohen_kappa": 0.7679702519777957,
+          "confusion_matrix": [
+            [
+              60960,
+              3946,
+              477,
+              47,
+              511
+            ],
+            [
+              3145,
+              10997,
+              5600,
+              142,
+              1638
+            ],
+            [
+              422,
+              4494,
+              58646,
+              3286,
+              2284
+            ],
+            [
+              25,
+              40,
+              2618,
+              10329,
+              27
+            ],
+            [
+              424,
+              1694,
+              2091,
+              107,
+              21519
+            ]
+          ],
+          "macro_f1": 0.7780163042234738,
+          "per_class": {
+            "N1": {
+              "f1": 0.515166420724709,
+              "precision": 0.5194369656605734,
+              "recall": 0.5109655236502184,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8464824918449236,
+              "precision": 0.8446537619541422,
+              "recall": 0.8483191575536655,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.766530612244898,
+              "precision": 0.7425059305585507,
+              "recall": 0.7921619756116267,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8306249276257381,
+              "precision": 0.8283228761692136,
+              "recall": 0.8329398103348171,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9312770686771008,
+              "precision": 0.9381925634080276,
+              "recall": 0.9244627773312507,
+              "support": 65941
+            }
+          }
+        }
+      },
+      "proposed": "E3",
+      "reference": "E6",
+      "subject_wilcoxon_macro_f1": {
+        "holm_adjusted_p_value": 0.13128850900909303,
+        "holm_family_size": 4,
+        "losses": 31,
+        "median_subject_difference": 0.007601406257057075,
+        "metric": "macro_f1",
+        "p_value": 0.03282212725227326,
+        "statistic": 1112.0,
+        "subjects": 78,
+        "ties": 0,
+        "wins": 47
+      }
+    }
+  ],
+  "primary_uncertainty": "paired_subject_cluster_bootstrap_percentile_95ci",
+  "provenance": {
+    "analysis_code_sha256": "7459210307a828a50c851936ad3828997b4e216c3a7b09886f7069fd4a3c1431",
+    "analysis_git_commit": "09541bdfeee02397ee028f8b6095d7a1dc6d57ce",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2026,
+    "campaign_sha256": "7348d67a6c9d5c0b37723fbfb3ac98cebc62d8ae54424ad49d494bd13afbe72a",
+    "campaign_source_git_commit": "9c39e02e85554ced4261f0bb42d3411711e334d1",
+    "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+    "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de"
+  },
+  "schema_version": 2,
+  "secondary_results": [
+    {
+      "cluster_bootstrap_macro_f1": {
+        "ci95_high": 0.017125852831914652,
+        "ci95_low": -0.003920820133204486,
+        "observed_difference": 0.005886084077524223,
+        "resamples": 10000,
+        "seed": 2026
+      },
+      "comparison": "E4-E2",
+      "descriptive": {
+        "difference_proposed_minus_reference": {
+          "accuracy": 0.0021589101085082163,
+          "cohen_kappa": 0.003988413201908236,
+          "macro_f1": 0.005886084077524223,
+          "per_class_f1": {
+            "N1": 0.003274265831764933,
+            "N2": 0.0027604023458180915,
+            "N3": 0.010295865134305249,
+            "REM": 0.010017985402490659,
+            "W": 0.003081901673241738
+          }
+        },
+        "proposed": {
+          "accuracy": 0.8334262721966142,
+          "cohen_kappa": 0.7717800724673187,
+          "confusion_matrix": [
+            [
+              60399,
+              4505,
+              446,
+              43,
+              548
+            ],
+            [
+              3258,
+              11686,
+              4785,
+              104,
+              1689
+            ],
+            [
+              443,
+              5452,
+              58467,
+              2338,
+              2432
+            ],
+            [
+              33,
+              59,
+              2237,
+              10674,
+              36
+            ],
+            [
+              602,
+              1408,
+              2053,
+              89,
+              21683
+            ]
+          ],
+          "macro_f1": 0.788673469012634,
+          "per_class": {
+            "N1": {
+              "f1": 0.5236601541494891,
+              "precision": 0.5056685417568152,
+              "recall": 0.5429792770188644,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8527858809801633,
+              "precision": 0.8599605812790493,
+              "recall": 0.8457299080020829,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8121124510214175,
+              "precision": 0.8057065217391305,
+              "recall": 0.8186210598972313,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8304003982919403,
+              "precision": 0.8216992572381385,
+              "recall": 0.8392877878846526,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9244084606201598,
+              "precision": 0.9330192322545764,
+              "recall": 0.9159551720477397,
+              "support": 65941
+            }
+          }
+        },
+        "reference": {
+          "accuracy": 0.831267362088106,
+          "cohen_kappa": 0.7677916592654105,
+          "confusion_matrix": [
+            [
+              61382,
+              3585,
+              458,
+              41,
+              475
+            ],
+            [
+              3786,
+              11085,
+              4770,
+              132,
+              1749
+            ],
+            [
+              1051,
+              5053,
+              58384,
+              2337,
+              2307
+            ],
+            [
+              98,
+              45,
+              2373,
+              10505,
+              18
+            ],
+            [
+              989,
+              1313,
+              2253,
+              149,
+              21131
+            ]
+          ],
+          "macro_f1": 0.7827873849351098,
+          "per_class": {
+            "N1": {
+              "f1": 0.5203858883177241,
+              "precision": 0.5258289454959442,
+              "recall": 0.5150543629774185,
+              "support": 21522
+            },
+            "N2": {
+              "f1": 0.8500254786343452,
+              "precision": 0.8555936574928925,
+              "recall": 0.8445293062547011,
+              "support": 69132
+            },
+            "N3": {
+              "f1": 0.8018165858871122,
+              "precision": 0.7980097234883015,
+              "recall": 0.8056599432471815,
+              "support": 13039
+            },
+            "REM": {
+              "f1": 0.8203824128894497,
+              "precision": 0.8228582554517134,
+              "recall": 0.8179214244242307,
+              "support": 25835
+            },
+            "W": {
+              "f1": 0.9213265589469181,
+              "precision": 0.9119840727424003,
+              "recall": 0.9308624376336422,
+              "support": 65941
+            }
+          }
+        }
+      },
+      "inference_scope": "prespecified_secondary_mechanism_analysis",
+      "proposed": "E4",
+      "reference": "E2",
+      "subject_wilcoxon_macro_f1": {
+        "holm_adjusted_p_value": null,
+        "holm_family_size": 0,
+        "losses": 39,
+        "median_subject_difference": -0.000511748708818538,
+        "metric": "macro_f1",
+        "p_value": 0.5384735506358018,
+        "statistic": 1417.0,
+        "subjects": 78,
+        "ties": 0,
+        "wins": 39
+      }
+    }
+  ],
+  "seed": 123,
+  "statistical_unit": "subject",
+  "status": "complete",
+  "supporting_test": "two_sided_paired_subject_wilcoxon"
+}
