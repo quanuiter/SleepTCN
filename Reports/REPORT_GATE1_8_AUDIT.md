@@ -25,8 +25,8 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Các phép kiểm tra tài liệu
 
-- Bản PDF lịch sử đã từng biên dịch theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; sau khi tích hợp extension E4, nguồn đã qua kiểm tra cân bằng dấu ngoặc và tham chiếu `\input`, nhưng chưa thể biên dịch lại trên máy hiện tại vì MiKTeX chưa hoàn tất cấu hình và bị từ chối quyền ghi registry.
-- Bản PDF lịch sử gồm 35 trang và bản thảo bài báo lịch sử gồm 9 trang đã được rà soát trực quan. Do nguồn vừa bổ sung extension E4, số trang và ảnh rà soát phải được tạo lại sau khi môi trường LaTeX được cấu hình.
+- Báo cáo và bài báo đã biên dịch thành công theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. MiKTeX vẫn cảnh báo chưa kiểm tra cập nhật và thiếu mẫu ngắt dòng tiếng Việt, nhưng không gây lỗi dựng PDF.
+- PDF mới gồm 36 trang và bản thảo bài báo gồm 9 trang. Toàn bộ trang đã được render bằng Poppler; các trang bìa, bảng Gate 6, bảng SHHS, phần extension E4, kết luận và tài liệu tham khảo đã được kiểm tra trực quan, không phát hiện tràn lề, cắt bảng, ký tự lỗi hoặc hình bị hỏng.
 - Không có tham chiếu hoặc trích dẫn chưa xác định, nhãn trùng, hộp tràn lề hay trang bị cắt.
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
@@ -59,10 +59,10 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, extension E4, phân tích E1/E2 và E3−E2; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng viết khóa luận sau khi dựng lại PDF. Báo cáo có bằng chứng cho lợi ích của các pipeline trong những giao thức SHHS đã chạy và các đánh đổi vận hành; các tuyên bố tương đương/không thua kém, suy rộng toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
 
-PDF bàn giao trước khi tích hợp extension: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` (không dùng làm bản cuối cho nguồn hiện tại).
+PDF bàn giao mới: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 báo cáo dài lịch sử: `f865b1735a00844678d88c82aa9229f551718b4e997011d18c789947ab156c8b`.
+SHA-256 báo cáo dài: `1d1279113c521cb7c0f6f614a1e463be2dd131f7f08143f260e9fe4563db1dfc`.
 
-PDF bài báo trước khi tích hợp extension: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf` (không dùng làm bản cuối cho nguồn hiện tại).
+PDF bài báo: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 
-SHA-256 bài báo lịch sử: `d2328af451f49db097acbe9febd2a35bb8fe78a2c2923fc2e3cd2b408daeaedc`.
+SHA-256 bài báo: `54e1578c3bd62678219b925dfd8c3455f63aa6039054383d84ef64311c62313f`.
