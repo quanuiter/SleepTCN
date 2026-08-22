@@ -1,0 +1,11 @@
+{
+  "best_checkpoint_sha256": "c617f97c34a88f1dd9cc5f5241fd4b17819aaa8fc76014ff87783ba16e0222be",
+  "component_seed": 123,
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "bandpass_v2",
+  "outer_fold": 6,
+  "schema_version": 1,
+  "smoke": false,
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "stage": "sequence/tcn"
+}

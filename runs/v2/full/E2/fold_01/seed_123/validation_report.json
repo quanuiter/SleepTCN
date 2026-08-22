@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "experiment_id": "E2",
+  "outer_fold": 1,
+  "seed": 123,
+  "smoke": false,
+  "manifest_sha256": "2122d8d6a97a418e2c34885812c5557c4dd717bcd5b1b7776a8e71a48d95aaa6",
+  "sequence_checkpoint_sha256": "5ae9b10e58e94dd2cba4a9595ac6d3d256a41f5d8746ab61fe9a8eb5aba0e8f0",
+  "roles": {
+    "validation": {
+      "records": 16,
+      "valid_epochs": 23881,
+      "prediction_sha256": "b425f5200a95b610e60237c411cd5748162bd483f8db3be781e4a8d1e133c8f6",
+      "metrics_sha256": "f22c3354a3331d23a4120896ac6df2a8c7283704309168571cbe067de1ac7e1c"
+    }
+  }
+}

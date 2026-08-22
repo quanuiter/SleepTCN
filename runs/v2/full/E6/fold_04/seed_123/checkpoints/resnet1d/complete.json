@@ -1,0 +1,11 @@
+{
+  "best_checkpoint_sha256": "b35e599b0ab8b01bc09642f3b1326d75d2bc0fdf86b30fa532a2ab245a5d0a70",
+  "component_seed": 123,
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "filtered_zscore_v2",
+  "outer_fold": 4,
+  "schema_version": 1,
+  "smoke": false,
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "stage": "resnet1d"
+}

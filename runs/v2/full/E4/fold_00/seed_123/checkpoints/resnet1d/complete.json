@@ -1,0 +1,11 @@
+{
+  "best_checkpoint_sha256": "e3b7e0cdbfae3f5cb8b6608d7af064b68e62456364c595301a82178c1c00afb0",
+  "component_seed": 123,
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "bandpass_v2",
+  "outer_fold": 0,
+  "schema_version": 1,
+  "smoke": false,
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "stage": "resnet1d"
+}
