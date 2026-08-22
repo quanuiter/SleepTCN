@@ -1,18 +1,24 @@
 {
-  "schema_version": 1,
-  "passed": true,
   "experiment_id": "E2",
+  "manifest_sha256": "2c1c058ffaac925d426b7889320bf5e092bd191e070e8685a32f029db544aef3",
   "outer_fold": 2,
-  "seed": 123,
-  "smoke": false,
-  "manifest_sha256": "74dfa2e923fcef0752a12eb1839cd9e6b4c522906217a63c1be1d7a730a952dd",
-  "sequence_checkpoint_sha256": "6cb1c4b0befc19684c7453a4bf23c0de7e5fdb567716892f4ba12046f3361a2e",
+  "passed": true,
   "roles": {
-    "validation": {
+    "test": {
+      "metrics_sha256": "4e76190c40914c09840c99527fe323ced923aa04a92f36cc3d53080fff6586e5",
+      "prediction_sha256": "628630b008c5e2fafe775b6fc5ac1969ff444df3ac9ec1cdc09f18a179772a8c",
       "records": 16,
-      "valid_epochs": 19396,
+      "valid_epochs": 23881
+    },
+    "validation": {
+      "metrics_sha256": "914d69905085c16a7cc27e3582b572afb42f3e3e76c952fa13003b2ac887e848",
       "prediction_sha256": "3ef8938ef98ad56cd3f1c71cf1fec8006b1b59f72632bfe4cfa233f39bf5c28c",
-      "metrics_sha256": "914d69905085c16a7cc27e3582b572afb42f3e3e76c952fa13003b2ac887e848"
+      "records": 16,
+      "valid_epochs": 19396
     }
-  }
+  },
+  "schema_version": 1,
+  "seed": 123,
+  "sequence_checkpoint_sha256": "6cb1c4b0befc19684c7453a4bf23c0de7e5fdb567716892f4ba12046f3361a2e",
+  "smoke": false
 }
