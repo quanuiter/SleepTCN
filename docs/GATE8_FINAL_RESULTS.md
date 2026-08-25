@@ -2,7 +2,7 @@
 
 Ngày khóa: **2026-08-14**
 
-Nhánh tài liệu hiện hành: `refactor`
+Nhánh tại thời điểm khóa: `refactor` (snapshot lịch sử; tài liệu hiện được phát hành trên `main`)
 
 Commit nền của artifact: `e3681a3` (provenance của chiến dịch)
 

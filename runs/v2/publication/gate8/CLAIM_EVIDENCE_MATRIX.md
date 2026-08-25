@@ -11,8 +11,8 @@ Tóm tắt, Kết luận hoặc bản trình bày phải được đối chiếu
 | C04 | not_supported | ResNet-1D tốt hơn 15CNN có ý nghĩa thống kê về Macro-F1. | E2−E1 p Holm=0.103554; CI chứa 0. | gate5_paired_results_seed42.json |
 | C05 | supported_with_tradeoff | ResNet-1D + TCN đơn giản hơn về vận hành, suy luận nhanh hơn và có thời gian chạy huấn luyện/validation thấp hơn E0 trong chiến dịch đã ghi nhận. | 2 so với 16 mô hình thành phần; speedup forward E2=3.757×; E2 mất 2 giờ 44 phút 57 giây so với E0 33 giờ 35 phút 36 giây trên 10 fold seed 123; tham số=4.366×; peak VRAM=1.284×. | gate6_latency_fold00_seed42.json; gate6_parameters_fold00_seed42.json; MULTISEED_SENSITIVITY_RESULTS.md |
 | C06 | contradicted_by_measurement | Embedding ResNet tách năm lớp tốt hơn 15CNN softmax. | E2−E1 Silhouette < 0 ở 10/10 fold. | gate6_feature_space/feature_space_report.json |
-| C07 | not_evaluated | Mô hình giải quyết domain shift hoặc zero-shot trên SHHS. | Không có thí nghiệm SHHS trong giao thức E0–E6. | EXPERIMENT_PROTOCOL_V2.md |
-| C08 | limited | Kết quả ổn định theo khởi tạo ngẫu nhiên. | Huấn luyện chính thức mới dùng seed 42. | experiments_v2.json; Gate-5 report |
+| C07 | not_evaluated | Mô hình giải quyết domain shift hoặc zero-shot trên SHHS. | E3 cao hơn E0 và E6 trong mẫu SHHS1 zero-shot đã khóa, nhưng kết quả chỉ hỗ trợ lợi thế trong mẫu/giao thức này và không chứng minh đã giải quyết domain shift hay tổng quát cho toàn bộ SHHS. | SHHS_ZERO_SHOT_RESULTS.md; REPORT_GATE1_8_AUDIT.md; EXPERIMENT_PROTOCOL_V2.md |
+| C08 | limited | Kết quả ổn định theo khởi tạo ngẫu nhiên. | Hai chiến dịch đầy đủ seed 42 và seed 123 giữ hướng dương của các đối chiếu; E3−E6 có CI dương ở cả hai nhưng chỉ seed 42 đạt Holm. Hai seed cố định chưa đại diện cho toàn bộ biến thiên khởi tạo. | MULTISEED_SENSITIVITY_RESULTS.md |
 | C09 | not_supported | P/N mang lại lợi ích tăng thêm có ý nghĩa cho vùng chuyển pha. | Full CPN−C=0.000953, CI95%=[-0.004588; 0.006568], ba p Holm đều bằng 1,000. | Gate 8 analysis, paired subject-cluster bootstrap and Wilcoxon-Holm. |
 | C10 | withdrawn_unsupported | Có thể quy P/N thành một tỷ lệ phần trăm thông tin. | Ablation chỉ đo hiệu ứng dự báo có điều kiện trong một quy trình; không đo lượng thông tin hay quan hệ nhân quả. | Gate 8 protocol claim boundary and group ablation design. |
 | C11 | not_established | Full CPN tương đương C, CP hoặc CN. | Không có biên tương đương/không thua kém được định trước; kiểm định khác biệt không có ý nghĩa không chứng minh tương đương. | Gate 8 protocol and confidence intervals crossing zero. |
@@ -63,14 +63,14 @@ Tóm tắt, Kết luận hoặc bản trình bày phải được đối chiếu
 
 ## C07 — not_evaluated
 
-- Diễn giải phù hợp: Kết luận hiện tại chỉ áp dụng in-domain trên Sleep-EDF Expanded.
+- Diễn giải phù hợp: E3 có lợi thế trong mẫu SHHS1 zero-shot đã khóa; không được mở rộng thành tuyên bố đã giải quyết domain shift hoặc tổng quát cho toàn bộ SHHS.
 
-- Diễn giải không được hỗ trợ: Đã chứng minh khả năng zero-shot/domain adaptation/lâm sàng.
+- Diễn giải không được hỗ trợ: Đã chứng minh giải quyết domain shift, tổng quát cho toàn bộ SHHS hoặc có giá trị lâm sàng.
 
 
 ## C08 — limited
 
-- Diễn giải phù hợp: Đây là kết quả của một training seed; cần thêm seed để đánh giá độ ổn định.
+- Diễn giải phù hợp: Hai seed cố định cho thấy hướng hiệu ứng lặp lại; cần thêm seed được đăng ký trước để ước lượng đầy đủ biến thiên do khởi tạo.
 
 - Diễn giải không được hỗ trợ: Kết quả bền vững theo random seed.
 

@@ -2,7 +2,7 @@
 
 Ngày kiểm toán: **2026-08-14**
 
-Nhánh lưu trữ tài liệu hiện hành: `refactor`
+Nhánh tại thời điểm kiểm toán: `refactor` (snapshot lịch sử; tài liệu hiện được phát hành trên `main`)
 
 Chiến dịch được kiểm toán thuộc snapshot lịch sử được xác định bởi commit dưới đây.
 

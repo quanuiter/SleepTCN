@@ -5,14 +5,14 @@
 - [ ] Mọi số liệu trong Abstract khớp bảng sinh tự động.
 - [ ] Chỉ gọi Macro-F1 là chỉ số chính; Accuracy/kappa là hỗ trợ.
 - [ ] Nêu rõ 78 đối tượng, 153 bản ghi, 195.469 epoch hợp lệ.
-- [ ] Nêu rõ một training seed 42.
+- [ ] Nêu rõ seed 42 là chiến dịch chính và seed 123 là phân tích độ nhạy sau giao thức.
 - [ ] Không coi 10 fold là 10 mẫu độc lập.
 - [ ] Holm chỉ gồm bốn so sánh chính.
 - [ ] E4−E2 được ghi là phân tích thứ cấp.
 - [ ] Không tạo p-value E5−E4.
 - [ ] Báo cáo đồng thời tốc độ, tham số và VRAM.
 - [ ] Không sử dụng tuyên bố 8,2×.
-- [ ] Không tuyên bố domain shift, zero-shot, SHHS hoặc giá trị lâm sàng.
+- [ ] Không tuyên bố đã giải quyết domain shift hoặc tổng quát cho toàn bộ SHHS; nếu nêu zero-shot/SHHS phải giới hạn ở 180 đối tượng và giao thức đã khóa; không tuyên bố giá trị lâm sàng.
 
 ## Yêu cầu về trình bày
 

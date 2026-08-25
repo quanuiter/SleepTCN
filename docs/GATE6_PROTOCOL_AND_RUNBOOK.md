@@ -63,8 +63,8 @@ biến thể preprocessing khác cho phân tích đặc trưng.
 
 ```bash
 cd /workspace/SleepTCN
-git switch refactor
-git pull origin refactor
+git switch main
+git pull origin main
 export PYTHONPATH="$PWD/src"
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 python -m unittest discover -s tests -p 'test_*.py'

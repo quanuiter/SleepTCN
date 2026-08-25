@@ -1,7 +1,7 @@
 # Runbook chạy GPU Docker — SleepTCN v2
 
 Tài liệu này quy định quy trình chạy một outer fold trên Docker GPU và lưu artifact lên
-nhánh `refactor`. Đợt hiện tại chỉ dùng training seed `42`, chạy một fold cho mỗi phiên
+nhánh `main`. Đợt hiện tại chỉ dùng training seed `42`, chạy một fold cho mỗi phiên
 thuê, với thứ tự `E0 -> E1 -> E2 -> E3 -> E4 -> E6`. Không chạy E5 và không dùng
 `--allow-test-evaluation`.
 
@@ -15,7 +15,7 @@ Mở Jupyter Terminal/terminal trong Docker. Đường dẫn dùng trong tài li
 
 ```bash
 cd /workspace
-git clone --branch refactor https://github.com/quanuiter/SleepTCN.git SleepTCN
+git clone --branch main https://github.com/quanuiter/SleepTCN.git SleepTCN
 cd /workspace/SleepTCN
 git status --short
 git log -1 --oneline
@@ -26,14 +26,14 @@ Nếu đã có workspace từ phiên trước, không clone lại:
 ```bash
 cd /workspace/SleepTCN
 git fetch origin
-git switch refactor
+git switch main
 git pull --ff-only
 git status --short
 ```
 
 `git status --short` phải không in gì trước khi chạy full experiment. Nếu source được upload thủ
 thủ công chứ không clone, tạo Git repository/remote và chắc chắn checkout đúng commit từ nhánh
-`refactor` trước khi tiếp tục.
+`main` trước khi tiếp tục.
 
 ## 2. Upload dữ liệu đã xử lý
 
@@ -321,14 +321,14 @@ git diff --cached --name-only | grep 'data/cache' \
 
 git diff --cached --stat
 git commit -m 'Add fold 02 validation runs and checkpoints'
-git push origin refactor
+git push origin main
 ```
 
-Sau push, ở máy cá nhân chạy `git pull` trên nhánh `refactor`, rồi kiểm tra đủ sáu
+Sau push, ở máy cá nhân chạy `git pull` trên nhánh `main`, rồi kiểm tra đủ sáu
 `run_manifest.json` và `validation_report.json`. Có thể tắt Docker khi commit đã push thành công.
 
 Repository hiện có `.gitattributes` gán `*.pt` cho Git LFS. Nếu máy Docker đã cài Git LFS, phải
-chạy thêm `git lfs push --all origin refactor` và `git lfs fsck`; nếu không dùng Git LFS,
+chạy thêm `git lfs push --all origin main` và `git lfs fsck`; nếu không dùng Git LFS,
 kiểm tra checkpoint được lưu trực tiếp là file nhị phân vài MB chứ không phải pointer ASCII
 130--132 byte. Tuyệt đối không coi commit pointer là backup hoàn chỉnh nếu blob LFS chưa được đẩy.
 

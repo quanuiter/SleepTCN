@@ -2,7 +2,7 @@
 
 Ngày cập nhật: 2026-08-25
 
-Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch SHHS1 zero-shot bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4. Tài liệu hiện hành được quản lý trên nhánh `refactor`.
+Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch SHHS1 zero-shot bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4. Tài liệu hiện hành được quản lý trên nhánh `main`.
 
 ## Nguồn bằng chứng khóa
 

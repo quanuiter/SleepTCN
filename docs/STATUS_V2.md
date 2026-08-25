@@ -2,7 +2,7 @@
 
 Ngày cập nhật: **2026-08-25**
 
-Nhánh tài liệu hiện hành: `refactor`
+Nhánh tài liệu hiện hành: `main`
 
 Commit nền của artifact Gate 8: `e3681a3` (provenance của chiến dịch)
 

@@ -36,12 +36,12 @@
     "status": "not_supported"
   },
   {
-    "allowed_wording": "Pipeline \u00edt m\u00f4 h\u00ecnh th\u00e0nh ph\u1ea7n h\u01a1n v\u00e0 suy lu\u1eadn nhanh h\u01a1n, \u0111\u1ed5i l\u1ea1i nhi\u1ec1u tham s\u1ed1 v\u00e0 VRAM h\u01a1n.",
-    "claim": "ResNet-1D + TCN \u0111\u01a1n gi\u1ea3n h\u01a1n v\u1ec1 v\u1eadn h\u00e0nh v\u00e0 nhanh h\u01a1n E0.",
+    "allowed_wording": "Quy trình có ít mô hình thành phần hơn, suy luận nhanh hơn và có thời gian chạy chiến dịch thấp hơn E0 trong seed 123, đổi lại có nhiều tham số và sử dụng nhiều VRAM hơn.",
+    "claim": "ResNet-1D + TCN đơn giản hơn về vận hành, suy luận nhanh hơn và có thời gian chạy huấn luyện/validation thấp hơn E0 trong chiến dịch đã ghi nhận.",
     "claim_id": "C05",
     "evidence": "2 so v\u1edbi 16 m\u00f4 h\u00ecnh th\u00e0nh ph\u1ea7n; speedup E2=3.757\u00d7; tham s\u1ed1=4.366\u00d7; peak VRAM=1.284\u00d7.",
-    "prohibited_wording": "M\u00f4 h\u00ecnh nh\u1eb9, ti\u1ebft ki\u1ec7m tham s\u1ed1 ho\u1eb7c nhanh h\u01a1n 8,2\u00d7.",
-    "source": "gate6_latency_fold00_seed42.json; gate6_parameters_fold00_seed42.json",
+    "prohibited_wording": "Mô hình nhẹ, tiết kiệm tham số, thời gian huấn luyện nhanh hơn trong mọi phần cứng hoặc nhanh hơn 8,2×.",
+    "source": "gate6_latency_fold00_seed42.json; gate6_parameters_fold00_seed42.json; MULTISEED_SENSITIVITY_RESULTS.md",
     "status": "supported_with_tradeoff"
   },
   {
@@ -54,21 +54,21 @@
     "status": "contradicted_by_measurement"
   },
   {
-    "allowed_wording": "K\u1ebft lu\u1eadn hi\u1ec7n t\u1ea1i ch\u1ec9 \u00e1p d\u1ee5ng in-domain tr\u00ean Sleep-EDF Expanded.",
+    "allowed_wording": "E3 có lợi thế trong mẫu SHHS1 zero-shot đã khóa; không được mở rộng thành tuyên bố đã giải quyết domain shift hoặc tổng quát cho toàn bộ SHHS.",
     "claim": "M\u00f4 h\u00ecnh gi\u1ea3i quy\u1ebft domain shift ho\u1eb7c zero-shot tr\u00ean SHHS.",
     "claim_id": "C07",
-    "evidence": "Kh\u00f4ng c\u00f3 th\u00ed nghi\u1ec7m SHHS trong giao th\u1ee9c E0\u2013E6.",
-    "prohibited_wording": "\u0110\u00e3 ch\u1ee9ng minh kh\u1ea3 n\u0103ng zero-shot/domain adaptation/l\u00e2m s\u00e0ng.",
-    "source": "EXPERIMENT_PROTOCOL_V2.md",
+    "evidence": "E3 cao hơn E0 và E6 trong mẫu SHHS1 zero-shot đã khóa, nhưng kết quả chỉ hỗ trợ lợi thế trong mẫu/giao thức này và không chứng minh đã giải quyết domain shift hay tổng quát cho toàn bộ SHHS.",
+    "prohibited_wording": "Đã chứng minh giải quyết domain shift, tổng quát cho toàn bộ SHHS hoặc có giá trị lâm sàng.",
+    "source": "SHHS_ZERO_SHOT_RESULTS.md; REPORT_GATE1_8_AUDIT.md; EXPERIMENT_PROTOCOL_V2.md",
     "status": "not_evaluated"
   },
   {
-    "allowed_wording": "\u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 c\u1ee7a m\u1ed9t training seed; c\u1ea7n th\u00eam seed \u0111\u1ec3 \u0111\u00e1nh gi\u00e1 \u0111\u1ed9 \u1ed5n \u0111\u1ecbnh.",
+    "allowed_wording": "Hai seed cố định cho thấy hướng hiệu ứng lặp lại; cần thêm seed được đăng ký trước để ước lượng đầy đủ biến thiên do khởi tạo.",
     "claim": "K\u1ebft qu\u1ea3 \u1ed5n \u0111\u1ecbnh theo kh\u1edfi t\u1ea1o ng\u1eabu nhi\u00ean.",
     "claim_id": "C08",
-    "evidence": "Hu\u1ea5n luy\u1ec7n ch\u00ednh th\u1ee9c m\u1edbi d\u00f9ng seed 42.",
+    "evidence": "Hai chiến dịch đầy đủ seed 42 và seed 123 giữ hướng dương của các đối chiếu; E3−E6 có CI dương ở cả hai nhưng chỉ seed 42 đạt Holm. Hai seed cố định chưa đại diện cho toàn bộ biến thiên khởi tạo.",
     "prohibited_wording": "K\u1ebft qu\u1ea3 b\u1ec1n v\u1eefng theo random seed.",
-    "source": "experiments_v2.json; Gate-5 report",
+    "source": "MULTISEED_SENSITIVITY_RESULTS.md",
     "status": "limited"
   },
   {
