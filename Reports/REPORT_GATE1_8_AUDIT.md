@@ -15,6 +15,8 @@ Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau gia
 - Gate 6: `runs/v2/analysis/gate6_validation_report.json`, `runs/v2/analysis/gate6_latency_fold00_seed42.json` và `runs/v2/analysis/gate6_feature_space/feature_space_report.json`.
 - Gate 7: bước tạo bảng, hình và ma trận truy nguyên đã hoàn tất; đầu ra cuối được hợp nhất trong gói Gate 8.
 - Gate 8: `runs/v2/gate8/analysis_seed42.json`, `runs/v2/publication/gate8/publication_manifest.json`, `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` và `runs/v2/publication/gate8/gate8_validation_report.json`.
+- Phân bố nhãn: `data/manifests/processed_validation_v2.json` cho Sleep-EDF và `Reports/SHHS_E3_E2_PAIRED_AUDIT.json` cho mẫu SHHS1 test đã khóa.
+- Phân tích lỗi theo lớp: các trường `per_class` và `confusion_matrix` trong `runs/v2/analysis/gate5_paired_results_seed42.json` (E3--E6 trên Sleep-EDF) và `Reports/SHHS_E3_E2_PAIRED_AUDIT.json` (E3--E2 trên SHHS1). Đây là chẩn đoán mô tả, không mở thêm họ kiểm định.
 - SHHS1: test gate SHA-256 `51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646` và phân tích bắt cặp SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`.
 - Thành phần SHHS1: test gate SHA-256 `fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c` và phân tích byte-giống-hệt SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
 - E3−E2 trên SHHS1: `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`, SHA-256 `d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a`; bốn artifact nguồn được khóa bằng SHA-256.
@@ -51,6 +53,7 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Benchmark Gate 6 đo suy luận forward đã khóa, không gồm I/O, tiền xử lý hoặc huấn luyện; vì vậy không được diễn giải thành tốc độ huấn luyện.
 - Thời gian huấn luyện/validation được báo cáo riêng từ chiến dịch seed 123: E2 nhanh hơn E0 khoảng 12,2 lần theo wall-clock của giao thức; đây là số đo vận hành quan sát được, phụ thuộc vào phần cứng, dừng sớm và điều phối lượt chạy.
 - Chiến dịch SHHS chính đã đạt: 180 test, 169.012 epoch hợp lệ, 5.400 dự đoán theo fold, 540 tổ hợp và 0 lỗi cổng test.
+- Phân tích lỗi theo lớp cho thấy Sleep-EDF tập trung nhầm lẫn ở các cặp N1/N2, còn SHHS1 có sai số nổi bật N3--N2 và N2--REM; đây là mô tả trên dự đoán gộp, không phải bằng chứng cơ chế.
 - E3--E0 zero-shot tăng 0,041219 Macro-F1 trung bình theo đối tượng, CI 95% [0,031367; 0,051196], p Holm `2,65e-13`, thắng/hòa/thua 138/0/42.
 - E3--E6 zero-shot tăng 0,027359, CI [0,018172; 0,036979], p Holm `1,87e-08`, thắng/hòa/thua 125/0/55.
 - Hai kết quả SHHS cho phép kết luận E3 tốt hơn E0/E6 trên mẫu đã khóa, không cho phép quy nguyên nhân riêng cho kiến trúc/tiền xử lý hoặc tuyên bố xác nhận lâm sàng.
@@ -68,8 +71,8 @@ Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS 
 
 PDF hiện hành trong kho: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 báo cáo dài: `db7d605f3b8847b8c9ed62d3b2f7181ffa2ee72a9a1208711cadb58d4baf7b6f`.
+SHA-256 báo cáo dài: `4ddf7df7e1791418dff0c7a8117ba8e12ddb2944c33c75800678ac5e96094686`.
 
 PDF bài báo hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 
-SHA-256 bài báo: `852dd4a68f0cfb394317c5ce813d1a19bc7da06aaa99ed3702effc752acf5c2a`.
+SHA-256 bài báo: `3c84addeb9186a354215bd466832bd515fca6bce068324586b114dd26fc06cfb`.

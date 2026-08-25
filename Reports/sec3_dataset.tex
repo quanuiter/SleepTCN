@@ -9,24 +9,26 @@ Nhãn được ánh xạ thành năm lớp W, N1, N2, N3 và REM. Các giai đo�
 
 \begin{table}[H]
 \centering
-\caption{Phân bố nhãn sau cắt cửa sổ}
+\caption{Phân bố nhãn hợp lệ trên Sleep-EDF và mẫu SHHS1 test}
 \label{tab:label_distribution}
-\begin{tabular}{lrr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrr|rr}
 \toprule
-\textbf{Nhãn} & \textbf{Số epoch} & \textbf{Tỷ lệ} \\
+\textbf{Nhãn} & \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{2}{c}{\textbf{SHHS1 test}} \\
+ & \textbf{Số epoch} & \textbf{Tỷ lệ} & \textbf{Số epoch} & \textbf{Tỷ lệ} \\
 \midrule
-W & 65.941 & 33,73\% \\
-N1 & 21.522 & 11,01\% \\
-N2 & 69.132 & 35,37\% \\
-N3 & 13.039 & 6,67\% \\
-REM & 25.835 & 13,22\% \\
+W & 65.941 & 33,73\% & 36.983 & 21,88\% \\
+N1 & 21.522 & 11,01\% & 7.002 & 4,14\% \\
+N2 & 69.132 & 35,37\% & 76.287 & 45,14\% \\
+N3 & 13.039 & 6,67\% & 22.806 & 13,49\% \\
+REM & 25.835 & 13,22\% & 25.934 & 15,34\% \\
 \midrule
-Movement/Unknown & 298 & Không tính \\
+\textbf{Tổng hợp lệ} & \textbf{195.469} & \textbf{100\%} & \textbf{169.012} & \textbf{100\%} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
-Sau khi chuẩn hóa cửa sổ, dữ liệu gồm 195.469 epoch hợp lệ. Phân bố không cân bằng giữa các lớp, đặc biệt ở N1 và N3, là lý do Macro-F1 và F1 theo lớp được ưu tiên bên cạnh Accuracy.
+Sleep-EDF có 298 epoch Movement hoặc Unknown bị loại khỏi các chỉ số; số liệu SHHS trong bảng là toàn bộ 169.012 epoch hợp lệ của mẫu test đã khóa. Phân bố nhãn khác nhau giữa hai bộ dữ liệu: Sleep-EDF tập trung nhiều hơn ở W và N1, trong khi SHHS tập trung nhiều hơn ở N2. Đây là đặc điểm của mẫu dữ liệu và là cơ sở để báo cáo Macro-F1 cùng F1 theo lớp bên cạnh Accuracy; bảng này không phải là kết quả so sánh mô hình.
 
 \subsection{Cắt cửa sổ và bảo toàn trục thời gian}
 

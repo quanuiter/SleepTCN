@@ -83,6 +83,59 @@ E6 & 0,769124 & 0,822969 & 0,757320 & 0,512397 \\
 \end{tabular}
 \end{table}
 
+\subsubsection{Phân tích lỗi theo lớp trên Sleep-EDF}
+
+Phân tích bổ sung được tính trên các dự đoán ngoài fold gộp của seed 42. Bảng~\ref{tab:sleepedf_class_errors} cho thấy chất lượng theo từng lớp của E3 và E6; $\Delta$F1 là chênh lệch E3--E6. Đây là phân tích mô tả của cùng artifact test, không mở thêm một họ kiểm định thống kê.
+
+\begin{table}[H]
+\centering
+\caption{Precision, recall và F1 theo lớp trên Sleep-EDF: E3 so với E6}
+\label{tab:sleepedf_class_errors}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Lớp} & \textbf{Hỗ trợ} & \multicolumn{3}{c}{\textbf{E3}} & \multicolumn{3}{c}{\textbf{E6}} & \textbf{$\Delta$F1} \\
+ & & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \\
+\midrule
+W & 65.941 & 0,933784 & 0,927086 & 0,930423 & 0,939099 & 0,916911 & 0,927872 & +0,002551 \\
+N1 & 21.522 & 0,514858 & 0,540981 & 0,527597 & 0,503248 & 0,521885 & 0,512397 & +0,015199 \\
+N2 & 69.132 & 0,858256 & 0,844674 & 0,851411 & 0,840123 & 0,836805 & 0,838460 & +0,012950 \\
+N3 & 13.039 & 0,807187 & 0,809725 & 0,808454 & 0,716010 & 0,777897 & 0,745672 & +0,062782 \\
+REM & 25.835 & 0,827439 & 0,841339 & 0,834331 & 0,822702 & 0,819741 & 0,821219 & +0,013113 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+E3 giữ F1 cao nhất ở W và N2, trong khi N1 vẫn là lớp khó nhất. Chênh lệch F1 lớn nhất giữa E3 và E6 nằm ở N3 (+0,062782); các lớp còn lại tăng từ +0,002551 đến +0,015199. Ma trận nhầm lẫn của E3 và E6 được trình bày theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán.
+
+\begin{table}[H]
+\centering
+\caption{Ma trận nhầm lẫn gộp trên Sleep-EDF, hàng là nhãn thật và cột là nhãn dự đoán}
+\label{tab:sleepedf_confusion}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Mô hình--nhãn thật} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+E3--W & 61.133 & 3.888 & 416 & 56 & 448 \\
+E3--N1 & 3.283 & 11.643 & 4.867 & 105 & 1.624 \\
+E3--N2 & 539 & 5.496 & 58.394 & 2.271 & 2.432 \\
+E3--N3 & 30 & 45 & 2.377 & 10.558 & 29 \\
+E3--REM & 483 & 1.542 & 1.984 & 90 & 21.736 \\
+\midrule
+E6--W & 60.462 & 4.420 & 528 & 61 & 470 \\
+E6--N1 & 2.940 & 11.232 & 5.524 & 231 & 1.595 \\
+E6--N2 & 429 & 4.842 & 57.850 & 3.544 & 2.467 \\
+E6--N3 & 25 & 73 & 2.766 & 10.143 & 32 \\
+E6--REM & 527 & 1.752 & 2.191 & 187 & 21.178 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này cho thấy sai số tập trung ở các giai đoạn có đặc trưng biên gần nhau; nó mô tả vị trí sai số trong mẫu hiện tại, không xác định nguyên nhân sinh lý hay quan hệ nhân quả của tiền xử lý.
+
 E3 có giá trị mô tả cao nhất trong chiến dịch chính. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước, trong đó E3--E6 là đối chiếu có bằng chứng mạnh nhất.
 
 \begin{table}[H]
@@ -334,6 +387,59 @@ E3--E6 & \textbf{0,0274} & $\mathbf{[0,0182;0,0370]}$ & 0,0292 & 125/0/55 & $1,8
 Cả hai khoảng tin cậy chính đều hoàn toàn dương và Wilcoxon vẫn có ý nghĩa sau Holm. Vì vậy E3 có Macro-F1 trung bình theo đối tượng cao hơn E0 và E6 trong mẫu SHHS1 và giao thức zero-shot đã khóa. Các chỉ số hỗ trợ cũng cùng chiều.
 
 N1 vẫn là lớp khó nhất. E3 có F1 N1 cao hơn E0/E6, nhưng recall N1 của E0 là 0,5841, cao hơn E3 0,5437; precision N1 của E3 là 0,2528, cao hơn E0 0,2017. Vì vậy lợi ích F1 của E3 phản ánh cân bằng precision--recall tốt hơn, không phải tăng đồng thời mọi chỉ số N1.
+
+\subsubsection{Phân tích lỗi theo lớp trên SHHS1}
+
+Trên SHHS1, phân tích lớp được thực hiện trên 169.012 epoch hợp lệ của mẫu test đã khóa. E3 được đối chiếu với E2 vì hai cấu hình dùng cùng họ ResNet-1D--TCN và khác chế độ xử lý tín hiệu; $\Delta$F1 là chênh lệch E3--E2. Các con số dưới đây là mô tả gộp, không thay thế cho phân tích bắt cặp ở cấp đối tượng.
+
+\begin{table}[H]
+\centering
+\caption{Precision, recall và F1 theo lớp trên SHHS1: E3 so với E2}
+\label{tab:shhs_class_errors}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Lớp} & \textbf{Hỗ trợ} & \multicolumn{3}{c}{\textbf{E3}} & \multicolumn{3}{c}{\textbf{E2}} & \textbf{$\Delta$F1} \\
+ & & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \\
+\midrule
+W & 36.983 & 0,882267 & 0,801395 & 0,839889 & 0,878039 & 0,727469 & 0,795694 & +0,044195 \\
+N1 & 7.002 & 0,252822 & 0,543702 & 0,345150 & 0,236726 & 0,352756 & 0,283322 & +0,061828 \\
+N2 & 76.287 & 0,739422 & 0,734896 & 0,737152 & 0,736197 & 0,693735 & 0,714336 & +0,022816 \\
+N3 & 22.806 & 0,944044 & 0,258178 & 0,405468 & 0,965898 & 0,249627 & 0,396725 & +0,008743 \\
+REM & 25.934 & 0,605237 & 0,893923 & 0,721785 & 0,488616 & 0,944976 & 0,644158 & +0,077626 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+E3 cải thiện F1 ở cả năm lớp so với E2, với mức tăng lớn nhất ở REM (+0,077626) và N1 (+0,061828). Tuy nhiên, recall N3 vẫn thấp (0,258178), còn recall REM cao nhưng precision thấp; đây là dấu hiệu của sự đánh đổi giữa các lớp trong điều kiện ngoài miền và cần được đọc cùng ma trận nhầm lẫn.
+
+\begin{table}[H]
+\centering
+\caption{Ma trận nhầm lẫn gộp trên SHHS1, hàng là nhãn thật và cột là nhãn dự đoán}
+\label{tab:shhs_confusion}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Mô hình--nhãn thật} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+E3--W & 29.638 & 4.481 & 1.171 & 21 & 1.672 \\
+E3--N1 & 874 & 3.807 & 601 & 3 & 1.717 \\
+E3--N2 & 2.348 & 5.947 & 56.063 & 324 & 11.605 \\
+E3--N3 & 78 & 39 & 16.674 & 5.888 & 127 \\
+E3--REM & 655 & 784 & 1.311 & 1 & 23.183 \\
+\midrule
+E2--W & 26.904 & 4.174 & 1.066 & 17 & 4.822 \\
+E2--N1 & 811 & 2.470 & 645 & 2 & 3.074 \\
+E2--N2 & 2.375 & 3.500 & 52.923 & 182 & 17.307 \\
+E2--N3 & 112 & 28 & 16.527 & 5.693 & 446 \\
+E2--REM & 439 & 262 & 726 & 0 & 24.507 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số N2 bị gán thành REM và số N3 bị gán thành N2 đều giảm, phù hợp với mức tăng F1 mô tả ở các lớp liên quan; đây vẫn là diễn giải mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả.
 
 \subsection{Phân tích bổ sung thành phần E1/E2 trên SHHS1}
 

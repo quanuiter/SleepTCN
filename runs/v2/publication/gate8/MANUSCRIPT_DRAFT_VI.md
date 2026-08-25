@@ -109,6 +109,47 @@ Macro-F1 tại vùng chuyển pha của điều kiện đầy đủ là 0,6201. 
 
 Kết quả cho thấy trong thiết kế hiện tại chưa quan sát thấy lợi ích tăng thêm có ý nghĩa của các nhóm ngữ cảnh liền trước/liền sau tại vùng chuyển pha. Kết quả không cho phép kết luận P/N không có thông tin, cũng không cho phép khẳng định các điều kiện tương đương.
 
+### 3.5. Phân bố nhãn và lỗi theo lớp
+
+Phân bố nhãn hợp lệ của hai mẫu được tổng hợp dưới đây. Sleep-EDF còn 298 epoch Movement hoặc Unknown không tham gia các chỉ số; mẫu SHHS1 gồm 169.012 epoch hợp lệ. Sự khác biệt phân bố giữa hai bộ dữ liệu là đặc điểm của mẫu, không phải hiệu ứng của mô hình.
+
+| Nhãn | Sleep-EDF (n) | Sleep-EDF (%) | SHHS1 test (n) | SHHS1 test (%) |
+| --- | ---: | ---: | ---: | ---: |
+| W | 65.941 | 33,73 | 36.983 | 21,88 |
+| N1 | 21.522 | 11,01 | 7.002 | 4,14 |
+| N2 | 69.132 | 35,37 | 76.287 | 45,14 |
+| N3 | 13.039 | 6,67 | 22.806 | 13,49 |
+| REM | 25.835 | 13,22 | 25.934 | 15,34 |
+| **Tổng hợp lệ** | **195.469** | **100,00** | **169.012** | **100,00** |
+
+Phân tích lỗi được tính trên dự đoán gộp đã khóa, theo hướng mô tả. Bảng dưới đây dùng precision, recall, F1 theo lớp; $Δ$F1 là chênh lệch giữa hai cấu hình trong cùng mẫu.
+
+**Sleep-EDF: E3 so với E6**
+
+| Lớp | E3 precision | E3 recall | E3 F1 | E6 precision | E6 recall | E6 F1 | $Δ$F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| W | 0,933784 | 0,927086 | 0,930423 | 0,939099 | 0,916911 | 0,927872 | +0,002551 |
+| N1 | 0,514858 | 0,540981 | 0,527597 | 0,503248 | 0,521885 | 0,512397 | +0,015199 |
+| N2 | 0,858256 | 0,844674 | 0,851411 | 0,840123 | 0,836805 | 0,838460 | +0,012950 |
+| N3 | 0,807187 | 0,809725 | 0,808454 | 0,716010 | 0,777897 | 0,745672 | +0,062782 |
+| REM | 0,827439 | 0,841339 | 0,834331 | 0,822702 | 0,819741 | 0,821219 | +0,013113 |
+
+N1 là lớp khó nhất trên Sleep-EDF. Mức tăng F1 lớn nhất của E3 so với E6 nằm ở N3. Các cặp nhầm lẫn lớn nhất của E3 là N2→N1 (5.496), N1→N2 (4.867), W→N1 (3.888), N3→N2 (2.377) và REM→N2 (1.984) epoch.
+
+**SHHS1: E3 so với E2**
+
+| Lớp | E3 precision | E3 recall | E3 F1 | E2 precision | E2 recall | E2 F1 | $Δ$F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| W | 0,882267 | 0,801395 | 0,839889 | 0,878039 | 0,727469 | 0,795694 | +0,044195 |
+| N1 | 0,252822 | 0,543702 | 0,345150 | 0,236726 | 0,352756 | 0,283322 | +0,061828 |
+| N2 | 0,739422 | 0,734896 | 0,737152 | 0,736197 | 0,693735 | 0,714336 | +0,022816 |
+| N3 | 0,944044 | 0,258178 | 0,405468 | 0,965898 | 0,249627 | 0,396725 | +0,008743 |
+| REM | 0,605237 | 0,893923 | 0,721785 | 0,488616 | 0,944976 | 0,644158 | +0,077626 |
+
+Trên SHHS1, E3 cải thiện F1 ở cả năm lớp so với E2; mức tăng lớn nhất nằm ở REM và N1. Tuy nhiên, recall N3 vẫn thấp và precision REM còn hạn chế. Các cặp nhầm lẫn lớn nhất của E3 là N3→N2 (16.674), N2→REM (11.605), N2→N1 (5.947), W→N1 (4.481) và N1→REM (1.717) epoch.
+
+Các ma trận nhầm lẫn đầy đủ, theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán, được giữ trong các artifact phân tích đã khóa. Những chẩn đoán này chỉ mô tả cấu trúc sai số của mẫu; không mở thêm kiểm định, không xác định cơ chế sinh lý và không được diễn giải là quan hệ nhân quả của tiền xử lý.
+
 ## 4. Thảo luận
 
 Phát hiện nổi bật nhất là tính nhất quán của E3 so với E6: E3 đạt kết quả cao hơn trong miền Sleep-EDF và tiếp tục có lợi thế trong đánh giá SHHS1. Mẫu hình này cho thấy lựa chọn chế độ xử lý biên độ có vai trò thực nghiệm quan trọng trong dữ liệu đã khảo sát.

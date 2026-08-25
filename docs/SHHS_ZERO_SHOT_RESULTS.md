@@ -40,6 +40,20 @@ float64 trước `argmax`.
 Chỉ số chính đã định trước là trung bình Macro-F1 theo đối tượng. Chỉ số gộp theo epoch và từng lớp là
 thứ cấp vì đối tượng có số epoch khác nhau.
 
+## Phân bố nhãn của mẫu test
+
+Phân bố dưới đây được tính trên 169.012 epoch hợp lệ của mẫu SHHS1 đã khóa. N2 là lớp chiếm tỷ trọng
+lớn nhất, trong khi N1 là lớp ít xuất hiện nhất.
+
+| Nhãn | Số epoch | Tỷ lệ |
+|---|---:|---:|
+| W | 36.983 | 21,88% |
+| N1 | 7.002 | 4,14% |
+| N2 | 76.287 | 45,14% |
+| N3 | 22.806 | 13,49% |
+| REM | 25.934 | 15,34% |
+| **Tổng hợp lệ** | **169.012** | **100,00%** |
+
 ## So sánh xác nhận bắt cặp
 
 Bootstrap lấy lại mẫu toàn bộ 180 đối tượng theo cặp 10.000 lần, seed 2030. Wilcoxon hạng có dấu hai
@@ -67,6 +81,24 @@ Phân tích thứ cấp nhất quán với kết luận chính:
   zero-shot so với cách xử lý E3.
 - E3 cải thiện F1 N1 so với E0 và E6, nhưng N1 vẫn là lớp yếu nhất; E0 có recall N1 cao hơn E3 nên
   đánh đổi precision-recall phải được nêu rõ.
+
+## Chẩn đoán lỗi theo lớp của E3 và E2
+
+Phân tích hậu nghiệm E3-E2 sử dụng cùng 169.012 epoch hợp lệ. Các số liệu sau đây là mô tả gộp,
+không phải một họ kiểm định mới.
+
+| Lớp | E3 precision | E3 recall | E3 F1 | E2 precision | E2 recall | E2 F1 | ΔF1 (E3-E2) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| W | 0,882267 | 0,801395 | 0,839889 | 0,878039 | 0,727469 | 0,795694 | +0,044195 |
+| N1 | 0,252822 | 0,543702 | 0,345150 | 0,236726 | 0,352756 | 0,283322 | +0,061828 |
+| N2 | 0,739422 | 0,734896 | 0,737152 | 0,736197 | 0,693735 | 0,714336 | +0,022816 |
+| N3 | 0,944044 | 0,258178 | 0,405468 | 0,965898 | 0,249627 | 0,396725 | +0,008743 |
+| REM | 0,605237 | 0,893923 | 0,721785 | 0,488616 | 0,944976 | 0,644158 | +0,077626 |
+
+E3 tăng F1 ở cả năm lớp; mức tăng lớn nhất nằm ở REM và N1. Mẫu hình này đi kèm đánh đổi giữa
+precision và recall: recall N3 vẫn thấp, còn precision REM còn hạn chế. Các cặp nhầm lẫn lớn nhất của
+E3 là N3→N2 (16.674), N2→REM (11.605), N2→N1 (5.947), W→N1 (4.481) và N1→REM (1.717) epoch.
+Ma trận đầy đủ được giữ trong `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`.
 
 ## Điều không được suy ra
 

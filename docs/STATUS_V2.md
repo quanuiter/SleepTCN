@@ -27,6 +27,7 @@ suy luận trên CPU và không sửa artifact Gate 1--8.
 ## Dữ liệu và thiết kế thực nghiệm
 
 - Sleep-EDF Expanded, Sleep Cassette: 78 đối tượng và 153 bản ghi.
+- Phân bố nhãn hợp lệ và chẩn đoán lỗi theo lớp đã được bổ sung cho Sleep-EDF và mẫu SHHS1 test đã khóa; phân tích chỉ mang tính mô tả và không mở thêm kiểm định.
 - 195.767 epoch/bộ biến thể; 195.469 epoch nhãn hợp lệ và 298 Movement/Unknown bị mask.
 - Split SHA-256:
   `6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de`.

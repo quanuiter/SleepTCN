@@ -98,9 +98,32 @@ Sleep-EDF Expanded là mốc phổ biến cho EEG đơn kênh~\cite{kemp2000slee
 
 \subsection{Dữ liệu và nhãn}
 
-Sleep-EDF Expanded Sleep Cassette gồm 153 bản ghi của 78 đối tượng, sử dụng kênh Fpz--Cz. Nhãn được ánh xạ về W, N1, N2, N3 và REM; các epoch không hợp lệ được giữ đúng vị trí chuỗi nhưng không tham gia huấn luyện hoặc tính chỉ số. Sau cắt cửa sổ, có 195.469 epoch hợp lệ. Phân bố lớp được báo cáo trong phần phụ lục kết quả.
+Sleep-EDF Expanded Sleep Cassette gồm 153 bản ghi của 78 đối tượng, sử dụng kênh Fpz--Cz. Nhãn được ánh xạ về W, N1, N2, N3 và REM; các epoch không hợp lệ được giữ đúng vị trí chuỗi nhưng không tham gia huấn luyện hoặc tính chỉ số. Sau cắt cửa sổ, có 195.469 epoch hợp lệ. Phân bố lớp được trình bày trong Bảng~\ref{tab:class-distribution}.
 
 Mẫu SHHS Visit 1 được khóa trước khi xem dự đoán và gồm 180 đối tượng test. Nghiên cứu không cập nhật trọng số bằng SHHS. Tín hiệu C4--A1 được đưa về cùng quy ước epoch với Sleep-EDF. Dữ liệu SHHS được sử dụng theo điều kiện truy cập NSRR; báo cáo không công bố mã định danh người tham gia.
+
+\begin{table}[t]
+\centering
+\caption{Phân bố nhãn hợp lệ trong hai mẫu đánh giá.}
+\label{tab:class-distribution}
+\small
+\begin{tabular}{lrr|rr}
+\toprule
+\textbf{Nhãn} & \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{2}{c}{\textbf{SHHS1 test}} \\
+ & \textbf{Số epoch} & \textbf{Tỷ lệ} & \textbf{Số epoch} & \textbf{Tỷ lệ} \\
+\midrule
+W & 65.941 & 33,73\% & 36.983 & 21,88\% \\
+N1 & 21.522 & 11,01\% & 7.002 & 4,14\% \\
+N2 & 69.132 & 35,37\% & 76.287 & 45,14\% \\
+N3 & 13.039 & 6,67\% & 22.806 & 13,49\% \\
+REM & 25.835 & 13,22\% & 25.934 & 15,34\% \\
+\midrule
+\textbf{Tổng hợp lệ} & \textbf{195.469} & \textbf{100\%} & \textbf{169.012} & \textbf{100\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sleep-EDF còn 298 epoch Movement hoặc Unknown không tham gia chỉ số. Sự khác biệt phân bố, đặc biệt tỷ trọng N1 thấp hơn và N2 cao hơn trong SHHS1, được xem là một đặc điểm của mẫu ngoài miền chứ không phải hiệu ứng của mô hình.
 
 \subsection{Tiền xử lý}
 
@@ -197,6 +220,49 @@ E3--E6 & \textbf{0,021319} & $\boldsymbol{[0,012179;0,030698]}$ & \textbf{0,0011
 \end{figure}
 
 Đối chiếu hậu nghiệm E3--E0 cho $\Delta\mf=0,015024$, \ci\ $[0,005746;0,025871]$, Wilcoxon $p=0,012321$ và thắng/hòa/thua 49/0/29. Kết quả củng cố vị trí của toàn bộ quy trình E3 trong chiến dịch hiện tại; do đây là so sánh hậu nghiệm nên không dùng để khẳng định một thành phần riêng lẻ.
+
+\subsection{Phân tích lỗi theo lớp trên Sleep-EDF}
+
+Phân tích lớp sử dụng dự đoán ngoài fold gộp của seed 42. Bảng~\ref{tab:sleepedf-class-errors} báo cáo precision, recall, F1 của E3 và E6 cùng chênh lệch F1. Đây là thống kê mô tả trên artifact test, không phải một họ kiểm định mới.
+
+\begin{table}[t]
+\centering
+\caption{Chỉ số theo lớp trên Sleep-EDF: E3 so với E6.}
+\label{tab:sleepedf-class-errors}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Lớp} & \textbf{E3 Prec.} & \textbf{E3 Recall} & \textbf{E3 F1} & \textbf{E6 Prec.} & \textbf{E6 Recall} & \textbf{E6 F1} & \textbf{$\Delta$F1} \\
+\midrule
+W & 0,933784 & 0,927086 & 0,930423 & 0,939099 & 0,916911 & 0,927872 & +0,002551 \\
+N1 & 0,514858 & 0,540981 & 0,527597 & 0,503248 & 0,521885 & 0,512397 & +0,015199 \\
+N2 & 0,858256 & 0,844674 & 0,851411 & 0,840123 & 0,836805 & 0,838460 & +0,012950 \\
+N3 & 0,807187 & 0,809725 & 0,808454 & 0,716010 & 0,777897 & 0,745672 & +0,062782 \\
+REM & 0,827439 & 0,841339 & 0,834331 & 0,822702 & 0,819741 & 0,821219 & +0,013113 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+N1 là lớp khó nhất của E3. Chênh lệch lớn nhất nằm ở N3, trong khi các lớp còn lại cải thiện ở mức nhỏ hơn. Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N2$\rightarrow$N1 (5.496), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Các số đếm này chỉ mô tả cấu trúc sai số của mẫu Sleep-EDF.
+
+\begin{table}[t]
+\centering
+\caption{Ma trận nhầm lẫn gộp của E3 trên Sleep-EDF.}
+\label{tab:sleepedf-confusion}
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Thật $\backslash$ Dự đoán} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+W & 61.133 & 3.888 & 416 & 56 & 448 \\
+N1 & 3.283 & 11.643 & 4.867 & 105 & 1.624 \\
+N2 & 539 & 5.496 & 58.394 & 2.271 & 2.432 \\
+N3 & 30 & 45 & 2.377 & 10.558 & 29 \\
+REM & 483 & 1.542 & 1.984 & 90 & 21.736 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Độ nhạy theo seed huấn luyện}
 
@@ -345,6 +411,49 @@ E3 cao hơn E0 0,0412 \mf\ trung bình theo đối tượng (\ci\ $[0,0314;0,051
 \end{figure}
 
 N1 vẫn là lớp khó nhất. E3 có F1 N1 cao hơn E0, nhưng recall N1 thấp hơn (0,5437 so với 0,5841) và precision cao hơn (0,2528 so với 0,2017). Lợi ích F1 vì vậy phản ánh cân bằng precision--recall tốt hơn, không phải tăng đồng thời mọi chỉ số.
+
+\subsection{Phân tích lỗi theo lớp trên SHHS1}
+
+Phân tích mô tả trên 169.012 epoch hợp lệ cho thấy E3 cải thiện F1 ở cả năm lớp so với E2, với mức tăng lớn nhất ở REM và N1. Tuy vậy, recall N3 vẫn thấp và precision REM còn hạn chế, cho thấy độ bền ngoài miền vẫn phụ thuộc vào từng lớp.
+
+\begin{table}[t]
+\centering
+\caption{Chỉ số theo lớp trên SHHS1: E3 so với E2.}
+\label{tab:shhs-class-errors}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Lớp} & \textbf{E3 Prec.} & \textbf{E3 Recall} & \textbf{E3 F1} & \textbf{E2 Prec.} & \textbf{E2 Recall} & \textbf{E2 F1} & \textbf{$\Delta$F1} \\
+\midrule
+W & 0,882267 & 0,801395 & 0,839889 & 0,878039 & 0,727469 & 0,795694 & +0,044195 \\
+N1 & 0,252822 & 0,543702 & 0,345150 & 0,236726 & 0,352756 & 0,283322 & +0,061828 \\
+N2 & 0,739422 & 0,734896 & 0,737152 & 0,736197 & 0,693735 & 0,714336 & +0,022816 \\
+N3 & 0,944044 & 0,258178 & 0,405468 & 0,965898 & 0,249627 & 0,396725 & +0,008743 \\
+REM & 0,605237 & 0,893923 & 0,721785 & 0,488616 & 0,944976 & 0,644158 & +0,077626 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N3$\rightarrow$N2 (16.674), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). Đây là các chẩn đoán mô tả trên cohort SHHS1 đã khóa; chúng không được dùng để suy ra cơ chế nhân quả của tiền xử lý.
+
+\begin{table}[t]
+\centering
+\caption{Ma trận nhầm lẫn gộp của E3 trên SHHS1.}
+\label{tab:shhs-confusion}
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Thật $\backslash$ Dự đoán} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+W & 29.638 & 4.481 & 1.171 & 21 & 1.672 \\
+N1 & 874 & 3.807 & 601 & 3 & 1.717 \\
+N2 & 2.348 & 5.947 & 56.063 & 324 & 11.605 \\
+N3 & 78 & 39 & 16.674 & 5.888 & 127 \\
+REM & 655 & 784 & 1.311 & 1 & 23.183 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Phân tích thành phần ngoài miền}
 
