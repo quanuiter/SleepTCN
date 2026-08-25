@@ -10,6 +10,7 @@ Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau gia
 - Gate 2--4: manifest từng lượt chạy, checkpoint, dự đoán validation/test, báo cáo kiểm định SHA-256.
 - Gate 5: `runs/v2/analysis/gate5_paired_results_seed42.json` và `docs/GATE5_STATISTICAL_RESULTS.md`.
 - Độ nhạy seed 123: `runs/v2/analysis/gate5_paired_results_seed123.json`, `runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json` và `docs/MULTISEED_SENSITIVITY_RESULTS.md`.
+- Thời gian huấn luyện/validation seed 123: các bản ghi wall-clock của 60 lượt chạy trong provenance Git của đợt chạy (`8af1d12`), được tổng hợp trong `docs/MULTISEED_SENSITIVITY_RESULTS.md`; E0 mất 33 giờ 35 phút 36 giây, E2 mất 2 giờ 44 phút 57 giây và toàn bộ sáu cấu hình mất 45 giờ 12 phút 10 giây trên GPU V100.
 - Đối chiếu bổ sung E3--E0: `Reports/POSTHOC_E3_E0_AUDIT.json`; được khóa nhãn `posthoc_audit_not_prespecified`, không nhập ngược vào bốn giả thuyết chính.
 - Gate 6: `runs/v2/analysis/gate6_validation_report.json`, `runs/v2/analysis/gate6_latency_fold00_seed42.json` và `runs/v2/analysis/gate6_feature_space/feature_space_report.json`.
 - Gate 7: bước tạo bảng, hình và ma trận truy nguyên đã hoàn tất; đầu ra cuối được hợp nhất trong gói Gate 8.
@@ -26,7 +27,7 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 ## Các phép kiểm tra tài liệu
 
 - Báo cáo và bài báo đã được biên dịch bằng TeX Live 2026 theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. Một cảnh báo vi kiểu chữ T5 không ảnh hưởng đến PDF.
-- PDF mới gồm 27 trang cho báo cáo dài và 9 trang cho bản thảo bài báo. Các tệp đầu ra đã được kiểm tra metadata, kích thước và log dựng; không phát hiện tràn lề, cắt bảng, ký tự lỗi hoặc hình bị hỏng.
+- PDF mới gồm 28 trang cho báo cáo dài và 9 trang cho bản thảo bài báo. Các tệp đầu ra đã được kiểm tra metadata, kích thước và log dựng; không phát hiện tràn lề, cắt bảng, ký tự lỗi hoặc hình bị hỏng.
 - Không có tham chiếu hoặc trích dẫn chưa xác định, nhãn trùng, hộp tràn lề hay trang bị cắt.
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
@@ -48,6 +49,7 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Gate 8 không tìm thấy bằng chứng rằng nhóm P/N cải thiện Macro-F1 tại vùng chuyển pha; kết quả này không chứng minh P/N vô dụng, không định lượng “phần trăm thông tin”, và không chứng minh tương đương.
 - Silhouette thấp hơn của E2 không chứng minh ResNet-1D vô ích; nó chỉ bác bỏ giả thuyết đơn giản rằng embedding E2 tách lớp tuyến tính tốt hơn logits E1 dưới phép đo đã khóa.
 - Benchmark Gate 6 đo suy luận forward đã khóa, không gồm I/O, tiền xử lý hoặc huấn luyện; vì vậy không được diễn giải thành tốc độ huấn luyện.
+- Thời gian huấn luyện/validation được báo cáo riêng từ chiến dịch seed 123: E2 nhanh hơn E0 khoảng 12,2 lần theo wall-clock của giao thức; đây là số đo vận hành quan sát được, phụ thuộc vào phần cứng, dừng sớm và điều phối lượt chạy.
 - Chiến dịch SHHS chính đã đạt: 180 test, 169.012 epoch hợp lệ, 5.400 dự đoán theo fold, 540 tổ hợp và 0 lỗi cổng test.
 - E3--E0 zero-shot tăng 0,041219 Macro-F1 trung bình theo đối tượng, CI 95% [0,031367; 0,051196], p Holm `2,65e-13`, thắng/hòa/thua 138/0/42.
 - E3--E6 zero-shot tăng 0,027359, CI [0,018172; 0,036979], p Holm `1,87e-08`, thắng/hòa/thua 125/0/55.
@@ -66,7 +68,7 @@ Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS 
 
 PDF hiện hành trong kho: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 báo cáo dài: `1005b29193f307dd225e29a94dfa6a69322554e4d097d3a7d45712198ee2476c`.
+SHA-256 báo cáo dài: `db7d605f3b8847b8c9ed62d3b2f7181ffa2ee72a9a1208711cadb58d4baf7b6f`.
 
 PDF bài báo hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 

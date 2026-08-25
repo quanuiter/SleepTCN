@@ -49,6 +49,9 @@ bản ghi, epoch gốc và nhãn thật.
   `p=0,012321`, thắng/hòa/thua `49/0/29`. Đây là bằng chứng hỗ trợ toàn bộ quy trình E3 trong chiến dịch
   hiện tại, không thuộc bốn giả thuyết chính đã định trước và không tách được đóng góp từng thành phần.
 - E2 nhanh hơn E0 `3,757×`, nhưng có `4,366×` tham số và peak allocated VRAM `1,284×`.
+- Trong chiến dịch seed 123, E2 mất `2 giờ 44 phút 57 giây` cho 10 fold huấn luyện/validation, còn E0 mất
+  `33 giờ 35 phút 36 giây`; toàn bộ sáu cấu hình mất `45 giờ 12 phút 10 giây` khi chạy tuần tự trên GPU V100.
+  Đây là thời gian wall-clock của giao thức, không phải benchmark độc lập phần cứng.
 - Silhouette E2 thấp hơn E1 ở 10/10 fold; không có bằng chứng rằng embedding ResNet phân tách lớp
   Euclid tốt hơn softmax 15CNN.
 

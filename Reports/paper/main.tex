@@ -61,7 +61,7 @@
 
 \renewcommand{\abstractname}{Tóm tắt}
 \begin{abstract}
-Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF Expanded. Sáu cấu hình được so sánh trên cùng phép chia theo 78 đối tượng và cùng nguyên tắc lựa chọn mô hình. Cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt \mf\ ngoài fold 0,7904, cao nhất trong chiến dịch. So với z-score theo bản ghi, chênh lệch là 0,0213 (\ci\ $[0,0122;0,0307]$, $p_{Holm}=0,0012$). Lần lặp sau giao thức giữ hướng hiệu ứng dương. ResNet-1D--TCN nhanh hơn khoảng 3,76 lần, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trên 180 đối tượng SHHS1 đã khóa, cấu hình này cao hơn hai mốc đối chứng theo \mf\ trung bình ở cấp đối tượng, với khoảng tin cậy hoàn toàn dương và kiểm định sau Holm có ý nghĩa. Kết quả ủng hộ giá trị của toàn bộ quy trình đã đánh giá và làm rõ đánh đổi giữa hiệu năng, độ bền ngoài miền và độ phức tạp vận hành.
+Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF Expanded. Sáu cấu hình được so sánh trên cùng phép chia theo 78 đối tượng và cùng nguyên tắc lựa chọn mô hình. Cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt \mf\ ngoài fold 0,7904, cao nhất trong chiến dịch. So với z-score theo bản ghi, chênh lệch là 0,0213 (\ci\ $[0,0122;0,0307]$, $p_{Holm}=0,0012$). Lần lặp sau giao thức giữ hướng hiệu ứng dương. ResNet-1D--TCN nhanh hơn khoảng 3,76 lần khi suy luận, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trong bản ghi seed 123, E2 hoàn tất 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; toàn bộ sáu cấu hình cần 45 giờ 12 phút 10 giây khi chạy tuần tự. Trên 180 đối tượng SHHS1 đã khóa, cấu hình này cao hơn hai mốc đối chứng theo \mf\ trung bình ở cấp đối tượng, với khoảng tin cậy hoàn toàn dương và kiểm định sau Holm có ý nghĩa. Kết quả ủng hộ giá trị của toàn bộ quy trình đã đánh giá và làm rõ đánh đổi giữa hiệu năng, độ bền ngoài miền và độ phức tạp vận hành.
 \end{abstract}
 
 \noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; TCN; Sleep-EDF Expanded; SHHS; zero-shot; kiểm định bắt cặp.
@@ -73,7 +73,7 @@ Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân g
 \selectlanguage{english}
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-Automatic sleep staging from single-channel electroencephalography requires evaluation protocols that separate model effects from differences in subjects and preprocessing. We conducted a controlled comparison of six configurations on a subject-wise Sleep-EDF Expanded split. The ResNet-1D--TCN configuration with the principal amplitude-processing scheme achieved the highest out-of-fold macro-F1 (0.7904). It exceeded record-wise z-score normalization by 0.0213 (95\% CI $[0.0122,0.0307]$, Holm-adjusted $p=0.0012$). A post-protocol repeat preserved the positive direction of this effect. ResNet-1D--TCN was approximately 3.76 times faster, at the cost of 4.37 times more parameters and 28.4\% higher peak GPU memory. In a locked zero-shot evaluation of 180 SHHS1 participants, the same configuration exceeded both reference conditions at the subject level, with fully positive confidence intervals and Holm-adjusted significance. The results support the complete evaluated procedure and quantify its operational trade-off; they do not imply universal architectural optimality.
+Automatic sleep staging from single-channel electroencephalography requires evaluation protocols that separate model effects from differences in subjects and preprocessing. We conducted a controlled comparison of six configurations on a subject-wise Sleep-EDF Expanded split. The ResNet-1D--TCN configuration with the principal amplitude-processing scheme achieved the highest out-of-fold macro-F1 (0.7904). It exceeded record-wise z-score normalization by 0.0213 (95\% CI $[0.0122,0.0307]$, Holm-adjusted $p=0.0012$). A post-protocol repeat preserved the positive direction of this effect. ResNet-1D--TCN was approximately 3.76 times faster in forward inference, at the cost of 4.37 times more parameters and 28.4\% higher peak GPU memory. In the seed-123 campaign, E2 completed the ten-fold training and validation campaign in 2 h 44 min 57 s, compared with 33 h 35 min 36 s for E0; the six configurations required 45 h 12 min 10 s when run sequentially. In a locked zero-shot evaluation of 180 SHHS1 participants, the same configuration exceeded both reference conditions at the subject level, with fully positive confidence intervals and Holm-adjusted significance. The results support the complete evaluated procedure and quantify its operational trade-off; they do not imply universal architectural optimality.
 \end{abstract}
 \noindent\textbf{Keywords:} sleep staging; single-channel EEG; ResNet-1D; temporal convolutional network; Sleep-EDF Expanded; SHHS; zero-shot evaluation.
 \selectlanguage{vietnamese}
@@ -260,7 +260,32 @@ E6 & 1.085.578 & 3,5756 & 27.967 & 75,54 & 3,76$\times$ \\
 \end{tabular}
 \end{table}
 
-ResNet-1D--TCN có cấu trúc vận hành gọn hơn và nhanh hơn E0 khoảng 3,76 lần trong phép đo đã chuẩn hóa. Đổi lại, số tham số tăng 4,37 lần và bộ nhớ đỉnh tăng 28,4\%. Vì vậy, ưu điểm của cấu hình này nằm ở hiệu năng và tốc độ xử lý, không phải ở việc giảm quy mô mô hình.
+ResNet-1D--TCN có cấu trúc vận hành gọn hơn và nhanh hơn E0 khoảng 3,76 lần trong phép đo suy luận đã chuẩn hóa. Đổi lại, số tham số tăng 4,37 lần và bộ nhớ đỉnh tăng 28,4\%. Vì vậy, ưu điểm của cấu hình này nằm ở hiệu năng và tốc độ xử lý, không phải ở việc giảm quy mô mô hình.
+
+Benchmark forward chỉ phản ánh thời gian suy luận sau khi mô hình đã được huấn luyện. Để ghi nhận chi phí tạo mô hình, Bảng~\ref{tab:training-runtime} tổng hợp wall-clock của chiến dịch seed 123 trên cùng GPU Tesla V100. Các lượt được chạy tuần tự trên 10 fold; thời gian bao gồm huấn luyện, validation và hoàn thiện artifact, trong khi test chưa được mở.
+
+\begin{table}[t]
+\centering
+\caption{Thời gian huấn luyện và validation của chiến dịch seed 123.}
+\label{tab:training-runtime}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Cấu hình} & \textbf{Tổng 10 fold} & \textbf{Trung bình/fold} \\
+\midrule
+E0 --- CNN đối chứng + BiLSTM & 33 giờ 35 phút 36 giây & 3 giờ 21 phút 34 giây \\
+E1 --- CNN đối chứng + TCN & 14 phút 17 giây & 1 phút 26 giây \\
+E2 --- ResNet-1D + TCN & 2 giờ 44 phút 57 giây & 16 phút 30 giây \\
+E3 --- ResNet-1D + TCN, xử lý chính & 3 giờ 16 phút 40 giây & 19 phút 40 giây \\
+E4 --- ResNet-1D + TCN, lọc dải & 2 giờ 55 phút 56 giây & 17 phút 36 giây \\
+E6 --- ResNet-1D + TCN, z-score & 2 giờ 24 phút 44 giây & 14 phút 28 giây \\
+\midrule
+\textbf{Toàn bộ sáu cấu hình} & \textbf{45 giờ 12 phút 10 giây} & \textbf{4 giờ 31 phút 13 giây} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Trong chiến dịch này, E2 có thời gian chạy huấn luyện và validation tổng cộng thấp hơn E0 khoảng 12,2 lần; E3 thấp hơn khoảng 10,2 lần. Đây là lợi ích vận hành được quan sát trong giao thức cụ thể, chịu ảnh hưởng của số epoch thực tế, dừng sớm, điều phối lượt chạy và phần cứng; không nên diễn giải thành ưu thế tốc độ phổ quát.
 
 \begin{figure}[t]
 \centering
@@ -353,7 +378,7 @@ Các kết quả nên được diễn giải trong phạm vi dữ liệu và gia
 
 \section{Kết luận}
 
-Thiết kế thống nhất theo đối tượng và tập test cho phép đánh giá công bằng sáu cấu hình trên Sleep-EDF. Ở chiến dịch chính, E3 đạt \mf\ mô tả 0,7904 và tốt hơn E6 với CI hoàn toàn dương cùng ý nghĩa sau Holm. Lần lặp sau giao thức giữ hiệu ứng E3--E6 theo hướng dương, củng cố bằng chứng về lợi ích của chế độ chuẩn hóa được lựa chọn. TCN và ResNet-1D riêng lẻ cho cải thiện mô tả hoặc hiệu ứng phụ thuộc miền, nhưng chưa tách được ưu thế ổn định sau hiệu chỉnh nhiều kiểm định. ResNet-1D--TCN đơn giản hóa vận hành và tăng tốc xử lý, với đánh đổi là nhiều tham số và bộ nhớ hơn.
+Thiết kế thống nhất theo đối tượng và tập test cho phép đánh giá công bằng sáu cấu hình trên Sleep-EDF. Ở chiến dịch chính, E3 đạt \mf\ mô tả 0,7904 và tốt hơn E6 với CI hoàn toàn dương cùng ý nghĩa sau Holm. Lần lặp sau giao thức giữ hiệu ứng E3--E6 theo hướng dương, củng cố bằng chứng về lợi ích của chế độ chuẩn hóa được lựa chọn. TCN và ResNet-1D riêng lẻ cho cải thiện mô tả hoặc hiệu ứng phụ thuộc miền, nhưng chưa tách được ưu thế ổn định sau hiệu chỉnh nhiều kiểm định. ResNet-1D--TCN đơn giản hóa vận hành và tăng tốc xử lý, với đánh đổi là nhiều tham số và bộ nhớ hơn. Trong chiến dịch seed 123, E2 hoàn tất thời gian huấn luyện và validation của 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; đây là lợi ích wall-clock của giao thức cụ thể, không phải tuyên bố tốc độ độc lập phần cứng.
 
 Trên SHHS1, E3 tốt hơn E0 và E6 theo tiêu chí bắt cặp đã khóa. Phân tích mở rộng cho thấy E4, chỉ sử dụng lọc dải, đạt kết quả cao hơn E2 và E3 trong giao thức tương ứng. Đây là bằng chứng rằng tiền xử lý ảnh hưởng đáng kể đến chuyển miền, không phải bằng chứng về ưu thế phổ quát hay quan hệ nhân quả của một thao tác. Phân tích thành phần cho thấy lợi ích của kiến trúc phụ thuộc vào miền và chế độ xử lý tín hiệu. Vì vậy, đóng góp chính của nghiên cứu là một quy trình có bằng chứng ngoài miền, phép đánh đổi vận hành được định lượng và giao thức thực nghiệm có khả năng truy nguyên, đồng thời phân biệt rõ kết quả của toàn hệ thống với đóng góp riêng của từng thành phần.
 

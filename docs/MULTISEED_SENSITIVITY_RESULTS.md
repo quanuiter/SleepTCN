@@ -15,6 +15,34 @@ của hướng hiệu ứng. Kết quả không được nhập ngược vào h�
 nguyên CI, Wilcoxon và hiệu chỉnh Holm riêng; không gộp p-value và không coi hai seed cố định là mẫu
 đại diện cho mọi khởi tạo.
 
+## Thời gian chạy chiến dịch
+
+Thời gian dưới đây được tổng hợp từ bản ghi wall-clock của toàn bộ chiến dịch seed 123 trên một GPU
+Tesla V100. Sáu cấu hình được chạy tuần tự trên 10 fold. Khoảng thời gian bao gồm huấn luyện, đánh giá
+validation và hoàn thiện artifact của từng lượt; test chưa được mở trong các lượt này. Đây là thời gian
+vận hành quan sát được trong giao thức cụ thể, không phải hằng số độc lập với phần cứng hay một phép đo
+độ phức tạp lý thuyết.
+
+Số liệu được cộng từ các bản ghi `fold_*_seed123_time.txt` của chiến dịch đã lưu trong provenance
+Git của đợt chạy (`8af1d12`). Bản ghi tổng hợp được giữ lại trong tài liệu này sau khi các log giám sát
+chi tiết được loại khỏi cây tệp nhẹ của bản phát hành.
+
+| Cấu hình | Tổng thời gian 10 fold | Trung bình mỗi fold |
+|---|---:|---:|
+| E0 — CNN đối chứng + BiLSTM | 33 giờ 35 phút 36 giây | 3 giờ 21 phút 34 giây |
+| E1 — CNN đối chứng + TCN | 14 phút 17 giây | 1 phút 26 giây |
+| E2 — ResNet-1D + TCN | 2 giờ 44 phút 57 giây | 16 phút 30 giây |
+| E3 — ResNet-1D + TCN, xử lý chính | 3 giờ 16 phút 40 giây | 19 phút 40 giây |
+| E4 — ResNet-1D + TCN, lọc dải | 2 giờ 55 phút 56 giây | 17 phút 36 giây |
+| E6 — ResNet-1D + TCN, z-score | 2 giờ 24 phút 44 giây | 14 phút 28 giây |
+| **Toàn bộ sáu cấu hình** | **45 giờ 12 phút 10 giây** | **4 giờ 31 phút 13 giây/fold** |
+
+Trong cùng chiến dịch, E2 hoàn tất nhanh hơn E0 khoảng 12,2 lần về thời gian chạy huấn luyện và
+validation tổng cộng; E3 nhanh hơn khoảng 10,2 lần. Chênh lệch này là một lợi ích vận hành quan sát
+được của cấu trúc ít thành phần hơn, nhưng vẫn chịu ảnh hưởng của số epoch thực tế, early stopping,
+chi phí điều phối và phần cứng. Vì vậy, nó được báo cáo bổ sung cho benchmark suy luận, không thay thế
+benchmark latency/throughput và không được suy diễn thành ưu thế tốc độ trên mọi môi trường.
+
 ## Hiệu năng mô tả theo seed
 
 | Cấu hình | Macro-F1 seed 42 | Macro-F1 seed 123 | Trung bình mô tả hai seed |

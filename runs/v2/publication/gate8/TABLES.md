@@ -34,6 +34,21 @@
 | E6 | 1.085.578 | 3,5756 | 3,6426 | 27.967 | 75,54 | 3,76× |
 
 
+## Thời gian huấn luyện và validation — seed 123
+
+| Cấu hình | Tổng 10 fold | Trung bình mỗi fold |
+| --- | ---: | ---: |
+| E0 — CNN đối chứng + BiLSTM | 33 giờ 35 phút 36 giây | 3 giờ 21 phút 34 giây |
+| E1 — CNN đối chứng + TCN | 14 phút 17 giây | 1 phút 26 giây |
+| E2 — ResNet-1D + TCN | 2 giờ 44 phút 57 giây | 16 phút 30 giây |
+| E3 — ResNet-1D + TCN, xử lý chính | 3 giờ 16 phút 40 giây | 19 phút 40 giây |
+| E4 — ResNet-1D + TCN, lọc dải | 2 giờ 55 phút 56 giây | 17 phút 36 giây |
+| E6 — ResNet-1D + TCN, z-score | 2 giờ 24 phút 44 giây | 14 phút 28 giây |
+| **Toàn bộ sáu cấu hình** | **45 giờ 12 phút 10 giây** | **4 giờ 31 phút 13 giây/fold** |
+
+Thời gian bao gồm huấn luyện, validation và hoàn thiện artifact trên một GPU V100; các lượt chạy tuần tự và test chưa mở.
+
+
 ## Silhouette theo fold
 
 | Fold | E1 | E2 | E2−E1 |

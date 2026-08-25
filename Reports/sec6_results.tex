@@ -119,7 +119,7 @@ Lần lặp seed 123 hoàn tất trên cùng phép chia và cùng cấu hình. B
 \centering
 \caption{\mf\ test ngoài fold của hai seed cố định}
 \label{tab:seed_sensitivity_models}
-\begin{tabular}{lrr}
+\begin{tabularx}{\textwidth}{Yrr}
 \toprule
 \textbf{Cấu hình} & \textbf{Seed 42 (chính)} & \textbf{Seed 123 (độ nhạy)} \\
 \midrule
@@ -130,7 +130,7 @@ E3 & \textbf{0,790443} & \textbf{0,788265} \\
 E4 & 0,789067 & 0,788673 \\
 E6 & 0,769124 & 0,778016 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{table}[H]
@@ -198,6 +198,32 @@ E6 & 1.085.578 & 3,5756 & 3,6426 & 27.967 & 75,54 & 3,76$\times$ \\
 \end{figure}
 
 ResNet-1D--TCN sử dụng ít mô hình thành phần hơn và nhanh hơn E0 khoảng 3,76 lần. Đổi lại, số tham số tăng 4,37 lần và bộ nhớ GPU cực đại tăng 28,4\%. Kết quả hỗ trợ sự gọn hơn về vận hành, không phải giảm tài nguyên mô hình.
+
+\subsubsection{Thời gian huấn luyện và hoàn thiện artifact}
+
+Benchmark độ trễ không phản ánh thời gian cần thiết để tạo ra các mô hình. Vì vậy, báo cáo bổ sung thời gian wall-clock của chiến dịch seed 123, được chạy tuần tự trên cùng một GPU Tesla V100 qua 10 fold. Khoảng thời gian bao gồm huấn luyện, đánh giá validation và hoàn thiện artifact của từng lượt; test chưa được mở trong các lượt này. Đây là số đo vận hành của giao thức hiện tại, không phải hằng số độc lập với phần cứng.
+
+\begin{table}[H]
+\centering
+\caption{Thời gian chạy huấn luyện và validation của chiến dịch seed 123}
+\label{tab:training_runtime}
+\begin{tabularx}{\textwidth}{Yrr}
+\toprule
+\textbf{Cấu hình} & \textbf{Tổng 10 fold} & \textbf{Trung bình/fold} \\
+\midrule
+E0 --- CNN đối chứng + BiLSTM & 33 giờ 35 phút 36 giây & 3 giờ 21 phút 34 giây \\
+E1 --- CNN đối chứng + TCN & 14 phút 17 giây & 1 phút 26 giây \\
+E2 --- ResNet-1D + TCN & 2 giờ 44 phút 57 giây & 16 phút 30 giây \\
+E3 --- ResNet-1D + TCN, xử lý chính & 3 giờ 16 phút 40 giây & 19 phút 40 giây \\
+E4 --- ResNet-1D + TCN, lọc dải & 2 giờ 55 phút 56 giây & 17 phút 36 giây \\
+E6 --- ResNet-1D + TCN, z-score & 2 giờ 24 phút 44 giây & 14 phút 28 giây \\
+\midrule
+\textbf{Toàn bộ sáu cấu hình} & \textbf{45 giờ 12 phút 10 giây} & \textbf{4 giờ 31 phút 13 giây} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Trong chiến dịch này, E2 hoàn tất nhanh hơn E0 khoảng 12,2 lần về thời gian chạy huấn luyện và validation tổng cộng; E3 nhanh hơn khoảng 10,2 lần. Kết quả cho thấy lợi ích vận hành bổ sung của cấu trúc ít thành phần hơn, bên cạnh lợi thế suy luận đã nêu ở trên. Tuy nhiên, thời gian wall-clock còn phụ thuộc vào số epoch thực tế, dừng sớm, điều phối lượt chạy và phần cứng; do đó không được diễn giải thành ưu thế tốc độ phổ quát.
 
 \subsection{Gate 6: không gian đặc trưng}
 

@@ -9,7 +9,7 @@ Tóm tắt, Kết luận hoặc bản trình bày phải được đối chiếu
 | C02 | supported | E3 tốt hơn E6 theo cả CI bootstrap và Wilcoxon sau Holm. | Δ=0.021319; CI=[0.012179, 0.030698]; p Holm=0.001185. | gate5_paired_results_seed42.json |
 | C03 | not_supported | TCN tốt hơn BiLSTM có ý nghĩa thống kê. | E1−E0 p Holm=0.102193; CI chứa 0. | gate5_paired_results_seed42.json |
 | C04 | not_supported | ResNet-1D tốt hơn 15CNN có ý nghĩa thống kê về Macro-F1. | E2−E1 p Holm=0.103554; CI chứa 0. | gate5_paired_results_seed42.json |
-| C05 | supported_with_tradeoff | ResNet-1D + TCN đơn giản hơn về vận hành và nhanh hơn E0. | 2 so với 16 mô hình thành phần; speedup E2=3.757×; tham số=4.366×; peak VRAM=1.284×. | gate6_latency_fold00_seed42.json; gate6_parameters_fold00_seed42.json |
+| C05 | supported_with_tradeoff | ResNet-1D + TCN đơn giản hơn về vận hành, suy luận nhanh hơn và có thời gian chạy huấn luyện/validation thấp hơn E0 trong chiến dịch đã ghi nhận. | 2 so với 16 mô hình thành phần; speedup forward E2=3.757×; E2 mất 2 giờ 44 phút 57 giây so với E0 33 giờ 35 phút 36 giây trên 10 fold seed 123; tham số=4.366×; peak VRAM=1.284×. | gate6_latency_fold00_seed42.json; gate6_parameters_fold00_seed42.json; MULTISEED_SENSITIVITY_RESULTS.md |
 | C06 | contradicted_by_measurement | Embedding ResNet tách năm lớp tốt hơn 15CNN softmax. | E2−E1 Silhouette < 0 ở 10/10 fold. | gate6_feature_space/feature_space_report.json |
 | C07 | not_evaluated | Mô hình giải quyết domain shift hoặc zero-shot trên SHHS. | Không có thí nghiệm SHHS trong giao thức E0–E6. | EXPERIMENT_PROTOCOL_V2.md |
 | C08 | limited | Kết quả ổn định theo khởi tạo ngẫu nhiên. | Huấn luyện chính thức mới dùng seed 42. | experiments_v2.json; Gate-5 report |
@@ -49,9 +49,9 @@ Tóm tắt, Kết luận hoặc bản trình bày phải được đối chiếu
 
 ## C05 — supported_with_tradeoff
 
-- Diễn giải phù hợp: Quy trình có ít mô hình thành phần hơn và suy luận nhanh hơn, đổi lại có nhiều tham số và sử dụng nhiều VRAM hơn.
+- Diễn giải phù hợp: Quy trình có ít mô hình thành phần hơn, suy luận nhanh hơn và có thời gian chạy chiến dịch thấp hơn E0 trong seed 123, đổi lại có nhiều tham số và sử dụng nhiều VRAM hơn.
 
-- Diễn giải không được hỗ trợ: Mô hình nhẹ, tiết kiệm tham số hoặc nhanh hơn 8,2×.
+- Diễn giải không được hỗ trợ: Mô hình nhẹ, tiết kiệm tham số, thời gian huấn luyện nhanh hơn trong mọi phần cứng hoặc nhanh hơn 8,2×.
 
 
 ## C06 — contradicted_by_measurement
