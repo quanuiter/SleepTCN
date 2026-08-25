@@ -2,7 +2,7 @@
 
 ## 1. Câu hỏi nghiên cứu
 
-Trong pipeline `15CNN + TCN` đã khóa ở E1, hai nhóm đặc trưng từ epoch liền trước (`P`) và epoch
+Trong quy trình `15CNN + TCN` đã khóa ở E1, hai nhóm đặc trưng từ epoch liền trước (`P`) và epoch
 liền sau (`N`) có mang lại giá trị dự báo tăng thêm so với chỉ dùng nhóm epoch hiện tại (`C`) hay
 không, đặc biệt tại các vùng chuyển pha và đối với N1?
 
@@ -89,6 +89,6 @@ Không suy ra tương đương/không thua kém từ việc `p > 0,05`. Gate 8 c
 ## 7. Phạm vi kết luận
 
 Nếu Full CPN tốt hơn C/CP/CN ở vùng chuyển pha, bằng chứng ủng hộ P/N có giá trị dự báo tăng thêm
-trong pipeline cụ thể này. Nếu không, kết luận chỉ là chưa quan sát thấy lợi ích trong thiết kế và
+trong quy trình cụ thể này. Nếu không, kết luận chỉ là chưa quan sát thấy lợi ích trong thiết kế và
 độ mạnh thống kê hiện có; không được kết luận các CNN P/N “không có thông tin” trong mọi mô hình hay
 mọi tình huống.

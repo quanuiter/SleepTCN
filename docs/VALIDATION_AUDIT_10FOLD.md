@@ -2,7 +2,9 @@
 
 Ngày kiểm toán: **2026-08-14**
 
-Nhánh: `run-in-docker`
+Nhánh lưu trữ tài liệu hiện hành: `refactor`
+
+Chiến dịch được kiểm toán thuộc snapshot lịch sử được xác định bởi commit dưới đây.
 
 Commit được kiểm toán: `b4ce94cb3b4f1d5d03e44b8c5287137cfa771767`
 

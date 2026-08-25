@@ -27,7 +27,7 @@ Wilcoxon cho Macro-F1 theo đối tượng có `p=2,3464e-17`; trung vị chênh
 
 ## Diễn giải được phép
 
-Trên mẫu 180 đối tượng SHHS1 và giao thức zero-shot hiện tại, toàn pipeline E3 cao hơn E2 một cách rõ ràng và nhất quán. Kết hợp với kết quả Sleep-EDF E3−E2 trước đó—Macro-F1 gộp +0,006962 nhưng Wilcoxon `p=0,898933`, thắng/hòa/thua 37/0/41—bằng chứng cho thấy lợi ích của chế độ tiền xử lý E3 biểu hiện mạnh hơn khi chuyển miền sang SHHS so với đánh giá trong miền Sleep-EDF.
+Trên mẫu 180 đối tượng SHHS1 và giao thức zero-shot hiện tại, toàn bộ quy trình E3 cao hơn E2 một cách rõ ràng và nhất quán. Kết hợp với kết quả Sleep-EDF E3−E2 trước đó—Macro-F1 gộp +0,006962 nhưng Wilcoxon `p=0,898933`, thắng/hòa/thua 37/0/41—bằng chứng cho thấy lợi ích của chế độ tiền xử lý E3 biểu hiện mạnh hơn khi chuyển miền sang SHHS so với đánh giá trong miền Sleep-EDF.
 
 Đối chiếu này ước lượng tác động của **toàn bộ chế độ tiền xử lý đầu-cuối E3 so với đầu vào thô** dưới cùng họ kiến trúc. Nó không tách riêng tác động của lọc dải, cắt biên độ hoặc chia 100.
 

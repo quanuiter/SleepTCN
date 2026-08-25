@@ -2,16 +2,16 @@
 
 Ngày khóa: **2026-08-14**
 
-Nhánh: `run-in-docker`
+Nhánh tài liệu hiện hành: `refactor`
 
-Commit artifact: `e3681a3`
+Commit nền của artifact: `e3681a3` (provenance của chiến dịch)
 
 Trạng thái: **ĐẠT VÀ ĐÃ ĐÓNG**
 
 ## Mục tiêu
 
 Gate 8 thay thế cách diễn giải feature importance dễ thiên lệch bằng ablation theo nhóm có kiểm soát.
-Câu hỏi là: trong pipeline 15CNN + TCN của E1, P (epoch liền trước) và N (epoch liền sau) có mang lại
+Câu hỏi là: trong quy trình 15CNN + TCN của E1, P (epoch liền trước) và N (epoch liền sau) có mang lại
 giá trị dự báo tăng thêm khi đã có C (epoch hiện tại), đặc biệt tại vùng chuyển pha hay không?
 
 Gate này không đo phần trăm thông tin, tầm quan trọng nhân quả hoặc tầm quan trọng toàn cục của CNN.
@@ -73,11 +73,11 @@ Cả ba CI đều chứa 0, p Holm đều bằng 1 và số đối tượng th�
 
 ## Kết luận được phép
 
-Trong pipeline 15CNN + TCN, với split và seed hiện tại, chưa quan sát thấy đóng góp dự báo tăng thêm
+Trong quy trình 15CNN + TCN, với split và seed hiện tại, chưa quan sát thấy đóng góp dự báo tăng thêm
 có ý nghĩa thống kê của P/N đối với Macro-F1 vùng chuyển pha. Một số lợi ích mô tả xuất hiện ở N1,
 nhưng không đủ để kết luận P/N cần thiết hoặc không cần thiết.
 
-Kết quả này trực tiếp khắc phục hạn chế của phát biểu feature importance cũ: thay vì quy đổi thành
+Kết quả này trực tiếp khắc phục hạn chế của cách diễn giải feature importance trước đây: thay vì quy đổi thành
 “phần trăm thông tin”, báo cáo hiệu ứng dự báo tăng thêm, CI, kiểm định bắt cặp và giới hạn mô hình.
 
 ## Kết luận không được phép

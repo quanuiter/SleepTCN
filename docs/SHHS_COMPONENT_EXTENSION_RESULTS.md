@@ -7,8 +7,8 @@ Trạng thái: **SUY LUẬN, KIỂM ĐỊNH ARTIFACT VÀ PHÂN TÍCH BẮT CẶP
 
 Phân tích này được khóa trước lần suy luận SHHS đầu tiên của E1/E2 để trả lời hai câu hỏi:
 
-1. E1--E0: thay BiLSTM bằng TCN trong pipeline 15-CNN có cải thiện Macro-F1 không?
-2. E2--E1: thay pipeline đặc trưng 15-CNN bằng ResNet-1D dưới cùng họ TCN có cải thiện Macro-F1 không?
+1. E1--E0: thay BiLSTM bằng TCN trong quy trình 15-CNN có cải thiện Macro-F1 không?
+2. E2--E1: thay bộ trích đặc trưng 15-CNN bằng ResNet-1D dưới cùng họ TCN có cải thiện Macro-F1 không?
 
 E0 được tái sử dụng nguyên trạng từ chiến dịch zero-shot v1. E1 và E2 dùng `paper_raw_v1`, đủ 10
 checkpoint theo fold và trung bình xác suất; không cập nhật trọng số bằng SHHS.
@@ -50,18 +50,18 @@ Phân tích thứ cấp phù hợp với kết luận chính:
 ## Kết luận được phép
 
 - Trên mẫu 180 đối tượng SHHS1 cố định này, E1 có Macro-F1 trung bình theo đối tượng cao hơn E0 theo
-  quy tắc đã khóa. Đây là bằng chứng ngoại miền thứ cấp ủng hộ TCN thay BiLSTM trong pipeline 15-CNN;
+  quy tắc đã khóa. Đây là bằng chứng ngoại miền thứ cấp ủng hộ TCN thay BiLSTM trong quy trình 15-CNN;
   hiệu ứng nhỏ, không phải ưu thế phổ quát.
 - Giả thuyết E2 tốt hơn E1 không được ủng hộ. Trong mẫu này, chênh lệch có hướng ngược lại và nhất quán
   ở tiêu chí chính, Macro-F1 gộp và vùng chuyển pha.
 - Vì E3 vẫn cao hơn E0 trong chiến dịch zero-shot v1, kết quả mới cho thấy không thể giải thích lợi ích
-  của toàn pipeline E3 bằng việc thay 15-CNN bằng ResNet-1D đơn thuần.
+  của toàn bộ quy trình E3 bằng việc thay 15-CNN bằng ResNet-1D đơn thuần.
 
 ## Điều không được suy ra
 
 - Không gọi đây là tái lập độc lập trên cohort chưa mở hoặc xác nhận lâm sàng.
 - Không nói TCN luôn tốt hơn BiLSTM hoặc ResNet luôn kém hơn 15-CNN trên mọi dữ liệu.
-- Không quy E2--E1 cho riêng một khái niệm trừu tượng về ``chất lượng đặc trưng'': hai pipeline khác kích
+- Không quy E2--E1 cho riêng một khái niệm trừu tượng về ``chất lượng đặc trưng'': hai quy trình khác kích
   thước biểu diễn, tham số giao diện TCN và quá trình huấn luyện extractor.
 - Không dùng kết quả này để tuyên bố tương đương/không thua kém hay kết luận P/N vô dụng.
 - Không nhập hai p-value mới vào họ Holm lịch sử của Sleep-EDF hoặc zero-shot v1.

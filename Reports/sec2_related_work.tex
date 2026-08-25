@@ -3,28 +3,22 @@
 
 \subsection{Mô hình phân giai đoạn giấc ngủ từ EEG}
 
-Các phương pháp ban đầu thường trích xuất thủ công đặc trưng miền thời gian, tần số hoặc thời gian--tần số rồi đưa vào bộ phân loại. Học sâu thay thế một phần quá trình này bằng bộ trích xuất đặc trưng học trực tiếp từ tín hiệu. DeepSleepNet kết hợp CNN hai nhánh và BiLSTM, đồng thời sử dụng huấn luyện theo giai đoạn để học cả hình thái epoch và quan hệ chuỗi~\cite{supratak2017deepsleepnet}. AttnSleep kết hợp cơ chế chú ý với mô hình theo thời gian~\cite{eldele2021attnsleep}; SleepTransformer khai thác self-attention cho mô hình hóa chuỗi và khả năng giải thích~\cite{phan2022sleeptransformer}.
+Các phương pháp học sâu cho phân giai đoạn giấc ngủ thường kết hợp bộ trích đặc trưng từ tín hiệu với một mô hình mô tả quan hệ theo thời gian. DeepSleepNet sử dụng CNN và BiLSTM để đồng thời học hình thái của epoch và ngữ cảnh chuỗi~\cite{supratak2017deepsleepnet}. Các hướng tiếp cận sau đó khai thác cơ chế chú ý hoặc self-attention để tăng khả năng biểu diễn quan hệ dài hạn~\cite{eldele2021attnsleep,phan2022sleeptransformer}.
 
-Các con số giữa công trình không được so sánh trực tiếp nếu khác phân tập, kênh EEG, quy tắc cắt Wake, phép chia đối tượng hoặc cách gộp dự đoán. Do đó, báo cáo này không dùng bảng xếp hạng xuyên bài báo để chứng minh ưu thế. So sánh chính chỉ diễn ra giữa các cấu hình E0--E6 trong cùng giao thức.
+Các chỉ số giữa những công trình khác nhau không thể xếp hạng trực tiếp nếu khác bộ dữ liệu, kênh EEG, quy tắc tạo cửa sổ hoặc cách chia đối tượng. Vì vậy, báo cáo chỉ thực hiện so sánh nội bộ giữa các cấu hình trong cùng một giao thức, thay vì suy ra thứ hạng giữa các bài báo.
 
-\subsection{ZleepAnlystNet}
+\subsection{Mốc tham chiếu và hướng thay thế}
 
-ZleepAnlystNet được công bố trên \textit{Scientific Reports} năm 2024~\cite{jadhav2024zleepanlystnet}. Phương pháp gồm hai giai đoạn được huấn luyện tách biệt:
+ZleepAnlystNet là mốc tham chiếu quan trọng của nghiên cứu, với quy trình gồm bộ trích đặc trưng CNN và mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Ý tưởng thay thế được khảo sát theo hai hướng. Thứ nhất, mạng tích chập theo thời gian có khả năng xử lý chuỗi song song và mô hình hóa quan hệ theo trường tiếp nhận mở rộng~\cite{bai2018tcn}. Thứ hai, ResNet-1D sử dụng kết nối dư để xây dựng biểu diễn tín hiệu sâu hơn~\cite{he2016resnet}.
 
-\begin{enumerate}
-  \item \textbf{Trích xuất đặc trưng:} ba nhóm CNN P, C và N lần lượt nhận tín hiệu epoch trước, hiện tại và sau, nhưng mục tiêu đều là nhãn của epoch hiện tại. Mỗi nhóm gồm năm CNN chuyên biệt cho W, N1, N2, N3 và REM. Mỗi CNN xuất năm xác suất, tạo vector 75 chiều cho một epoch.
-  \item \textbf{Phân loại chuỗi:} chuỗi vector 75 chiều của bản ghi được đưa vào BiLSTM 128 đơn vị ẩn và lớp phân loại năm lớp.
-\end{enumerate}
-
-Mỗi CNN có hai khối tích chập với kernel 55 và 25, sau đó là hai lớp kết nối đầy đủ. Các mạng dùng trọng số mất mát khác nhau để nhấn mạnh từng lớp. Bài báo gốc báo cáo tổng khoảng 248.500 tham số và dùng phép chia theo đối tượng. Trên phân tập SC gồm 153 bản ghi của 78 người, bài báo gọi phiên bản này là Sleep-EDF-18 và dùng 10 fold~\cite{jadhav2024zleepanlystnet}.
+Hai hướng thay thế không mặc nhiên bảo đảm hiệu năng cao hơn. TCN có thể đem lại lợi ích vận hành nhưng vẫn cần được kiểm tra trên cùng đối tượng; embedding ResNet có thể hữu ích cho mô hình chuỗi mà không nhất thiết tạo ra các cụm hình học tách biệt. Do đó, nghiên cứu đánh giá riêng thay đổi mô hình chuỗi, thay đổi bộ trích đặc trưng và thay đổi tiền xử lý.
 
 \subsection{Khoảng trống được kiểm tra}
 
-Ba giả thuyết thiết kế cần được tách riêng. Thứ nhất, TCN có thể xử lý chuỗi song song bằng tích chập giãn~\cite{bai2018tcn}, nhưng điều đó không tự động suy ra \mf\ cao hơn BiLSTM. Thứ hai, kết nối dư giúp huấn luyện CNN sâu hơn~\cite{he2016resnet}, nhưng embedding nhiều chiều hơn không mặc nhiên tốt hơn 75 xác suất đã được giám sát trực tiếp. Thứ ba, lọc và chuẩn hóa có thể thay đổi phân phối đầu vào, nhưng tác động của từng thao tác phải được đo bằng cấu hình chỉ khác đúng thành phần cần khảo sát.
+Khoảng trống chính của các so sánh mô hình là sự thiếu nhất quán về đối tượng, phép chia và cách chọn mô hình. Giao thức hiện tại khắc phục điểm này bằng phép chia theo đối tượng, khóa tập kiểm tra cho đến khi hoàn tất lựa chọn trên validation và sử dụng kiểm định bắt cặp ở cấp đối tượng.
 
-Gate 5 xử lý hai khoảng trống đầu bằng so sánh E1--E0 và E2--E1. Gate 5 cũng kiểm tra tiền xử lý qua E3--E2, E4--E2 và E3--E6. Gate 6 đo đánh đổi vận hành và hình học đặc trưng. Gate 8 thay thế cách diễn giải tầm quan trọng đặc trưng dễ thiên lệch bằng loại bỏ nhóm có kiểm soát.
+Bên cạnh hiệu năng trong miền, nghiên cứu xem xét khả năng chuyển sang mẫu SHHS1. Phân tích này được giữ độc lập với chiến dịch chính, nhằm đánh giá liệu thứ hạng quan sát trên Sleep-EDF có còn xuất hiện trong một mẫu ngoài miền đã khóa hay không.
 
 \subsection{Nguyên tắc diễn giải}
 
-Không bác bỏ giả thuyết không không chứng minh hai mô hình tương đương. Muốn kết luận tương đương hoặc không thua kém cần xác định biên có ý nghĩa trước khi xem dữ liệu và dùng kiểm định tương ứng. Giao thức hiện tại không có biên này; vì vậy các kết quả không có ý nghĩa thống kê được diễn đạt là ``chưa đủ bằng chứng về khác biệt'', không phải ``hai cấu hình tương đương''.
-
+Không bác bỏ giả thuyết không không đồng nghĩa với chứng minh tương đương. Tương tự, một chỉ số hình học hoặc một phương pháp ước lượng tầm quan trọng không thể tự nó xác định nguyên nhân của chênh lệch dự đoán. Báo cáo vì vậy ưu tiên chênh lệch hiệu năng, khoảng tin cậy, kiểm định bắt cặp và phạm vi áp dụng của từng kết quả.

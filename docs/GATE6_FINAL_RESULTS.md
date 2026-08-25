@@ -93,7 +93,7 @@ xác nhận.
 
 Thông điệp phù hợp cho khóa luận/bài báo:
 
-> ResNet-1D + TCN đem lại pipeline ít mô hình thành phần hơn và suy luận nhanh hơn, đổi lại số tham số
+> ResNet-1D + TCN đem lại quy trình ít mô hình thành phần hơn và suy luận nhanh hơn, đổi lại số tham số
 > và peak VRAM cao hơn. Cải thiện chất lượng mạnh nhất trong thí nghiệm hiện tại đến từ lựa chọn xử lý
 > biên độ E3 so với z-score E6, không phải từ bằng chứng rằng embedding ResNet tách lớp tốt hơn.
 

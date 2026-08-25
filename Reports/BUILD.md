@@ -1,4 +1,4 @@
-# Biên dịch và kiểm tra báo cáo Gate 1--8 cùng SHHS1 zero-shot
+# Biên dịch và kiểm định báo cáo Gate 1--8 cùng SHHS1 zero-shot
 
 Tệp chính: `main.tex`.
 
@@ -16,11 +16,12 @@ pdflatex -interaction=nonstopmode -halt-on-error main.tex
 PDF bàn giao được sao chép vào `output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 Biên bản kiểm định nội dung và bố cục nằm tại `REPORT_GATE1_8_AUDIT.md`.
 
-## Phạm vi manifest
+## Phạm vi manifest và kiểm định toàn vẹn
 
-`REPORT_MANIFEST.sha256` chỉ khóa các file báo cáo có trong repository và các evidence trực tiếp
-được liệt kê. Mọi đường dẫn đều tương đối với `Reports/`. Gói công bố Gate 8 có manifest và validator
-riêng nên không lặp toàn bộ hash tại đây; một entry chỉ hợp lệ khi file tồn tại và SHA-256 khớp.
+`REPORT_MANIFEST.sha256` ghi nhận các tệp báo cáo có trong kho mã và các bằng chứng trực tiếp được
+liệt kê. Mọi đường dẫn đều tương đối với `Reports/`. Gói công bố Gate 8 có manifest và bộ kiểm định
+riêng nên không lặp lại toàn bộ mã băm tại đây. Một mục trong manifest chỉ được xem là hợp lệ khi tệp
+tồn tại và SHA-256 khớp.
 
 ## Nguồn số liệu bắt buộc
 
@@ -51,14 +52,17 @@ riêng nên không lặp toàn bộ hash tại đây; một entry chỉ hợp l�
 - `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/analysis/diagnostics.json`
 - `SHHS_SEED123_E4_EXTENSION.md`
 
-Không thay số liệu trong bảng bằng kết quả lịch sử từ notebook cũ. Mọi thay đổi ở Tóm tắt, Kết luận hoặc slide phải đối chiếu `../runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md`.
+Các bảng phải lấy số liệu từ những artifact đã khóa; không sử dụng lại kết quả lịch sử từ notebook cũ.
+Mọi thay đổi ở phần Tóm tắt, Kết luận hoặc slide phải được đối chiếu với
+`../runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md`.
 
 ## Kiểm tra tối thiểu trước khi nộp
 
 Gói dữ liệu dẫn xuất có hợp đồng riêng, không phụ thuộc đường dẫn máy: chạy
 `scripts/audit_reproducibility.py` với `data/manifests/processed_artifact_manifest_v2.json` trước
-khi upload Docker. Manifest này được tạo sau khi chuẩn hóa ZIP metadata; PDF hiện hành giữ số liệu
-khoa học cũ và không cần dựng lại chỉ vì thay đổi container NPZ.
+khi upload Docker. Manifest này được tạo sau khi chuẩn hóa ZIP metadata; PDF phải được dựng lại mỗi khi
+nguồn báo cáo thay đổi. Thay đổi container NPZ không tự động làm thay đổi số liệu nếu nguồn báo cáo và
+các artifact khóa không đổi.
 
 1. Không còn lỗi LaTeX, tham chiếu chưa xác định hoặc trích dẫn thiếu.
 2. Không còn các tuyên bố lịch sử: nhanh hơn 8,2 lần, P/N đóng góp 12% thông tin, hoặc ResNet/TCN riêng lẻ vượt trội có ý nghĩa.

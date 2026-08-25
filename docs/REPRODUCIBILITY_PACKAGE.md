@@ -1,13 +1,13 @@
-# Hợp đồng tái chạy package
+# Gói tái lập và kiểm toán dữ liệu
 
-Package hiện có hai lớp kiểm chứng tách biệt:
+Gói tái lập gồm hai lớp kiểm chứng bổ sung:
 
 1. `processed_artifact_manifest_v2.json` khóa snapshot NPZ đang dùng bằng path tương đối, kích thước
    và SHA-256 toàn tệp.
 2. `preprocess_sleepedf.py` có thể tái sinh từ EDF gốc; writer `sleeptcn_deterministic_npz_v1` cố
    định metadata ZIP để Windows/Linux không tạo hash khác nhau cho cùng mảng.
 
-## Kiểm tra trong Docker sạch
+## Kiểm tra trong môi trường sạch
 
 Dùng Python 3.11 và lock đầy đủ:
 
@@ -27,12 +27,12 @@ python scripts/audit_reproducibility.py \
   --output runs/v2/reproducibility_audit_gpu.json
 ```
 
-Lệnh phải in `PASS`. Khi upload cả E5 để kiểm toán đầy đủ, bỏ `--variants` hoặc thêm
-`bandpass_clip_v2`. Không đổi tên thư mục thành `bandpass_clip_v2_NoNeed`.
+Kết quả hợp lệ phải có trạng thái `PASS`. Khi kiểm toán toàn bộ năm biến thể, có thể bỏ tùy chọn
+`--variants` hoặc bổ sung `bandpass_clip_v2`.
 
-## Tái sinh từ raw EDF
+## Tái sinh từ EDF gốc
 
-Không ghi đè snapshot đã dùng cho kết quả công bố. Tạo output staging riêng, dùng raw manifest có
+Không ghi đè snapshot dùng cho kết quả công bố. Hãy tạo một thư mục trung gian riêng, sử dụng manifest có
 SHA-256 và chạy:
 
 ```bash
@@ -48,6 +48,6 @@ python scripts/canonicalize_npz.py \
   --processed-root /tmp/sleeptcn-processed --check
 ```
 
-Manifest tái sinh phải được so sánh theo `output_sha256`, số record, nhãn và chỉ số epoch. Nếu
-hash khác, giữ lại cả hai manifest để điều tra; không sửa checksum kỳ vọng cho đến khi xác định rõ
-khác biệt ở dữ liệu nguồn, thư viện hoặc quy trình.
+Manifest tái sinh cần được đối chiếu theo `output_sha256`, số bản ghi, nhãn và chỉ số epoch. Khi phát hiện
+khác biệt, cần lưu cả hai manifest và xác định nguyên nhân ở dữ liệu nguồn, thư viện hoặc quy trình trước
+khi cập nhật bất kỳ checksum kỳ vọng nào.

@@ -1,50 +1,36 @@
 \section{Giới thiệu}
 \label{sec:introduction}
 
-Phân giai đoạn giấc ngủ là quá trình gán nhãn cho từng đoạn tín hiệu 30 giây dựa trên đa ký giấc ngủ. Trong thực hành, các giai đoạn thường được quy về năm lớp: thức (W), N1, N2, N3 và chuyển động mắt nhanh (REM). Việc chấm thủ công cần chuyên môn và vẫn tồn tại bất đồng giữa người chấm; chương trình độ tin cậy liên chấm của AASM ghi nhận mức đồng thuận trung bình 82,6\%, trong đó N1 có mức thấp nhất 63,0\%~\cite{rosenberg2013aasm}. Vì vậy, mô hình tự động cần được đánh giá không chỉ bằng độ chính xác tổng thể mà còn bằng chỉ số cân bằng lớp, độ bất định và mức ổn định theo đối tượng.
+Phân giai đoạn giấc ngủ là nhiệm vụ nền tảng trong phân tích đa ký giấc ngủ. Các phương pháp tự động từ EEG một kênh có thể giảm yêu cầu về thiết bị và chi phí xử lý, nhưng hiệu quả của chúng phụ thuộc đáng kể vào cách chia dữ liệu, lựa chọn mô hình và xử lý tín hiệu. Đặc biệt, N1 thường khó nhận diện và chênh lệch giữa các mô hình dễ bị lẫn với khác biệt giữa đối tượng nếu không sử dụng thiết kế đánh giá bắt cặp.
 
-ZleepAnlystNet là một kiến trúc hai giai đoạn cho EEG đơn kênh: 15 CNN chuyên biệt tạo đặc trưng xác suất, sau đó BiLSTM phân loại chuỗi~\cite{jadhav2024zleepanlystnet}. Kiến trúc có ít tham số so với nhiều mô hình cùng thời, nhưng việc huấn luyện và vận hành 15 bộ trích xuất riêng biệt làm tăng số thành phần cần quản lý. Dự án SleepTCN khảo sát khả năng thay thế từng thành phần bằng TCN và ResNet-1D, đồng thời kiểm tra vai trò của tiền xử lý. Tuy nhiên, một so sánh có giá trị chỉ có thể được thiết lập khi các cấu hình dùng cùng đối tượng trong từng fold, cùng seed, cùng tập kiểm tra và cùng quy tắc chọn checkpoint.
-
-\subsection{Vấn đề của bản thực nghiệm lịch sử}
-
-Bản báo cáo trước đây tổng hợp kết quả từ các notebook có phép chia và seed khác nhau, đồng thời đưa vào một số kết quả SHHS chưa thuộc chiến dịch đã kiểm định. Cách tổng hợp đó không bảo đảm so sánh bắt cặp và không cho phép thực hiện kiểm định theo cùng đối tượng. Ngoài ra, các phát biểu ``nhanh hơn 8,2 lần'', ``đóng góp 12\% thông tin'' và ``embedding tốt hơn'' chưa có phép đo kiểm soát tương ứng.
-
-Giao thức v2 được xây dựng để sửa những điểm này. Mọi cấu hình chính dùng cùng manifest 10 fold theo đối tượng, seed huấn luyện 42, cùng khóa epoch và cùng chiến dịch mở test một lần. Những kết quả lịch sử không đáp ứng điều kiện trên chỉ được xem là tài liệu tham khảo, không tham gia kết luận.
+ZleepAnlystNet đề xuất một quy trình hai giai đoạn, kết hợp các bộ trích đặc trưng CNN với mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu này khảo sát một hướng thay thế dựa trên ResNet-1D và mạng tích chập theo thời gian, đồng thời đánh giá vai trò của chế độ xử lý biên độ. Mục tiêu không chỉ là tìm cấu hình có điểm số cao, mà còn xác định sự đánh đổi giữa hiệu năng, tốc độ suy luận và độ phức tạp vận hành.
 
 \subsection{Câu hỏi nghiên cứu}
 
-Nghiên cứu trả lời tám câu hỏi:
+Nghiên cứu tập trung vào bốn câu hỏi:
 
 \begin{enumerate}
-  \item Khi giữ nguyên dữ liệu và 15CNN, thay BiLSTM bằng TCN có cải thiện \mf\ hay không?
-  \item Khi giữ nguyên dữ liệu và TCN, thay 15CNN bằng ResNet-1D có cải thiện \mf\ hay không?
-  \item Lọc dải và cách đổi thang biên độ ảnh hưởng thế nào đến hiệu năng?
-  \item Việc giảm số mô hình thành phần đánh đổi thế nào với độ trễ, thông lượng, số tham số và bộ nhớ GPU?
-  \item Các nhóm đặc trưng từ epoch hiện tại (C), trước (P) và sau (N) mang lại lợi ích dự báo tăng thêm nào tại vùng chuyển pha?
-  \item Các checkpoint đã khóa tổng quát zero-shot như thế nào sang mẫu SHHS1 ngoài miền, và E3 khác E0/E6 ra sao theo đối tượng?
-  \item Khi suy luận E1/E2 trên cùng mẫu SHHS, hai đối chiếu thành phần E1--E0 và E2--E1 có giữ được hướng và độ chắc chắn nào?
-  \item Trên cùng mẫu SHHS đã mở, E3--E2 cho thấy gói tiền xử lý đầu-cuối thay đổi độ bền chuyển miền như thế nào so với raw?
+  \item Việc thay mô hình chuỗi BiLSTM bằng mạng tích chập theo thời gian có cải thiện hiệu năng khi giữ nguyên bộ trích đặc trưng hay không?
+  \item ResNet-1D có tạo ra lợi ích dự báo rõ ràng hơn bộ trích đặc trưng CNN ban đầu khi sử dụng cùng mô hình chuỗi hay không?
+  \item Chế độ xử lý biên độ nào cho kết quả ổn định hơn trong miền Sleep-EDF và khi chuyển sang SHHS1?
+  \item Một quy trình ít thành phần hơn có đem lại lợi ích vận hành đủ rõ ràng để cân bằng chi phí tham số và bộ nhớ hay không?
 \end{enumerate}
+
+Ngoài bốn câu hỏi chính, Gate 8 thực hiện một phân tích bổ sung về vai trò của ngữ cảnh thời gian tại vùng chuyển pha. Phân tích này được trình bày như bằng chứng cơ chế, không thay thế các so sánh hiệu năng đã đăng ký trước.
 
 \subsection{Đóng góp và phạm vi}
 
-Các đóng góp có bằng chứng của nghiên cứu gồm:
+Nghiên cứu đóng góp:
 
 \begin{itemize}
-  \item một quy trình tiền xử lý có truy nguyên nguồn, giữ nguyên trục thời gian và kiểm định 765 tệp NPZ;
-  \item một thiết kế 10 fold bắt cặp theo 78 đối tượng, không trộn đêm của cùng người giữa các vai trò;
-  \item 60 lần chạy xác thực và 60 lần suy luận test từ checkpoint đã khóa cho sáu cấu hình;
-  \item phân tích bootstrap cụm bắt cặp, Wilcoxon theo đối tượng và hiệu chỉnh Holm;
-  \item benchmark trên cùng GPU và phân tích Silhouette theo cùng epoch;
-  \item thí nghiệm loại bỏ nhóm C/P/N với đầu vào và số tham số TCN không đổi;
-  \item một chiến dịch SHHS1 riêng gồm tiền xử lý có truy nguyên, tổ hợp đủ 10 fold và phân tích bắt cặp trên 180 đối tượng zero-shot;
-  \item một phân tích bổ sung E1/E2 khóa trước suy luận hai cấu hình, có cổng artifact riêng và ranh giới rõ rằng cohort đã được mở trước cho E0/E3/E6.
-  \item một phân tích bắt cặp E3--E2 có khóa SHA-256 nguồn, định lượng hiệu ứng toàn gói tiền xử lý trên cùng 180 đối tượng và công khai rõ phạm vi suy rộng của kết quả.
-  \item một lần lặp đầy đủ 60 lượt chạy với seed 123 trên đúng split và cấu hình, được phân tích riêng như kiểm tra độ nhạy sau giao thức và không gộp $p$-value với seed 42.
+  \item một thiết kế thực nghiệm bắt cặp theo đối tượng trên Sleep-EDF Expanded, trong đó mọi cấu hình dùng cùng phép chia và cùng nguyên tắc lựa chọn mô hình;
+  \item một đánh giá thống nhất về hiệu năng dự đoán, độ phức tạp vận hành và khả năng zero-shot trên mẫu SHHS1 đã khóa;
+  \item một lần lặp sau giao thức để kiểm tra độ bền của hướng hiệu ứng theo seed huấn luyện thứ hai;
+  \item một phân tích ablation có kiểm soát thay cho cách quy đổi tầm quan trọng đặc trưng thành tỷ lệ phần trăm thông tin.
 \end{itemize}
 
-Kết luận in-domain chỉ bao gồm Sleep-EDF Expanded, kênh Fpz-Cz và hai seed huấn luyện cố định. Seed 42 là chiến dịch chính; seed 123 được thực hiện sau khi đã xem kết quả chính để đánh giá độ nhạy và khả năng lặp lại của hướng hiệu ứng. Kết luận ngoài miền chỉ bao gồm mẫu 180 đối tượng SHHS1 đã khóa, kênh EEG C4--A1, checkpoint seed 42 và giao thức zero-shot không cập nhật trọng số. Phân tích E1/E2 được khóa trước suy luận hai cấu hình trên cùng cohort đã dùng cho E0/E3/E6 nên được trình bày là bằng chứng thứ cấp. Đối chiếu E3--E2 là phân tích bổ sung trên mẫu này. Nghiên cứu chưa đánh giá đa kênh, một chiến dịch đa seed đăng ký trước, thích nghi miền hay giá trị lâm sàng. ``Đơn giản hơn'' trong báo cáo chỉ có nghĩa là ít mô hình thành phần hơn, không đồng nghĩa với ít tham số hoặc ít bộ nhớ hơn.
+Kết luận trong miền áp dụng cho Sleep-EDF Expanded và các seed cố định đã đánh giá. Kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức zero-shot tương ứng. Các phát biểu về tối ưu phổ quát, tương đương mô hình, thích nghi miền hoặc giá trị lâm sàng nằm ngoài phạm vi của nghiên cứu.
 
 \subsection{Cấu trúc báo cáo}
 
-Phần~\ref{sec:related_work} trình bày công trình liên quan và mốc ZleepAnlystNet. Phần~\ref{sec:dataset} mô tả Sleep-EDF, SHHS1 và phép chia. Phần~\ref{sec:preprocessing} và~\ref{sec:background} trình bày tiền xử lý cùng nền tảng kiến trúc. Phần~\ref{sec:methodology} đặc tả E0--E6, quy trình Gate, giao thức zero-shot và thống kê. Phần~\ref{sec:results} báo cáo Gate 1--8 cùng chiến dịch SHHS1 riêng. Cuối cùng, Phần~\ref{sec:discussion} và~\ref{sec:conclusion} thảo luận ý nghĩa, giới hạn và kết luận.
+Phần~\ref{sec:related_work} trình bày nền tảng và các công trình liên quan. Phần~\ref{sec:dataset} mô tả dữ liệu và thiết kế chia mẫu; Phần~\ref{sec:preprocessing} trình bày xử lý tín hiệu; Phần~\ref{sec:background} giới thiệu các thành phần mô hình. Phần~\ref{sec:methodology} mô tả giao thức đánh giá và thống kê. Phần~\ref{sec:results} trình bày kết quả, tiếp theo là thảo luận, kết luận và hồ sơ tái lập.

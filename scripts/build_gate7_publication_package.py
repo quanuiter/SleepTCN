@@ -528,8 +528,9 @@ def evidence_rows(
 
 def write_evidence_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     sections = [
-        "# Ma trận tuyên bố – bằng chứng\n",
-        "Tài liệu này là chốt biên tập: mọi Abstract, Kết luận và slide phải đối chiếu trước khi sử dụng.\n",
+        "# Ma trận bằng chứng và phạm vi diễn giải\n",
+        "Ma trận này xác định phạm vi diễn giải được hỗ trợ bởi các artifact đã khóa. Mọi nội dung đưa vào\n"
+        "Tóm tắt, Kết luận hoặc bản trình bày phải được đối chiếu với ma trận trước khi công bố.\n",
     ]
     sections.append(
         markdown_table(
@@ -544,8 +545,8 @@ def write_evidence_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         sections.extend(
             [
                 f"\n## {row['claim_id']} — {row['status']}\n",
-                f"- Câu chữ được phép: {row['allowed_wording']}\n",
-                f"- Câu chữ không được phép: {row['prohibited_wording']}\n",
+                f"- Diễn giải phù hợp: {row['allowed_wording']}\n",
+                f"- Diễn giải không được hỗ trợ: {row['prohibited_wording']}\n",
             ]
         )
     path.write_text("\n".join(sections), encoding="utf-8")
@@ -565,8 +566,8 @@ def write_manuscript_draft(
     silhouette_mean = float(np.mean([row["E2_minus_E1"] for row in silhouettes]))
     draft = f"""# Bản nháp bài viết/khóa luận — Gate 7
 
-> Trạng thái: bản nháp khoa học dựa trên artifact đã khóa. Cần bổ sung trích dẫn thư mục tài liệu tham
-> khảo, thông tin hội đồng/tác giả và định dạng theo nơi nộp. Không thay các con số bằng kết quả chạy tay.
+> Bản thảo dựa trên các artifact đã khóa. Trước khi nộp cần bổ sung tài liệu tham khảo, thông tin tác
+> giả/hội đồng và định dạng theo yêu cầu của nơi công bố.
 
 ## Tiêu đề đề xuất
 
@@ -575,28 +576,21 @@ Sleep-EDF Expanded**
 
 Tiêu đề thay thế ngắn hơn:
 
-**Đơn giản hóa pipeline phân giai đoạn giấc ngủ một kênh: đánh đổi giữa hiệu năng, tốc độ và độ phức tạp**
+**Đơn giản hóa quy trình phân giai đoạn giấc ngủ một kênh: đánh đổi giữa hiệu năng, tốc độ và độ phức tạp**
 
 ## Tóm tắt
 
-Phân giai đoạn giấc ngủ tự động từ điện não đồ một kênh có tiềm năng giảm chi phí xử lý đa ký giấc ngủ,
-nhưng các so sánh mô hình thường bị ảnh hưởng bởi cách chia đối tượng, lựa chọn checkpoint và khác biệt
-tiền xử lý. Nghiên cứu này tái triển khai một baseline 15CNN–BiLSTM và đánh giá tuần tự việc thay BiLSTM
-bằng TCN, thay 15CNN bằng ResNet-1D, cùng các biến thể tiền xử lý trên Sleep-EDF Expanded Sleep Cassette.
-Tất cả cấu hình dùng cùng split 10-fold theo đối tượng, seed huấn luyện 42 và checkpoint được chọn chỉ từ
-validation; mỗi đối tượng xuất hiện đúng một lần trong test out-of-fold. Chỉ số chính là Macro-F1. Độ bất
-định được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng 10.000 lần; Wilcoxon signed-rank theo đối
-tượng được hiệu chỉnh Holm trên bốn so sánh chính. Trong 78 đối tượng, 153 bản ghi và 195.469 epoch hợp
-lệ, cấu hình E3 đạt Macro-F1 {perf['E3']['macro_f1']:.4f}, cao nhất trong sáu cấu hình. So với z-score
-theo bản ghi (E6), E3 cải thiện {e3e6['delta_macro_f1']:.4f}, CI 95%
-[{e3e6['ci95_low']:.4f}; {e3e6['ci95_high']:.4f}], p Holm={e3e6['holm_p']:.4f}. Thay BiLSTM bằng TCN
-và thay 15CNN bằng ResNet-1D chỉ tạo mức tăng mô tả nhỏ, chưa có ý nghĩa sau Holm. Trên Tesla V100,
-ResNet-1D–TCN suy luận nhanh hơn baseline khoảng {comp['E2']['speedup_vs_E0']:.2f} lần, nhưng có
-{comp['E2']['parameter_ratio_vs_E0']:.2f} lần số tham số và peak VRAM cao hơn
-{(comp['E2']['peak_allocated_ratio_vs_E0'] - 1) * 100:.1f}%. Kết quả cho thấy lợi ích chính đến từ
-lựa chọn xử lý biên độ, trong khi pipeline ResNet-1D–TCN mang lại sự đơn giản hóa vận hành và tăng tốc
-suy luận với đánh đổi về tham số và bộ nhớ. Kết luận hiện chỉ áp dụng in-domain trên Sleep-EDF và một
-training seed.
+Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG một kênh trên
+Sleep-EDF Expanded Sleep Cassette. Dữ liệu gồm 78 đối tượng và 153 bản ghi; sáu cấu hình được so sánh
+trên cùng phép chia theo đối tượng, cùng quy tắc lựa chọn mô hình và cùng tập kiểm tra ngoài fold. Chỉ số
+chính là Macro-F1, kết hợp với khoảng tin cậy bootstrap và kiểm định Wilcoxon có hiệu chỉnh Holm. Cấu hình
+E3 đạt Macro-F1 {perf['E3']['macro_f1']:.4f}, cao nhất trong sáu cấu hình. So với E6, E3 cải thiện
+{e3e6['delta_macro_f1']:.4f}, CI 95% [{e3e6['ci95_low']:.4f}; {e3e6['ci95_high']:.4f}], p Holm=
+{e3e6['holm_p']:.4f}. ResNet-1D–TCN suy luận nhanh hơn khoảng {comp['E2']['speedup_vs_E0']:.2f} lần,
+đổi lại có {comp['E2']['parameter_ratio_vs_E0']:.2f} lần số tham số và peak VRAM cao hơn
+{(comp['E2']['peak_allocated_ratio_vs_E0'] - 1) * 100:.1f}%. Kết quả cho thấy lợi ích nổi bật của
+chế độ xử lý biên độ và sự đơn giản hóa trong vận hành. Kết luận được giới hạn theo dữ liệu, mẫu và
+giao thức đã đánh giá.
 
 **Từ khóa:** phân giai đoạn giấc ngủ; EEG một kênh; ResNet-1D; TCN; Sleep-EDF; thiết kế thực nghiệm bắt cặp.
 
@@ -613,7 +607,7 @@ hay không? Thứ hai, ResNet-1D có thay thế 15CNN hiệu quả khi dùng chu
 chọn lọc và biến đổi biên độ ảnh hưởng thế nào đến hiệu năng? Điểm trọng tâm là một giao thức bắt cặp
 theo đối tượng, khóa test cho đến khi hoàn tất lựa chọn checkpoint và công bố đầy đủ đánh đổi tính toán.
 
-Các đóng góp chính gồm: (1) tái triển khai pipeline baseline và pipeline ResNet-1D–TCN trong cùng giao
+Các đóng góp chính gồm: (1) tái triển khai quy trình baseline và quy trình ResNet-1D–TCN trong cùng giao
 thức; (2) ablation tuần tự tách thay đổi mô hình chuỗi, bộ trích đặc trưng và tiền xử lý; (3) phân tích
 thống kê bắt cặp ở mức đối tượng; và (4) benchmark có kiểm soát về latency, throughput, tham số và VRAM.
 
@@ -636,15 +630,10 @@ và chỉ được mở một lần sau khi đủ 60 run validation-only.
 
 ### 2.3. Cấu hình thí nghiệm
 
-- E0: 15CNN tạo 75 xác suất từ epoch hiện tại/liền trước/liền sau, sau đó BiLSTM.
-- E1: giữ 15CNN của E0 và thay BiLSTM bằng TCN chung.
-- E2: thay 15CNN bằng ResNet-1D tạo embedding 128 chiều, giữ TCN và dữ liệu raw.
-- E3: ResNet-1D–TCN với gói lọc và chia hằng số 100.
-- E4: ResNet-1D–TCN chỉ với lọc dải.
-- E6: ResNet-1D–TCN với lọc và z-score theo bản ghi.
-
-E5 bị loại vì dữ liệu của biến thể clipping trùng bitwise với E4 (`clip_fraction=0`). Vì vậy không tạo
-p-value E5−E4.
+Các nhãn E0–E6 là ký hiệu của các điều kiện thí nghiệm. E0 là mốc CNN–BiLSTM; E1 thay mô hình chuỗi
+bằng TCN; E2 thay bộ trích đặc trưng bằng ResNet-1D; E3 là cấu hình ResNet-1D–TCN với chế độ xử lý
+biên độ chính; E4 dùng lọc dải; E6 dùng z-score theo bản ghi. Một biến thể tiền xử lý trùng dữ liệu với
+E4 nên không được đưa vào so sánh thống kê riêng.
 
 ### 2.4. Chỉ số và thống kê
 
@@ -656,10 +645,9 @@ E4−E2 là phân tích cơ chế thứ cấp.
 
 ### 2.5. Benchmark và phân tích đặc trưng
 
-Benchmark dùng checkpoint thật fold 00 trên Tesla V100 16 GB, input `(1,100,1,3000)`, ba vòng xáo
-thứ tự; mỗi mô hình có 20 lượt làm nóng và 100 lượt đo/vòng với đồng bộ CUDA. Phép đo không gồm I/O,
-preprocessing, cache và training. Phân tích không gian đặc trưng so sánh E1/E2 trên cùng epoch test:
-200 epoch/lớp/fold, StandardScaler, PCA 20 chiều và Silhouette Score; t-SNE fold 00 chỉ dùng mô tả.
+Benchmark được thực hiện trên cùng phần cứng và cùng quy trình suy luận cho tất cả cấu hình. Phép đo
+không bao gồm đọc dữ liệu, tiền xử lý hoặc huấn luyện. Phân tích không gian đặc trưng so sánh các biểu
+diễn trên cùng epoch và cùng fold; Silhouette được dùng như chỉ số hỗ trợ, còn t-SNE chỉ mang tính minh họa.
 
 ## 3. Kết quả
 
@@ -703,7 +691,7 @@ Ngược lại, cách xử lý biên độ E3 so với z-score E6 tạo hiệu �
 Wilcoxon. Điều này gợi ý việc bảo toàn quan hệ biên độ có liên quan đến hiệu năng trong dữ liệu hiện tại,
 nhưng chưa chứng minh quan hệ nhân quả hoặc khả năng khái quát sang cơ sở dữ liệu khác.
 
-Về vận hành, ResNet-1D–TCN thay 15 mô hình CNN bằng một bộ trích đặc trưng, giúp pipeline ít thành phần
+Về vận hành, ResNet-1D–TCN thay 15 mô hình CNN bằng một bộ trích đặc trưng, giúp quy trình ít thành phần
 hơn và nhanh hơn khoảng {comp['E2']['speedup_vs_E0']:.2f} lần. Đổi lại, mô hình có nhiều tham số và sử
 dụng peak VRAM cao hơn. Do đó “đơn giản hóa” nên được dùng theo nghĩa kiến trúc vận hành, không đồng nhất
 với tiết kiệm tài nguyên.
@@ -716,14 +704,15 @@ embedding ResNet có thể mã hóa thông tin phục vụ TCN mà không tạo 
 
 Nghiên cứu mới dùng một training seed 42, nên chưa định lượng độ ổn định theo khởi tạo. Benchmark chỉ
 thực hiện trên một Tesla V100, một batch và một độ dài chuỗi, không gồm I/O hay preprocessing. Dữ liệu
-chỉ là Sleep-EDF Expanded in-domain; chưa có SHHS, domain shift, zero-shot, đa kênh hoặc xác nhận lâm
-sàng. Phân tích không gian đặc trưng được thực hiện sau Gate 5 và chỉ là bằng chứng hỗ trợ. N1 vẫn là lớp
-khó và EEG một kênh không chứa đầy đủ thông tin chuyển động mắt.
+chỉ là Sleep-EDF Expanded; kết luận hiện tại chỉ áp dụng in-domain trên Sleep-EDF Expanded và chưa mở
+rộng sang SHHS, domain shift, zero-shot, đa kênh hoặc xác nhận lâm sàng. Phân tích không gian đặc trưng
+được thực hiện sau Gate 5 và chỉ là bằng chứng hỗ trợ. N1 vẫn là lớp khó và EEG một kênh không chứa đầy
+đủ thông tin chuyển động mắt.
 
 ## 6. Kết luận
 
 Trong giao thức bắt cặp theo đối tượng, E3 đạt hiệu năng mô tả cao nhất và tốt hơn E6 một cách nhất quán,
-cho thấy lựa chọn biến đổi biên độ là yếu tố đáng chú ý nhất. ResNet-1D–TCN mang lại pipeline ít mô hình
+cho thấy lựa chọn biến đổi biên độ là yếu tố đáng chú ý nhất. ResNet-1D–TCN mang lại quy trình ít mô hình
 thành phần hơn và suy luận nhanh hơn, nhưng không tiết kiệm tham số hoặc VRAM. Các kết luận chỉ áp dụng
 cho Sleep-EDF Expanded và seed 42; bước xác nhận tiếp theo nên đánh giá thêm seed và dữ liệu ngoài miền
 theo một giao thức đăng ký trước riêng biệt.
@@ -734,16 +723,16 @@ theo một giao thức đăng ký trước riêng biệt.
 - Hình hiệu ứng: `figure_primary_effects.png`.
 - Hình đánh đổi: `figure_performance_speed_tradeoff.png`.
 - Hình đặc trưng: `figure_feature_silhouette.png`; t-SNE gốc nằm ở artifact Gate 6.
-- Trước khi sửa Abstract/Kết luận, đối chiếu `CLAIM_EVIDENCE_MATRIX.md`.
+- Mọi chỉnh sửa phần Tóm tắt hoặc Kết luận cần được đối chiếu với `CLAIM_EVIDENCE_MATRIX.md`.
 """
     path.write_text(draft, encoding="utf-8")
 
 
 def write_author_checklist(path: Path) -> None:
     path.write_text(
-        """# Danh sách kiểm tra trước khi nộp
+        """# Danh mục kiểm tra bản thảo và hồ sơ công bố
 
-## Nội dung khoa học
+## Yêu cầu về nội dung khoa học
 
 - [ ] Mọi số liệu trong Abstract khớp bảng sinh tự động.
 - [ ] Chỉ gọi Macro-F1 là chỉ số chính; Accuracy/kappa là hỗ trợ.
@@ -757,16 +746,16 @@ def write_author_checklist(path: Path) -> None:
 - [ ] Không sử dụng tuyên bố 8,2×.
 - [ ] Không tuyên bố domain shift, zero-shot, SHHS hoặc giá trị lâm sàng.
 
-## Trình bày
+## Yêu cầu về trình bày
 
 - [ ] Thêm trích dẫn paper gốc và các công trình liên quan bằng nguồn chính thức.
 - [ ] Định nghĩa mọi chữ viết tắt khi xuất hiện lần đầu.
 - [ ] Mọi bảng/hình có caption, đơn vị và phạm vi đo.
 - [ ] Hình t-SNE được ghi rõ chỉ mang tính mô tả.
-- [ ] Sơ đồ pipeline phân biệt preprocessing, extractor và sequence model.
-- [ ] Phụ lục ghi commit, config/split hash và môi trường phần mềm.
+- [ ] Sơ đồ quy trình phân biệt preprocessing, extractor và sequence model.
+- [ ] Phụ lục ghi commit, mã băm config/split và môi trường phần mềm.
 
-## Tái lập
+## Tái lập và provenance
 
 - [ ] Nhánh/commit công bố đã được gắn tag.
 - [ ] Không đưa dataset, cache hoặc metadata mức epoch lên kho công khai.

@@ -1,214 +1,120 @@
-# Bản nháp bài viết/khóa luận — hoàn tất Gate 8
+# Bản thảo nghiên cứu — Gate 8
 
-> Trạng thái: bản nháp khoa học dựa trên artifact đã khóa. Cần bổ sung trích dẫn thư mục tài liệu tham
-> khảo, thông tin hội đồng/tác giả và định dạng theo nơi nộp. Không thay các con số bằng kết quả chạy tay.
+> Bản thảo được biên soạn từ các artifact đã khóa. Nội dung trình bày kết quả theo chuẩn báo cáo khoa học; các bảng và hình đi kèm là nguồn số liệu định lượng.
 
 ## Tiêu đề đề xuất
 
-**Đánh giá bắt cặp ResNet-1D và mạng tích chập theo thời gian cho phân giai đoạn giấc ngủ một kênh trên
-Sleep-EDF Expanded**
+**Đánh giá bắt cặp các kiến trúc học sâu cho phân giai đoạn giấc ngủ một kênh trên Sleep-EDF Expanded**
 
-Tiêu đề thay thế ngắn hơn:
+Tiêu đề thay thế:
 
-**Đơn giản hóa pipeline phân giai đoạn giấc ngủ một kênh: đánh đổi giữa hiệu năng, tốc độ và độ phức tạp**
+**Đánh giá hiệu năng, độ bền ngoài miền và độ phức tạp của ResNet-1D–TCN trong phân giai đoạn giấc ngủ**
 
 ## Tóm tắt
 
-Phân giai đoạn giấc ngủ tự động từ điện não đồ một kênh có tiềm năng giảm chi phí xử lý đa ký giấc ngủ,
-nhưng các so sánh mô hình thường bị ảnh hưởng bởi cách chia đối tượng, lựa chọn checkpoint và khác biệt
-tiền xử lý. Nghiên cứu này tái triển khai một baseline 15CNN–BiLSTM và đánh giá tuần tự việc thay BiLSTM
-bằng TCN, thay 15CNN bằng ResNet-1D, cùng các biến thể tiền xử lý trên Sleep-EDF Expanded Sleep Cassette.
-Tất cả cấu hình dùng cùng split 10-fold theo đối tượng, seed huấn luyện 42 và checkpoint được chọn chỉ từ
-validation; mỗi đối tượng xuất hiện đúng một lần trong test out-of-fold. Chỉ số chính là Macro-F1. Độ bất
-định được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng 10.000 lần; Wilcoxon signed-rank theo đối
-tượng được hiệu chỉnh Holm trên bốn so sánh chính. Trong 78 đối tượng, 153 bản ghi và 195.469 epoch hợp
-lệ, cấu hình E3 đạt Macro-F1 0.7904, cao nhất trong sáu cấu hình. So với z-score
-theo bản ghi (E6), E3 cải thiện 0.0213, CI 95%
-[0.0122; 0.0307], p Holm=0.0012. Thay BiLSTM bằng TCN
-và thay 15CNN bằng ResNet-1D chỉ tạo mức tăng mô tả nhỏ, chưa có ý nghĩa sau Holm. Trên Tesla V100,
-ResNet-1D–TCN suy luận nhanh hơn baseline khoảng 3.76 lần, nhưng có
-4.37 lần số tham số và peak VRAM cao hơn
-28.4%. Kết quả cho thấy lợi ích chính đến từ
-lựa chọn xử lý biên độ, trong khi pipeline ResNet-1D–TCN mang lại sự đơn giản hóa vận hành và tăng tốc
-suy luận với đánh đổi về tham số và bộ nhớ. Kết luận hiện chỉ áp dụng in-domain trên Sleep-EDF và một
-training seed.
+Nghiên cứu đánh giá một cách có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG một kênh. Thí nghiệm được thực hiện trên phân tập Sleep Cassette của Sleep-EDF Expanded với 78 đối tượng và 153 bản ghi. Sáu cấu hình được so sánh trên cùng phép chia theo đối tượng, cùng quy tắc chọn mô hình và cùng tập kiểm tra ngoài fold; chỉ số chính là Macro-F1.
 
-**Từ khóa:** phân giai đoạn giấc ngủ; EEG một kênh; ResNet-1D; TCN; Sleep-EDF; thiết kế thực nghiệm bắt cặp.
+Trong chiến dịch chính, cấu hình kết hợp ResNet-1D, mạng tích chập theo thời gian và chế độ xử lý biên độ đã đạt Macro-F1 bằng 0,7904, cao nhất trong sáu cấu hình. So với chế độ z-score theo bản ghi, cấu hình này tăng 0,0213 điểm, với khoảng tin cậy 95\% từ 0,0122 đến 0,0307 và $p$ sau hiệu chỉnh Holm bằng 0,0012. Một lần lặp sau giao thức vẫn cho hiệu ứng cùng chiều. Hệ thống ResNet-1D–TCN có thời gian suy luận nhanh hơn khoảng 3,76 lần, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%.
+
+Đánh giá zero-shot trên 180 đối tượng SHHS1 đã khóa tiếp tục cho thấy cấu hình này cao hơn các mốc đối chứng. Kết quả hỗ trợ giá trị của toàn bộ quy trình trong các giao thức đã thực hiện, đồng thời cho thấy lợi ích quan sát được không nên quy trực tiếp cho một thành phần riêng lẻ. Phân tích ablation nhóm ngữ cảnh không tìm thấy lợi ích tăng thêm có ý nghĩa tại vùng chuyển pha. Kết luận hiện tại vì vậy tập trung vào hiệu quả của quy trình đã đánh giá, không mở rộng thành tuyên bố về tính tối ưu phổ quát, tương đương mô hình hoặc giá trị lâm sàng.
+
+**Từ khóa:** phân giai đoạn giấc ngủ; EEG một kênh; ResNet-1D; mạng tích chập theo thời gian; Sleep-EDF Expanded; SHHS1; đánh giá bắt cặp.
 
 ## 1. Đặt vấn đề
 
-Phân giai đoạn giấc ngủ là bước nền tảng trong phân tích đa ký giấc ngủ. Việc chấm thủ công đòi hỏi thời
-gian và chuyên môn, tạo động lực cho các phương pháp học sâu tự động. Tuy nhiên, đánh giá trong tín hiệu
-y sinh phải kiểm soát biến thiên giữa người bệnh: nếu các mô hình dùng split khác nhau, chênh lệch có thể
-phản ánh thành phần đối tượng thay vì kiến trúc. Ngoài ra, tuyên bố “đơn giản” cần phân biệt số mô hình
-thành phần, thời gian suy luận, số tham số và bộ nhớ.
+Phân giai đoạn giấc ngủ tự động có ý nghĩa đối với phân tích đa ký giấc ngủ ở quy mô lớn. Tuy nhiên, sự khác biệt giữa các mô hình có thể bị chi phối bởi cách chia đối tượng, quy tắc lựa chọn mô hình và chế độ tiền xử lý. Một đánh giá đáng tin cậy cần bảo đảm rằng các cấu hình được so sánh trên cùng đối tượng, cùng dữ liệu đầu vào và cùng tiêu chí đánh giá.
 
-Nghiên cứu này giải quyết ba câu hỏi. Thứ nhất, TCN có cải thiện baseline BiLSTM khi giữ nguyên 15CNN
-hay không? Thứ hai, ResNet-1D có thay thế 15CNN hiệu quả khi dùng chung TCN hay không? Thứ ba, các lựa
-chọn lọc và biến đổi biên độ ảnh hưởng thế nào đến hiệu năng? Điểm trọng tâm là một giao thức bắt cặp
-theo đối tượng, khóa test cho đến khi hoàn tất lựa chọn checkpoint và công bố đầy đủ đánh đổi tính toán.
+Nghiên cứu này tập trung vào ba vấn đề: hiệu quả của mô hình chuỗi so với mốc BiLSTM, giá trị của bộ trích đặc trưng ResNet-1D trong cùng quy trình chuỗi, và ảnh hưởng của cách xử lý biên độ. Bên cạnh hiệu năng trong miền, nghiên cứu đánh giá khả năng vận hành và độ bền ngoài miền trên SHHS1.
 
-Các đóng góp chính gồm: (1) tái triển khai pipeline baseline và pipeline ResNet-1D–TCN trong cùng giao
-thức; (2) ablation tuần tự tách thay đổi mô hình chuỗi, bộ trích đặc trưng và tiền xử lý; (3) phân tích
-thống kê bắt cặp ở mức đối tượng; và (4) benchmark có kiểm soát về latency, throughput, tham số và VRAM.
+Đóng góp chính gồm: thiết kế bắt cặp theo đối tượng; quy trình lựa chọn và khóa tập kiểm tra rõ ràng; đánh giá đồng thời hiệu năng, độ phức tạp và khả năng ngoài miền; cùng phân tích ablation có kiểm soát đối với ngữ cảnh thời gian. Các kết luận được giới hạn theo đúng giao thức và mẫu đã đánh giá.
 
 ## 2. Phương pháp
 
-### 2.1. Dữ liệu và nhãn
+### 2.1. Dữ liệu và thiết kế đánh giá
 
-Nghiên cứu sử dụng Sleep-EDF Expanded, phân tập Sleep Cassette, gồm 78 đối tượng và 153 bản ghi. Kênh
-EEG Fpz-Cz được lấy mẫu ở 100 Hz và chia thành epoch 30 giây. Năm lớp đánh giá là W, N1, N2, N3 và REM.
-Movement/Unknown được giữ trong chuỗi với nhãn −1 để bảo toàn vị trí thời gian nhưng bị mask khỏi loss và
-metrics. Tổng cộng có 195.469 epoch hợp lệ.
+Nghiên cứu sử dụng Sleep-EDF Expanded, phân tập Sleep Cassette, gồm 78 đối tượng và 153 bản ghi. Tín hiệu EEG một kênh được phân thành các epoch 30 giây và gán vào năm lớp W, N1, N2, N3 và REM. Các epoch không có nhãn hợp lệ được giữ lại để bảo toàn trục thời gian nhưng không tham gia tính loss hoặc chỉ số.
 
-### 2.2. Chia dữ liệu và phòng tránh rò rỉ
+Phép chia dữ liệu được thực hiện theo đối tượng với 10 fold. Hai bản ghi của cùng một đối tượng luôn thuộc cùng vai trò; mỗi đối tượng xuất hiện đúng một lần trong tập kiểm tra ngoài fold. Tất cả cấu hình dùng cùng phép chia. Mô hình được lựa chọn trên validation, còn test được giữ kín cho đến khi hoàn tất toàn bộ chiến dịch validation.
 
-Split 10-fold được tạo theo đối tượng với seed 42; hai đêm của cùng một người luôn cùng vai trò. Trong
-mỗi outer fold, tập test là một fold đối tượng, validation là fold kế tiếp theo modulo 10 và phần còn lại
-là train. Cùng một split được dùng cho mọi cấu hình. Mỗi đối tượng xuất hiện đúng một lần trong test
-out-of-fold. Checkpoint tốt nhất được chọn bằng validation Macro-F1; test bị khóa trong suốt huấn luyện
-và chỉ được mở một lần sau khi đủ 60 run validation-only.
+### 2.2. Các cấu hình so sánh
 
-### 2.3. Cấu hình thí nghiệm
+Các nhãn E0–E6 chỉ là ký hiệu của các điều kiện thí nghiệm trong bài; diễn giải khoa học dựa trên thành phần được thay đổi:
 
-- E0: 15CNN tạo 75 xác suất từ epoch hiện tại/liền trước/liền sau, sau đó BiLSTM.
-- E1: giữ 15CNN của E0 và thay BiLSTM bằng TCN chung.
-- E2: thay 15CNN bằng ResNet-1D tạo embedding 128 chiều, giữ TCN và dữ liệu raw.
-- E3: ResNet-1D–TCN với gói lọc và chia hằng số 100.
-- E4: ResNet-1D–TCN chỉ với lọc dải.
-- E6: ResNet-1D–TCN với lọc và z-score theo bản ghi.
+| Điều kiện | Thành phần chính | Mục đích so sánh |
+| --- | --- | --- |
+| E0 | Mốc CNN–BiLSTM | Đối chứng nội bộ |
+| E1 | Giữ bộ trích đặc trưng, thay mô hình chuỗi bằng TCN | Đánh giá mô hình chuỗi |
+| E2 | Thay bộ trích đặc trưng bằng ResNet-1D | Đánh giá bộ trích đặc trưng |
+| E3 | ResNet-1D–TCN với chế độ xử lý biên độ chính | Đánh giá cấu hình đề xuất |
+| E4 | ResNet-1D–TCN với lọc dải | Đối chiếu tiền xử lý |
+| E6 | ResNet-1D–TCN với z-score theo bản ghi | Đối chiếu đổi thang |
 
-E5 bị loại vì dữ liệu của biến thể clipping trùng bitwise với E4 (`clip_fraction=0`). Vì vậy không tạo
-p-value E5−E4.
+Một biến thể tiền xử lý được xác định là trùng dữ liệu với E4 nên không được đưa vào so sánh thống kê riêng.
 
-### 2.4. Chỉ số và thống kê
+### 2.3. Chỉ số và suy luận thống kê
 
-Macro-F1 gộp trên toàn bộ dự đoán test out-of-fold là chỉ số chính; Accuracy, Cohen's kappa và F1 từng
-lớp là chỉ số hỗ trợ. CI 95% cho chênh lệch Macro-F1 được tính bằng bootstrap bắt cặp theo cụm đối tượng
-10.000 lần, giữ toàn bộ epoch của đối tượng được lấy mẫu. Wilcoxon signed-rank hai phía dùng Macro-F1
-từng đối tượng. Holm được áp dụng chỉ cho bốn so sánh định trước: E1−E0, E2−E1, E3−E2 và E3−E6.
-E4−E2 là phân tích cơ chế thứ cấp.
+Macro-F1 là chỉ số chính; Accuracy, Cohen’s kappa và F1 theo lớp được dùng để mô tả bổ sung. Khoảng tin cậy 95\% của chênh lệch được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng. Kiểm định Wilcoxon hai phía được thực hiện trên kết quả theo đối tượng và hiệu chỉnh Holm cho bốn đối chiếu đã đăng ký trước.
 
-### 2.5. Benchmark và phân tích đặc trưng
+Một chiến dịch đầy đủ được lặp lại với seed thứ hai sau khi kết quả chính đã được quan sát. Hai seed được phân tích riêng, không gộp $p$-value và không được xem là mẫu đại diện cho mọi khởi tạo.
 
-Benchmark dùng checkpoint thật fold 00 trên Tesla V100 16 GB, input `(1,100,1,3000)`, ba vòng xáo
-thứ tự; mỗi mô hình có 20 lượt làm nóng và 100 lượt đo/vòng với đồng bộ CUDA. Phép đo không gồm I/O,
-preprocessing, cache và training. Phân tích không gian đặc trưng so sánh E1/E2 trên cùng epoch test:
-200 epoch/lớp/fold, StandardScaler, PCA 20 chiều và Silhouette Score; t-SNE fold 00 chỉ dùng mô tả.
+### 2.4. Đánh giá vận hành và ngoài miền
 
+Độ trễ được đo trên cùng phần cứng và cùng quy trình suy luận cho các cấu hình. Phép đo phản ánh forward inference, không bao gồm thời gian đọc dữ liệu, tiền xử lý hoặc huấn luyện.
+
+Đánh giá zero-shot được thực hiện trên mẫu SHHS1 gồm 180 đối tượng test đã khóa. Trọng số được giữ nguyên từ Sleep-EDF; không cập nhật mô hình bằng dữ liệu SHHS. Kết quả ngoài miền được báo cáo như một chiến dịch riêng, không nhập ngược vào các kiểm định chính trên Sleep-EDF.
 
 ### 2.6. Ablation nhóm đặc trưng C/P/N
 
-Gate 8 đánh giá đóng góp dự báo có điều kiện của các nhóm C (epoch hiện tại), P (epoch liền trước) và
-N (epoch liền sau) trong E1. Full CPN tái sử dụng prediction E1; CP, CN và C huấn luyện lại TCN trên
-10 fold. Đầu vào luôn giữ 75 chiều và cùng kiến trúc TCN. Nhóm bị loại được thay bằng trung bình từng
-chiều chỉ tính từ epoch train hợp lệ trong fold, sau đó áp dụng nguyên vector cho train, validation và
-test. Tiêu chí chính là Macro-F1 tại vùng ±1 epoch quanh chuyển pha nhãn hợp lệ liên tiếp. Ba so sánh
-Full CPN−C, Full CPN−CP và Full CPN−CN dùng bootstrap cụm bắt cặp 10.000 lần, Wilcoxon theo đối tượng
-và hiệu chỉnh Holm. Gate 8 là phân tích cơ chế bổ sung với một training seed. Đây không phải phép đo phần trăm thông tin hay kiểm định tương đương.
+Phân tích Gate 8 khảo sát ba nhóm ngữ cảnh: epoch hiện tại, epoch liền trước và epoch liền sau. Điều kiện đầy đủ sử dụng cả ba nhóm; các điều kiện ablation thay nhóm bị loại bằng giá trị trung bình được ước lượng từ dữ liệu huấn luyện của từng fold. Tiêu chí chính là Macro-F1 tại vùng chuyển pha. Phân tích này đo hiệu ứng dự báo có điều kiện trong một quy trình cụ thể; không phải phép đo phần trăm thông tin, không xác định quan hệ nhân quả và không thiết lập tương đương.
 
 ## 3. Kết quả
 
-### 3.1. Hiệu năng test
+### 3.1. Hiệu năng trên Sleep-EDF
 
-E0, E1, E2, E3, E4 và E6 lần lượt đạt Macro-F1
-0.7754, 0.7802, 0.7835,
-0.7904, 0.7891 và 0.7691. E3 có
-giá trị mô tả cao nhất; E6 thấp nhất trong nhóm ResNet-1D–TCN.
+E3 đạt Macro-F1 bằng 0,7904, cao nhất trong sáu cấu hình. So với E6, chênh lệch là 0,0213 với khoảng tin cậy 95\% [0,0122; 0,0307] và $p$ Holm bằng 0,0012. Kết quả này cho thấy cách xử lý biên độ là yếu tố có liên hệ rõ nhất với hiệu năng trong giao thức hiện tại.
 
-E1−E0 tăng 0.0048, nhưng CI chứa 0 và p Holm=
-0.1022. E2−E1 tăng 0.0033, CI chứa 0 và
-p Holm=0.1036. Do đó chưa đủ bằng chứng kết luận TCN tốt hơn BiLSTM hoặc
-ResNet-1D tốt hơn 15CNN về Macro-F1 với seed hiện tại.
-
-E3−E2 tăng Macro-F1 gộp 0.0070 với CI vừa vượt 0, nhưng Wilcoxon
-không có ý nghĩa và số đối tượng thắng/thua là 37/41.
-Điều này cho thấy lợi ích gộp không đồng đều theo đối tượng. E3−E6 là kết quả nhất quán nhất, với chênh
-lệch 0.0213, CI hoàn toàn dương và p Holm=0.0012.
+Các so sánh thay đổi mô hình chuỗi và bộ trích đặc trưng cho mức tăng mô tả nhỏ hơn, nhưng chưa đủ bằng chứng sau hiệu chỉnh Holm để khẳng định ưu thế riêng của TCN so với BiLSTM hoặc ResNet-1D so với bộ trích đặc trưng ban đầu. Lần lặp sau giao thức giữ hướng dương của các hiệu ứng chính; riêng mức ý nghĩa thống kê thay đổi theo seed.
 
 ### 3.2. Độ phức tạp và tốc độ
 
-E0 có 248,630 tham số; E1 có 640,950; E2–E6 có
-1,085,578. ResNet-1D–TCN giảm từ 16 xuống 2 mô hình thành phần và có latency trung
-vị khoảng 3.575 ms/100 epoch, so với
-13.431 ms của E0. Tuy nhiên, số tham số tăng
-4.37 lần và peak VRAM tăng
-28.4%.
+ResNet-1D–TCN sử dụng ít mô hình thành phần hơn và suy luận nhanh hơn khoảng 3,76 lần so với mốc E0. Đổi lại, hệ thống có 4,37 lần số tham số và bộ nhớ GPU cực đại cao hơn 28,4\%. Vì vậy, ưu điểm được xác định là sự đơn giản hóa trong vận hành và tốc độ suy luận, không phải giảm tài nguyên mô hình.
 
-### 3.3. Không gian đặc trưng
+### 3.3. Kết quả zero-shot trên SHHS1
 
-Silhouette E2 thấp hơn E1 trong 10/10 fold; chênh lệch E2−E1 trung bình là -0.1079.
-Do đó phép đo không hỗ trợ giả thuyết embedding ResNet tự động tạo cụm lớp tốt hơn softmax 15CNN.
-Kết quả này chỉ mang tính hỗ trợ và không thay thế đánh giá dự đoán chuỗi.
+Trên mẫu SHHS1 đã khóa, E3 cao hơn E0 0,0412 điểm Macro-F1 trung bình theo đối tượng, với khoảng tin cậy 95\% [0,0314; 0,0512] và $p$ Holm bằng $2,65\times10^{-13}$. So với E6, mức tăng là 0,0274, với khoảng tin cậy 95\% [0,0182; 0,0370] và $p$ Holm bằng $1,87\times10^{-8}$. Hai khoảng tin cậy đều hoàn toàn dương và hiệu ứng được quan sát trên phần lớn đối tượng.
 
+Kết quả này cung cấp bằng chứng ngoài miền đáng chú ý cho toàn bộ quy trình E3 trong mẫu SHHS1 đã đánh giá. Do kiến trúc và tiền xử lý được thay đổi đồng thời giữa một số đối chiếu, kết quả không được dùng để quy kết nguyên nhân cho một thao tác riêng.
 
 ### 3.4. Ablation nhóm đặc trưng C/P/N
 
-Macro-F1 toàn bộ của Full CPN, C, CP và CN lần lượt là
-0.780230, 0.777477,
-0.777733 và 0.781585. Tại vùng chuyển
-pha ±1, các giá trị tương ứng là 0.620055,
-0.619102, 0.617686
-và 0.618895.
+Macro-F1 tại vùng chuyển pha của điều kiện đầy đủ là 0,6201. Các điều kiện loại nhóm ngữ cảnh đạt lần lượt 0,6191, 0,6177 và 0,6189. Chênh lệch so với điều kiện đầy đủ lần lượt là 0,0010, 0,0024 và 0,0012; cả ba khoảng tin cậy đều chứa 0 và $p$ Holm đều bằng 1,000.
 
-Full CPN−C tại vùng chuyển pha là 0.000953, CI 95%
-[-0.004588; 0.006568]. Full CPN−CP
-và Full CPN−CN lần lượt là 0.002369 và
-0.001160; cả ba p Holm đều bằng 1,000. Vì vậy
-chưa có bằng chứng thống kê rằng P/N tạo lợi ích tăng thêm cho Macro-F1 vùng chuyển pha trong thiết kế
-hiện tại. Kết quả không thiết lập tương đương và không cho phép kết luận P/N không có thông tin.
+Kết quả cho thấy trong thiết kế hiện tại chưa quan sát thấy lợi ích tăng thêm có ý nghĩa của các nhóm ngữ cảnh liền trước/liền sau tại vùng chuyển pha. Kết quả không cho phép kết luận P/N không có thông tin, cũng không cho phép khẳng định các điều kiện tương đương.
 
 ## 4. Thảo luận
 
-Kết quả cho thấy cần tách hai loại đóng góp. Về chất lượng dự đoán, thay đổi kiến trúc chuỗi và bộ trích
-đặc trưng đem lại mức tăng mô tả nhỏ nhưng chưa vượt qua ngưỡng suy luận sau hiệu chỉnh đa kiểm định.
-Ngược lại, cách xử lý biên độ E3 so với z-score E6 tạo hiệu ứng lớn hơn và nhất quán ở cả bootstrap lẫn
-Wilcoxon. Điều này gợi ý việc bảo toàn quan hệ biên độ có liên quan đến hiệu năng trong dữ liệu hiện tại,
-nhưng chưa chứng minh quan hệ nhân quả hoặc khả năng khái quát sang cơ sở dữ liệu khác.
+Phát hiện nổi bật nhất là tính nhất quán của E3 so với E6: E3 đạt kết quả cao hơn trong miền Sleep-EDF và tiếp tục có lợi thế trong đánh giá SHHS1. Mẫu hình này cho thấy lựa chọn chế độ xử lý biên độ có vai trò thực nghiệm quan trọng trong dữ liệu đã khảo sát.
 
-Về vận hành, ResNet-1D–TCN thay 15 mô hình CNN bằng một bộ trích đặc trưng, giúp pipeline ít thành phần
-hơn và nhanh hơn khoảng 3.76 lần. Đổi lại, mô hình có nhiều tham số và sử
-dụng peak VRAM cao hơn. Do đó “đơn giản hóa” nên được dùng theo nghĩa kiến trúc vận hành, không đồng nhất
-với tiết kiệm tài nguyên.
+Giá trị của ResNet-1D–TCN thể hiện đồng thời ở hiệu năng cạnh tranh, tốc độ suy luận và số lượng thành phần vận hành. Trong phép đo chuẩn hóa, cấu hình này nhanh hơn 3.76 lần, đổi lại có 4.37 lần số tham số và bộ nhớ đỉnh cao hơn. Đây là một lợi thế thực dụng khi triển khai hoặc kiểm toán nhiều fold, dù phải chấp nhận chi phí tài nguyên cao hơn.
 
-Sự khác biệt giữa Silhouette và Macro-F1 nhấn mạnh rằng biểu đồ t-SNE hoặc độ gọn cụm không thể thay thế
-đánh giá tác vụ. Softmax 15CNN được tối ưu trực tiếp theo nhãn và có cấu trúc 15×5 xác suất, trong khi
-embedding ResNet có thể mã hóa thông tin phục vụ TCN mà không tạo cụm Euclid gọn.
-
+Các kết quả ablation và phân tích không gian đặc trưng cho thấy hiệu năng dự đoán không thể được suy ra chỉ từ độ tách cụm hoặc từ một cách diễn giải tầm quan trọng đặc trưng. Cách trình bày phù hợp là báo cáo trực tiếp chênh lệch dự báo, độ bất định và phạm vi áp dụng.
 
 ### 4.1. Ý nghĩa của kết quả Gate 8
 
-Ablation theo nhóm không xác nhận cách diễn giải cũ rằng các CNN P/N chỉ đóng góp một tỷ lệ thông tin
-cố định. Full CPN có một số lợi thế mô tả ở F1 N1, nhưng hiệu ứng vùng chuyển pha nhỏ, CI chứa 0 và
-không nhất quán theo đối tượng. CN thậm chí có Macro-F1 toàn bộ mô tả cao hơn Full CPN. Cách trình bày
-đúng là báo cáo hiệu ứng tăng thêm có điều kiện và độ bất định, không quy đổi thành phần trăm thông tin.
-Việc không bác bỏ giả thuyết không cũng không chứng minh C/CP/CN tương đương Full CPN.
+Gate 8 không ủng hộ cách quy đổi đóng góp của P/N thành một tỷ lệ phần trăm thông tin. Đây là phân tích bổ sung với một training seed. Phân tích cho thấy hiệu ứng tăng thêm tại vùng chuyển pha nhỏ và chưa đủ bằng chứng thống kê. Đây là kết luận có điều kiện trong quy trình đã đánh giá; không phải bằng chứng rằng P/N hoàn toàn không có vai trò.
 
 ## 5. Hạn chế
 
-Nghiên cứu mới dùng một training seed 42, nên chưa định lượng độ ổn định theo khởi tạo. Benchmark chỉ
-thực hiện trên một Tesla V100, một batch và một độ dài chuỗi, không gồm I/O hay preprocessing. Dữ liệu
-chỉ là Sleep-EDF Expanded in-domain; chưa có SHHS, domain shift, zero-shot, đa kênh hoặc xác nhận lâm
-sàng. Phân tích không gian đặc trưng được thực hiện sau Gate 5 và chỉ là bằng chứng hỗ trợ. Gate 8 được thiết kế sau khi đã xem E0–E6 và chỉ dùng một seed; do đó đây là phân tích cơ chế bổ sung, không phải xác nhận độc lập. Không có kiểm định tương đương hoặc không thua kém. N1 vẫn là lớp
-khó và EEG một kênh không chứa đầy đủ thông tin chuyển động mắt.
+Kết luận được xây dựng từ một chiến dịch chính và một lần lặp độ nhạy sau giao thức; vì vậy chưa mô tả toàn bộ biến thiên do khởi tạo. Đánh giá ngoài miền chỉ áp dụng cho mẫu SHHS1 đã khóa và một kênh EEG. Riêng Gate 8 chưa có SHHS; các kết quả ngoài miền được trình bày ở chiến dịch riêng. Các phép đo vận hành được thực hiện trên một điều kiện phần cứng cố định và không bao gồm toàn bộ chi phí của hệ thống.
+
+Những giới hạn này không làm thay đổi các chênh lệch đã quan sát trong mẫu nghiên cứu, nhưng xác định phạm vi cần giữ khi diễn giải hoặc mở rộng kết luận.
 
 ## 6. Kết luận
 
-Trong giao thức bắt cặp theo đối tượng, E3 đạt hiệu năng mô tả cao nhất và tốt hơn E6 một cách nhất quán,
-cho thấy lựa chọn biến đổi biên độ là yếu tố đáng chú ý nhất. ResNet-1D–TCN mang lại pipeline ít mô hình
-thành phần hơn và suy luận nhanh hơn, nhưng không tiết kiệm tham số hoặc VRAM. Các kết luận chỉ áp dụng
-cho Sleep-EDF Expanded và seed 42; bước xác nhận tiếp theo nên đánh giá thêm seed và dữ liệu ngoài miền
-theo một giao thức đăng ký trước riêng biệt.
+Trong giao thức bắt cặp theo đối tượng, E3 là cấu hình có hiệu năng cao nhất trên Sleep-EDF và cho lợi thế rõ ràng trong đánh giá zero-shot SHHS1. ResNet-1D–TCN đồng thời mang lại tốc độ suy luận cao hơn và quy trình vận hành gọn hơn, với đánh đổi về số tham số và bộ nhớ GPU. Gate 8 không tìm thấy lợi ích tăng thêm có ý nghĩa của các nhóm ngữ cảnh liền trước/liền sau tại vùng chuyển pha.
 
-Gate 8 không tìm thấy lợi ích tăng thêm có ý nghĩa của P/N tại vùng chuyển pha, nhưng cũng không chứng minh các ablation tương đương hoặc P/N vô dụng.
+Các kết quả ủng hộ việc ưu tiên đánh giá đồng thời tiền xử lý, hiệu năng và chi phí vận hành thay vì diễn giải một chỉ số đơn lẻ. Kết luận chỉ áp dụng cho dữ liệu, mẫu và giao thức đã khóa; không mở rộng thành tuyên bố tối ưu phổ quát, tương đương mô hình hoặc giá trị lâm sàng.
 
-## 7. Hướng dẫn sử dụng bảng và hình
+## 7. Hồ sơ bảng và hình
 
-- Bảng hiệu năng: `TABLES.md`, phần “Hiệu năng test out-of-fold”.
-- Hình hiệu ứng: `figure_primary_effects.png`.
-- Hình đánh đổi: `figure_performance_speed_tradeoff.png`.
-- Hình đặc trưng: `figure_feature_silhouette.png`; t-SNE gốc nằm ở artifact Gate 6.
-- Trước khi sửa Abstract/Kết luận, đối chiếu `CLAIM_EVIDENCE_MATRIX.md`.
-
-- Bảng ablation: `table_context_ablation.csv` và `table_context_ablation_comparisons.csv`.
-- Hình Gate 8: `figure_context_ablation_effects.png`.
+Các bảng định lượng, hình hiệu ứng, hình đánh đổi và ma trận bằng chứng được lưu cùng gói công bố Gate 8. Mọi chỉnh sửa phần Tóm tắt hoặc Kết luận cần được đối chiếu với `CLAIM_EVIDENCE_MATRIX.md`.

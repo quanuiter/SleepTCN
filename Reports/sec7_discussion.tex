@@ -1,67 +1,38 @@
 \section{Thảo luận}
 \label{sec:discussion}
 
-\subsection{Kết quả nào có bằng chứng mạnh nhất?}
+\subsection{Phát hiện chính}
 
-Trong chiến dịch chính seed 42, E3--E6 là đối chiếu mạnh nhất: E3 cao hơn E6 với chênh lệch 0,0213, CI bootstrap hoàn toàn dương và Wilcoxon vẫn có ý nghĩa sau Holm. Lần lặp đầy đủ với seed 123 tiếp tục cho chênh lệch dương 0,0102 và CI hoàn toàn dương. Hai cấu hình dùng cùng bộ lọc, ngưỡng cắt, ResNet-1D, TCN và split; chúng chỉ khác cách đổi thang biên độ. Như vậy, dữ liệu hiện có cung cấp bằng chứng nhất quán về hướng lợi ích của phép chia hằng số 100 so với z-score từng bản ghi. Mức p Holm thay đổi giữa hai seed, vì vậy kết luận phù hợp là hiệu ứng có hướng lặp lại và đáng chú ý, còn độ mạnh suy luận phụ thuộc vào khởi tạo.
+Phát hiện nhất quán nhất của nghiên cứu là lợi thế của E3 so với E6. E3 đạt Macro-F1 cao hơn trong chiến dịch Sleep-EDF và tiếp tục có lợi thế khi đánh giá zero-shot trên SHHS1. Lần lặp sau giao thức giữ hướng hiệu ứng dương, cho thấy kết quả không chỉ xuất hiện ở một lần khởi tạo duy nhất, dù độ mạnh suy luận thay đổi theo seed.
 
-Kết quả SHHS1 sau đó cung cấp kiểm tra ngoài miền đã định trước và tiếp tục nghiêng về E3: E3 cao hơn E6 0,0274 \mf\ trung bình theo đối tượng với CI hoàn toàn dương. Tuy vậy, không nên chuyển thành tuyên bố rằng bảo toàn biên độ luôn tốt hơn, rằng phép đổi thang gây ra khác biệt theo cơ chế sinh lý, hoặc rằng E3 đã giải quyết dịch chuyển miền. SHHS đồng thời khác quần thể, thiết bị, montage và phân bố nhãn nên thiết kế hiện tại không nhận dạng cơ chế nhân quả của riêng phép đổi thang.
+Mẫu hình này cho thấy chế độ xử lý biên độ có vai trò thực nghiệm nổi bật trong dữ liệu đã khảo sát. Tuy nhiên, E3 và E6 chỉ được so sánh trong các điều kiện cụ thể của nghiên cứu; kết quả không nên được chuyển thành quy luật chung về chuẩn hóa EEG.
 
-Đối chiếu E3--E0 bổ sung một kết quả thực dụng: xét toàn bộ gói thay đổi, E3 cao hơn E0 0,0150 \mf\ với CI bootstrap hoàn toàn dương và Wilcoxon $p=0,0123$. Đây là bằng chứng trực tiếp rằng pipeline E3 hoạt động tốt hơn mốc E0 trong chiến dịch hiện tại. Vì E3 thay đồng thời kiến trúc và tiền xử lý, kết quả này xác nhận giá trị của toàn pipeline chứ chưa tách được lợi ích riêng của từng thành phần; các đối chiếu E1--E0 và E2--E1 được dùng cho phần quy kết cơ chế.
+\subsection{Ý nghĩa của đánh giá ngoài miền}
 
-\subsection{Ý nghĩa của kết quả SHHS1 zero-shot}
+Trên mẫu SHHS1 đã khóa, E3 cao hơn E0 và E6 theo Macro-F1 trung bình ở cấp đối tượng, với khoảng tin cậy hoàn toàn dương và kiểm định sau Holm có ý nghĩa. Sự nhất quán giữa hiệu năng gộp, hiệu năng theo đối tượng và các chỉ số hỗ trợ làm cho bằng chứng ngoài miền có sức thuyết phục hơn một thứ hạng mô tả đơn lẻ.
 
-Khác với đối chiếu E3--E0 hậu nghiệm trên Sleep-EDF, E3--E0 và E3--E6 là hai so sánh chính được khóa trong giao thức zero-shot trước khi mở test SHHS. Hiệu ứng E3--E0 đạt 0,0412 với 138/180 đối tượng tăng; E3--E6 đạt 0,0274 với 125/180 đối tượng tăng. Sự nhất quán giữa CI bootstrap, Wilcoxon-Holm, \mf\ gộp, accuracy, $\kappa$ và vùng chuyển pha làm cho kết luận ``E3 tốt hơn hai mốc trong mẫu SHHS1 đã khóa'' có cơ sở mạnh hơn một thứ hạng mô tả đơn lẻ.
-
-Kết quả này cho thấy ResNet-1D--TCN có giá trị như một hệ thống hoàn chỉnh, dù các ablation in-domain chưa tách được ưu thế riêng của từng khối. Trên SHHS, E3 tổng quát tốt hơn E0 và E6; trên Sleep-EDF, E3 đạt kết quả cao nhất về mô tả ở cả hai seed. Vì E3 đồng thời thay kiến trúc và tiền xử lý, đóng góp được chứng minh mạnh nhất là giá trị của toàn pipeline cùng đánh đổi vận hành, chứ không phải tuyên bố mọi thành phần đều vượt trội khi đứng riêng.
-
-E6 kém E3 trên cả Sleep-EDF và SHHS1, nên dữ liệu hiện có không ủng hộ z-score từng bản ghi như cải tiến cho hai miền này. Đây vẫn là kết luận có điều kiện theo cách lọc, ngưỡng cắt, montage và checkpoint đã dùng; không phải quy luật chung về chuẩn hóa EEG.
-
-Đối chiếu E3--E2 trên SHHS bổ sung góc nhìn trực tiếp về chế độ tiền xử lý khi giữ cùng họ ResNet-1D--TCN. E3 tăng 0,04750 \mf\ trung bình theo đối tượng, CI $[0,03724;0,05792]$, thắng 147/180 người và đồng thời cải thiện N1 lẫn vùng chuyển pha. Mẫu hình này cho thấy gói lọc--cắt--đổi thang đặc biệt hữu ích khi chuyển miền. Vì ba thao tác được thay đổi đồng thời và phân tích được bổ sung sau khi các kết quả riêng đã quan sát, kết quả nên được hiểu là bằng chứng mạnh cho toàn chế độ tiền xử lý trong mẫu SHHS hiện tại, chưa phải phép quy kết nhân quả cho từng thao tác.
+Kết quả này ủng hộ giá trị của toàn bộ quy trình E3 trong mẫu SHHS1 đã đánh giá. Do kiến trúc và tiền xử lý thay đổi đồng thời trong một số đối chiếu, nghiên cứu không quy kết chênh lệch cho riêng ResNet-1D, TCN hay một thao tác tiền xử lý. SHHS khác Sleep-EDF về quần thể, thiết bị và montage, vì vậy kết luận được giữ ở phạm vi mẫu và giao thức tương ứng.
 
 \subsection{Vai trò của TCN và ResNet-1D}
 
-Trên Sleep-EDF, E1 cao hơn E0 0,0048 \mf\ và E2 cao hơn E1 0,0033; các khoảng tin cậy vẫn bao quanh 0 sau phân tích đã định trước. Vì vậy, dữ liệu in-domain cho thấy cải thiện mô tả nhỏ nhưng chưa đủ để khẳng định ưu thế riêng ổn định của TCN so với BiLSTM hay ResNet-1D so với 15CNN.
+Trong Sleep-EDF, thay đổi mô hình chuỗi và bộ trích đặc trưng tạo mức tăng mô tả nhỏ nhưng chưa đủ bằng chứng sau hiệu chỉnh đa kiểm định để khẳng định ưu thế riêng. Phân tích thành phần trên SHHS cung cấp thêm thông tin: TCN có lợi thế so với BiLSTM trong đối chiếu thứ cấp, còn đối chiếu ResNet-1D với bộ trích đặc trưng ban đầu không ủng hộ giả thuyết ResNet-1D cao hơn trong điều kiện raw. Hai kết quả này được dùng để làm rõ cơ chế, không phải để xếp hạng phổ quát các kiến trúc.
 
-Phân tích SHHS bổ sung làm rõ hơn nhưng không đồng nhất hai kết luận. E1--E0 đạt $+0,00651$ \mf\ trung bình theo đối tượng, CI $[0,00192;0,01087]$ và $p$ Holm 0,00325. Trong mẫu này, bằng chứng thứ cấp ủng hộ việc thay BiLSTM bằng TCN khi giữ nguyên pipeline 15CNN; hiệu ứng nhỏ và CI vùng chuyển pha vẫn chứa 0. Ngược lại, E2--E1 đạt $-0,01280$, CI $[-0,02209;-0,00350]$ và $p$ Holm 0,01005. Vì thế giả thuyết pipeline đặc trưng ResNet-1D cao hơn pipeline đặc trưng 15CNN dưới cùng họ TCN không được ủng hộ; dữ liệu SHHS raw nghiêng theo hướng ngược lại. Không nên biến kết quả có điều kiện này thành tuyên bố ResNet luôn kém hơn.
+Đóng góp thực dụng của ResNet-1D--TCN là sự kết hợp giữa hiệu năng cạnh tranh, ít mô hình thành phần hơn và tốc độ suy luận cao hơn. Hệ thống nhanh hơn khoảng 3,76 lần so với mốc E0, nhưng có 4,37 lần số tham số và bộ nhớ GPU cực đại cao hơn 28,4\%. Vì vậy, ``đơn giản'' trong nghiên cứu này được hiểu là đơn giản hóa vận hành, không phải giảm mọi dạng tài nguyên.
 
-Đóng góp thực dụng của ResNet-1D--TCN nằm ở phép đánh đổi khác: hai mô hình thành phần thay cho 16 và độ trễ forward thấp hơn khoảng 3,76 lần. Điều này có thể giảm độ phức tạp của mã vận hành, số checkpoint logic và số đường đi suy luận. Đổi lại, kiến trúc mới có 1.085.578 tham số, cao hơn E0 4,37 lần, và dùng peak VRAM cao hơn 28,4\%. Vì vậy ``đơn giản'' phải luôn đi kèm định nghĩa vận hành.
+\subsection{Ý nghĩa của Gate 8}
 
-\subsection{Không gian đặc trưng không xác nhận giả thuyết ban đầu}
+Gate 8 thay thế cách quy đổi tầm quan trọng đặc trưng thành tỷ lệ phần trăm thông tin bằng phép đo hiệu ứng dự báo có điều kiện. Kết quả không cho thấy lợi ích tăng thêm có ý nghĩa của các nhóm ngữ cảnh liền trước/liền sau tại vùng chuyển pha. Cách diễn giải phù hợp là chưa có đủ bằng chứng về lợi ích trong thiết kế hiện tại; kết quả không chứng minh các nhóm này vô dụng và không thiết lập tương đương giữa các điều kiện.
 
-Silhouette của E2 thấp hơn E1 ở mọi fold. Kết quả này phản bác cách diễn đạt cũ rằng embedding ResNet tạo không gian lớp rõ ràng hơn theo phép đo đã chọn. Tuy nhiên, Silhouette ưu tiên cụm Euclid compact trong biểu diễn từng epoch. Softmax của 15CNN được giám sát trực tiếp theo lớp, còn embedding ResNet có thể mã hóa các chiều phục vụ TCN mà không tạo cụm hình cầu. Vì thế chỉ số đặc trưng là bằng chứng hỗ trợ, không phải phép thay thế cho hiệu năng chuỗi.
+Phân tích không gian đặc trưng cũng không cho thấy embedding ResNet có Silhouette cao hơn biểu diễn của mốc CNN. Đây là bằng chứng hỗ trợ về hình học biểu diễn, không phải phép thay thế cho đánh giá dự đoán chuỗi.
 
-\subsection{Khắc phục hạn chế của feature importance}
+\subsection{Giá trị của thiết kế đánh giá}
 
-Bản lịch sử quy composite score từ mutual information, Random Forest và permutation importance thành ``12\% thông tin'' cho P/N. Cách quy đổi này không có đơn vị thông tin thống nhất và có thể đánh giá thấp đặc trưng tương quan hoặc chỉ hữu ích ở trường hợp hiếm. Gate 8 thay bằng can thiệp dự báo có kiểm soát: giữ nguyên kích thước đầu vào và mô hình, chỉ thay nhóm bị loại bằng trung bình train, rồi đo hiệu ứng tại vùng chuyển pha.
+Thiết kế bắt cặp theo đối tượng, quy tắc khóa test và việc tách chiến dịch chính khỏi các phân tích bổ sung giúp giảm nguy cơ diễn giải quá mức. Hệ thống truy nguyên và kiểm định artifact không làm tăng trực tiếp hiệu năng mô hình, nhưng bảo đảm rằng các bảng và kết luận được xây dựng từ đúng dữ liệu, đúng mô hình và đúng phạm vi đã công bố.
 
-Kết quả Gate 8 cho thấy hiệu ứng nhỏ, CI rộng qua 0 và không nhất quán theo người. Cách kết luận đúng là chưa tìm thấy lợi ích tăng thêm có ý nghĩa trong pipeline E1 và seed 42. Không được suy ra C đủ thay CPN hoặc P/N không chứa tín hiệu. Một kiểm định tương đương cần biên được xác định trước; Gate 8 không có biên này.
+\subsection{Hạn chế và phạm vi diễn giải}
 
-\subsection{Ý nghĩa của quy trình Gate}
+Kết quả được xây dựng từ các seed cố định và một mẫu SHHS1 đã khóa. Phân tích cơ chế Gate 8 chưa có SHHS; đánh giá ngoài miền được thực hiện trong chiến dịch riêng. Benchmark phản ánh một điều kiện phần cứng và forward inference, còn nhãn chỉ đến từ một nguồn chấm. Những điểm này không làm thay đổi các hiệu ứng đã quan sát, nhưng cần được giữ khi mở rộng kết luận sang dữ liệu hoặc môi trường khác.
 
-Giá trị quan trọng của Gate 1--5 là tách chọn mô hình khỏi đánh giá cuối. Validation được dùng chọn checkpoint, còn test bị khóa cho đến khi 60 run hoàn tất. Cùng split và seed cho phép đối chiếu theo từng người, khắc phục lỗi thiết kế khác fold trong bản cũ. Gate 6--8 được ghi rõ là phân tích hỗ trợ hoặc cơ chế, tránh dùng chúng để chọn lại mô hình sau khi đã xem test.
+\subsection{Hướng phát triển}
 
-Hệ thống manifest, SHA-256 và trình kiểm định độc lập không làm tăng độ chính xác, nhưng làm tăng khả năng phát hiện artifact thiếu, checkpoint sai, cache lệch fold hoặc thay đổi mã nguồn. Đây là nền tảng cần thiết nếu báo cáo được phát triển thành khóa luận hoặc bài báo tái lập.
-
-\subsection{Hạn chế}
-
-\begin{itemize}
-  \item Có hai seed huấn luyện cố định; seed 123 được thực hiện sau chiến dịch chính để đánh giá độ nhạy của kết quả đối với ngẫu nhiên hóa. Hai seed chưa đủ để mô hình hóa toàn bộ phân phối biến thiên do khởi tạo.
-  \item Đánh giá ngoài miền chỉ dùng một mẫu 180 đối tượng SHHS1, không phải toàn bộ cohort; đồng thời có dịch chuyển montage Fpz--Cz sang C4--A1 nên không tách được nguồn suy giảm.
-  \item Phân tích E1/E2 được khóa trước suy luận hai cấu hình này nhưng tái sử dụng cohort 180 người đã mở cho E0/E3/E6; vì vậy đây là bằng chứng ngoài miền thứ cấp.
-  \item Đối chiếu E3--E2 trên SHHS được khóa theo artifact và phương pháp sau khi các thống kê riêng E2/E3 đã được quan sát; CI và kiểm định vẫn định lượng rõ hiệu ứng trên mẫu hiện tại, nhưng cần được lặp lại theo giao thức định trước nếu muốn quy kết từng thao tác tiền xử lý.
-  \item Nhãn chỉ từ một nguồn chấm; không có đồng thuận nhiều chuyên gia.
-  \item EEG đơn kênh thiếu EOG/EMG, đặc biệt hạn chế ở N1 và REM.
-  \item Benchmark chỉ dùng một Tesla V100, một batch/độ dài chuỗi, và không gồm I/O, tiền xử lý hay huấn luyện.
-  \item Phân tích Silhouette và Gate 8 được thực hiện sau kết quả chính; chúng bổ sung bằng chứng cơ chế và độ nhạy, không thay thế các so sánh chính.
-  \item Đối chiếu E3--E0 trên Sleep-EDF được bổ sung sau khi quan sát kết quả; hiệu ứng và CI vẫn cung cấp bằng chứng hỗ trợ cho toàn pipeline E3 trong chiến dịch này.
-  \item Không có kiểm định tương đương hoặc không thua kém với biên định trước.
-  \item Tái kiểm toán kho NPZ cục bộ cho thấy 459/765 mã băm toàn tệp không khớp manifest lịch sử ở ba biến thể, dù nhãn, chỉ số epoch, hình dạng, min/max và quan hệ biến đổi số vẫn qua kiểm tra nội dung. Dữ liệu thô không còn ở đường dẫn đã ghi trong môi trường kiểm toán và manifest run chưa khóa mã băm nội dung đầu vào; do đó chưa được tuyên bố tái lập byte-theo-byte cho kho tiền xử lý cục bộ.
-  \item Lọc hai chiều không nhân quả, nên chưa đại diện cho triển khai thời gian thực.
-  \item Cửa sổ SHHS dùng nhãn thật để giữ 30 phút Wake quanh giấc ngủ; đây là quy tắc benchmark ngoại tuyến, chưa phải pipeline triển khai hoàn toàn không nhãn.
-  \item Tổ hợp 10 fold cải thiện độ bền nhưng cần tải nhiều checkpoint; lợi ích vận hành ``2 mô hình thành phần'' áp dụng cho một fold, còn hệ xác nhận đầy đủ dùng 160 checkpoint thành phần cho E0 và 20 cho mỗi E3/E6.
-\end{itemize}
-
-\subsection{Hướng nghiên cứu tiếp theo có cơ sở}
-
-Nếu mục tiêu là hoàn thành khóa luận trên bằng chứng hiện có, nên dừng huấn luyện và tập trung biên tập, trích dẫn, phụ lục tái lập cùng phân tích sai số mô tả. Nếu mở chiến dịch mới với ngân sách nhỏ, hướng hợp lý là thích nghi giới hạn bằng đúng 5 đối tượng adaptation SHHS đã khóa, đăng ký trước lớp được cập nhật, số bước, learning rate và tiêu chí dừng; 15 validation chỉ dùng chọn cấu hình đã định và 180 test không được mở lại để điều chỉnh. So sánh này phải được gọi là chiến dịch adaptation mới, không nhập ngược vào $p$-value zero-shot. Nếu cần đánh giá nhiều seed hơn, phải khóa trước số seed, họ đối chiếu và quy tắc tổng hợp; không nên chạy thêm seed chỉ để tìm ngưỡng ý nghĩa.
+Hướng tiếp theo phù hợp là đăng ký trước một chiến dịch đa seed và một mẫu ngoài miền độc lập, đồng thời bổ sung phân tích sai số theo lớp và theo đối tượng. Nếu đánh giá thích nghi miền, cần xác định trước dữ liệu được phép sử dụng, tiêu chí lựa chọn và quy tắc khóa test để bảo toàn tính so sánh với kết quả zero-shot hiện tại.

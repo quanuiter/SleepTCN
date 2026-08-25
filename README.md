@@ -1,12 +1,12 @@
 # SleepTCN
 
-Kho nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể tiền xử lý
-trên Sleep-EDF Expanded — Sleep Cassette.
+SleepTCN là kho nghiên cứu tái triển khai và đánh giá các quy trình phân giai đoạn giấc ngủ từ EEG một
+kênh trên Sleep-EDF Expanded — Sleep Cassette. Nghiên cứu tập trung vào sự khác biệt giữa 15CNN–BiLSTM,
+15CNN–TCN và ResNet-1D–TCN, đồng thời đánh giá các phương án tiền xử lý tín hiệu.
 
-> **Trạng thái ngày 2026-08-22:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích
-> thành phần E1/E2, đối chiếu hậu nghiệm E3−E2 và phân tích độ nhạy seed 42/123 đều đã hoàn tất. Không có chiến dịch GPU nào đang
-> chờ chạy. Xem `docs/STATUS_V2.md`, `docs/SHHS_ZERO_SHOT_RESULTS.md` và báo cáo
-> tại `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
+> **Trạng thái ngày 2026-08-25:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích thành
+> phần E1/E2, đối chiếu E3−E2 và phân tích độ nhạy với seed 42/123 đã hoàn tất. Kết quả hiện hành được
+> trình bày tại `docs/STATUS_V2.md` và trong báo cáo `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
 ## Kết quả chính
 
@@ -42,9 +42,9 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 | 7 | Gói bảng, hình, bản thảo và ma trận bằng chứng | ĐẠT |
 | 8 | Ablation C/P/N: 30 validation + 30 test | ĐẠT |
 
-## Đọc theo thứ tự
+## Tài liệu kết quả
 
-1. `docs/README.md` — cổng tài liệu hiện hành.
+1. `docs/README.md` — mục lục tài liệu.
 2. `docs/STATUS_V2.md` — nguồn duy nhất cho trạng thái cuối.
 3. `docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
 4. `docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
@@ -54,8 +54,8 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 8. `docs/REPRODUCIBILITY_PACKAGE.md` — lock môi trường, audit hash và quy trình tái sinh NPZ.
 9. `docs/SOURCE_ARCHITECTURE.md` — ranh giới module và nguyên tắc tổ chức source.
 
-`STATUS_V2.md` là nguồn duy nhất cho trạng thái hiện hành. Các runbook mô tả cách tái tạo một cổng
-cụ thể; các bước tuần tự bên trong không phải danh sách công việc đang chờ ở thời điểm hiện tại.
+`STATUS_V2.md` là tài liệu chính thức về trạng thái và phạm vi kết luận. Các protocol và runbook ghi lại
+thiết kế thực nghiệm, điều kiện tái lập và nguồn gốc của từng nhóm kết quả.
 
 ## Phạm vi và giới hạn
 
@@ -83,11 +83,11 @@ src/sleeptcn/     Mã nguồn dùng chung
 tests/            Kiểm thử tự động
 ```
 
-## Quy tắc bất biến sau Gate 8
+## Phạm vi kết luận
 
-- Không sửa kết quả E0–E6 hoặc Gate 8 dựa trên việc đã xem test.
-- Không gọi `p > 0,05` là bằng chứng tương đương.
-- Không gọi ablation C/P/N là phép đo phần trăm thông tin hay quan hệ nhân quả.
-- Không đưa dataset hoặc `data/cache/` lên kho Git.
-- Mọi mở rộng thêm seed, thích nghi SHHS hoặc cohort xác nhận mới phải là giao thức riêng, tách khỏi
-  kết quả Gate 1–8 và các phân tích SHHS đã đóng.
+- Các kết quả E0–E6 và Gate 8 được xem là các kết quả đã khóa; mọi phân tích mới phải dùng protocol riêng.
+- Giá trị p lớn hơn 0,05 không được diễn giải như bằng chứng về tính tương đương hoặc không thua kém.
+- Ablation C/P/N chỉ ước lượng hiệu ứng dự báo có điều kiện trong quy trình hiện tại, không đo tỷ lệ thông
+  tin và không xác lập quan hệ nhân quả.
+- Kết luận SHHS chỉ áp dụng cho cohort và giao thức zero-shot đã khóa; chưa có cơ sở để suy rộng sang toàn
+  bộ SHHS hoặc thực hành lâm sàng.

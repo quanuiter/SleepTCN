@@ -1,10 +1,10 @@
 # Trạng thái dự án: Gate 1--8, SHHS zero-shot và độ nhạy hai seed
 
-Ngày cập nhật: **2026-08-22**
+Ngày cập nhật: **2026-08-25**
 
-Nhánh: `run-in-docker`
+Nhánh tài liệu hiện hành: `refactor`
 
-Commit artifact Gate 8: `e3681a3`
+Commit nền của artifact Gate 8: `e3681a3` (provenance của chiến dịch)
 
 Trạng thái: **GATE 1--8, SHHS ZERO-SHOT V1, E1/E2, E3−E2 VÀ ĐỘ NHẠY SEED 42/123 ĐÃ HOÀN TẤT**
 
@@ -46,7 +46,7 @@ bản ghi, epoch gốc và nhãn thật.
 - E3−E6: `+0,021319`, CI 95% `[0,012179; 0,030698]`, p Holm `0,001185`.
 - E1−E0 và E2−E1 chưa có ý nghĩa sau hiệu chỉnh Holm.
 - Đối chiếu hậu nghiệm E3−E0: `+0,015024`, CI 95% `[0,005746; 0,025871]`, Wilcoxon
-  `p=0,012321`, thắng/hòa/thua `49/0/29`. Đây là bằng chứng hỗ trợ toàn pipeline E3 trong chiến dịch
+  `p=0,012321`, thắng/hòa/thua `49/0/29`. Đây là bằng chứng hỗ trợ toàn bộ quy trình E3 trong chiến dịch
   hiện tại, không thuộc bốn giả thuyết chính đã định trước và không tách được đóng góp từng thành phần.
 - E2 nhanh hơn E0 `3,757×`, nhưng có `4,366×` tham số và peak allocated VRAM `1,284×`.
 - Silhouette E2 thấp hơn E1 ở 10/10 fold; không có bằng chứng rằng embedding ResNet phân tách lớp
@@ -90,7 +90,7 @@ Kiểm toán local cuối cùng:
 | Full CPN − CN | 0,001160 | [−0,003918; 0,006490] | 1,000 |
 
 Kết luận hợp lệ: chưa quan sát thấy đóng góp dự báo tăng thêm có ý nghĩa thống kê của P/N đối với
-Macro-F1 vùng chuyển pha trong pipeline và seed hiện tại. Không được suy ra P/N vô dụng, chỉ chứa một
+Macro-F1 vùng chuyển pha trong quy trình và seed hiện tại. Không được suy ra P/N vô dụng, chỉ chứa một
 tỷ lệ thông tin nào đó, hoặc Full CPN tương đương các ablation.
 
 ## Chiến dịch SHHS1 zero-shot

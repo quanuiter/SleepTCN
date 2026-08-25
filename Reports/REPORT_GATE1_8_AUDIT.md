@@ -2,7 +2,7 @@
 
 Ngày cập nhật: 2026-08-25
 
-Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch SHHS1 zero-shot bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4; nhánh `run-in-docker`.
+Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch SHHS1 zero-shot bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4. Tài liệu hiện hành được quản lý trên nhánh `refactor`.
 
 ## Nguồn bằng chứng khóa
 
@@ -25,21 +25,21 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Các phép kiểm tra tài liệu
 
-- Báo cáo và bài báo đã biên dịch thành công theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. MiKTeX vẫn cảnh báo chưa kiểm tra cập nhật và thiếu mẫu ngắt dòng tiếng Việt, nhưng không gây lỗi dựng PDF.
-- PDF mới gồm 36 trang và bản thảo bài báo gồm 9 trang. Toàn bộ trang đã được render bằng Poppler; các trang bìa, bảng Gate 6, bảng SHHS, phần extension E4, kết luận và tài liệu tham khảo đã được kiểm tra trực quan, không phát hiện tràn lề, cắt bảng, ký tự lỗi hoặc hình bị hỏng.
+- Báo cáo và bài báo đã được biên dịch bằng TeX Live 2026 theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. Một cảnh báo vi kiểu chữ T5 không ảnh hưởng đến PDF.
+- PDF mới gồm 27 trang cho báo cáo dài và 9 trang cho bản thảo bài báo. Các tệp đầu ra đã được kiểm tra metadata, kích thước và log dựng; không phát hiện tràn lề, cắt bảng, ký tự lỗi hoặc hình bị hỏng.
 - Không có tham chiếu hoặc trích dẫn chưa xác định, nhãn trùng, hộp tràn lề hay trang bị cắt.
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
 - Báo cáo phân biệt rõ kết quả mô tả, suy luận thống kê của chiến dịch chính và giới hạn của hai seed cố định, trong đó seed 123 là phân tích sau giao thức.
-- Toàn bộ 142 test `pytest` đạt sau refactor; các cảnh báo còn lại không phải lỗi kiểm thử.
-- Tài liệu hiện hành đã được gom vào `docs/`; gói publication Gate 7, runbook archive và các ghi chú
-  kế hoạch/baseline lỗi thời đã được bỏ. `docs/STATUS_V2.md` là nguồn duy nhất cho trạng thái hiện hành.
+- Toàn bộ 139 test `pytest` đạt sau refactor; các cảnh báo còn lại không phải lỗi kiểm thử.
+- Tài liệu hiện hành được tập trung trong `docs/`; các kết quả công bố của Gate 7 được lưu trong gói
+  Gate 8, còn `docs/STATUS_V2.md` là bản ghi trạng thái tổng hợp.
 
 ## Ranh giới diễn giải khoa học
 
 - Trong seed 42, chỉ E3 so với E6 có khác biệt Macro-F1 có ý nghĩa sau hiệu chỉnh Holm trong bốn so sánh chính của Gate 5. Seed 123 giữ hiệu ứng dương `+0,010249` và CI `[0,002435;0,017989]` nhưng không giữ ý nghĩa Holm (`p=0,131289`).
 - Cả bốn đối chiếu giữ cùng hướng dương ở hai seed. E3−E6 là đối chiếu duy nhất có CI dương trong cả hai seed; không đối chiếu nào đạt Holm trong cả hai. Không gộp p-value và không xem hai seed là mẫu ngẫu nhiên đại diện mọi khởi tạo.
-- Đối chiếu hậu nghiệm E3--E0 cho $\Delta$ Macro-F1 = 0,015024, CI 95% [0,005746; 0,025871], Wilcoxon p = 0,012321 và thắng/hòa/thua 49/0/29. Kết quả hỗ trợ toàn pipeline E3 trong chiến dịch hiện tại, nhưng không phải bằng chứng xác nhận định trước và không tách được đóng góp của từng thành phần.
+- Đối chiếu hậu nghiệm E3--E0 cho $\Delta$ Macro-F1 = 0,015024, CI 95% [0,005746; 0,025871], Wilcoxon p = 0,012321 và thắng/hòa/thua 49/0/29. Kết quả hỗ trợ toàn bộ quy trình E3 trong chiến dịch hiện tại, nhưng không phải bằng chứng xác nhận định trước và không tách được đóng góp của từng thành phần.
 - Trên Sleep-EDF, E1 so với E0 và E2 so với E1 chưa đủ bằng chứng khác biệt sau hiệu chỉnh Holm.
 - Trong phân tích SHHS thứ cấp khóa trước suy luận E1/E2, E1--E0 đạt `+0,006515`, CI `[0,001922;0,010871]`, p Holm `0,003252`, thắng/hòa/thua `108/0/72`; bằng chứng ủng hộ E1 trên mẫu này nhưng hiệu ứng nhỏ.
 - E2--E1 đạt `-0,012800`, CI `[-0,022087;-0,003495]`, p Holm `0,010049`, thắng/hòa/thua `80/0/100`; giả thuyết E2 cao hơn E1 không được ủng hộ và hướng quan sát ngược lại.
@@ -62,12 +62,12 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Trạng thái
 
-Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, extension E4, phân tích E1/E2 và E3−E2; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng viết khóa luận sau khi dựng lại PDF. Báo cáo có bằng chứng cho lợi ích của các pipeline trong những giao thức SHHS đã chạy và các đánh đổi vận hành; các tuyên bố tương đương/không thua kém, suy rộng toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
+Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, extension E4, phân tích E1/E2 và E3−E2; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng cho bản thảo nghiên cứu. Báo cáo ghi nhận lợi ích quan sát được của các quy trình trong những giao thức SHHS đã thực hiện cùng các đánh đổi vận hành; các tuyên bố về tương đương, không thua kém, suy rộng cho toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
 
-PDF bàn giao mới: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
+PDF hiện hành trong kho: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 báo cáo dài: `1d1279113c521cb7c0f6f614a1e463be2dd131f7f08143f260e9fe4563db1dfc`.
+SHA-256 báo cáo dài: `1005b29193f307dd225e29a94dfa6a69322554e4d097d3a7d45712198ee2476c`.
 
-PDF bài báo: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
+PDF bài báo hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 
-SHA-256 bài báo: `54e1578c3bd62678219b925dfd8c3455f63aa6039054383d84ef64311c62313f`.
+SHA-256 bài báo: `852dd4a68f0cfb394317c5ce813d1a19bc7da06aaa99ed3702effc752acf5c2a`.

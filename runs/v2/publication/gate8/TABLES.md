@@ -1,4 +1,4 @@
-# Bảng Gate 8 sinh tự động
+# Bảng Gate 8 — kết quả định lượng
 
 ## Hiệu năng test out-of-fold
 
@@ -66,4 +66,5 @@
 | FULL_CPN-CP | 0,002369 | [-0,002990; 0,007714] | 1,000000 | 41/0/37 |
 | FULL_CPN-CN | 0,001160 | [-0,003918; 0,006490] | 1,000000 | 38/0/40 |
 
-Gate 8 là phân tích cơ chế bổ sung với một seed. p lớn không thiết lập tương đương; ablation không phải phép đo phần trăm thông tin.
+Gate 8 là phân tích cơ chế bổ sung với một seed. Giá trị p lớn không thiết lập tương đương; ablation
+không phải phép đo phần trăm thông tin.

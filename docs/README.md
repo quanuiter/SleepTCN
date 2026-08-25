@@ -1,20 +1,21 @@
-# Tài liệu SleepTCN
+# Hệ thống tài liệu SleepTCN
 
-Thư mục này chứa tài liệu hiện hành. Kết quả máy đọc nằm trong `runs/v2/`, báo cáo LaTeX và PDF
-nằm trong `Reports/`, còn notebook chỉ là lớp điều phối minh họa.
+Thư mục này tập hợp các protocol, kết quả và giới hạn diễn giải của nghiên cứu. Số liệu có cấu trúc được
+lưu trong `runs/v2/`, còn báo cáo tổng hợp và bản thảo nằm trong `Reports/`. Notebook chỉ giữ vai trò
+minh họa và kiểm tra môi trường.
 
-## Đọc trước
+## Tài liệu nền tảng
 
 1. [STATUS_V2.md](STATUS_V2.md) — trạng thái, kết quả chính và giới hạn kết luận.
 2. [REPRODUCIBILITY_PACKAGE.md](REPRODUCIBILITY_PACKAGE.md) — hợp đồng môi trường, dữ liệu và audit.
 3. [REPORT_GATE1_8_AUDIT.md](../Reports/REPORT_GATE1_8_AUDIT.md) — kiểm định nội dung báo cáo.
 4. [CLAIM_EVIDENCE_MATRIX.md](../runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md) — biên phát biểu khoa học.
 
-## Theo nhiệm vụ
+## Phân loại tài liệu
 
 | Nhu cầu | Tài liệu chính |
 |---|---|
-| Cấu trúc source | [SOURCE_ARCHITECTURE.md](SOURCE_ARCHITECTURE.md) |
+| Kiến trúc phần mềm | [SOURCE_ARCHITECTURE.md](SOURCE_ARCHITECTURE.md) |
 | Chạy GPU/Docker | [DOCKER_GPU_RUNBOOK.md](DOCKER_GPU_RUNBOOK.md) |
 | Tái lập SHHS | [SHHS_V1_RUNBOOK.md](SHHS_V1_RUNBOOK.md) |
 | Tiền xử lý | [PREPROCESSING_SPEC.md](PREPROCESSING_SPEC.md) |
@@ -23,10 +24,12 @@ nằm trong `Reports/`, còn notebook chỉ là lớp điều phối minh họa.
 | Gate 8 ablation | [GATE8_CONTEXT_ABLATION_PROTOCOL.md](GATE8_CONTEXT_ABLATION_PROTOCOL.md) |
 | Kết quả chi tiết | Các file `*_RESULTS.md`; số liệu máy đọc tương ứng nằm trong `runs/v2/` |
 
-## Nguồn sự thật
+## Nguyên tắc sử dụng
 
-- `STATUS_V2.md` là trạng thái hiện hành duy nhất.
-- Protocol và runbook là tài liệu chuẩn để tái lập, không phải backlog.
-- `runs/v2/publication/gate8/` là gói công bố cuối; Gate 7 chỉ còn là bước lịch sử trong quy trình.
-- `Reports/` là báo cáo và evidence; không dùng tài liệu diễn giải để sửa artifact đã khóa.
-- Tài liệu cũ đã xóa vẫn có thể truy nguyên từ lịch sử Git của nhánh nghiên cứu.
+- `STATUS_V2.md` là tài liệu chính thức về trạng thái hiện hành.
+- Protocol và runbook mô tả thiết kế, điều kiện tái lập và giới hạn của từng phân tích.
+- `runs/v2/publication/gate8/` là gói kết quả công bố cuối; các bảng và hình Gate 7 đã được hợp nhất vào
+  gói này.
+- `Reports/` chứa báo cáo tổng hợp và các biên bản kiểm toán; mọi diễn giải phải phù hợp với ma trận bằng
+  chứng trong gói Gate 8.
+- Các tài liệu lịch sử vẫn có thể được truy nguyên từ lịch sử Git khi cần đối chiếu.

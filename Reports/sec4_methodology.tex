@@ -1,97 +1,73 @@
 \section{Phương pháp và thiết kế thực nghiệm}
 \label{sec:methodology}
 
-\subsection{Các cấu hình E0--E6}
+\subsection{Các cấu hình so sánh}
+
+Sáu cấu hình chính được xây dựng theo nguyên tắc thay đổi từng nhóm thành phần trong cùng giao thức:
 
 \begin{table}[H]
 \centering
-\caption{Thiết kế loại bỏ thành phần trong giao thức v2}
-\label{tab:experiments}
+\caption{Các cấu hình và mục tiêu so sánh}
+\label{tab:experiment_matrix}
 \begin{tabularx}{\textwidth}{lYYY}
 \toprule
-\textbf{Mã} & \textbf{Dữ liệu} & \textbf{Bộ trích xuất} & \textbf{Mô hình chuỗi / mục đích} \\
+\textbf{Mã} & \textbf{Bộ trích đặc trưng} & \textbf{Mô hình chuỗi} & \textbf{Mục tiêu} \\
 \midrule
-E0 & \code{paper\_raw\_v1} & 15CNN & BiLSTM; mốc tham chiếu đã sửa thiết kế \\
-E1 & \code{paper\_raw\_v1} & 15CNN của E0 & TCN; E1--E0 cô lập mô hình chuỗi \\
-E2 & \code{paper\_raw\_v1} & ResNet-1D & TCN; E2--E1 cô lập bộ trích xuất \\
-E3 & \code{filtered\_v2} & ResNet-1D & TCN; E3--E2 đo gói tiền xử lý \\
-E4 & \code{bandpass\_v2} & ResNet-1D & TCN; E4--E2 đo riêng lọc dải \\
-E5 & \code{bandpass\_clip\_v2} & ResNet-1D & TCN; loại vì đầu vào trùng E4 \\
-E6 & \code{filtered\_zscore\_v2} & ResNet-1D & TCN; E3--E6 so đổi thang \\
+E0 & CNN của mốc tham chiếu & BiLSTM & Đối chứng nội bộ \\
+E1 & Giữ mốc tham chiếu & TCN & Đánh giá thay đổi mô hình chuỗi \\
+E2 & ResNet-1D & TCN & Đánh giá thay đổi bộ trích đặc trưng \\
+E3 & ResNet-1D và xử lý biên độ chính & TCN & Cấu hình đề xuất \\
+E4 & ResNet-1D và lọc dải & TCN & Đối chiếu tiền xử lý \\
+E6 & ResNet-1D và z-score theo bản ghi & TCN & Đối chiếu đổi thang \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-E0 là mốc tái hiện đã hiệu chỉnh, không phải bản sao bitwise hoặc tái lập định lượng trực tiếp của mã MATLAB gốc. Bài báo gốc báo cáo cấu hình Fpz--Cz trên Sleep-EDF-18, còn chiến dịch v2 dùng Sleep-EDF Expanded SC với 78 đối tượng. Giao thức v2 chia train/validation theo đối tượng, che Movement/Unknown thay vì đổi thành Wake và chạy bằng PyTorch với checkpoint truy nguyên. Vì vậy E0 là đối chứng nội bộ công bằng cho E1--E6, không phải phép kiểm tra xem có khôi phục chính xác từng con số của bài báo gốc hay không. E1 tái sử dụng đúng 15 bộ trích xuất tốt nhất của E0 cùng fold và seed, nhờ đó E1--E0 chỉ thay mô hình chuỗi.
+E0 là đối chứng nội bộ đã hiệu chỉnh theo giao thức v2, không phải bản sao định lượng của bài báo gốc. Vì vậy, các đối chiếu trong nghiên cứu được hiểu là so sánh giữa các cấu hình trong cùng thí nghiệm.
 
-\subsection{Huấn luyện hai giai đoạn}
+\subsection{Huấn luyện và khóa đánh giá}
 
-15CNN dùng Adam, learning rate $10^{-3}$, batch 64, tối đa 1.000 epoch và dừng sớm sau 10 lần validation không cải thiện loss có trọng số. ResNet-1D dùng AdamW, learning rate $10^{-3}$, weight decay $10^{-4}$, batch 64 epoch, tối đa 40 epoch và patience 8 theo \mf\ validation. Trọng số lớp của ResNet chỉ được tính từ đối tượng train.
+Mỗi cấu hình được huấn luyện riêng trên cùng các fold theo đối tượng. Mô hình được lựa chọn bằng Macro-F1 trên validation. Tập test được giữ kín trong toàn bộ giai đoạn huấn luyện và chỉ được mở sau khi hoàn tất tất cả lượt validation. Sau khi mở, mỗi đối tượng được đánh giá đúng một lần ở vai trò test ngoài fold.
 
-Sau khi bộ trích xuất hoàn tất, trọng số được khóa và đặc trưng được lưu theo từng bản ghi. BiLSTM dùng Adam, learning rate $10^{-2}$, batch 4 bản ghi; TCN dùng Adam, learning rate $5\times10^{-4}$, batch 8 bản ghi. Cả hai chọn checkpoint tốt nhất bằng \mf\ validation. Tập test không xuất hiện trong API huấn luyện.
-
-Movement/Unknown có nhãn $-1$ trong dữ liệu và được chuyển thành nhãn padding $-100$ ở batch; masked cross-entropy bỏ các vị trí này khỏi gradient. Vị trí vẫn tồn tại trong chuỗi để không làm dịch ngữ cảnh.
+Quy trình này tách lựa chọn mô hình khỏi đánh giá cuối và bảo đảm các cấu hình sử dụng cùng khóa thời gian, cùng nhãn và cùng đơn vị suy luận. Mô hình đã chọn, dự đoán và chỉ số được kiểm tra tính nhất quán trước khi tổng hợp.
 
 \subsection{Quy trình kiểm định Gate 1--8}
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-  node distance=0.55cm and 0.65cm,
-  box/.style={draw,rounded corners,align=center,minimum width=2.55cm,minimum height=1.05cm,fill=blue!5},
-  arrow/.style={-{Latex[length=2mm]},thick}
-]
-\node[box] (g1) {Gate 1\\Dữ liệu và split};
-\node[box,right=of g1] (g2) {Gate 2\\Smoke và resume};
-\node[box,right=of g2] (g3) {Gate 3\\60 validation run};
-\node[box,right=of g3] (g4) {Gate 4\\Mở test một lần};
-\node[box,below=of g4] (g5) {Gate 5\\Thống kê bắt cặp};
-\node[box,left=of g5] (g6) {Gate 6\\Tốc độ và đặc trưng};
-\node[box,left=of g6] (g7) {Gate 7\\Gói công bố};
-\node[box,left=of g7] (g8) {Gate 8\\Ablation C/P/N};
-\draw[arrow] (g1)--(g2); \draw[arrow] (g2)--(g3); \draw[arrow] (g3)--(g4);
-\draw[arrow] (g4)--(g5); \draw[arrow] (g5)--(g6); \draw[arrow] (g6)--(g7); \draw[arrow] (g7)--(g8);
-\end{tikzpicture}
-\caption{Chuỗi cổng kiểm định. Gate 8 là phân tích cơ chế bổ sung sau khi kết quả chính đã được khóa.}
-\label{fig:gate_flow}
-\end{figure}
+Các cổng được tổ chức theo chuỗi bằng chứng:
 
-Gate 2 chỉ kiểm tra khả năng chạy xuyên suốt, checkpoint, tiếp tục chạy và tính toàn vẹn artifact; chỉ số smoke không dùng đánh giá mô hình. Gate 3 khóa 60 checkpoint tốt nhất từ $6\times10$ lần chạy validation-only. Gate 4 chỉ suy luận test từ các checkpoint này sau câu xác nhận bắt buộc; mỗi artifact test được kiểm định ngay sau khi sinh. Gate 5 mới thực hiện suy luận thống kê.
+\begin{enumerate}
+  \item Gate 1 kiểm tra nguồn dữ liệu, nhãn, tiền xử lý và phép chia theo đối tượng.
+  \item Gate 2 xác nhận khả năng chạy và phục hồi của quy trình.
+  \item Gate 3 hoàn tất lựa chọn mô hình trên validation mà không sử dụng test.
+  \item Gate 4 mở test theo quy tắc đã khóa và kiểm tra tính đầy đủ của dự đoán.
+  \item Gate 5 thực hiện các so sánh hiệu năng bắt cặp.
+  \item Gate 6 đánh giá độ phức tạp, tốc độ và hình học biểu diễn.
+  \item Gate 7 tập hợp bảng, hình và ma trận bằng chứng.
+  \item Gate 8 khảo sát bổ sung vai trò của các nhóm ngữ cảnh tại vùng chuyển pha.
+\end{enumerate}
 
-\subsection{Phân tích thống kê Gate 5}
+\subsection{Phân tích thống kê}
 
-\mf\ gộp trên toàn bộ dự đoán test ngoài fold là hiệu ứng mô tả chính. Khoảng tin cậy 95\% cho chênh lệch được tính bằng bootstrap bắt cặp theo cụm đối tượng 10.000 lần, seed 2026~\cite{efron1994bootstrap}. Mỗi lần lấy mẫu giữ toàn bộ epoch của người được chọn. Kiểm định hạng có dấu Wilcoxon hai phía dùng \mf\ từng đối tượng~\cite{wilcoxon1945}. Holm hiệu chỉnh đúng bốn so sánh định trước: E1--E0, E2--E1, E3--E2 và E3--E6~\cite{holm1979}. Đối chiếu trực tiếp E3--E0 chỉ được đặt ra sau khi đã xem kết quả nên được ghi riêng là hậu nghiệm; nó dùng cùng bootstrap cụm và Wilcoxon nhưng không được nhập ngược vào nhóm giả thuyết xác nhận ban đầu.
+Macro-F1 gộp trên dự đoán test ngoài fold là chỉ số mô tả chính. Khoảng tin cậy 95\% của chênh lệch được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng; kiểm định Wilcoxon hai phía được thực hiện trên Macro-F1 từng đối tượng. Hiệu chỉnh Holm chỉ áp dụng cho bốn đối chiếu đã đăng ký trước: thay đổi mô hình chuỗi, thay đổi bộ trích đặc trưng, thay đổi chế độ xử lý chính và đối chiếu với z-score.
 
-E4--E2 là phân tích cơ chế thứ cấp và không thuộc họ Holm. Mười fold không được xem là 10 mẫu độc lập; đơn vị suy luận là 78 đối tượng.
+Đối chiếu toàn bộ cấu hình với mốc ban đầu được thực hiện sau khi đã quan sát kết quả nên được ghi rõ là hậu nghiệm. Các phân tích bổ sung không được nhập ngược vào nhóm giả thuyết chính.
 
-Sau khi kết quả seed 42 đã được quan sát, toàn bộ 60 lượt chạy được lặp lại với seed 123 trên đúng manifest split, sáu cấu hình, quy tắc chọn checkpoint và khóa epoch. Test seed 123 tiếp tục bị khóa đến khi đủ 60 lượt validation rồi được mở bằng chiến dịch riêng. Bootstrap, Wilcoxon và Holm được tính lại hoàn toàn trong seed 123; không gộp dự đoán hoặc $p$-value giữa hai seed. Vì lựa chọn chạy lần lặp này xảy ra sau kết quả chính, nó được định danh là phân tích độ nhạy sau giao thức, nhằm kiểm tra khả năng lặp lại của hướng hiệu ứng. Hai seed cố định cũng không được xem là mẫu ngẫu nhiên để ước lượng phân phối hiệu năng qua mọi khởi tạo.
+\subsection{Độ nhạy theo seed}
 
-\subsection{Benchmark và không gian đặc trưng Gate 6}
+Toàn bộ chiến dịch được lặp lại với một seed huấn luyện thứ hai trên cùng phép chia và cùng cấu hình. Hai lần chạy được báo cáo riêng, không gộp $p$-value và không xem hai seed cố định là mẫu đại diện cho mọi khởi tạo. Mục tiêu của lần lặp là đánh giá độ bền của hướng hiệu ứng, không phải xây dựng một ước lượng đầy đủ về phân phối hiệu năng.
 
-Benchmark dùng checkpoint fold 00, seed 42 trên Tesla V100-PCIE-16GB. Input float32 có dạng $(1,100,1,3000)$. Mỗi cấu hình được đo trong ba vòng xáo thứ tự; mỗi vòng có 20 lượt làm nóng và 100 lượt forward có đồng bộ CUDA. Phạm vi không gồm I/O, tiền xử lý, cache hoặc huấn luyện.
+\subsection{Benchmark và không gian đặc trưng}
 
-Phân tích đặc trưng so sánh E1 và E2 trên cùng epoch test: mỗi fold lấy 200 epoch mỗi lớp, chuẩn hóa bằng StandardScaler và giảm còn 20 chiều bằng PCA trước khi tính Silhouette. Mọi phép biến đổi được fit riêng trong từng fold và biểu diễn. t-SNE chỉ dùng minh họa; kết luận định lượng dựa trên Silhouette bắt cặp.
+Benchmark được thực hiện trên cùng phần cứng cho tất cả cấu hình. Phép đo phản ánh suy luận forward và không bao gồm đọc dữ liệu, tiền xử lý, lưu trữ trung gian hoặc huấn luyện. Phân tích không gian đặc trưng so sánh các biểu diễn trên cùng epoch và cùng fold; Silhouette được dùng như chỉ số hỗ trợ, còn t-SNE chỉ dùng để minh họa.
 
-\subsection{Ablation C/P/N Gate 8}
+\subsection{Ablation nhóm ngữ cảnh Gate 8}
 
-Gate 8 giữ nguyên đầu vào 75 chiều và kiến trúc TCN của E1. Full CPN tái sử dụng dự đoán E1. Với C, CP và CN, nhóm bị loại được thay bằng trung bình từng chiều chỉ tính từ epoch train hợp lệ trong fold. Cùng vector được áp dụng cho train, validation và test; validation/test không tham gia ước lượng.
+Gate 8 giữ nguyên mô hình chuỗi và chỉ thay đổi sự hiện diện của ba nhóm ngữ cảnh: epoch hiện tại, epoch liền trước và epoch liền sau. Nhóm bị loại được thay bằng giá trị trung bình ước lượng từ dữ liệu huấn luyện của từng fold; validation và test không tham gia bước ước lượng.
 
-Tiêu chí chính là \mf\ tại vùng $\pm1$ epoch quanh chuyển pha nhãn hợp lệ liên tiếp. Khoảng Movement/Unknown làm đứt chuỗi. Ba so sánh Full CPN--C, Full CPN--CP và Full CPN--CN dùng bootstrap cụm 10.000 lần, Wilcoxon theo đối tượng và Holm. Gate này chỉ đo hiệu ứng dự báo tăng thêm có điều kiện; không đo ``phần trăm thông tin'' hay quan hệ nhân quả.
+Tiêu chí chính là Macro-F1 tại vùng chuyển pha. Ba so sánh ablation dùng cùng bootstrap cụm, Wilcoxon theo đối tượng và hiệu chỉnh Holm. Gate 8 đo hiệu ứng dự báo có điều kiện trong một quy trình cụ thể; không đo tỷ lệ thông tin, không xác định quan hệ nhân quả và không thiết lập tương đương.
 
-\subsection{Giao thức SHHS1 zero-shot sau Gate 8}
+\subsection{Đánh giá zero-shot trên SHHS1}
 
-Chiến dịch SHHS là giao thức riêng, không được nhập ngược vào Gate 1--8. Toàn bộ checkpoint Sleep-EDF đã khóa trước khi suy luận SHHS. Với mỗi E0, E3 và E6, outer fold $f$ dùng đúng bộ trích xuất và mô hình chuỗi \code{best.pt} của fold $f$; không dùng \code{latest.pt}, không xếp hạng fold theo SHHS và không trộn thành phần giữa fold. E0 cần 15 CNN cùng một BiLSTM mỗi fold; E3/E6 cần một ResNet-1D cùng một TCN mỗi fold.
+Chiến dịch SHHS được tiến hành độc lập sau khi các mô hình Sleep-EDF đã được khóa. Trọng số không được cập nhật bằng dữ liệu SHHS. Mỗi cấu hình sử dụng các mô hình tương ứng với các fold đã huấn luyện, sau đó tổ hợp dự đoán ở cấp đối tượng. Các kiểm tra kỹ thuật xác nhận khả năng sử dụng mô hình, căn chỉnh epoch và tính đầy đủ của dự đoán trước khi tính chỉ số.
 
-Mỗi fold sinh xác suất softmax cho toàn bộ epoch. Xác suất cuối của một epoch là
-
-\begin{equation}
- \bar{p}(y=k\mid x)=\frac{1}{10}\sum_{f=0}^{9}p_f(y=k\mid x),
-\end{equation}
-
-với phép cộng theo thứ tự fold 00--09 bằng bộ tích lũy float64. Nhãn cuối là $\arg\max_k\bar{p}$; nếu hòa thì chọn chỉ số lớp nhỏ hơn. Cách này dùng đủ 10 mô hình ngoài miền và tránh chọn một fold thuận lợi sau khi xem SHHS.
-
-Validation gồm 15 đối tượng và chỉ dùng làm cổng kỹ thuật: kiểm tra tải checkpoint, hash, căn chỉnh epoch và phép tổ hợp. Test 180 đối tượng chỉ được mở sau khi cổng validation đạt; không có cập nhật gradient hoặc điều chỉnh giao thức dựa trên test.
-
-Tiêu chí chính đã định trước là trung bình \mf\ theo đối tượng. Hai so sánh chính là E3--E0 và E3--E6. Khoảng tin cậy percentile 95\% được tính bằng bootstrap cụm bắt cặp 10.000 lần, seed 2030: mỗi lần lấy lại mẫu 180 đối tượng và giữ nguyên toàn bộ epoch của người được chọn. Wilcoxon hạng có dấu hai phía dùng \mf\ từng đối tượng; Holm hiệu chỉnh đúng hai so sánh. \mf\ gộp theo epoch, accuracy, $\kappa$, F1/recall từng lớp và \mf\ tại vùng $\pm1$ epoch quanh chuyển pha thật liên tiếp là chỉ số hỗ trợ, không thay thế tiêu chí chính.
-
-Sau chiến dịch chính, E1 và E2 được suy luận theo một giao thức thành phần riêng đã khóa trước lần suy luận của hai cấu hình này. E1--E0 và E2--E1 dùng cùng 180 đối tượng, cùng khóa epoch và Holm trên đúng hai đối chiếu. Khi các thống kê riêng E2/E3 đã được quan sát, một giao thức hậu nghiệm tiếp tục khóa nguồn artifact theo SHA-256 rồi tính duy nhất E3--E2. Phân tích này dùng trung bình chênh lệch \mf\ theo đối tượng, bootstrap cụm 10.000 lần với seed 2032 và Wilcoxon hai phía. Vì chỉ có một đối chiếu hậu nghiệm nên không thêm hiệu chỉnh đa kiểm định; điều này không nâng nó thành giả thuyết xác nhận định trước. E3--E2 đo toàn bộ chế độ tiền xử lý đầu-cuối của E3 so với raw dưới cùng họ ResNet-1D--TCN, không nhận dạng riêng tác động của lọc dải, cắt biên độ hoặc chia 100.
+Kết quả SHHS không được nhập ngược vào Gate 1--8. Đây là đánh giá ngoài miền trên mẫu đã khóa, nhằm kiểm tra độ bền của hướng hiệu ứng chứ không phải kiểm định lâm sàng hoặc đánh giá trên toàn bộ cohort SHHS.

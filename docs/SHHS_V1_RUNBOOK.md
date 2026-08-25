@@ -128,7 +128,7 @@ manifest lựa chọn gốc sau khi đã biết phân bố nhãn.
 ## 6. Điểm dừng trước tiền xử lý
 
 Chưa đưa SHHS vào mô hình tại điểm này. Bước tiếp theo phải khóa và kiểm thử
-pipeline tiền xử lý: chọn đúng `EEG` C4-A1, đổi 125 Hz về tần số đầu vào của mô
+quy trình tiền xử lý: chọn đúng `EEG` C4-A1, đổi 125 Hz về tần số đầu vào của mô
 hình bằng phương pháp xác định trước, chia epoch 30 giây, ánh xạ `3/4 -> N3`,
 loại `6/9`, và bảo toàn vai trò adaptation/validation/test. Chỉ sau khi kiểm
 tra số lượng, thời lượng, biên độ và mã băm đầu ra mới chạy zero-shot.
@@ -161,7 +161,7 @@ Pipeline thực hiện theo thứ tự:
    `5→REM`, `6/9→-1`.
 4. Xác định cửa sổ từ epoch ngủ đầu đến cuối cộng 30 phút wake mỗi phía.
    Đây là thao tác phụ thuộc nhãn chỉ để chuẩn hóa cửa sổ benchmark, không phải
-   pipeline suy luận triển khai được.
+   quy trình suy luận có thể triển khai.
 5. Sinh ba nhánh tương thích checkpoint: E0 `paper_raw_v1`, E3
    `filtered_v2`, E6 `filtered_zscore_v2`.
 

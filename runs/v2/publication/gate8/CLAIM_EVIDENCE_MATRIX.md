@@ -1,6 +1,7 @@
-# Ma trận tuyên bố – bằng chứng
+# Ma trận bằng chứng và phạm vi diễn giải
 
-Tài liệu này là chốt biên tập: mọi Abstract, Kết luận và slide phải đối chiếu trước khi sử dụng.
+Ma trận này xác định phạm vi diễn giải được hỗ trợ bởi các artifact đã khóa. Mọi nội dung đưa vào
+Tóm tắt, Kết luận hoặc bản trình bày phải được đối chiếu với ma trận trước khi công bố.
 
 | ID | Trạng thái | Tuyên bố | Bằng chứng | Nguồn |
 | --- | --- | --- | --- | --- |
@@ -13,90 +14,90 @@ Tài liệu này là chốt biên tập: mọi Abstract, Kết luận và slide 
 | C07 | not_evaluated | Mô hình giải quyết domain shift hoặc zero-shot trên SHHS. | Không có thí nghiệm SHHS trong giao thức E0–E6. | EXPERIMENT_PROTOCOL_V2.md |
 | C08 | limited | Kết quả ổn định theo khởi tạo ngẫu nhiên. | Huấn luyện chính thức mới dùng seed 42. | experiments_v2.json; Gate-5 report |
 | C09 | not_supported | P/N mang lại lợi ích tăng thêm có ý nghĩa cho vùng chuyển pha. | Full CPN−C=0.000953, CI95%=[-0.004588; 0.006568], ba p Holm đều bằng 1,000. | Gate 8 analysis, paired subject-cluster bootstrap and Wilcoxon-Holm. |
-| C10 | withdrawn_unsupported | Có thể quy P/N thành một tỷ lệ phần trăm thông tin. | Ablation chỉ đo hiệu ứng dự báo có điều kiện trong một pipeline; không đo lượng thông tin hay quan hệ nhân quả. | Gate 8 protocol claim boundary and group ablation design. |
+| C10 | withdrawn_unsupported | Có thể quy P/N thành một tỷ lệ phần trăm thông tin. | Ablation chỉ đo hiệu ứng dự báo có điều kiện trong một quy trình; không đo lượng thông tin hay quan hệ nhân quả. | Gate 8 protocol claim boundary and group ablation design. |
 | C11 | not_established | Full CPN tương đương C, CP hoặc CN. | Không có biên tương đương/không thua kém được định trước; kiểm định khác biệt không có ý nghĩa không chứng minh tương đương. | Gate 8 protocol and confidence intervals crossing zero. |
 | C12 | supported | Gate 8 hoàn tất và có thể truy nguyên artifact. | 30/30 validation, 30/30 test, 30 checkpoint, 30 vector train và prediction thẳng hàng; local audit passed. | Gate 8 validation/test campaign journals, manifests and SHA-256 audit. |
 
 
 ## C01 — supported
 
-- Câu chữ được phép: E3 đạt Macro-F1 out-of-fold cao nhất trong thí nghiệm Sleep-EDF seed 42.
+- Diễn giải phù hợp: E3 đạt Macro-F1 out-of-fold cao nhất trong thí nghiệm Sleep-EDF seed 42.
 
-- Câu chữ không được phép: E3 là mô hình tốt nhất một cách tổng quát.
+- Diễn giải không được hỗ trợ: E3 là mô hình tốt nhất một cách tổng quát.
 
 
 ## C02 — supported
 
-- Câu chữ được phép: Chia hằng số bảo toàn quan hệ biên độ tốt hơn z-score theo bản ghi trong giao thức hiện tại.
+- Diễn giải phù hợp: Chia hằng số bảo toàn quan hệ biên độ tốt hơn z-score theo bản ghi trong giao thức hiện tại.
 
-- Câu chữ không được phép: Chuẩn hóa biên độ giải quyết domain shift hoặc luôn tốt hơn z-score.
+- Diễn giải không được hỗ trợ: Chuẩn hóa biên độ giải quyết domain shift hoặc luôn tốt hơn z-score.
 
 
 ## C03 — not_supported
 
-- Câu chữ được phép: E1 tăng mô tả nhẹ so với E0 nhưng chưa đủ bằng chứng sau Holm.
+- Diễn giải phù hợp: E1 tăng mô tả nhẹ so với E0 nhưng chưa đủ bằng chứng sau Holm.
 
-- Câu chữ không được phép: TCN vượt trội BiLSTM.
+- Diễn giải không được hỗ trợ: TCN vượt trội BiLSTM.
 
 
 ## C04 — not_supported
 
-- Câu chữ được phép: E2 tăng mô tả nhẹ, chưa có ý nghĩa thống kê sau Holm.
+- Diễn giải phù hợp: E2 tăng mô tả nhẹ, chưa có ý nghĩa thống kê sau Holm.
 
-- Câu chữ không được phép: ResNet-1D cải thiện độ chính xác một cách chắc chắn.
+- Diễn giải không được hỗ trợ: ResNet-1D cải thiện độ chính xác một cách chắc chắn.
 
 
 ## C05 — supported_with_tradeoff
 
-- Câu chữ được phép: Pipeline ít mô hình thành phần hơn và suy luận nhanh hơn, đổi lại nhiều tham số và VRAM hơn.
+- Diễn giải phù hợp: Quy trình có ít mô hình thành phần hơn và suy luận nhanh hơn, đổi lại có nhiều tham số và sử dụng nhiều VRAM hơn.
 
-- Câu chữ không được phép: Mô hình nhẹ, tiết kiệm tham số hoặc nhanh hơn 8,2×.
+- Diễn giải không được hỗ trợ: Mô hình nhẹ, tiết kiệm tham số hoặc nhanh hơn 8,2×.
 
 
 ## C06 — contradicted_by_measurement
 
-- Câu chữ được phép: Phân tích hỗ trợ không cho thấy Silhouette của E2 cao hơn E1.
+- Diễn giải phù hợp: Phân tích hỗ trợ không cho thấy Silhouette của E2 cao hơn E1.
 
-- Câu chữ không được phép: 15CNN giàu thông tin hơn hoặc ResNet kém hơn một cách tổng quát.
+- Diễn giải không được hỗ trợ: 15CNN giàu thông tin hơn hoặc ResNet kém hơn một cách tổng quát.
 
 
 ## C07 — not_evaluated
 
-- Câu chữ được phép: Kết luận hiện tại chỉ áp dụng in-domain trên Sleep-EDF Expanded.
+- Diễn giải phù hợp: Kết luận hiện tại chỉ áp dụng in-domain trên Sleep-EDF Expanded.
 
-- Câu chữ không được phép: Đã chứng minh khả năng zero-shot/domain adaptation/lâm sàng.
+- Diễn giải không được hỗ trợ: Đã chứng minh khả năng zero-shot/domain adaptation/lâm sàng.
 
 
 ## C08 — limited
 
-- Câu chữ được phép: Đây là kết quả của một training seed; cần thêm seed để đánh giá độ ổn định.
+- Diễn giải phù hợp: Đây là kết quả của một training seed; cần thêm seed để đánh giá độ ổn định.
 
-- Câu chữ không được phép: Kết quả bền vững theo random seed.
+- Diễn giải không được hỗ trợ: Kết quả bền vững theo random seed.
 
 
 ## C09 — not_supported
 
-- Câu chữ được phép: Chưa quan sát thấy đóng góp tăng thêm có ý nghĩa của P/N cho Macro-F1 vùng chuyển pha.
+- Diễn giải phù hợp: Chưa quan sát thấy đóng góp tăng thêm có ý nghĩa của P/N cho Macro-F1 vùng chuyển pha.
 
-- Câu chữ không được phép: P/N chắc chắn không có tác dụng.
+- Diễn giải không được hỗ trợ: P/N chắc chắn không có tác dụng.
 
 
 ## C10 — withdrawn_unsupported
 
-- Câu chữ được phép: Báo cáo chênh lệch dự báo, CI và kiểm định bắt cặp theo từng nhóm.
+- Diễn giải phù hợp: Báo cáo chênh lệch dự báo, CI và kiểm định bắt cặp theo từng nhóm.
 
-- Câu chữ không được phép: P/N chỉ chứa hoặc đóng góp 12% thông tin.
+- Diễn giải không được hỗ trợ: P/N chỉ chứa hoặc đóng góp 12% thông tin.
 
 
 ## C11 — not_established
 
-- Câu chữ được phép: Chưa phát hiện khác biệt; tương đương chưa được kiểm định.
+- Diễn giải phù hợp: Chưa phát hiện khác biệt; tương đương chưa được kiểm định.
 
-- Câu chữ không được phép: Các điều kiện đã được chứng minh tương đương.
+- Diễn giải không được hỗ trợ: Các điều kiện đã được chứng minh tương đương.
 
 
 ## C12 — supported
 
-- Câu chữ được phép: Gate 8 hoàn tất kỹ thuật và artifact đã được kiểm toán.
+- Diễn giải phù hợp: Gate 8 hoàn tất kỹ thuật và artifact đã được kiểm toán.
 
-- Câu chữ không được phép: Hoàn tất kỹ thuật đồng nghĩa kết luận có giá trị lâm sàng.
+- Diễn giải không được hỗ trợ: Hoàn tất kỹ thuật đồng nghĩa kết luận có giá trị lâm sàng.

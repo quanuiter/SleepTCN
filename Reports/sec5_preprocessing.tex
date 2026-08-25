@@ -1,50 +1,35 @@
 \section{Tiền xử lý tín hiệu}
 \label{sec:preprocessing}
 
-\subsection{Đọc và căn chỉnh dữ liệu}
+\subsection{Chuẩn hóa và căn chỉnh dữ liệu}
 
-Mỗi cặp PSG--Hypnogram được kiểm tra mã băm nguồn trước khi xử lý. Tín hiệu vật lý Fpz-Cz được đọc theo hệ số hiệu chuẩn trong EDF, chuyển sang $\mu$V và chia thành epoch cố định 3.000 mẫu. Nhãn được trải theo thời lượng annotation rồi căn với PSG. Mỗi NPZ lưu tín hiệu, nhãn, mặt nạ hợp lệ, chỉ số epoch gốc, mã đối tượng/bản ghi, tên nguồn, mã băm, cấu hình tiền xử lý và thống kê cắt.
+Tín hiệu EEG được chuyển về đơn vị vật lý, căn chỉnh với nhãn theo thời gian và chia thành các epoch 30 giây. Mọi biến thể dùng cùng cửa sổ, cùng nhãn và cùng chỉ số thời gian gốc. Nhờ vậy, sự khác biệt giữa các cấu hình có thể được quy về chế độ xử lý tín hiệu hoặc thành phần mô hình thay vì khác biệt do dữ liệu.
 
-Tệp được ghi qua tệp tạm rồi thay thế nguyên tử để tránh artifact dở dang. Năm biến thể, mỗi biến thể 153 bản ghi, tạo tổng cộng 765 NPZ đã được kiểm tra lại độc lập.
+\subsection{Các chế độ xử lý tín hiệu}
 
-\subsection{Các biến thể dữ liệu}
+Nghiên cứu so sánh năm chế độ xử lý: tín hiệu thô; lọc dải; lọc dải kết hợp giới hạn biên độ; lọc dải kết hợp chia theo hằng số; và lọc dải kết hợp z-score theo bản ghi.
 
 \begin{table}[H]
 \centering
-\caption{Các biến thể tiền xử lý trong giao thức v2}
+\caption{Các chế độ tiền xử lý trong giao thức}
 \label{tab:preprocessing_variants}
 \begin{tabularx}{\textwidth}{lYYY}
 \toprule
-\textbf{Biến thể} & \textbf{Lọc} & \textbf{Cắt biên độ} & \textbf{Đổi thang} \\
+\textbf{Chế độ} & \textbf{Lọc dải} & \textbf{Giới hạn biên độ} & \textbf{Đổi thang} \\
 \midrule
-\code{paper\_raw\_v1} & Không & Không & Không \\
-\code{bandpass\_v2} & Butterworth bậc 4, 0,5--30 Hz & Không & Không \\
-\code{bandpass\_clip\_v2} & Butterworth bậc 4, 0,5--30 Hz & $\pm800\,\mu$V & Không \\
-\code{filtered\_v2} & Butterworth bậc 4, 0,5--30 Hz & $\pm800\,\mu$V & Chia 100 \\
-\code{filtered\_zscore\_v2} & Butterworth bậc 4, 0,5--30 Hz & $\pm800\,\mu$V & z-score theo bản ghi \\
+Tín hiệu thô & Không & Không & Không \\
+Lọc dải & 0,5--30 Hz & Không & Không \\
+Lọc dải và giới hạn biên độ & 0,5--30 Hz & Có & Không \\
+Lọc dải và chia hằng số & 0,5--30 Hz & Có & Chia hằng số \\
+Lọc dải và z-score & 0,5--30 Hz & Có & Theo bản ghi \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Lọc được áp dụng lên tín hiệu liên tục trước khi chia epoch bằng \code{scipy.signal.sosfiltfilt}, tức lọc hai chiều không lệch pha. Thiết kế này phù hợp đánh giá ngoại tuyến nhưng không áp dụng trực tiếp cho hệ thống nhân quả thời gian thực. Không thêm notch 50 Hz vì 50 Hz nằm ngoài dải thông 0,5--30 Hz và đúng tần số Nyquist của tín hiệu 100 Hz.
+Lọc dải được thực hiện trên tín hiệu liên tục trước khi chia epoch và không tạo lệch pha. Đây là lựa chọn phù hợp cho đánh giá ngoại tuyến. Chế độ chia hằng số bảo toàn quan hệ biên độ tương đối sau khi giới hạn biên độ, trong khi z-score chuẩn hóa từng bản ghi theo trung bình và độ lệch chuẩn của chính bản ghi đó.
 
-Với \code{filtered\_v2}, phép đổi thang là
+\subsection{Kiểm định tính nhất quán}
 
-\begin{equation}
- x' = \frac{\operatorname{clip}(x_f,-800,800)}{100},
-\end{equation}
+Các biến thể được kiểm tra về số lượng epoch, nhãn, mặt nạ hợp lệ, vị trí thời gian và phân bố lớp. Kiểm tra độc lập xác nhận năm chế độ có cùng cấu trúc dữ liệu khoa học. Một biến thể giới hạn biên độ được xác định trùng dữ liệu với chế độ lọc dải trên toàn bộ bản ghi hiện có; vì vậy biến thể này không được xem là một điều kiện độc lập trong phân tích thống kê.
 
-trong đó $x_f$ là tín hiệu sau lọc. Với \code{filtered\_zscore\_v2}, trung bình và độ lệch chuẩn được tính trên toàn bản ghi sau lọc/cắt, không phụ thuộc nhãn:
-
-\begin{equation}
- x' = \frac{x_f-\mu_{record}}{\sigma_{record}+\varepsilon}.
-\end{equation}
-
-\subsection{Kiểm tra phép cắt biên độ}
-
-Kiểm tra 153/153 cặp NPZ cho thấy \code{bandpass\_v2} và \code{bandpass\_clip\_v2} trùng bitwise ở các trường khoa học; tỷ lệ mẫu bị cắt bằng 0. Vì thế E5 không tạo điều kiện dữ liệu mới và bị loại khỏi fold 01--09. Không tạo $p$-value E5--E4 vì so sánh hai đầu vào giống hệt nhau không trả lời thêm câu hỏi khoa học.
-
-\subsection{Kiểm định đầu ra tiền xử lý}
-
-Gate 1 xác nhận mọi biến thể có cùng nhãn, mặt nạ và chỉ số epoch gốc; không có tệp lỗi; tổng số epoch và phân bố lớp khớp giữa các biến thể. Mã băm manifest và mã băm nguồn được ghi lại để phát hiện thay đổi âm thầm. Dữ liệu mới không bị sửa để ép khớp chênh lệch 10 epoch Wake trong notebook lịch sử, vì NPZ lịch sử không còn đủ để chứng minh nguyên nhân tuyệt đối.
-
+Quy trình kiểm định không điều chỉnh dữ liệu để khớp với các kết quả lịch sử. Mọi kết quả trong báo cáo đều dựa trên các artifact đã khóa và các phép đối chiếu được ghi nhận trong hồ sơ truy nguyên.
