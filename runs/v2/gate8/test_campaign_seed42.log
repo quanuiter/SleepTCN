@@ -1,0 +1,64 @@
+[01/30] CP/fold_00: dang suy luan test
+[01/30] CP/fold_00: dat
+[02/30] CN/fold_00: dang suy luan test
+[02/30] CN/fold_00: dat
+[03/30] C/fold_00: dang suy luan test
+[03/30] C/fold_00: dat
+[04/30] CP/fold_01: dang suy luan test
+[04/30] CP/fold_01: dat
+[05/30] CN/fold_01: dang suy luan test
+[05/30] CN/fold_01: dat
+[06/30] C/fold_01: dang suy luan test
+[06/30] C/fold_01: dat
+[07/30] CP/fold_02: dang suy luan test
+[07/30] CP/fold_02: dat
+[08/30] CN/fold_02: dang suy luan test
+[08/30] CN/fold_02: dat
+[09/30] C/fold_02: dang suy luan test
+[09/30] C/fold_02: dat
+[10/30] CP/fold_03: dang suy luan test
+[10/30] CP/fold_03: dat
+[11/30] CN/fold_03: dang suy luan test
+[11/30] CN/fold_03: dat
+[12/30] C/fold_03: dang suy luan test
+[12/30] C/fold_03: dat
+[13/30] CP/fold_04: dang suy luan test
+[13/30] CP/fold_04: dat
+[14/30] CN/fold_04: dang suy luan test
+[14/30] CN/fold_04: dat
+[15/30] C/fold_04: dang suy luan test
+[15/30] C/fold_04: dat
+[16/30] CP/fold_05: dang suy luan test
+[16/30] CP/fold_05: dat
+[17/30] CN/fold_05: dang suy luan test
+[17/30] CN/fold_05: dat
+[18/30] C/fold_05: dang suy luan test
+[18/30] C/fold_05: dat
+[19/30] CP/fold_06: dang suy luan test
+[19/30] CP/fold_06: dat
+[20/30] CN/fold_06: dang suy luan test
+[20/30] CN/fold_06: dat
+[21/30] C/fold_06: dang suy luan test
+[21/30] C/fold_06: dat
+[22/30] CP/fold_07: dang suy luan test
+[22/30] CP/fold_07: dat
+[23/30] CN/fold_07: dang suy luan test
+[23/30] CN/fold_07: dat
+[24/30] C/fold_07: dang suy luan test
+[24/30] C/fold_07: dat
+[25/30] CP/fold_08: dang suy luan test
+[25/30] CP/fold_08: dat
+[26/30] CN/fold_08: dang suy luan test
+[26/30] CN/fold_08: dat
+[27/30] C/fold_08: dang suy luan test
+[27/30] C/fold_08: dat
+[28/30] CP/fold_09: dang suy luan test
+[28/30] CP/fold_09: dat
+[29/30] CN/fold_09: dang suy luan test
+[29/30] CN/fold_09: dat
+[30/30] C/fold_09: dang suy luan test
+[30/30] C/fold_09: dat
+{
+  "status": "complete",
+  "completed_targets": 30
+}

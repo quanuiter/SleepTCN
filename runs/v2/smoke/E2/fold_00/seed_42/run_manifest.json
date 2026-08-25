@@ -1,0 +1,34 @@
+{
+  "allow_test_evaluation": false,
+  "config_path": "configs/experiments_v2.json",
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "paper_raw_v1",
+  "device": "cuda",
+  "experiment_id": "E2",
+  "extractor_sha256": "ab238bf9e86e0316527b7bf7207724a4916c749d36e7b743aae7a2892e026b29",
+  "git_commit": null,
+  "git_dirty": true,
+  "metrics_roles": [
+    "validation"
+  ],
+  "outer_fold": 0,
+  "resume": false,
+  "role_records": {
+    "test": "locked_until_best_checkpoint",
+    "train": [
+      "SC4011E",
+      "SC4012E"
+    ],
+    "validation": [
+      "SC4041E"
+    ]
+  },
+  "runner_code_sha256": "12245ec0d2fe51a0843ed873d3080f752db23621c6e2b583bba4922be9be9a39",
+  "schema_version": 1,
+  "seed": 42,
+  "sequence_checkpoint_sha256": "67228788c9934e4befa9339f4c8fe5d58f18e938b70637dfa42630a1dc863304",
+  "smoke": true,
+  "split_path": "data/splits/sleepedf_sc_10fold_seed42_v2.json",
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "status": "complete"
+}

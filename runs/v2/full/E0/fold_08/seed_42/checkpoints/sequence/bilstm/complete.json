@@ -1,0 +1,11 @@
+{
+  "best_checkpoint_sha256": "dd3004bdca24163ca09a42d01c9c153f4aa93005bb3e341133035fc62d37c299",
+  "component_seed": 42,
+  "config_sha256": "1d812bbfb45e9ca90e2654b41311954fd6e66a56e1bbcdbfba48df8147d0ae1b",
+  "data_variant": "paper_raw_v1",
+  "outer_fold": 8,
+  "schema_version": 1,
+  "smoke": false,
+  "split_sha256": "6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de",
+  "stage": "sequence/bilstm"
+}
