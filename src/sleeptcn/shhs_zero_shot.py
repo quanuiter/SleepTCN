@@ -2,15 +2,11 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
-import math
-import os
-import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import numpy as np
 import torch
@@ -18,16 +14,23 @@ import torch
 from .artifacts import sha256_file
 from .experiment import build_context
 from .features import extract_15cnn_features
+from .io.serialization import atomic_savez, atomic_write_json
+from .evaluation.shhs_zero_shot import (
+    confusion_matrix,
+    ensemble_probabilities,
+    load_prediction_artifact,
+    metrics_from_confusion,
+)
 from .test_gate import _load_extractor, _load_sequence_model
-
-
-EXPERIMENT_VARIANTS = {
-    "E0": "paper_raw_v1",
-    "E3": "filtered_v2",
-    "E6": "filtered_zscore_v2",
-}
-FOLDS = tuple(range(10))
-TEST_CONFIRMATION = "OPEN-SHHS-ZERO-SHOT-TEST-ONCE"
+from .workflows.shhs_protocol import (
+    EXPERIMENT_VARIANTS,
+    FOLDS,
+    TEST_CONFIRMATION,
+    input_entries,
+    load_inventory,
+    load_preprocess_manifest,
+    load_protocol as load_locked_protocol,
+)
 
 
 @dataclass(frozen=True)
@@ -45,121 +48,11 @@ class ExternalRecord:
 
 
 def atomic_json(path: Path, document: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        mode="w", encoding="utf-8", dir=path.parent, prefix=f".{path.name}.",
-        suffix=".tmp", delete=False
-    ) as handle:
-        temporary = Path(handle.name)
-        json.dump(document, handle, ensure_ascii=False, indent=2)
-        handle.write("\n")
-    try:
-        os.replace(temporary, path)
-    finally:
-        temporary.unlink(missing_ok=True)
+    atomic_write_json(path, document, ensure_ascii=False, sort_keys=False)
 
 
 def atomic_npz(path: Path, **arrays: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        mode="wb", dir=path.parent, prefix=f".{path.name}.", suffix=".tmp", delete=False
-    ) as handle:
-        temporary = Path(handle.name)
-        np.savez_compressed(handle, **arrays)
-    try:
-        os.replace(temporary, path)
-    finally:
-        temporary.unlink(missing_ok=True)
-
-
-def load_locked_protocol(
-    path: Path,
-    *,
-    experiment_variants: dict[str, str] | None = None,
-    expected_status: str = "locked_before_validation_inference",
-) -> tuple[dict[str, Any], str]:
-    selected_variants = EXPERIMENT_VARIANTS if experiment_variants is None else experiment_variants
-    raw = path.read_bytes()
-    protocol = json.loads(raw.decode("utf-8"))
-    if protocol.get("status") != expected_status:
-        raise ValueError("SHHS zero-shot protocol is not locked")
-    if tuple(protocol.get("experiments", {})) != tuple(selected_variants):
-        raise ValueError("SHHS zero-shot experiment order differs")
-    observed_variants = {
-        experiment: details.get("data_variant")
-        for experiment, details in protocol["experiments"].items()
-    }
-    if observed_variants != selected_variants:
-        raise ValueError("SHHS zero-shot data variants differ")
-    policy = protocol.get("checkpoint_policy", {})
-    ensemble = protocol.get("ensemble", {})
-    checks = {
-        "folds": policy.get("outer_folds") == list(FOLDS),
-        "all_folds": policy.get("use_all_folds") is True,
-        "no_ranking": policy.get("rank_or_select_fold_by_validation_metric") is False,
-        "best_only": policy.get("checkpoint_filename") == "best.pt",
-        "probability_mean": ensemble.get("aggregation") == "arithmetic_mean_probability",
-        "fold_order": ensemble.get("fold_order") == list(FOLDS),
-    }
-    failed = sorted(key for key, value in checks.items() if not value)
-    if failed:
-        raise ValueError(f"Invalid locked zero-shot policy: {failed}")
-    return protocol, hashlib.sha256(raw).hexdigest()
-
-
-def load_inventory(
-    path: Path,
-    protocol_sha256: str,
-    *,
-    expected_best_checkpoints: int = 200,
-) -> tuple[dict[str, Any], str]:
-    raw = path.read_bytes()
-    inventory = json.loads(raw.decode("utf-8"))
-    if inventory.get("status") != "passed":
-        raise ValueError("Checkpoint inventory has not passed")
-    if inventory.get("protocol_sha256") != protocol_sha256:
-        raise ValueError("Checkpoint inventory points to another protocol")
-    if inventory.get("summary", {}).get("best_checkpoints") != expected_best_checkpoints:
-        raise ValueError(
-            "Checkpoint inventory does not contain "
-            f"{expected_best_checkpoints} best checkpoint references"
-        )
-    return inventory, hashlib.sha256(raw).hexdigest()
-
-
-def load_preprocess_manifest(
-    path: Path, protocol: dict[str, Any]
-) -> tuple[dict[str, Any], str]:
-    raw = path.read_bytes()
-    digest = hashlib.sha256(raw).hexdigest()
-    expected = protocol["preprocessing_provenance"]["manifest_sha256"]
-    if digest != expected:
-        raise ValueError("Preprocess manifest SHA-256 differs from zero-shot protocol")
-    manifest = json.loads(raw.decode("utf-8"))
-    if manifest.get("status") != "complete" or manifest.get("scope") != "primary":
-        raise ValueError("Primary preprocessing manifest is not complete")
-    return manifest, digest
-
-
-def input_entries(
-    preprocess_manifest: dict[str, Any], role: str, variant: str
-) -> list[dict[str, Any]]:
-    if role not in {"validation", "test"}:
-        raise ValueError("Zero-shot inference role must be validation or test")
-    expected = 15 if role == "validation" else 180
-    entries = sorted(
-        (
-            entry for entry in preprocess_manifest["records"]
-            if entry["role"] == role and entry["variant"] == variant
-        ),
-        key=lambda entry: entry["record_key"],
-    )
-    if len(entries) != expected:
-        raise ValueError(f"Expected {expected} {role}/{variant} records, found {len(entries)}")
-    keys = [entry["record_key"] for entry in entries]
-    if len(keys) != len(set(keys)):
-        raise ValueError(f"Duplicate record in {role}/{variant}")
-    return entries
+    atomic_savez(path, arrays)
 
 
 def load_external_record(
@@ -301,87 +194,6 @@ def save_fold_artifact(
         original_epoch_index=record.original_epoch_index,
     )
     return sha256_file(path)
-
-
-def load_prediction_artifact(
-    path: Path, expected: dict[str, Any]
-) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    with np.load(path, allow_pickle=False) as npz:
-        metadata = json.loads(str(npz["metadata_json"].item()))
-        mismatches = {
-            key: (metadata.get(key), value)
-            for key, value in expected.items()
-            if metadata.get(key) != value
-        }
-        if mismatches:
-            raise ValueError(f"{path}: metadata mismatch {mismatches}")
-        probabilities = npz["probabilities"].copy()
-        y = npz["y"].copy()
-        valid = npz["valid_mask"].copy()
-        indices = npz["original_epoch_index"].copy()
-    if probabilities.shape != (len(y), 5) or not np.isfinite(probabilities).all():
-        raise ValueError(f"{path}: invalid probabilities")
-    if (
-        y.dtype != np.int8
-        or valid.dtype != np.bool_
-        or indices.dtype != np.int32
-        or valid.shape != y.shape
-        or indices.shape != y.shape
-        or not np.array_equal(valid, y >= 0)
-    ):
-        raise ValueError(f"{path}: invalid valid mask")
-    return metadata, probabilities, y, valid, indices
-
-
-def ensemble_probabilities(parts: Iterable[np.ndarray]) -> np.ndarray:
-    matrices = list(parts)
-    if len(matrices) != 10:
-        raise ValueError("Locked ensemble requires exactly ten folds")
-    shape = matrices[0].shape
-    if any(matrix.shape != shape for matrix in matrices):
-        raise ValueError("Fold probability shapes differ")
-    accumulator = np.zeros(shape, dtype=np.float64)
-    for matrix in matrices:
-        accumulator += matrix.astype(np.float64, copy=False)
-    mean = (accumulator / 10.0).astype(np.float32)
-    if not np.allclose(mean.sum(axis=1), 1.0, rtol=1e-5, atol=1e-6):
-        raise ValueError("Ensemble probabilities do not sum to one")
-    return mean
-
-
-def confusion_matrix(y: np.ndarray, prediction: np.ndarray) -> np.ndarray:
-    matrix = np.zeros((5, 5), dtype=np.int64)
-    for truth, predicted in zip(y, prediction, strict=True):
-        matrix[int(truth), int(predicted)] += 1
-    return matrix
-
-
-def metrics_from_confusion(matrix: np.ndarray) -> dict[str, Any]:
-    total = int(matrix.sum())
-    per_class_f1 = []
-    per_class_recall = []
-    for index in range(5):
-        tp = int(matrix[index, index])
-        fp = int(matrix[:, index].sum() - tp)
-        fn = int(matrix[index, :].sum() - tp)
-        f1 = 0.0 if 2 * tp + fp + fn == 0 else 2 * tp / (2 * tp + fp + fn)
-        recall = 0.0 if tp + fn == 0 else tp / (tp + fn)
-        per_class_f1.append(float(f1))
-        per_class_recall.append(float(recall))
-    accuracy = float(np.trace(matrix) / total) if total else 0.0
-    expected = float(
-        np.dot(matrix.sum(axis=1), matrix.sum(axis=0)) / (total * total)
-    ) if total else 0.0
-    kappa = 0.0 if math.isclose(expected, 1.0) else (accuracy - expected) / (1.0 - expected)
-    return {
-        "macro_f1": float(np.mean(per_class_f1)),
-        "accuracy": accuracy,
-        "cohen_kappa": float(kappa),
-        "per_class_f1": per_class_f1,
-        "per_class_recall": per_class_recall,
-        "confusion_matrix": matrix.tolist(),
-        "valid_epochs": total,
-    }
 
 
 def run_role(

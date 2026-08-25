@@ -14,22 +14,25 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .artifacts import combined_sha256, sha256_file
-from .engine import load_model_checkpoint
 from .experiment import (
     RunContext,
-    _checkpoint_metadata,
     _save_role_predictions,
     _selected_records,
-    _stage_is_complete,
-    _write_json_atomic,
     build_context,
     feature_sequences,
     load_cnn15_from_e0,
 )
 from .features import expected_15cnn_keys
-from .models import BiLSTMSleepNet, EEGResNet1D, SleepCNN, SleepTCN
+from .models import EEGResNet1D, SleepCNN
+from .workflows.model_factory import (
+    build_sequence_model,
+    load_sequence_checkpoint,
+    sequence_kind,
+)
+from .workflows.checkpoints import load_verified_checkpoint
 from .run_validation import validate_run
 from .training_data import resolve_fold_partitions
+from .io.serialization import atomic_write_json, read_json
 
 
 ACTIVE_EXPERIMENTS = ("E0", "E1", "E2", "E3", "E4", "E6")
@@ -130,10 +133,6 @@ def _run_root(workspace: Path, target: TestTarget, seed: int) -> Path:
     )
 
 
-def _read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def _text_sha256_lf(path: Path) -> str:
     """Hash JSON provenance canonically when Git checked it out as CRLF."""
     payload = path.read_bytes().replace(b"\r\n", b"\n")
@@ -144,7 +143,7 @@ def _baseline_entry(workspace: Path, target: TestTarget, seed: int) -> dict[str,
     run_root = _run_root(workspace, target, seed)
     manifest_path = run_root / "run_manifest.json"
     report_path = run_root / "validation_report.json"
-    manifest = _read_json(manifest_path)
+    manifest = read_json(manifest_path)
     if manifest.get("experiment_id") != target.experiment_id:
         raise ValueError(f"{target.key}: experiment mismatch")
     if manifest.get("outer_fold") != target.outer_fold or manifest.get("seed") != seed:
@@ -166,7 +165,7 @@ def _baseline_entry(workspace: Path, target: TestTarget, seed: int) -> dict[str,
     report = validate_run(workspace, run_root)
     if not report.get("passed") or set(report.get("roles", {})) != {"validation"}:
         raise ValueError(f"{target.key}: independent validation did not pass")
-    stored_report = _read_json(report_path)
+    stored_report = read_json(report_path)
     portable_report = json.loads(json.dumps(report))
     portable_report["manifest_sha256"] = _text_sha256_lf(manifest_path)
     portable_report["roles"]["validation"]["metrics_sha256"] = _text_sha256_lf(
@@ -235,19 +234,15 @@ def _load_extractor(context: RunContext) -> tuple[str, Any, str]:
             model = SleepCNN()
             stage = f"cnn15/{key}"
             checkpoint_dir = context.run_root / "checkpoints" / "cnn15" / key
-            if not _stage_is_complete(
-                context, checkpoint_dir, stage, component_seed
-            ):
-                raise ValueError(f"incomplete extractor stage: {stage}")
-            path = checkpoint_dir / "best.pt"
-            load_model_checkpoint(
-                path,
+            path = load_verified_checkpoint(
+                context,
                 model,
-                expected_metadata={
-                    **_checkpoint_metadata(context, model, stage, component_seed),
-                    "selection_metric": "validation_loss",
-                },
+                checkpoint_dir,
+                stage,
+                component_seed,
+                selection_metric="validation_loss",
                 device=context.device,
+                incomplete_message=f"incomplete extractor stage: {stage}",
             )
             models[key] = model.eval()
             hashes[key] = sha256_file(path)
@@ -255,50 +250,35 @@ def _load_extractor(context: RunContext) -> tuple[str, Any, str]:
     model = EEGResNet1D()
     stage = "resnet1d"
     checkpoint_dir = context.run_root / "checkpoints" / stage
-    if not _stage_is_complete(context, checkpoint_dir, stage, context.seed):
-        raise ValueError(f"incomplete extractor stage: {stage}")
-    path = checkpoint_dir / "best.pt"
-    load_model_checkpoint(
-        path,
+    path = load_verified_checkpoint(
+        context,
         model,
-        expected_metadata={
-            **_checkpoint_metadata(context, model, stage, context.seed),
-            "selection_metric": "validation_macro_f1",
-        },
+        checkpoint_dir,
+        stage,
+        context.seed,
+        selection_metric="validation_macro_f1",
         device=context.device,
+        incomplete_message=f"incomplete extractor stage: {stage}",
     )
     return "resnet1d", model.eval(), sha256_file(path)
 
 
 def _load_sequence_model(context: RunContext) -> tuple[str, Any, Path]:
     experiment = context.config["experiments"][context.experiment_id]
-    if experiment["sequence_model"] == "bilstm":
-        kind = "bilstm"
-        cfg = context.config["components"]["bilstm"]
-        model = BiLSTMSleepNet(input_dim=75, hidden_dim=cfg["hidden_dim"])
-    else:
-        kind = "tcn"
-        cfg = context.config["components"]["common_tcn"]
-        feature_dim = 75 if context.experiment_id == "E1" else 128
-        model = SleepTCN(
-            input_dim=feature_dim,
-            hidden_dim=cfg["hidden_dim"],
-            kernel_size=cfg["kernel_size"],
-            n_blocks=cfg["residual_blocks"],
-            dropout=cfg["dropout"],
-        )
-    stage = f"sequence/{kind}"
+    model_name = experiment["sequence_model"]
+    kind = sequence_kind(model_name)
+    feature_dim = 75 if context.experiment_id in {"E0", "E1"} else 128
+    model = build_sequence_model(
+        context.config,
+        model_name,
+        input_dim=feature_dim,
+    )
     checkpoint_dir = context.run_root / "checkpoints" / "sequence" / kind
-    if not _stage_is_complete(context, checkpoint_dir, stage, context.seed):
-        raise ValueError(f"incomplete sequence stage: {stage}")
-    path = checkpoint_dir / "best.pt"
-    load_model_checkpoint(
-        path,
+    path = load_sequence_checkpoint(
+        context,
         model,
-        expected_metadata={
-            **_checkpoint_metadata(context, model, stage, context.seed),
-            "selection_metric": "validation_macro_f1",
-        },
+        kind,
+        checkpoint_dir,
         device=context.device,
     )
     return kind, model.eval(), path
@@ -342,7 +322,7 @@ def _evaluate_target(
         resume=True,
     )
     manifest_path = context.run_root / "run_manifest.json"
-    manifest = _read_json(manifest_path)
+    manifest = read_json(manifest_path)
     extractor_kind, extractor, extractor_hash = _load_extractor(context)
     if extractor_hash != entry["extractor_sha256"]:
         raise ValueError(f"{target.key}: extractor hash changed")
@@ -372,7 +352,7 @@ def _evaluate_target(
         "test",
         sequence_path,
     )
-    _write_json_atomic(
+    atomic_write_json(
         manifest_path,
         _unlocked_manifest(
             manifest,
@@ -381,7 +361,7 @@ def _evaluate_target(
         ),
     )
     report = validate_run(workspace, context.run_root)
-    _write_json_atomic(context.run_root / "validation_report.json", report)
+    atomic_write_json(context.run_root / "validation_report.json", report)
     return {
         "state": "complete",
         "test_prediction_sha256": report["roles"]["test"]["prediction_sha256"],
@@ -425,7 +405,7 @@ def execute_campaign(
         if not path.is_file():
             raise FileNotFoundError(f"campaign journal does not exist: {path}")
         source_commit = assert_git_state(workspace, seed, resume=True)
-        campaign = _read_json(path)
+        campaign = read_json(path)
         if campaign.get("schema_version") != CAMPAIGN_SCHEMA_VERSION:
             raise ValueError("unsupported campaign schema")
         if campaign.get("source_git_commit") != source_commit:
@@ -437,7 +417,7 @@ def execute_campaign(
             )
         campaign = preflight(workspace, seed)
         campaign["status"] = "running"
-        _write_json_atomic(path, campaign)
+        atomic_write_json(path, campaign)
     for index, target in enumerate(campaign_targets(), start=1):
         entry = campaign["targets"][target.key]
         if _resume_or_recover_target(workspace, target, seed, entry):
@@ -445,16 +425,16 @@ def execute_campaign(
             continue
         print(f"[{index:02d}/60] {target.key}: dang danh gia test", flush=True)
         entry["state"] = "running"
-        _write_json_atomic(path, campaign)
+        atomic_write_json(path, campaign)
         result = _evaluate_target(
             workspace, target, seed, device, num_workers, campaign
         )
         entry.update(result)
-        _write_json_atomic(path, campaign)
+        atomic_write_json(path, campaign)
         print(
             f"[{index:02d}/60] {target.key}: dat ({result['test_valid_epochs']} epoch)",
             flush=True,
         )
     campaign["status"] = "complete"
-    _write_json_atomic(path, campaign)
+    atomic_write_json(path, campaign)
     return campaign

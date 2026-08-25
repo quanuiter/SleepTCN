@@ -1,0 +1,7 @@
+# Exact Linux/Python 3.11 environment used for the published GPU artifacts.
+# The included freeze pins direct and transitive dependencies; the extra index
+# supplies the CUDA 12.1 PyTorch wheels.
+# Included freeze SHA-256: 17276998452bbab2434c9c05be005bd96f63201d3940c378bd3bc6137ee984e2
+--index-url https://pypi.org/simple
+--extra-index-url https://download.pytorch.org/whl/cu121
+-r ../environment/pip-freeze.txt

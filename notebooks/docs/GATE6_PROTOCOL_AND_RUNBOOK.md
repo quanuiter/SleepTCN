@@ -1,5 +1,9 @@
 # Gate 6 — giao thức benchmark và không gian đặc trưng
 
+> **LEGACY / HISTORY:** Nội dung này được giữ để truy nguyên Gate 6. Dùng
+> `docs/README.md` để tìm protocol và runbook hiện hành; các bước lịch sử ở đây
+> không phải công việc đang chờ.
+
 ## Phạm vi đã khóa
 
 Gate 6 là bằng chứng bổ sung sau Gate 5, không được dùng để thay đổi E0–E6 hoặc lựa chọn lại checkpoint.

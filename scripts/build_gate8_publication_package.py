@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import importlib.util
 import json
 import platform
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,38 +15,25 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import sha256_file  # noqa: E402
+from sleeptcn.io.serialization import read_json  # noqa: E402
+from sleeptcn.workflows.provenance import clean_git_commit as _require_clean_git  # noqa: E402
+
+file_sha256 = sha256_file  # compatibility alias for existing builder imports
+
 
 SCHEMA_VERSION = 1
 CONDITIONS = ("FULL_CPN", "C", "CP", "CN")
 COMPARISONS = ("FULL_CPN-C", "FULL_CPN-CP", "FULL_CPN-CN")
 
 
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def clean_git_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return _require_clean_git(
+        workspace,
+        dirty_message="official Gate-8 build requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode:
-        raise RuntimeError("workspace must be a readable Git repository")
-    if status.stdout.strip():
-        raise RuntimeError("official Gate-8 build requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def load_gate7_builder(workspace: Path) -> Any:
@@ -486,8 +471,8 @@ def build(workspace: Path, output_dir: Path) -> dict[str, Any]:
             "numpy": np.__version__,
             "matplotlib": matplotlib.__version__,
         },
-        "input_sha256": {name: file_sha256(path) for name, path in inputs.items()},
-        "output_sha256": {name: file_sha256(path) for name, path in files.items()},
+        "input_sha256": {name: sha256_file(path) for name, path in inputs.items()},
+        "output_sha256": {name: sha256_file(path) for name, path in files.items()},
         "counts": {
             "experiments": len(performance),
             "comparisons": len(comparisons),

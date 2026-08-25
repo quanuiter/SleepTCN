@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import wilcoxon
 
-from sleeptcn.artifacts import sha256_file
+from sleeptcn.io.hashing import sha256_file
 from sleeptcn.shhs_analysis import (
     _subject_confusions,
     _subject_macro_f1,

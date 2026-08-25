@@ -4,16 +4,23 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import platform
-import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Iterable
 
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import sha256_file  # noqa: E402
+from sleeptcn.io.serialization import read_json  # noqa: E402
+from sleeptcn.workflows.provenance import clean_git_commit as _require_clean_git  # noqa: E402
+
+file_sha256 = sha256_file  # compatibility alias for existing builder imports
 
 EXPERIMENTS = ("E0", "E1", "E2", "E3", "E4", "E6")
 PRIMARY_COMPARISONS = ("E1-E0", "E2-E1", "E3-E2", "E3-E6")
@@ -28,28 +35,11 @@ LABELS = {
 }
 
 
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def clean_git_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return _require_clean_git(
+        workspace,
+        dirty_message="official Gate-7 build requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode:
-        raise RuntimeError("workspace must be a readable Git repository")
-    if status.stdout.strip():
-        raise RuntimeError("official Gate-7 build requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def validate_inputs(
@@ -787,10 +777,6 @@ def write_author_checklist(path: Path) -> None:
     )
 
 
-def file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def build(workspace: Path, output_dir: Path) -> dict[str, Any]:
     workspace = workspace.resolve()
     output_dir = output_dir.resolve()
@@ -853,9 +839,9 @@ def build(workspace: Path, output_dir: Path) -> dict[str, Any]:
             "numpy": np.__version__,
             "matplotlib": matplotlib.__version__,
         },
-        "input_sha256": {name: file_sha256(path) for name, path in inputs.items()},
+        "input_sha256": {name: sha256_file(path) for name, path in inputs.items()},
         "output_sha256": {
-            name: file_sha256(path) for name, path in files.items()
+            name: sha256_file(path) for name, path in files.items()
         },
         "counts": {
             "experiments": len(performance),

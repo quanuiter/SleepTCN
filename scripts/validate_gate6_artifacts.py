@@ -5,10 +5,15 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.serialization import read_json  # noqa: E402
 
 
 ACTIVE = ("E0", "E1", "E2", "E3", "E4", "E6")
@@ -20,10 +25,6 @@ EXPECTED_PARAMETERS = {
     "E4": 1_085_578,
     "E6": 1_085_578,
 }
-
-
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def validate_parameters(path: Path) -> dict[str, Any]:

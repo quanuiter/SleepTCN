@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
-import tempfile
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -14,14 +12,10 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from .artifacts import (
-    PredictionTable,
-    combined_sha256,
-    save_prediction_table,
-    sha256_file,
-)
+from .artifacts import sha256_file
 from .dataset import SleepRecord, load_record
 from .engine import fit_model, load_model_checkpoint, seed_everything, sequence_forward
+from .evaluation import PredictionTable, load_prediction_table, save_role_artifacts
 from .experiment import (
     RunContext,
     build_context,
@@ -32,19 +26,28 @@ from .experiment import (
 from .metrics import compute_metrics
 from .models import SleepTCN
 from .run_validation import validate_run
+from .io.serialization import atomic_savez, atomic_write_json, read_json
 from .training import collate_feature_sequences, masked_cross_entropy
 from .training_data import (
     FeatureSequence,
     FeatureSequenceDataset,
     resolve_fold_partitions,
 )
-
-
-CONDITIONS = ("CP", "CN", "C")
-GROUP_SLICES = {"C": (0, 25), "P": (25, 50), "N": (50, 75)}
-GATE8_CONFIG = Path("configs/gate8_context_ablation.json")
-SPLIT_PATH = Path("data/splits/sleepedf_sc_10fold_seed42_v2.json")
-UNLOCK_CONFIRMATION = "OPEN-GATE8-LOCKED-TEST-ONCE"
+from .workflows.context_ablation import (
+    CONDITIONS,
+    GROUP_SLICES,
+    context_groups,
+    mask_feature_sequences,
+    train_replacement_mean,
+)
+from .workflows.gate8_protocol import (
+    GATE8_CONFIG,
+    SPLIT_PATH,
+    UNLOCK_CONFIRMATION,
+    load_protocol,
+)
+from .workflows.model_factory import build_sequence_model
+from .workflows.provenance import runner_code_sha256
 
 
 @dataclass(frozen=True)
@@ -66,47 +69,6 @@ class Gate8Context:
     @property
     def experiment_id(self) -> str:
         return f"G8_{self.condition}"
-
-
-def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
-    path = path.resolve()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            encoding="utf-8",
-            dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            delete=False,
-        ) as handle:
-            temporary = Path(handle.name)
-            json.dump(payload, handle, indent=2, sort_keys=True)
-            handle.write("\n")
-        os.replace(temporary, path)
-    finally:
-        if temporary is not None and temporary.exists():
-            temporary.unlink()
-
-
-def _write_npz_atomic(path: Path, **arrays: Any) -> None:
-    path = path.resolve()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            delete=False,
-        ) as handle:
-            temporary = Path(handle.name)
-            np.savez_compressed(handle, **arrays)
-        os.replace(temporary, path)
-    finally:
-        if temporary is not None and temporary.exists():
-            temporary.unlink()
 
 
 def _git(workspace: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
@@ -136,52 +98,8 @@ def _assert_reference_ancestor(workspace: Path, reference: str) -> None:
         )
 
 
-def load_protocol(workspace: Path) -> tuple[dict[str, Any], str]:
-    path = workspace.resolve() / GATE8_CONFIG
-    protocol = json.loads(path.read_text(encoding="utf-8"))
-    expected = {
-        "schema_version": 1,
-        "status": "preregistered_before_gate8_training",
-        "gate": "GATE_8_CONTEXT_GROUP_ABLATION",
-        "source_experiment": "E1",
-        "source_extractor_experiment": "E0",
-        "seed": 42,
-        "outer_folds": 10,
-    }
-    mismatches = {
-        key: (protocol.get(key), value)
-        for key, value in expected.items()
-        if protocol.get(key) != value
-    }
-    if mismatches:
-        raise ValueError(f"Gate 8 protocol mismatch: {mismatches}")
-    if tuple(protocol.get("conditions", {})) != CONDITIONS:
-        raise ValueError("Gate 8 condition order must be CP, CN, C")
-    if protocol["feature_contract"].get("group_slices") != {
-        key: list(value) for key, value in GROUP_SLICES.items()
-    }:
-        raise ValueError("Gate 8 feature slices differ from the frozen contract")
-    if protocol["test_gate"].get("required_completed_validation_runs") != 30:
-        raise ValueError("Gate 8 must lock exactly 30 validation runs")
-    if protocol["test_gate"].get("unlock_confirmation") != UNLOCK_CONFIRMATION:
-        raise ValueError("Gate 8 test confirmation phrase changed")
-    return protocol, sha256_file(path)
-
-
 def gate8_runner_sha256(workspace: Path) -> str:
-    paths = (
-        "src/sleeptcn/artifacts.py",
-        "src/sleeptcn/dataset.py",
-        "src/sleeptcn/engine.py",
-        "src/sleeptcn/experiment.py",
-        "src/sleeptcn/features.py",
-        "src/sleeptcn/gate8.py",
-        "src/sleeptcn/metrics.py",
-        "src/sleeptcn/models.py",
-        "src/sleeptcn/training.py",
-        "src/sleeptcn/training_data.py",
-    )
-    return combined_sha256({name: sha256_file(workspace / name) for name in paths})
+    return runner_code_sha256(workspace, include_gate8=True)
 
 
 def build_gate8_context(
@@ -267,72 +185,6 @@ def _load_role_records(
     return records
 
 
-def train_replacement_mean(
-    sequences: Sequence[FeatureSequence],
-) -> tuple[np.ndarray, int]:
-    if not sequences:
-        raise ValueError("training sequences must not be empty")
-    total = np.zeros(75, dtype=np.float64)
-    count = 0
-    for sequence in sequences:
-        if sequence.features.shape[1] != 75:
-            raise ValueError("Gate 8 requires 75-dimensional 15CNN features")
-        valid = (sequence.labels >= 0) & (sequence.labels < 5)
-        total += sequence.features[valid].sum(axis=0, dtype=np.float64)
-        count += int(valid.sum())
-    if count <= 0:
-        raise ValueError("training role has no valid epochs")
-    mean = (total / count).astype(np.float32)
-    if mean.shape != (75,) or not np.isfinite(mean).all():
-        raise AssertionError("invalid Gate 8 replacement mean")
-    return mean, count
-
-
-def mask_feature_sequences(
-    sequences: Sequence[FeatureSequence],
-    condition: str,
-    replacement_mean: np.ndarray,
-) -> tuple[FeatureSequence, ...]:
-    if condition not in CONDITIONS or replacement_mean.shape != (75,):
-        raise ValueError("invalid Gate 8 masking arguments")
-    masked_groups = tuple(
-        group
-        for group in GROUP_SLICES
-        if group not in context_groups(condition)
-    )
-    output: list[FeatureSequence] = []
-    for sequence in sequences:
-        if sequence.features.shape[1] != 75:
-            raise ValueError("Gate 8 masking requires 75-dimensional features")
-        features = sequence.features.copy()
-        for group in masked_groups:
-            start, stop = GROUP_SLICES[group]
-            features[:, start:stop] = replacement_mean[start:stop]
-            if not np.array_equal(
-                features[:, start:stop],
-                np.broadcast_to(replacement_mean[start:stop], features[:, start:stop].shape),
-            ):
-                raise AssertionError(f"failed to mask feature group {group}")
-        output.append(
-            replace(
-                sequence,
-                extractor_id=f"{sequence.extractor_id}_gate8_{condition}",
-                features=features,
-            )
-        )
-    return tuple(output)
-
-
-def context_groups(condition: str) -> tuple[str, ...]:
-    if condition == "CP":
-        return ("C", "P")
-    if condition == "CN":
-        return ("C", "N")
-    if condition == "C":
-        return ("C",)
-    raise ValueError(f"unknown Gate 8 condition: {condition}")
-
-
 def _feature_sequences_for_role(
     context: Gate8Context,
     role: str,
@@ -376,10 +228,12 @@ def _save_replacement(
         "extractor_sha256": extractor_hash,
     }
     path = _replacement_path(context)
-    _write_npz_atomic(
+    atomic_savez(
         path,
-        metadata_json=np.asarray(json.dumps(metadata, sort_keys=True)),
-        replacement_mean=mean,
+        {
+            "metadata_json": np.asarray(json.dumps(metadata, sort_keys=True)),
+            "replacement_mean": mean,
+        },
     )
     return sha256_file(path)
 
@@ -411,13 +265,10 @@ def _load_replacement(context: Gate8Context, extractor_hash: str) -> np.ndarray:
 
 
 def _make_tcn(context: Gate8Context) -> SleepTCN:
-    cfg = context.source_context.config["components"]["common_tcn"]
-    return SleepTCN(
+    return build_sequence_model(
+        context.source_context.config,
+        "common_tcn",
         input_dim=75,
-        hidden_dim=cfg["hidden_dim"],
-        kernel_size=cfg["kernel_size"],
-        n_blocks=cfg["residual_blocks"],
-        dropout=cfg["dropout"],
     )
 
 
@@ -510,10 +361,11 @@ def _save_role(
 ) -> dict[str, Any]:
     table = predict_sequences(model, sequences, "tcn", context.device)
     checkpoint_hash = sha256_file(checkpoint)
-    save_prediction_table(
-        context.run_root / "predictions" / f"{role}.npz",
+    return save_role_artifacts(
+        context.run_root,
         table,
-        {
+        role,
+        prediction_metadata={
             "experiment_id": context.experiment_id,
             "condition": context.condition,
             "outer_fold": context.outer_fold,
@@ -525,24 +377,16 @@ def _save_role(
             "role": role,
             "smoke": context.smoke,
         },
-    )
-    metrics = table.metrics()
-    _write_json_atomic(
-        context.run_root / "metrics" / f"{role}.json",
-        {
-            "metadata": {
-                "experiment_id": context.experiment_id,
-                "condition": context.condition,
-                "outer_fold": context.outer_fold,
-                "seed": context.seed,
-                "role": role,
-                "checkpoint_sha256": checkpoint_hash,
-                "gate8_config_sha256": context.protocol_sha256,
-            },
-            "metrics": metrics,
+        metrics_metadata={
+            "experiment_id": context.experiment_id,
+            "condition": context.condition,
+            "outer_fold": context.outer_fold,
+            "seed": context.seed,
+            "role": role,
+            "checkpoint_sha256": checkpoint_hash,
+            "gate8_config_sha256": context.protocol_sha256,
         },
     )
-    return metrics
 
 
 def _parameter_count(model: torch.nn.Module) -> int:
@@ -562,7 +406,7 @@ def run_validation_condition(context: Gate8Context) -> dict[str, Any]:
     if manifest_path.exists():
         if not context.resume:
             raise FileExistsError(f"Gate 8 run already exists; use --resume: {context.run_root}")
-        existing = json.loads(manifest_path.read_text(encoding="utf-8"))
+        existing = read_json(manifest_path)
         if existing.get("status") in {"validation_complete", "complete"}:
             return validate_gate8_run(context.workspace, context.run_root)
 
@@ -621,7 +465,7 @@ def run_validation_condition(context: Gate8Context) -> dict[str, Any]:
         },
         "metrics_roles": [],
     }
-    _write_json_atomic(manifest_path, manifest)
+    atomic_write_json(manifest_path, manifest)
     model, best = _train_tcn(context, masked_train, masked_validation)
     validation_metrics = _save_role(
         context, model, masked_validation, "validation", best
@@ -634,24 +478,14 @@ def run_validation_condition(context: Gate8Context) -> dict[str, Any]:
             "metrics_roles": ["validation"],
         }
     )
-    _write_json_atomic(manifest_path, manifest)
+    atomic_write_json(manifest_path, manifest)
     report = validate_gate8_run(context.workspace, context.run_root)
-    _write_json_atomic(context.run_root / "validation_report.json", report)
+    atomic_write_json(context.run_root / "validation_report.json", report)
     return {"validation": validation_metrics, "validation_report": report}
 
 
 def _load_prediction(path: Path) -> tuple[PredictionTable, dict[str, Any]]:
-    with np.load(path, allow_pickle=False) as npz:
-        metadata = json.loads(str(npz["metadata_json"].item()))
-        table = PredictionTable(
-            subject_id=npz["subject_id"].copy(),
-            record_key=npz["record_key"].copy(),
-            original_epoch_index=npz["original_epoch_index"].copy(),
-            true_label=npz["true_label"].copy(),
-            predicted_label=npz["predicted_label"].copy(),
-            logits=npz["logits"].copy(),
-        )
-    return table, metadata
+    return load_prediction_table(path)
 
 
 def _compare_nested(left: Any, right: Any, path: str = "metrics") -> None:
@@ -673,7 +507,7 @@ def _compare_nested(left: Any, right: Any, path: str = "metrics") -> None:
 def validate_gate8_run(workspace: Path, run_root: Path) -> dict[str, Any]:
     workspace, run_root = workspace.resolve(), run_root.resolve()
     manifest_path = run_root / "run_manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest = read_json(manifest_path)
     if manifest.get("status") not in {
         "validation_complete",
         "test_running",
@@ -763,7 +597,7 @@ def validate_gate8_run(workspace: Path, run_root: Path) -> dict[str, Any]:
                 raise ValueError(f"Gate 8 {record_key} true labels mismatch")
             if not np.all(table.subject_id[selected] == record.info.subject_id):
                 raise ValueError(f"Gate 8 {record_key} subject identity mismatch")
-        metric_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+        metric_payload = read_json(metrics_path)
         _compare_nested(metric_payload["metrics"], table.metrics())
         roles[role] = {
             "records": len(records),
@@ -798,14 +632,14 @@ def evaluate_locked_test_target(context: Gate8Context) -> dict[str, Any]:
     if report["status"] == "complete":
         return report
     manifest_path = context.run_root / "run_manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest = read_json(manifest_path)
     test_records = _load_role_records(context, "test", permit_test=True)
     if report["status"] == "validation_complete":
         manifest["status"] = "test_running"
         manifest["role_records"]["test"] = [
             record.info.record_key for record in test_records
         ]
-        _write_json_atomic(manifest_path, manifest)
+        atomic_write_json(manifest_path, manifest)
     elif manifest["role_records"]["test"] != [
         record.info.record_key for record in test_records
     ]:
@@ -829,9 +663,9 @@ def evaluate_locked_test_target(context: Gate8Context) -> dict[str, Any]:
     _save_role(context, model.eval(), masked_test, "test", checkpoint)
     manifest["status"] = "complete"
     manifest["metrics_roles"] = ["validation", "test"]
-    _write_json_atomic(manifest_path, manifest)
+    atomic_write_json(manifest_path, manifest)
     final_report = validate_gate8_run(context.workspace, context.run_root)
-    _write_json_atomic(context.run_root / "validation_report.json", final_report)
+    atomic_write_json(context.run_root / "validation_report.json", final_report)
     return final_report
 
 

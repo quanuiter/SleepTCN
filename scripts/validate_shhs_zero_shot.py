@@ -8,13 +8,12 @@ from pathlib import Path
 
 import numpy as np
 
-from sleeptcn.artifacts import sha256_file
-from sleeptcn.shhs_zero_shot import (
-    EXPERIMENT_VARIANTS,
-    FOLDS,
+from sleeptcn.io.hashing import sha256_file
+from sleeptcn.evaluation.shhs_zero_shot import (
     ensemble_probabilities,
     load_prediction_artifact,
 )
+from sleeptcn.workflows.shhs_protocol import EXPERIMENT_VARIANTS, FOLDS
 
 
 def main() -> int:

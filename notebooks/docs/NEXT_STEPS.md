@@ -1,5 +1,8 @@
 # Trạng thái dừng và điều kiện tiếp tục
 
+> Đây là phụ lục quyết định cho nghiên cứu tương lai. Nguồn duy nhất cho trạng thái hiện hành là
+> `STATUS_V2.md`; các mục dưới đây không phải danh sách công việc đang chờ.
+
 Ngày cập nhật: **2026-08-22**
 
 Trạng thái hiện tại: **DỪNG SAU GATE 8, SHHS ZERO-SHOT V1, E1/E2, E3−E2 VÀ ĐỘ NHẠY SEED 42/123**

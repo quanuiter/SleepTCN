@@ -53,9 +53,17 @@ cần upload cho lịch chạy hiện tại.
 Các manifest và split sau phải có trong source:
 
 ```text
-data/manifests/preprocess_manifest_v2_ablations.json
+data/manifests/raw_inventory.json
 data/manifests/processed_validation_v2.json
 data/manifests/bandpass_clip_identity_v2.json
+data/manifests/processed_artifact_manifest_v2.json
+data/manifests/processed_artifact_manifest_v2.json.sha256
+data/manifests/reproducibility_audit_v2.json
+data/manifests/reproducibility_audit_v2.json.sha256
+requirements/lock-cu121.txt
+requirements/lock-cu121.txt.sha256
+environment/pip-freeze.txt
+environment/pip-freeze.txt.sha256
 data/splits/sleepedf_sc_10fold_seed42_v2.json
 ```
 
@@ -81,21 +89,17 @@ nvidia-smi
 python3 --version
 ```
 
-Tạo environment trong `/workspace` để không lẫn với source. Python 3.10 hoặc 3.11 đều phù hợp;
-ví dụ dùng Python 3.10:
+Tạo environment trong `/workspace` để không lẫn với source. Lock file GPU đã được chốt cho
+Python 3.11:
 
 ```bash
 cd /workspace
 python3 -m venv .venv
 source /workspace/.venv/bin/activate
 
-python -m pip install --upgrade pip
-python -m pip install \
-  torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 \
-  --index-url https://download.pytorch.org/whl/cu121
-
 cd /workspace/SleepTCN
-python -m pip install -r requirements/base.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements/lock-cu121.txt
 ```
 
 `cu121` là bộ wheel CUDA 12.1 đã dùng cho các fold trước. Driver mới hơn vẫn tương thích ngược
@@ -137,9 +141,16 @@ python scripts/check_environment.py \
   --workspace /workspace/SleepTCN \
   --require-gpu \
   --output runs/v2/environment_check_gpu.json
+
+python scripts/audit_reproducibility.py \
+  --workspace /workspace/SleepTCN \
+  --manifest data/manifests/processed_artifact_manifest_v2.json \
+  --variants paper_raw_v1 filtered_v2 bandpass_v2 filtered_zscore_v2 \
+  --output runs/v2/reproducibility_audit_gpu.json
 ```
 
-Mặc định lệnh kiểm tra bốn biến thể của sáu experiment đang hoạt động. Chỉ dùng thêm
+Hai lệnh trên phải cùng trả `PASS`. Lệnh audit xác nhận hash toàn tệp, ZIP metadata và khả năng đọc
+NPZ trong workspace Docker; nó không cần truy cập EDF gốc. Mặc định lệnh kiểm tra bốn biến thể của sáu experiment đang hoạt động. Chỉ dùng thêm
 `--include-retired-e5` khi muốn audit lại E5 và đã upload `bandpass_clip_v2`. Chỉ tiếp tục khi
 báo `PASS`. Nếu báo `BadZipFile`, upload lại tệp NPZ bị báo lỗi trước khi chạy.
 

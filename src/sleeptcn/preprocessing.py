@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
-import os
 import re
-import tempfile
 from collections import Counter
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -16,6 +13,9 @@ from typing import Any, Iterable
 import numpy as np
 import pyedflib
 from scipy.signal import butter, sosfiltfilt
+
+from .io.hashing import sha256_file
+from .io.serialization import atomic_savez
 
 
 KEY_RE = re.compile(r"^(SC\d{4}[A-Z])")
@@ -71,14 +71,6 @@ def record_key(path: Path) -> str:
     if match is None:
         raise ValueError(f"Invalid Sleep Cassette filename: {path.name}")
     return match.group(1)
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def load_source_hashes(manifest_path: Path) -> dict[str, dict[str, str]]:
@@ -244,20 +236,6 @@ def filtered_v2(signal: np.ndarray, config: PreprocessConfig) -> tuple[np.ndarra
     return output, clip_fraction
 
 
-def atomic_savez(path: Path, arrays: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        dir=path.parent, prefix=f".{path.stem}.", suffix=".npz", delete=False
-    ) as handle:
-        temporary = Path(handle.name)
-    try:
-        np.savez(temporary, **arrays)
-        os.replace(temporary, path)
-    except BaseException:
-        temporary.unlink(missing_ok=True)
-        raise
-
-
 def process_record(
     psg_path: Path,
     hyp_path: Path,
@@ -410,7 +388,11 @@ def process_record(
                     "record_key": key,
                     "subject_id": key[:5],
                     "variant": variant,
-                    "output_path": str(output_paths[variant].resolve()),
+                    # Relative paths make manifests portable across a clean
+                    # checkout, Docker mount, and local workstation.
+                    "output_path": str(
+                        output_paths[variant].relative_to(output_root)
+                    ),
                     "output_sha256": output_hash,
                     "epochs": int(len(labels_trimmed)),
                     "samples_per_epoch": config.samples_per_epoch,

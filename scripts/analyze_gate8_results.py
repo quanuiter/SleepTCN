@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -13,8 +12,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sleeptcn.artifacts import combined_sha256, sha256_file
-from sleeptcn.gate8 import CONDITIONS, load_protocol
+from sleeptcn.io.hashing import combined_sha256, sha256_file
+from sleeptcn.workflows.gate8_protocol import CONDITIONS, load_protocol
 from sleeptcn.gate8_analysis import (
     descriptive_views,
     paired_cluster_bootstrap_subset,
@@ -23,6 +22,8 @@ from sleeptcn.gate8_analysis import (
 )
 from sleeptcn.metrics import compute_metrics
 from sleeptcn.statistics import PredictionArrays, assert_paired, holm_adjust
+from sleeptcn.io.serialization import read_json
+from sleeptcn.workflows.provenance import clean_git_commit
 
 
 EXPECTED_SUBJECTS = 78
@@ -36,26 +37,12 @@ PAIR_NAMES = {
 }
 
 
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def clean_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return clean_git_commit(
+        workspace,
+        unreadable_message="official Gate 8 analysis requires a clean Git worktree",
+        dirty_message="official Gate 8 analysis requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode or status.stdout.strip():
-        raise RuntimeError("official Gate 8 analysis requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def load_npz(path: Path) -> PredictionArrays:

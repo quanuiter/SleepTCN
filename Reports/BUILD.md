@@ -25,6 +25,8 @@ Biên bản kiểm định nội dung và bố cục nằm tại `REPORT_GATE1_8
 - `../runs/v2/gate8/analysis_seed42.json`
 - `../runs/v2/publication/gate8/publication_manifest.json`
 - `../data/manifests/processed_validation_v2.json`
+- `../data/manifests/processed_artifact_manifest_v2.json`
+- `../data/manifests/reproducibility_audit_v2.json`
 - `../data/splits/sleepedf_sc_10fold_seed42_v2.json`
 - `POSTHOC_E3_E0_AUDIT.json` (phân tích hậu nghiệm, không thuộc bốn giả thuyết chính)
 - `E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json`
@@ -46,6 +48,11 @@ Biên bản kiểm định nội dung và bố cục nằm tại `REPORT_GATE1_8
 Không thay số liệu trong bảng bằng kết quả lịch sử từ notebook cũ. Mọi thay đổi ở Tóm tắt, Kết luận hoặc slide phải đối chiếu `../runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md`.
 
 ## Kiểm tra tối thiểu trước khi nộp
+
+Gói dữ liệu dẫn xuất có hợp đồng riêng, không phụ thuộc đường dẫn máy: chạy
+`scripts/audit_reproducibility.py` với `data/manifests/processed_artifact_manifest_v2.json` trước
+khi upload Docker. Manifest này được tạo sau khi chuẩn hóa ZIP metadata; PDF hiện hành giữ số liệu
+khoa học cũ và không cần dựng lại chỉ vì thay đổi container NPZ.
 
 1. Không còn lỗi LaTeX, tham chiếu chưa xác định hoặc trích dẫn thiếu.
 2. Không còn các tuyên bố lịch sử: nhanh hơn 8,2 lần, P/N đóng góp 12% thông tin, hoặc ResNet/TCN riêng lẻ vượt trội có ý nghĩa.

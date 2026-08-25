@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
-from sleeptcn.artifacts import sha256_file
+from sleeptcn.io.hashing import sha256_file
 from sleeptcn.gate8_analysis import transition_mask
 from sleeptcn.metrics import compute_metrics
 from sleeptcn.shhs_analysis import load_ensemble_predictions

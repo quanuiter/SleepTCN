@@ -53,7 +53,11 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Hai kết quả SHHS cho phép kết luận E3 tốt hơn E0/E6 trên mẫu đã khóa, không cho phép quy nguyên nhân riêng cho kiến trúc/tiền xử lý hoặc tuyên bố xác nhận lâm sàng.
 - Extension seed 123 đã đạt 180 test, 169.012 epoch hợp lệ, 9.000 dự đoán theo fold, 900 tổ hợp và 0 lỗi cổng test. E4 đạt Macro-F1 theo đối tượng 0,5732; cao hơn E2 `+0,032320`, CI `[0,023649;0,041035]`, p Holm `7,40e-13`, thắng/hòa/thua `135/1/44`; cao hơn E3 theo hướng E4 `+0,009820`, CI `[0,007298;0,012503]`, p Holm `1,89e-10`. Đây là bằng chứng bắt cặp mở rộng trên cùng cohort, không phải kiểm định tương đương/không thua kém, không tách nhân quả của riêng band-pass.
 - E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của bài báo MATLAB gốc. Báo cáo đã bổ sung bảng đối chiếu trực tiếp và nêu rõ khác quần thể/giao thức.
-- Tái kiểm toán kho NPZ cục bộ ghi nhận 459/765 mã băm toàn tệp lệch manifest lịch sử ở ba biến thể, trong khi kiểm tra nhãn, chỉ số, hình dạng và quan hệ biến đổi số đều đạt. Do chưa truy cập lại được dữ liệu thô và manifest run không khóa mã băm nội dung đầu vào, chưa được tuyên bố tái lập byte-theo-byte cho kho tiền xử lý cục bộ.
+- Gói NPZ đã được chuẩn hóa bằng serializer `sleeptcn_deterministic_npz_v1`. Manifest nội dung
+  `data/manifests/processed_artifact_manifest_v2.json` và audit độc lập xác nhận 765/765 tệp khớp
+  SHA-256, ZIP metadata và nội dung đọc được; các mã băm container lịch sử vẫn được giữ trong trường
+  `legacy_output_sha256`. Đây là khóa byte cho snapshot hiện tại, không thay thế bước tái sinh độc lập
+  từ EDF gốc trong lock môi trường.
 
 ## Trạng thái
 

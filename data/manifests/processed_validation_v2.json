@@ -1,9 +1,8 @@
 {
-  "schema_version": 1,
-  "processed_root": "/home/quannn/SleepTCN/data/processed",
+  "schema_version": 2,
+  "processed_root": "data/processed",
   "preprocess_manifests": [
-    "/home/quannn/SleepTCN/data/manifests/preprocess_manifest_v1.json",
-    "/home/quannn/SleepTCN/data/manifests/preprocess_manifest_v2_ablations.json"
+    "data/manifests/processed_artifact_manifest_v2.json"
   ],
   "variants": [
     "paper_raw_v1",

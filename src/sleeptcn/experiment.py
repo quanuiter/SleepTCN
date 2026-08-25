@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import json
-import os
 import subprocess
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
@@ -22,17 +19,16 @@ from .artifacts import (
     load_feature_sequence,
     prediction_table_from_parts,
     save_feature_sequence,
-    save_prediction_table,
     sha256_file,
 )
 from .dataset import SleepRecord, load_record
 from .engine import (
     epoch_forward,
     fit_model,
-    load_model_checkpoint,
     seed_everything,
     sequence_forward,
 )
+from .evaluation import save_role_artifacts
 from .features import (
     MANIPULATIONS,
     MANIPULATION_PREFIX,
@@ -40,7 +36,8 @@ from .features import (
     class_specific_weights,
     expected_15cnn_keys,
 )
-from .models import BiLSTMSleepNet, EEGResNet1D, SleepCNN, SleepTCN
+from .io.serialization import atomic_write_json, read_json
+from .models import EEGResNet1D, SleepCNN
 from .training import collate_feature_sequences, masked_cross_entropy
 from .training_data import (
     FeatureSequence,
@@ -50,9 +47,18 @@ from .training_data import (
     class_counts_from_records,
     resolve_fold_partitions,
 )
-
-
-EXPERIMENT_IDS = ("E0", "E1", "E2", "E3", "E4", "E5", "E6")
+from .workflows.checkpoints import load_verified_checkpoint
+from .workflows.layout import EXPERIMENT_IDS, build_experiment_layout
+from .workflows.model_factory import (
+    build_sequence_model,
+    load_sequence_checkpoint,
+    sequence_component_config,
+)
+from .workflows.provenance import runner_code_sha256
+from .workflows.stages import (
+    mark_stage_complete as _mark_stage_complete,
+    stage_is_complete as _stage_is_complete,
+)
 
 
 @dataclass(frozen=True)
@@ -72,28 +78,6 @@ class RunContext:
     data_variant: str
     run_root: Path
     cache_root: Path
-
-
-def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
-    path = path.resolve()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            encoding="utf-8",
-            dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            delete=False,
-        ) as handle:
-            temporary_path = Path(handle.name)
-            json.dump(payload, handle, indent=2, sort_keys=True)
-            handle.write("\n")
-        os.replace(temporary_path, path)
-    finally:
-        if temporary_path is not None and temporary_path.exists():
-            temporary_path.unlink()
 
 
 def _git_state(workspace: Path) -> tuple[str | None, bool]:
@@ -116,23 +100,6 @@ def _git_state(workspace: Path) -> tuple[str | None, bool]:
     return commit, dirty
 
 
-def runner_code_sha256(workspace: Path) -> str:
-    relative_paths = (
-        "src/sleeptcn/artifacts.py",
-        "src/sleeptcn/dataset.py",
-        "src/sleeptcn/engine.py",
-        "src/sleeptcn/experiment.py",
-        "src/sleeptcn/features.py",
-        "src/sleeptcn/metrics.py",
-        "src/sleeptcn/models.py",
-        "src/sleeptcn/training.py",
-        "src/sleeptcn/training_data.py",
-    )
-    return combined_sha256(
-        {path: sha256_file(workspace / path) for path in relative_paths}
-    )
-
-
 def build_context(
     workspace: Path,
     experiment_id: str,
@@ -145,45 +112,30 @@ def build_context(
     num_workers: int,
     resume: bool = False,
 ) -> RunContext:
-    workspace = workspace.resolve()
-    if experiment_id not in EXPERIMENT_IDS:
-        raise ValueError(f"experiment_id must be one of {EXPERIMENT_IDS}")
-    if outer_fold not in range(10) or seed < 0 or num_workers < 0:
+    if num_workers < 0:
         raise ValueError("invalid fold, seed or num_workers")
     if smoke and allow_test_evaluation:
         raise ValueError("smoke mode must not evaluate the test role")
+    layout = build_experiment_layout(
+        workspace,
+        experiment_id,
+        outer_fold,
+        seed,
+        smoke=smoke,
+    )
+    workspace = layout.workspace
     torch_device = torch.device(device)
     if torch_device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but is unavailable")
     config_path = workspace / "configs" / "experiments_v2.json"
     split_path = workspace / "data" / "splits" / "sleepedf_sc_10fold_seed42_v2.json"
-    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config = read_json(config_path)
     if config["protocol"].get("validation_schedule") != "end_of_epoch":
         raise ValueError("runner only accepts the frozen end_of_epoch schedule")
     for component in ("cnn15", "bilstm", "resnet1d", "common_tcn"):
         if config["components"][component].get("validation_schedule") != "end_of_epoch":
             raise ValueError(f"unexpected validation schedule for {component}")
     experiment = config["experiments"][experiment_id]
-    mode = "smoke" if smoke else "full"
-    run_root = (
-        workspace
-        / "runs"
-        / "v2"
-        / mode
-        / experiment_id
-        / f"fold_{outer_fold:02d}"
-        / f"seed_{seed}"
-    )
-    cache_root = (
-        workspace
-        / "data"
-        / "cache"
-        / "features"
-        / "v2"
-        / mode
-        / f"fold_{outer_fold:02d}"
-        / f"seed_{seed}"
-    )
     return RunContext(
         workspace=workspace,
         experiment_id=experiment_id,
@@ -198,24 +150,9 @@ def build_context(
         config_sha256=sha256_file(config_path),
         split_sha256=sha256_file(split_path),
         data_variant=experiment["data_variant"],
-        run_root=run_root,
-        cache_root=cache_root,
+        run_root=layout.run_root,
+        cache_root=layout.cache_root,
     )
-
-
-def _checkpoint_metadata(
-    context: RunContext, model: nn.Module, stage: str, component_seed: int
-) -> dict[str, Any]:
-    return {
-        "experiment_id": context.experiment_id,
-        "stage": stage,
-        "outer_fold": context.outer_fold,
-        "seed": component_seed,
-        "config_sha256": context.config_sha256,
-        "split_sha256": context.split_sha256,
-        "data_variant": context.data_variant,
-        "model_class": type(model).__name__,
-    }
 
 
 def _selected_records(
@@ -287,67 +224,6 @@ def _fit_kwargs(
             latest_path if context.resume and latest_path.is_file() else None
         ),
     }
-
-
-def _stage_marker_path(checkpoint_dir: Path) -> Path:
-    return checkpoint_dir / "complete.json"
-
-
-def _stage_is_complete(
-    context: RunContext,
-    checkpoint_dir: Path,
-    stage: str,
-    component_seed: int,
-) -> bool:
-    marker_path = _stage_marker_path(checkpoint_dir)
-    best_path = checkpoint_dir / "best.pt"
-    if not marker_path.is_file():
-        return False
-    marker = json.loads(marker_path.read_text(encoding="utf-8"))
-    expected = {
-        "stage": stage,
-        "outer_fold": context.outer_fold,
-        "component_seed": component_seed,
-        "config_sha256": context.config_sha256,
-        "split_sha256": context.split_sha256,
-        "data_variant": context.data_variant,
-        "smoke": context.smoke,
-    }
-    mismatches = {
-        key: (marker.get(key), value)
-        for key, value in expected.items()
-        if marker.get(key) != value
-    }
-    if mismatches:
-        raise ValueError(f"stage completion marker mismatch: {mismatches}")
-    if not best_path.is_file() or sha256_file(best_path) != marker.get(
-        "best_checkpoint_sha256"
-    ):
-        raise ValueError(f"completed stage checkpoint mismatch: {stage}")
-    return True
-
-
-def _mark_stage_complete(
-    context: RunContext,
-    checkpoint_dir: Path,
-    stage: str,
-    component_seed: int,
-) -> None:
-    best_path = checkpoint_dir / "best.pt"
-    _write_json_atomic(
-        _stage_marker_path(checkpoint_dir),
-        {
-            "schema_version": 1,
-            "stage": stage,
-            "outer_fold": context.outer_fold,
-            "component_seed": component_seed,
-            "config_sha256": context.config_sha256,
-            "split_sha256": context.split_sha256,
-            "data_variant": context.data_variant,
-            "smoke": context.smoke,
-            "best_checkpoint_sha256": sha256_file(best_path),
-        },
-    )
 
 
 def train_cnn15(
@@ -423,14 +299,13 @@ def train_cnn15(
                 _mark_stage_complete(
                     context, checkpoint_dir, stage, component_seed
                 )
-            best_path = checkpoint_dir / "best.pt"
-            load_model_checkpoint(
-                best_path,
+            best_path = load_verified_checkpoint(
+                context,
                 model,
-                expected_metadata={
-                    **_checkpoint_metadata(context, model, stage, component_seed),
-                    "selection_metric": "validation_loss",
-                },
+                checkpoint_dir,
+                stage,
+                component_seed,
+                selection_metric="validation_loss",
                 device=context.device,
             )
             models[key] = model.eval()
@@ -463,20 +338,17 @@ def load_cnn15_from_e0(context: RunContext) -> tuple[dict[str, SleepCNN], str]:
         if not path.is_file():
             raise FileNotFoundError(
                 f"E1 requires the verified E0 CNN checkpoint: {path}"
-            )
+        )
         stage = f"cnn15/{key}"
         marker_dir = path.parent
-        if not _stage_is_complete(
-            source_context, marker_dir, stage, component_seed
-        ):
-            raise ValueError(f"E0 CNN stage is not marked complete: {stage}")
-        load_model_checkpoint(
-            path,
+        load_verified_checkpoint(
+            source_context,
             model,
-            expected_metadata={
-                **_checkpoint_metadata(source_context, model, stage, component_seed),
-                "selection_metric": "validation_loss",
-            },
+            marker_dir,
+            stage,
+            component_seed,
+            selection_metric="validation_loss",
+            incomplete_message=f"E0 CNN stage is not marked complete: {stage}",
             device=context.device,
         )
         models[key] = model.eval()
@@ -545,14 +417,13 @@ def train_resnet(
             ),
         )
         _mark_stage_complete(context, checkpoint_dir, stage, context.seed)
-    best_path = checkpoint_dir / "best.pt"
-    load_model_checkpoint(
-        best_path,
+    best_path = load_verified_checkpoint(
+        context,
         model,
-        expected_metadata={
-            **_checkpoint_metadata(context, model, stage, context.seed),
-            "selection_metric": "validation_macro_f1",
-        },
+        checkpoint_dir,
+        stage,
+        context.seed,
+        selection_metric="validation_macro_f1",
         device=context.device,
     )
     return model.eval(), sha256_file(best_path)
@@ -643,29 +514,15 @@ def train_sequence_model(
     validation_sequences: Sequence[FeatureSequence],
     kind: str,
 ) -> tuple[nn.Module, Path]:
-    if kind == "bilstm":
-        cfg = context.config["components"]["bilstm"]
-        model: nn.Module = BiLSTMSleepNet(input_dim=75, hidden_dim=cfg["hidden_dim"])
-        learning_rate = cfg["learning_rate"]
-        batch_size = cfg["batch_size_records"]
-        max_epochs = cfg["max_epochs"]
-        patience = cfg["early_stopping_patience_validations"]
-    elif kind == "tcn":
-        cfg = context.config["components"]["common_tcn"]
-        feature_dim = train_sequences[0].features.shape[1]
-        model = SleepTCN(
-            input_dim=feature_dim,
-            hidden_dim=cfg["hidden_dim"],
-            kernel_size=cfg["kernel_size"],
-            n_blocks=cfg["residual_blocks"],
-            dropout=cfg["dropout"],
-        )
-        learning_rate = cfg["learning_rate"]
-        batch_size = cfg["batch_size_records"]
-        max_epochs = cfg["max_epochs"]
-        patience = cfg["early_stopping_patience_validations"]
-    else:
-        raise ValueError("sequence kind must be bilstm or tcn")
+    if not train_sequences:
+        raise ValueError("train_sequences must not be empty")
+    cfg = sequence_component_config(context.config, kind)
+    feature_dim = train_sequences[0].features.shape[1]
+    model = build_sequence_model(context.config, kind, input_dim=feature_dim)
+    learning_rate = cfg["learning_rate"]
+    batch_size = cfg["batch_size_records"]
+    max_epochs = cfg["max_epochs"]
+    patience = cfg["early_stopping_patience_validations"]
     seed_everything(context.seed)
     generator = torch.Generator().manual_seed(context.seed)
     train_loader = _loader(
@@ -711,14 +568,11 @@ def train_sequence_model(
             ),
         )
         _mark_stage_complete(context, checkpoint_dir, stage, context.seed)
-    best_path = checkpoint_dir / "best.pt"
-    load_model_checkpoint(
-        best_path,
+    best_path = load_sequence_checkpoint(
+        context,
         model,
-        expected_metadata={
-            **_checkpoint_metadata(context, model, stage, context.seed),
-            "selection_metric": "validation_macro_f1",
-        },
+        kind,
+        checkpoint_dir,
         device=context.device,
     )
     return model.eval(), best_path
@@ -755,10 +609,11 @@ def _save_role_predictions(
 ) -> dict[str, object]:
     table = predict_sequences(model, sequences, kind, context.device)
     checkpoint_hash = sha256_file(checkpoint_path)
-    save_prediction_table(
-        context.run_root / "predictions" / f"{role}.npz",
+    return save_role_artifacts(
+        context.run_root,
         table,
-        {
+        role,
+        prediction_metadata={
             "experiment_id": context.experiment_id,
             "outer_fold": context.outer_fold,
             "seed": context.seed,
@@ -768,22 +623,14 @@ def _save_role_predictions(
             "role": role,
             "smoke": context.smoke,
         },
-    )
-    metrics = table.metrics()
-    _write_json_atomic(
-        context.run_root / "metrics" / f"{role}.json",
-        {
-            "metadata": {
-                "experiment_id": context.experiment_id,
-                "outer_fold": context.outer_fold,
-                "seed": context.seed,
-                "role": role,
-                "checkpoint_sha256": checkpoint_hash,
-            },
-            "metrics": metrics,
+        metrics_metadata={
+            "experiment_id": context.experiment_id,
+            "outer_fold": context.outer_fold,
+            "seed": context.seed,
+            "role": role,
+            "checkpoint_sha256": checkpoint_hash,
         },
     )
-    return metrics
 
 
 def run_experiment(context: RunContext) -> dict[str, Any]:
@@ -836,7 +683,7 @@ def run_experiment(context: RunContext) -> dict[str, Any]:
             "test": "locked_until_best_checkpoint",
         },
     }
-    _write_json_atomic(context.run_root / "run_manifest.json", run_manifest)
+    atomic_write_json(context.run_root / "run_manifest.json", run_manifest)
 
     if context.experiment_id == "E0":
         extractor, extractor_hash = train_cnn15(
@@ -912,5 +759,5 @@ def run_experiment(context: RunContext) -> dict[str, Any]:
         best_sequence_checkpoint
     )
     run_manifest["metrics_roles"] = list(metrics)
-    _write_json_atomic(context.run_root / "run_manifest.json", run_manifest)
+    atomic_write_json(context.run_root / "run_manifest.json", run_manifest)
     return {"run_manifest": run_manifest, "metrics": metrics}

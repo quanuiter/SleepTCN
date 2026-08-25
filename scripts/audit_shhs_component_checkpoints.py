@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from audit_shhs_zero_shot_checkpoints import read_json, validate_checkpoint
-from sleeptcn.artifacts import combined_sha256, sha256_file
+from sleeptcn.io.hashing import combined_sha256, sha256_file
 from sleeptcn.features import expected_15cnn_keys
 
 

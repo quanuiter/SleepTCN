@@ -44,18 +44,21 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 
 ## Đọc theo thứ tự
 
-1. `notebooks/docs/STATUS_V2.md` — trạng thái cuối và phạm vi đã hoàn thành.
-2. `notebooks/docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
-3. `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
-4. `notebooks/docs/SHHS_E3_E2_PAIRED_RESULTS.md` — đối chiếu tiền xử lý E3−E2.
+1. `docs/README.md` — cổng tài liệu hiện hành.
+2. `notebooks/docs/STATUS_V2.md` — nguồn duy nhất cho trạng thái cuối.
+3. `notebooks/docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
+4. `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
 5. `notebooks/docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
 6. `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` — báo cáo LaTeX hoàn chỉnh.
 7. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
-8. `notebooks/docs/NEXT_STEPS.md` — trạng thái dừng và điều kiện nếu mở nghiên cứu mới.
+8. `notebooks/docs/REPRODUCIBILITY_PACKAGE.md` — lock môi trường, audit hash và quy trình tái sinh NPZ.
+9. `Reports/REPRODUCIBILITY_BASELINE.md` — mốc kiểm tra trước refactor.
+10. `docs/DOCUMENT_MATRIX.md` và `docs/SOURCE_ARCHITECTURE.md` — kế hoạch dọn tài liệu và source.
 
-`STATUS_V2.md` và `NEXT_STEPS.md` là hai nguồn duy nhất cho trạng thái và kế hoạch hiện hành. Các
-runbook còn lại mô tả cách tái tạo một cổng cụ thể; các bước tuần tự bên trong không phải danh sách
-công việc đang chờ ở thời điểm hiện tại.
+`STATUS_V2.md` là nguồn duy nhất cho trạng thái hiện hành. `NEXT_STEPS.md` chỉ ghi điều kiện và giao
+thức cho một nghiên cứu mới trong tương lai. Các runbook còn lại mô tả cách tái tạo một cổng cụ thể;
+các bước tuần tự bên trong không phải danh sách công việc đang chờ ở thời điểm hiện tại. Ma trận dọn tài
+liệu nằm tại `docs/DOCUMENT_MATRIX.md`.
 
 ## Phạm vi và giới hạn
 

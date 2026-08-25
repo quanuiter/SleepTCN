@@ -12,6 +12,7 @@ import numpy as np
 
 from sleeptcn.preprocessing import sha256_file
 from sleeptcn.shhs_preprocessing import RAW_STAGE_MAP, SHHS_VARIANTS
+from sleeptcn.io.serialization import read_json
 
 
 REQUIRED = {
@@ -114,7 +115,7 @@ def main() -> int:
     parser.add_argument("--preprocess-manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    manifest = json.loads(args.preprocess_manifest.read_text(encoding="utf-8"))
+    manifest = read_json(args.preprocess_manifest)
     if manifest.get("status") != "complete":
         raise ValueError("Preprocess manifest is not complete")
     variants = tuple(manifest["variants"])

@@ -1,5 +1,8 @@
 # Runbook Docker GPU — Gate 8
 
+> **LEGACY / HISTORY:** Runbook Gate 8 riêng đã được đóng. Dùng
+> `../DOCKER_GPU_RUNBOOK.md` cho quy trình vận hành GPU hiện hành.
+
 Runbook này chỉ áp dụng sau khi mã Gate 8 đã được commit và push lên nhánh `run-in-docker`.
 Không chạy các lệnh test trước khi đủ 30/30 validation run.
 

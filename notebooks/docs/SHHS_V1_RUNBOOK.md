@@ -1,5 +1,8 @@
 # SHHS-v1: runbook và biên bản thực thi zero-shot
 
+> **FROZEN PROTOCOL:** Runbook này là quy trình tái lập chiến dịch SHHS đã đóng.
+> Không dùng để mở thêm cohort/adaptation; quyết định nghiên cứu mới nằm trong `NEXT_STEPS.md`.
+
 ## Trạng thái hiện tại
 
 - Chiến dịch Sleep-EDF v2 vẫn khóa tại Gate 8.

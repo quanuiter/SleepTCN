@@ -4,9 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -21,22 +19,7 @@ from sleeptcn.gate8 import (
     load_protocol,
     validate_gate8_run,
 )
-
-
-def write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w", encoding="utf-8", dir=path.parent, delete=False
-        ) as handle:
-            temporary = Path(handle.name)
-            json.dump(payload, handle, indent=2, sort_keys=True)
-            handle.write("\n")
-        os.replace(temporary, path)
-    finally:
-        if temporary is not None and temporary.exists():
-            temporary.unlink()
+from sleeptcn.io.serialization import atomic_write_json
 
 
 def key(condition: str, fold: int) -> str:
@@ -143,7 +126,7 @@ def main() -> int:
                 for condition in CONDITIONS
             },
         }
-        write_json_atomic(journal_path, journal)
+        atomic_write_json(journal_path, journal)
 
     index = 0
     for fold in range(10):
@@ -165,7 +148,7 @@ def main() -> int:
             else:
                 print(f"[{index:02d}/30] {target}: dang suy luan test", flush=True)
                 journal["targets"][target]["state"] = "running"
-                write_json_atomic(journal_path, journal)
+                atomic_write_json(journal_path, journal)
                 report = evaluate_locked_test_target(context)
             baseline = journal["baselines"][target]
             current = {
@@ -193,10 +176,10 @@ def main() -> int:
                 "test_records": report["roles"]["test"]["records"],
                 "test_valid_epochs": report["roles"]["test"]["valid_epochs"],
             }
-            write_json_atomic(journal_path, journal)
+            atomic_write_json(journal_path, journal)
             print(f"[{index:02d}/30] {target}: dat", flush=True)
     journal["status"] = "complete"
-    write_json_atomic(journal_path, journal)
+    atomic_write_json(journal_path, journal)
     print(json.dumps({"status": "complete", "completed_targets": 30}, indent=2))
     return 0
 

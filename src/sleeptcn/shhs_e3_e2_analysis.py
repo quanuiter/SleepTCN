@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -20,10 +19,7 @@ from .shhs_analysis import (
     sha256_file,
 )
 from .statistics import assert_paired
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+from .io.serialization import read_json
 
 
 def supporting_evidence_decision(ci95_low: float, p_value: float) -> str:
@@ -39,8 +35,8 @@ def _validate_source(
     expected_manifest_hash: str,
     expected_gate_hash: str,
 ) -> tuple[dict[str, Any], str, str]:
-    manifest = _load_json(manifest_path)
-    gate = _load_json(gate_path)
+    manifest = read_json(manifest_path)
+    gate = read_json(gate_path)
     manifest_hash = sha256_file(manifest_path)
     gate_hash = sha256_file(gate_path)
     if manifest_hash != expected_manifest_hash:
@@ -131,7 +127,7 @@ def analyze_e3_e2(
     e2_gate_path: Path,
     protocol_path: Path,
 ) -> dict[str, Any]:
-    protocol = _load_json(protocol_path)
+    protocol = read_json(protocol_path)
     if protocol.get("status") != "locked_posthoc_before_paired_computation":
         raise ValueError("E3-E2 post-hoc protocol is not locked")
     if protocol.get("comparison") != "E3-E2":

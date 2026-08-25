@@ -145,9 +145,11 @@ nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang to�
   độc lập hoàn toàn.
 - E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của kết quả MATLAB
   trong bài báo gốc.
-- Kiểm toán kho NPZ cục bộ còn 459/765 mã băm toàn tệp lệch manifest lịch sử ở ba biến thể, dù các
-  kiểm tra nội dung khoa học đã đạt. Chưa tuyên bố tái lập byte-theo-byte cho kho tiền xử lý cho đến khi
-  tái sinh từ dữ liệu thô hoặc lập manifest nội dung chuẩn mới trong môi trường đã khóa.
+- Kho NPZ đã được chuẩn hóa bằng `sleeptcn_deterministic_npz_v1`, với
+  `data/manifests/processed_artifact_manifest_v2.json` và audit độc lập xác nhận 765/765 tệp khớp
+  SHA-256, ZIP metadata và nội dung đọc được. Các mã băm lịch sử được giữ trong trường
+  `legacy_output_sha256` để truy nguyên; không ghi đè manifest cũ. Snapshot này khóa byte của kho hiện
+  tại, còn tái sinh độc lập từ EDF gốc vẫn phải chạy trong lock môi trường và so sánh manifest.
 
 ## Trạng thái dừng
 

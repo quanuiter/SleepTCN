@@ -9,13 +9,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 import torch
 
-from sleeptcn.artifacts import combined_sha256, sha256_file
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import combined_sha256, sha256_file
 from sleeptcn.features import expected_15cnn_keys
+from sleeptcn.io.serialization import read_json
 
 
 EXPERIMENTS = {
@@ -25,10 +29,6 @@ EXPERIMENTS = {
     "E4": {"variant": "bandpass_v2", "extractor": "resnet1d", "sequence": "tcn"},
     "E6": {"variant": "filtered_zscore_v2", "extractor": "resnet1d", "sequence": "tcn"},
 }
-
-
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def validate_checkpoint(

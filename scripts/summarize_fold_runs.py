@@ -5,15 +5,16 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.serialization import read_json  # noqa: E402
+
 
 EXPERIMENTS = tuple(f"E{index}" for index in range(7))
-
-
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def checkpoint_summary(checkpoint_root: Path) -> dict[str, Any]:

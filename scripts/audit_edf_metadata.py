@@ -239,9 +239,9 @@ def main() -> int:
         global_errors.append("subject_count_unexpected")
 
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "dataset": "sleep-edf-expanded/sleep-cassette/1.0.0",
-        "source_readonly": str(data_dir),
+        "source_readonly": "sleep-edf-expanded/sleep-cassette/1.0.0",
         "assumptions": {
             "channel": args.channel,
             "sampling_rate_hz": args.sampling_rate,

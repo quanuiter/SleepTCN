@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -21,14 +20,11 @@ from .shhs_analysis import (
     sha256_file,
 )
 from .statistics import assert_paired, holm_adjust
+from .io.serialization import read_json
 
 
 EXPERIMENTS = ("E0", "E1", "E2")
 PRIMARY_COMPARISONS = (("E1", "E0"), ("E2", "E1"))
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def superiority_decision(
@@ -49,11 +45,11 @@ def analyze_component_extension(
     reference_gate_path: Path,
     protocol_path: Path,
 ) -> dict[str, Any]:
-    protocol = _load_json(protocol_path)
-    component_manifest = _load_json(component_manifest_path)
-    component_gate = _load_json(component_gate_path)
-    reference_manifest = _load_json(reference_manifest_path)
-    reference_gate = _load_json(reference_gate_path)
+    protocol = read_json(protocol_path)
+    component_manifest = read_json(component_manifest_path)
+    component_gate = read_json(component_gate_path)
+    reference_manifest = read_json(reference_manifest_path)
+    reference_gate = read_json(reference_gate_path)
     protocol_hash = sha256_file(protocol_path)
     component_manifest_hash = sha256_file(component_manifest_path)
     reference_manifest_hash = sha256_file(reference_manifest_path)

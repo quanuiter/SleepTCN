@@ -1,5 +1,8 @@
 # Trình chạy huấn luyện E0–E6 (giao thức v2)
 
+> **LEGACY / HISTORY:** Ghi chú runner này mô tả workflow lịch sử. Dùng
+> `../DOCKER_GPU_RUNBOOK.md` và `../../docs/README.md` cho lệnh vận hành hiện hành.
+
 Runner vẫn hỗ trợ E0--E6 để bảo toàn khả năng kiểm toán. Lịch chính hiện tại chỉ chạy
 `E0 -> E1 -> E2 -> E3 -> E4 -> E6`; E5 bị loại khỏi fold 01--09 vì trùng bitwise E4. E1 phải
 chạy sau E0 cùng fold/seed; các E khác độc lập về checkpoint.
@@ -36,7 +39,7 @@ không phải artifact bắt buộc và không được commit.
 ## Chạy và resume
 
 Smoke CPU/GPU đã hoàn tất. Lệnh vận hành chính thức cho từng fold nằm trong
-`DOCKER_GPU_RUNBOOK.md`. Ví dụ resume E2 fold 02:
+`../DOCKER_GPU_RUNBOOK.md`. Ví dụ resume E2 fold 02:
 
 ```bash
 python scripts/run_experiment.py \

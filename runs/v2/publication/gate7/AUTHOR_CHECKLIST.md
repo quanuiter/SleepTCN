@@ -1,0 +1,31 @@
+# Danh sách kiểm tra trước khi nộp
+
+## Nội dung khoa học
+
+- [ ] Mọi số liệu trong Abstract khớp bảng sinh tự động.
+- [ ] Chỉ gọi Macro-F1 là chỉ số chính; Accuracy/kappa là hỗ trợ.
+- [ ] Nêu rõ 78 đối tượng, 153 bản ghi, 195.469 epoch hợp lệ.
+- [ ] Nêu rõ một training seed 42.
+- [ ] Không coi 10 fold là 10 mẫu độc lập.
+- [ ] Holm chỉ gồm bốn so sánh chính.
+- [ ] E4−E2 được ghi là phân tích thứ cấp.
+- [ ] Không tạo p-value E5−E4.
+- [ ] Báo cáo đồng thời tốc độ, tham số và VRAM.
+- [ ] Không sử dụng tuyên bố 8,2×.
+- [ ] Không tuyên bố domain shift, zero-shot, SHHS hoặc giá trị lâm sàng.
+
+## Trình bày
+
+- [ ] Thêm trích dẫn paper gốc và các công trình liên quan bằng nguồn chính thức.
+- [ ] Định nghĩa mọi chữ viết tắt khi xuất hiện lần đầu.
+- [ ] Mọi bảng/hình có caption, đơn vị và phạm vi đo.
+- [ ] Hình t-SNE được ghi rõ chỉ mang tính mô tả.
+- [ ] Sơ đồ pipeline phân biệt preprocessing, extractor và sequence model.
+- [ ] Phụ lục ghi commit, config/split hash và môi trường phần mềm.
+
+## Tái lập
+
+- [ ] Nhánh/commit công bố đã được gắn tag.
+- [ ] Không đưa dataset, cache hoặc metadata mức epoch lên kho công khai.
+- [ ] Lệnh tái tạo bảng/hình Gate 7 được ghi trong README/runbook.
+- [ ] Tất cả kiểm thử và manifest xuất bản trả trạng thái đạt.

@@ -1,5 +1,8 @@
 # Runbook Gate 4 — mở test đúng một lần
 
+> **LEGACY / HISTORY:** Đây là hồ sơ quy trình mở test một lần. Không dùng file
+> này làm backlog hoặc mở lại locked-test; xem `STATUS_V2.md` và `docs/README.md`.
+
 ## Mục tiêu
 
 Đánh giá đúng 60 checkpoint đã khóa: `E0, E1, E2, E3, E4, E6` × fold `00–09`, seed `42`.

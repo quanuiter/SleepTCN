@@ -7,21 +7,17 @@ Kiểm tra sâu metadata EDF sẽ được bổ sung ở bước tiếp theo v�
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import sha256_file
 
 
 PREFIX_RE = re.compile(r"^(SC\d{4}[A-Z])")
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def record_key(path: Path) -> str:
@@ -35,7 +31,9 @@ def file_info(path: Path, with_hash: bool) -> dict[str, object]:
     key = record_key(path)
     result: dict[str, object] = {
         "name": path.name,
-        "path": str(path.resolve()),
+        # The filename plus its immutable SHA-256 identifies the source;
+        # absolute mount paths make manifests differ on every machine.
+        "path": path.name,
         "record_key": key,
         "subject_id": key[:5],
         "size_bytes": path.stat().st_size,
@@ -83,9 +81,9 @@ def main() -> int:
     subjects = sorted({key[:5] for key in paired_keys})
 
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "dataset": "sleep-edf-expanded/sleep-cassette/1.0.0",
-        "source_readonly": str(source),
+        "source_readonly": "sleep-edf-expanded/sleep-cassette/1.0.0",
         "hashes_included": args.with_hash,
         "summary": {
             "psg_files": len(psg_paths),
