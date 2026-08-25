@@ -1,7 +1,7 @@
 \section{Giới thiệu}
 \label{sec:introduction}
 
-Phân giai đoạn giấc ngủ là nhiệm vụ nền tảng trong phân tích đa ký giấc ngủ. Các phương pháp tự động từ EEG một kênh có thể giảm yêu cầu về thiết bị và chi phí xử lý, nhưng hiệu quả của chúng phụ thuộc đáng kể vào cách chia dữ liệu, lựa chọn mô hình và xử lý tín hiệu. Đặc biệt, N1 thường khó nhận diện và chênh lệch giữa các mô hình dễ bị lẫn với khác biệt giữa đối tượng nếu không sử dụng thiết kế đánh giá bắt cặp.
+Phân giai đoạn giấc ngủ là nhiệm vụ nền tảng trong phân tích đa ký giấc ngủ. Các phương pháp tự động từ EEG một kênh có thể giảm yêu cầu về thiết bị và chi phí xử lý, nhưng hiệu quả của chúng phụ thuộc đáng kể vào cách chia dữ liệu, lựa chọn mô hình và xử lý tín hiệu. Đặc biệt, N1 thường khó nhận diện và có mức đồng thuận liên chấm thấp~\cite{rosenberg2013aasm}; chênh lệch giữa các mô hình cũng dễ bị lẫn với khác biệt giữa đối tượng nếu không sử dụng thiết kế đánh giá bắt cặp.
 
 ZleepAnlystNet đề xuất một quy trình hai giai đoạn, kết hợp các bộ trích đặc trưng CNN với mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu này khảo sát một hướng thay thế dựa trên ResNet-1D và mạng tích chập theo thời gian, đồng thời đánh giá vai trò của chế độ xử lý biên độ. Mục tiêu không chỉ là tìm cấu hình có điểm số cao, mà còn xác định sự đánh đổi giữa hiệu năng, tốc độ suy luận và độ phức tạp vận hành.
 

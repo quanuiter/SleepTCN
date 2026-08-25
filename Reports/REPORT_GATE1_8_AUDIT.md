@@ -29,7 +29,7 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 ## Các phép kiểm tra tài liệu
 
 - Báo cáo và bài báo đã được biên dịch bằng TeX Live 2026 theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. Một cảnh báo vi kiểu chữ T5 không ảnh hưởng đến PDF.
-- PDF mới gồm 28 trang cho báo cáo dài và 9 trang cho bản thảo bài báo. Các tệp đầu ra đã được kiểm tra metadata, kích thước và log dựng; không phát hiện tràn lề, cắt bảng, ký tự lỗi hoặc hình bị hỏng.
+- PDF cuối gồm 30 trang cho báo cáo dài và 10 trang cho bản thảo bài báo. Các tệp đã được kiểm tra trực quan sau khi dựng lại; bảng và hình của phần Kết quả nằm trước phần Thảo luận, không còn trôi xuống sau tài liệu tham khảo.
 - Không có tham chiếu hoặc trích dẫn chưa xác định, nhãn trùng, hộp tràn lề hay trang bị cắt.
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
@@ -71,8 +71,8 @@ Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS 
 
 PDF hiện hành trong kho: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 báo cáo dài: `4ddf7df7e1791418dff0c7a8117ba8e12ddb2944c33c75800678ac5e96094686`.
+SHA-256 báo cáo dài: `7671450d7e3b2174eee6466da1c05740b2c4a417e861846c73115822d61740ac`.
 
 PDF bài báo hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 
-SHA-256 bài báo: `3c84addeb9186a354215bd466832bd515fca6bce068324586b114dd26fc06cfb`.
+SHA-256 bài báo: `6ad77e1fc4dab4bd5ba4c0c1c2f94dc9c8fe8d97f330c4da48d9df8d35d697d9`.

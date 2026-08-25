@@ -48,7 +48,7 @@ Các cổng được tổ chức theo chuỗi bằng chứng:
 
 \subsection{Phân tích thống kê}
 
-Macro-F1 gộp trên dự đoán test ngoài fold là chỉ số mô tả chính. Khoảng tin cậy 95\% của chênh lệch được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng; kiểm định Wilcoxon hai phía được thực hiện trên Macro-F1 từng đối tượng. Hiệu chỉnh Holm chỉ áp dụng cho bốn đối chiếu đã đăng ký trước: thay đổi mô hình chuỗi, thay đổi bộ trích đặc trưng, thay đổi chế độ xử lý chính và đối chiếu với z-score.
+Macro-F1 gộp trên dự đoán test ngoài fold là chỉ số mô tả chính. Khoảng tin cậy 95\% của chênh lệch Macro-F1 gộp được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng; kiểm định Wilcoxon hai phía được thực hiện trên chênh lệch Macro-F1 của từng đối tượng. Hai phép phân tích trả lời các câu hỏi khác nhau: bootstrap định lượng bất định của chênh lệch gộp, còn Wilcoxon đánh giá thứ hạng của các chênh lệch ở cấp đối tượng. Hiệu chỉnh Holm chỉ áp dụng cho bốn đối chiếu đã đăng ký trước: thay đổi mô hình chuỗi, thay đổi bộ trích đặc trưng, thay đổi chế độ xử lý chính và đối chiếu với z-score~\cite{efron1994bootstrap,wilcoxon1945,holm1979}.
 
 Đối chiếu toàn bộ cấu hình với mốc ban đầu được thực hiện sau khi đã quan sát kết quả nên được ghi rõ là hậu nghiệm. Các phân tích bổ sung không được nhập ngược vào nhóm giả thuyết chính.
 
@@ -58,7 +58,7 @@ Toàn bộ chiến dịch được lặp lại với một seed huấn luyện t
 
 \subsection{Benchmark và không gian đặc trưng}
 
-Benchmark được thực hiện trên cùng phần cứng cho tất cả cấu hình. Phép đo phản ánh suy luận forward và không bao gồm đọc dữ liệu, tiền xử lý, lưu trữ trung gian hoặc huấn luyện. Thời gian wall-clock của chiến dịch seed 123 được báo cáo riêng, bao gồm huấn luyện, validation và hoàn thiện artifact trên 10 fold; các lượt được chạy tuần tự và test chưa được mở. Phân tích không gian đặc trưng so sánh các biểu diễn trên cùng epoch và cùng fold; Silhouette được dùng như chỉ số hỗ trợ, còn t-SNE chỉ dùng để minh họa.
+Benchmark được thực hiện trên cùng phần cứng cho tất cả cấu hình. Phép đo phản ánh suy luận forward và không bao gồm đọc dữ liệu, tiền xử lý, lưu trữ trung gian hoặc huấn luyện. Thời gian wall-clock của chiến dịch seed 123 được báo cáo riêng, bao gồm huấn luyện, validation và hoàn thiện artifact trên 10 fold; các lượt được chạy tuần tự và test chưa được mở. Phân tích không gian đặc trưng so sánh các biểu diễn trên cùng epoch và cùng fold; Silhouette được dùng như chỉ số hỗ trợ~\cite{rousseeuw1987silhouettes}, còn t-SNE chỉ dùng để minh họa.
 
 \subsection{Ablation nhóm ngữ cảnh Gate 8}
 

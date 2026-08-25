@@ -14,6 +14,7 @@
 \usepackage{multirow}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage[section]{placeins}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{xurl}
@@ -49,8 +50,8 @@
 \newcommand{\mf}{\ensuremath{\mathrm{Macro\mbox{-}F1}}}
 \newcommand{\ci}{\ensuremath{\mathrm{CI}_{95\%}}}
 
-\title{\textbf{Đánh giá có kiểm soát ResNet-1D--TCN cho phân giai đoạn giấc ngủ từ EEG đơn kênh: tái hiện trên Sleep-EDF và kiểm tra zero-shot trên SHHS1}\\[0.55em]
-\large Controlled Evaluation of ResNet-1D--TCN for Single-Channel EEG Sleep Staging: Reproduction on Sleep-EDF and Zero-Shot Assessment on SHHS1}
+\title{\textbf{Đánh giá có kiểm soát ResNet-1D--TCN cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF và SHHS1}\\[0.55em]
+\large Controlled Evaluation of ResNet-1D--TCN for Single-Channel EEG Sleep Staging on Sleep-EDF and SHHS1}
 \author{Ngô Nhật Quân \and Phạm Thái Sơn\\
 \small Trường Đại học Công nghệ Thông tin, Đại học Quốc gia TP. Hồ Chí Minh}
 \date{Bản thảo nghiên cứu, tháng 8 năm 2026}
@@ -61,7 +62,7 @@
 
 \renewcommand{\abstractname}{Tóm tắt}
 \begin{abstract}
-Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF Expanded. Sáu cấu hình được so sánh trên cùng phép chia theo 78 đối tượng và cùng nguyên tắc lựa chọn mô hình. Cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt \mf\ ngoài fold 0,7904, cao nhất trong chiến dịch. So với z-score theo bản ghi, chênh lệch là 0,0213 (\ci\ $[0,0122;0,0307]$, $p_{Holm}=0,0012$). Lần lặp sau giao thức giữ hướng hiệu ứng dương. ResNet-1D--TCN nhanh hơn khoảng 3,76 lần khi suy luận, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trong bản ghi seed 123, E2 hoàn tất 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; toàn bộ sáu cấu hình cần 45 giờ 12 phút 10 giây khi chạy tuần tự. Trên 180 đối tượng SHHS1 đã khóa, cấu hình này cao hơn hai mốc đối chứng theo \mf\ trung bình ở cấp đối tượng, với khoảng tin cậy hoàn toàn dương và kiểm định sau Holm có ý nghĩa. Kết quả ủng hộ giá trị của toàn bộ quy trình đã đánh giá và làm rõ đánh đổi giữa hiệu năng, độ bền ngoài miền và độ phức tạp vận hành.
+Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF Expanded. Sáu cấu hình được so sánh trên cùng phép chia theo 78 đối tượng và cùng nguyên tắc lựa chọn mô hình. Cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt \mf\ ngoài fold 0,7904, cao nhất trong chiến dịch. So với z-score theo bản ghi, chênh lệch là 0,0213 (\ci\ $[0,0122;0,0307]$, $p_{Holm}=0,0012$). Lần lặp sau giao thức giữ hướng hiệu ứng dương. ResNet-1D--TCN nhanh hơn khoảng 3,76 lần khi suy luận, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trong lần lặp với seed 123, E2 hoàn tất 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; toàn bộ sáu cấu hình cần 45 giờ 12 phút 10 giây khi chạy tuần tự. Trên 180 đối tượng SHHS1 đã khóa, cấu hình này cao hơn hai mốc đối chứng theo \mf\ trung bình ở cấp đối tượng, với khoảng tin cậy hoàn toàn dương và kiểm định sau Holm có ý nghĩa. Kết quả ủng hộ giá trị của toàn bộ quy trình đã đánh giá và làm rõ đánh đổi giữa hiệu năng, độ bền ngoài miền và độ phức tạp vận hành.
 \end{abstract}
 
 \noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; TCN; Sleep-EDF Expanded; SHHS; zero-shot; kiểm định bắt cặp.
@@ -86,13 +87,13 @@ ZleepAnlystNet là mô hình EEG đơn kênh hai giai đoạn, kết hợp bộ 
 
 Nghiên cứu thiết kế một chiến dịch bắt cặp theo đối tượng để trả lời bốn câu hỏi: (1) TCN có cải thiện so với BiLSTM khi giữ nguyên bộ trích đặc trưng hay không; (2) ResNet-1D có tạo lợi ích khi dùng cùng mô hình chuỗi hay không; (3) chế độ xử lý biên độ ảnh hưởng thế nào; và (4) các kết quả có giữ được khi đánh giá zero-shot trên SHHS1 hay không.
 
-Đóng góp chính gồm: một giao thức 10-fold thống nhất và chống rò rỉ; các ablation thành phần trên cùng đối tượng; đánh giá độ phức tạp, tốc độ và không gian đặc trưng; kiểm tra trực tiếp nhóm ngữ cảnh C/P/N; và một chiến dịch zero-shot đã khóa trên SHHS1. Báo cáo phân biệt rõ so sánh định trước, phân tích thứ cấp và phân tích hậu nghiệm để giới hạn phát biểu trong phạm vi bằng chứng.
+Đóng góp chính gồm: một giao thức 10-fold thống nhất và chống rò rỉ; các ablation thành phần trên cùng đối tượng; đánh giá độ phức tạp, tốc độ và không gian đặc trưng; phân tích trực tiếp vai trò của ngữ cảnh liền trước và liền sau; và một chiến dịch zero-shot đã khóa trên SHHS1. Nghiên cứu phân biệt rõ so sánh định trước, phân tích thứ cấp và phân tích hậu nghiệm để giới hạn phát biểu trong phạm vi bằng chứng.
 
 \section{Nghiên cứu liên quan}
 
 DeepSleepNet kết hợp CNN hai nhánh và BiLSTM để học hình thái epoch cùng quan hệ theo thời gian~\cite{supratak2017deepsleepnet}. AttnSleep sử dụng cơ chế chú ý và mô hình hóa thời gian~\cite{eldele2021attnsleep}; SleepTransformer khai thác self-attention và ước lượng bất định~\cite{phan2022sleeptransformer}. Các công trình này cho thấy ngữ cảnh chuỗi quan trọng, nhưng khác biệt về tập dữ liệu, phép chia và tiền xử lý khiến việc so sánh chéo bảng không thay thế được ablation trong cùng giao thức.
 
-Sleep-EDF Expanded là mốc phổ biến cho EEG đơn kênh~\cite{kemp2000sleepEDF,physionetSleepEDF}. SHHS là cohort đa trung tâm quy mô lớn, được thu thập để nghiên cứu rối loạn hô hấp khi ngủ và nguy cơ tim mạch~\cite{quan1997shhs}; dữ liệu được phân phối qua National Sleep Research Resource (NSRR)~\cite{zhang2018nsrr}. Khác biệt giữa Sleep-EDF và SHHS về tuổi, bệnh lý, thiết bị, montage và phân bố nhãn tạo ra phép kiểm tra dịch chuyển miền thực tế hơn đánh giá trong cùng bộ dữ liệu.
+Sleep-EDF Expanded là mốc phổ biến cho EEG đơn kênh~\cite{kemp2000sleepEDF,physionetSleepEDF}. SHHS là nghiên cứu đoàn hệ đa trung tâm quy mô lớn, được thu thập để nghiên cứu rối loạn hô hấp khi ngủ và nguy cơ tim mạch~\cite{quan1997shhs}; dữ liệu được phân phối qua National Sleep Research Resource (NSRR)~\cite{zhang2018nsrr}. Khác biệt giữa Sleep-EDF và SHHS về tuổi, bệnh lý, thiết bị, montage và phân bố nhãn tạo ra phép kiểm tra dịch chuyển miền thực tế hơn đánh giá trong cùng bộ dữ liệu.
 
 \section{Vật liệu và phương pháp}
 
@@ -154,21 +155,21 @@ E0 giữ cấu trúc CNN--BiLSTM của ZleepAnlystNet và được xem là đố
 
 \subsection{Huấn luyện và chia fold}
 
-78 đối tượng được chia thành 10 fold theo đối tượng. Trong mỗi lượt đánh giá, một fold dùng cho test, một fold dùng cho validation và các fold còn lại dùng cho huấn luyện. Hai đêm của cùng người luôn có cùng vai trò; cùng phép chia được áp dụng cho mọi cấu hình và tập test không tham gia lựa chọn mô hình.
+78 đối tượng được chia thành 10 phân hoạch (fold). Trong mỗi lượt đánh giá, một fold dùng để kiểm tra, một fold dùng để xác thực và các fold còn lại dùng để huấn luyện. Hai đêm của cùng người luôn có cùng vai trò; cùng phép chia được áp dụng cho mọi cấu hình và tập kiểm tra không tham gia lựa chọn mô hình.
 
-Các bộ trích đặc trưng và mô hình chuỗi được huấn luyện theo hai giai đoạn phù hợp với từng cấu hình. Mô hình được chọn bằng Macro-F1 trên validation; các epoch không hợp lệ bị loại khỏi loss và chỉ số nhưng vẫn giữ vị trí thời gian. Tập test chỉ được mở sau khi hoàn tất toàn bộ lượt validation.
+Các bộ trích đặc trưng và mô hình chuỗi được huấn luyện theo hai giai đoạn phù hợp với từng cấu hình. Mô hình được chọn bằng Macro-F1 trên tập xác thực; các epoch không hợp lệ bị loại khỏi hàm mất mát và chỉ số nhưng vẫn giữ vị trí thời gian. Tập kiểm tra chỉ được mở sau khi hoàn tất toàn bộ lượt xác thực.
 
 \subsection{Khóa test và phân tích thống kê}
 
-Sáu cấu hình hoàn tất chiến dịch validation trước khi mở test. Macro-F1 gộp là chỉ số mô tả chính trong Sleep-EDF; đơn vị suy luận thống kê là đối tượng. Khoảng tin cậy được ước lượng bằng bootstrap cụm bắt cặp, Wilcoxon hai phía được tính trên Macro-F1 từng đối tượng và Holm hiệu chỉnh bốn so sánh định trước~\cite{efron1994bootstrap,wilcoxon1945,holm1979}. E3--E0 được ghi rõ là hậu nghiệm.
+Sáu cấu hình hoàn tất quá trình lựa chọn trên tập xác thực trước khi mở tập kiểm tra. Macro-F1 gộp là chỉ số mô tả chính trong Sleep-EDF; đơn vị suy luận thống kê là đối tượng. Bootstrap cụm bắt cặp ước lượng khoảng tin cậy của chênh lệch Macro-F1 gộp, còn Wilcoxon hai phía đánh giá thứ hạng của chênh lệch Macro-F1 ở từng đối tượng. Holm hiệu chỉnh bốn so sánh định trước~\cite{efron1994bootstrap,wilcoxon1945,holm1979}. Hai phép phân tích có thể cho kết quả khác nhau vì chúng nhắm đến hai đại lượng ước lượng khác nhau. E3--E0 được ghi rõ là hậu nghiệm.
 
 Sau khi đã quan sát kết quả chính, chiến dịch được lặp lại với seed huấn luyện thứ hai trên cùng phép chia và cùng cấu hình. Hai seed được phân tích riêng; không gộp $p$-value và không xem chúng là mẫu đại diện cho mọi khởi tạo. Lần lặp được trình bày như phân tích độ nhạy sau giao thức.
 
-Trong SHHS, dự đoán của các fold được tổ hợp ở cấp đối tượng. Tiêu chí chính được khóa trước là Macro-F1 trung bình theo đối tượng; hai so sánh E3--E0 và E3--E6 dùng bootstrap cụm và Wilcoxon-Holm. Phân tích E1/E2 là bằng chứng thứ cấp trên cùng cohort; E3--E2 được ghi rõ là hậu nghiệm.
+Trong SHHS, dự đoán của các fold được tổ hợp ở cấp đối tượng. Tiêu chí chính được khóa trước là Macro-F1 trung bình theo đối tượng; hai so sánh E3--E0 và E3--E6 dùng bootstrap cụm và Wilcoxon-Holm. Phân tích E1/E2 là bằng chứng thứ cấp trên cùng mẫu; E3--E2 được ghi rõ là hậu nghiệm.
 
 \subsection{Đánh giá hỗ trợ}
 
-Benchmark phản ánh forward inference trên cùng phần cứng cho tất cả cấu hình và không bao gồm I/O, tiền xử lý hoặc huấn luyện. Không gian đặc trưng được so sánh bằng Silhouette như một chỉ số hỗ trợ~\cite{rousseeuw1987silhouettes}. Ablation nhóm ngữ cảnh giữ nguyên mô hình chuỗi và thay nhóm bị loại bằng giá trị trung bình ước lượng từ dữ liệu huấn luyện; tiêu chí chính là Macro-F1 tại vùng chuyển pha.
+Phép đo thời gian suy luận được thực hiện trên cùng phần cứng cho tất cả cấu hình và không bao gồm đọc/ghi dữ liệu, tiền xử lý hoặc huấn luyện. Không gian đặc trưng được so sánh bằng Silhouette như một chỉ số hỗ trợ~\cite{rousseeuw1987silhouettes}. Phân tích loại bỏ nhóm ngữ cảnh giữ nguyên mô hình chuỗi và thay nhóm bị loại bằng giá trị trung bình ước lượng từ dữ liệu huấn luyện; tiêu chí chính là Macro-F1 tại vùng chuyển pha.
 
 \section{Kết quả}
 
@@ -193,7 +194,7 @@ E6 & 0,769124 & 0,822969 & 0,757320 & 0,512397 \\
 \end{tabular}
 \end{table}
 
-E3 có giá trị mô tả cao nhất ở cả bốn chỉ số (Bảng~\ref{tab:sleepedf-performance}). Tuy nhiên, thứ hạng gộp không tự tạo bằng chứng thống kê. Bảng~\ref{tab:paired-sleepedf} cho thấy E1--E0 và E2--E1 có hiệu ứng nhỏ, khoảng tin cậy chứa 0 và không có ý nghĩa sau Holm. E3--E2 có khoảng tin cậy gộp vừa dương nhưng chỉ 37/78 người cải thiện; Wilcoxon không có ý nghĩa. E3--E6 là đối chiếu nhất quán duy nhất trong bốn giả thuyết định trước.
+E3 có giá trị mô tả cao nhất ở cả bốn chỉ số (Bảng~\ref{tab:sleepedf-performance}). Tuy nhiên, thứ hạng gộp không tự tạo bằng chứng thống kê. Bảng~\ref{tab:paired-sleepedf} cho thấy E1--E0 và E2--E1 có hiệu ứng nhỏ, khoảng tin cậy chứa 0 và không có ý nghĩa sau Holm. E3--E2 có khoảng tin cậy của chênh lệch gộp vừa dương nhưng chỉ 37/78 người cải thiện; Wilcoxon ở cấp đối tượng không có ý nghĩa. Sự khác biệt này phù hợp với hai đại lượng ước lượng đã xác định trong phương pháp. E3--E6 là đối chiếu nhất quán duy nhất trong bốn giả thuyết định trước.
 
 \begin{table}[t]
 \centering
@@ -202,7 +203,7 @@ E3 có giá trị mô tả cao nhất ở cả bốn chỉ số (Bảng~\ref{tab
 \small
 \begin{tabular}{lrrrr}
 \toprule
-\textbf{So sánh} & $\boldsymbol{\Delta}$\textbf{\mf} & \textbf{\ci} & $\boldsymbol{p_{Holm}}$ & \textbf{Thắng/Hòa/Thua} \\
+\textbf{So sánh} & $\boldsymbol{\Delta}$\textbf{\mf\ gộp} & \textbf{\ci} & $\boldsymbol{p_{Holm}}$ & \textbf{Thắng/Hòa/Thua} \\
 \midrule
 E1--E0 & 0,004811 & $[-0,000915;0,010193]$ & 0,102193 & 51/0/27 \\
 E2--E1 & 0,003251 & $[-0,002370;0,008808]$ & 0,103554 & 44/0/34 \\
@@ -223,7 +224,7 @@ E3--E6 & \textbf{0,021319} & $\boldsymbol{[0,012179;0,030698]}$ & \textbf{0,0011
 
 \subsection{Phân tích lỗi theo lớp trên Sleep-EDF}
 
-Phân tích lớp sử dụng dự đoán ngoài fold gộp của seed 42. Bảng~\ref{tab:sleepedf-class-errors} báo cáo precision, recall, F1 của E3 và E6 cùng chênh lệch F1. Đây là thống kê mô tả trên artifact test, không phải một họ kiểm định mới.
+Phân tích lớp sử dụng dự đoán ngoài fold gộp của seed 42. Bảng~\ref{tab:sleepedf-class-errors} báo cáo precision, recall, F1 của E3 và E6 cùng chênh lệch F1. Đây là thống kê mô tả trên cùng tập dự đoán kiểm tra, không phải một họ kiểm định mới.
 
 \begin{table}[t]
 \centering
@@ -310,7 +311,7 @@ Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối 
 
 \begin{table}[t]
 \centering
-\caption{Benchmark forward trên Tesla V100.}
+\caption{Thời gian suy luận trên Tesla V100.}
 \label{tab:complexity}
 \small
 \begin{tabular}{lrrrrr}
@@ -328,11 +329,11 @@ E6 & 1.085.578 & 3,5756 & 27.967 & 75,54 & 3,76$\times$ \\
 
 ResNet-1D--TCN có cấu trúc vận hành gọn hơn và nhanh hơn E0 khoảng 3,76 lần trong phép đo suy luận đã chuẩn hóa. Đổi lại, số tham số tăng 4,37 lần và bộ nhớ đỉnh tăng 28,4\%. Vì vậy, ưu điểm của cấu hình này nằm ở hiệu năng và tốc độ xử lý, không phải ở việc giảm quy mô mô hình.
 
-Benchmark forward chỉ phản ánh thời gian suy luận sau khi mô hình đã được huấn luyện. Để ghi nhận chi phí tạo mô hình, Bảng~\ref{tab:training-runtime} tổng hợp wall-clock của chiến dịch seed 123 trên cùng GPU Tesla V100. Các lượt được chạy tuần tự trên 10 fold; thời gian bao gồm huấn luyện, validation và hoàn thiện artifact, trong khi test chưa được mở.
+Phép đo trên chỉ phản ánh thời gian suy luận sau khi mô hình đã được huấn luyện. Để ghi nhận chi phí tạo mô hình, Bảng~\ref{tab:training-runtime} tổng hợp thời gian thực đo của chiến dịch seed 123 trên cùng GPU Tesla V100. Các lượt được chạy tuần tự trên 10 fold; thời gian bao gồm huấn luyện, xác thực và hoàn thiện đầu ra, trong khi tập kiểm tra chưa được mở.
 
 \begin{table}[t]
 \centering
-\caption{Thời gian huấn luyện và validation của chiến dịch seed 123.}
+\caption{Thời gian huấn luyện và xác thực của chiến dịch seed 123.}
 \label{tab:training-runtime}
 \small
 \begin{tabular}{lrr}
@@ -351,7 +352,7 @@ E6 --- ResNet-1D + TCN, z-score & 2 giờ 24 phút 44 giây & 14 phút 28 giây 
 \end{tabular}
 \end{table}
 
-Trong chiến dịch này, E2 có thời gian chạy huấn luyện và validation tổng cộng thấp hơn E0 khoảng 12,2 lần; E3 thấp hơn khoảng 10,2 lần. Đây là lợi ích vận hành được quan sát trong giao thức cụ thể, chịu ảnh hưởng của số epoch thực tế, dừng sớm, điều phối lượt chạy và phần cứng; không nên diễn giải thành ưu thế tốc độ phổ quát.
+Trong chiến dịch này, tổng thời gian huấn luyện và xác thực của E2 thấp hơn E0 khoảng 12,2 lần; E3 thấp hơn khoảng 10,2 lần. Đây là lợi ích vận hành được quan sát trong giao thức cụ thể, chịu ảnh hưởng của số epoch thực tế, dừng sớm, điều phối lượt chạy và phần cứng; không nên diễn giải thành ưu thế tốc độ phổ quát.
 
 \begin{figure}[t]
 \centering
@@ -435,7 +436,7 @@ REM & 0,605237 & 0,893923 & 0,721785 & 0,488616 & 0,944976 & 0,644158 & +0,07762
 \end{tabular}}
 \end{table}
 
-Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N3$\rightarrow$N2 (16.674), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). Đây là các chẩn đoán mô tả trên cohort SHHS1 đã khóa; chúng không được dùng để suy ra cơ chế nhân quả của tiền xử lý.
+Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N3$\rightarrow$N2 (16.674), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). Đây là các chẩn đoán mô tả trên mẫu SHHS1 đã khóa; chúng không được dùng để suy ra cơ chế nhân quả của tiền xử lý.
 
 \begin{table}[t]
 \centering
@@ -459,9 +460,9 @@ REM & 655 & 784 & 1.311 & 1 & 23.183 \\
 
 E1--E0 trên SHHS đạt $+0,00651$ \mf\ theo đối tượng, \ci\ $[0,00192;0,01087]$, $p_{Holm}=0,00325$ và thắng/hòa/thua 108/0/72. Đây là bằng chứng thứ cấp ủng hộ TCN thay BiLSTM trong bộ trích đặc trưng đối chứng, nhưng hiệu ứng nhỏ. E2--E1 đạt $-0,01280$, \ci\ $[-0,02209;-0,00350]$, $p_{Holm}=0,01005$ và 80/0/100; giả thuyết ResNet-1D cao hơn bộ trích đặc trưng đối chứng dưới cùng TCN không được ủng hộ trên tín hiệu SHHS chưa qua xử lý dải.
 
-Đối chiếu hậu nghiệm E3--E2, cùng họ ResNet-1D--TCN nhưng khác chế độ tiền xử lý, cho $+0,04750$ \mf\ theo đối tượng, \ci\ $[0,03724;0,05792]$, Wilcoxon $p=2,35\times10^{-17}$ và thắng/hòa/thua 147/0/33. F1 N1 tăng 0,06183 và \mf\ vùng chuyển pha tăng 0,04700. Kết quả hỗ trợ mạnh toàn bộ chế độ tiền xử lý E3 trong cohort đã mở, nhưng chưa tách được tác động riêng của từng thao tác.
+Đối chiếu hậu nghiệm E3--E2, cùng họ ResNet-1D--TCN nhưng khác chế độ tiền xử lý, cho $+0,04750$ \mf\ theo đối tượng, \ci\ $[0,03724;0,05792]$, Wilcoxon $p=2,35\times10^{-17}$ và thắng/hòa/thua 147/0/33. F1 N1 tăng 0,06183 và \mf\ vùng chuyển pha tăng 0,04700. Kết quả hỗ trợ mạnh toàn bộ chế độ tiền xử lý E3 trong mẫu đã mở, nhưng chưa tách được tác động riêng của từng thao tác.
 
-Một phân tích mở rộng đánh giá E4, chỉ sử dụng lọc dải, trên cùng cohort SHHS1 và cùng giao thức. E4 đạt \mf\ theo đối tượng 0,5732, \mf\ gộp 0,6147, accuracy 0,7064, $\kappa=0,5869$ và F1 N1 0,3492. So với E2, chênh lệch \mf\ theo đối tượng là $+0,03232$, CI 95\% $[0,02365;0,04104]$, Wilcoxon--Holm $p=7,40\times10^{-13}$ và thắng/hòa/thua 135/1/44. E4 cũng cao hơn E3 $0,00982$ theo hướng E4, CI $[0,00730;0,01250]$ và $p_{Holm}=1,89\times10^{-10}$. Đây là so sánh bắt cặp mở rộng trên cùng cohort và giao thức; kết quả không phải kiểm định tương đương hoặc không thua kém và không tách được tác động riêng của lọc dải.
+Một phân tích mở rộng sử dụng checkpoint seed 123 của cả năm cấu hình để đánh giá E4, chỉ sử dụng lọc dải, trên cùng mẫu SHHS1. E4 đạt \mf\ theo đối tượng 0,5732, \mf\ gộp 0,6147, accuracy 0,7064, $\kappa=0,5869$ và F1 N1 0,3492. So với E2 cùng seed, chênh lệch \mf\ theo đối tượng là $+0,03232$, CI 95\% $[0,02365;0,04104]$, Wilcoxon--Holm $p=7,40\times10^{-13}$ và thắng/hòa/thua 135/1/44. E4 cũng cao hơn E3 cùng seed 0,00982, CI $[0,00730;0,01250]$ và $p_{Holm}=1,89\times10^{-10}$. Đây là so sánh bắt cặp mở rộng trên mẫu đã được mở; kết quả không phải kiểm định tương đương hoặc không thua kém và không tách được tác động riêng của lọc dải.
 
 \section{Thảo luận}
 
@@ -475,41 +476,41 @@ Toàn bộ quy trình E3 có hiệu năng cao hơn đối chứng E0 trong cả 
 
 Trong miền Sleep-EDF, E1--E0 và E2--E1 cho mức cải thiện mô tả dương nhưng chưa đạt ngưỡng sau Holm. Trên SHHS, E1--E0 cho hiệu ứng dương nhỏ, còn E2--E1 cho hiệu ứng âm. Mẫu hình này cho thấy lợi ích của kiến trúc phụ thuộc miền và không ủng hộ tuyên bố ResNet-1D luôn tốt hơn bộ trích đặc trưng đối chứng. Giá trị thực dụng rõ nhất của ResNet-1D--TCN là kết hợp được hiệu năng cạnh tranh với cấu trúc vận hành gọn và tốc độ xử lý cao hơn, đổi lại nhiều tham số và bộ nhớ hơn.
 
-Silhouette thấp hơn không đồng nghĩa embedding ResNet không hữu ích: chỉ số này ưu tiên cụm Euclid compact ở từng epoch, trong khi TCN có thể khai thác thông tin phân bố hoặc liên tục theo thời gian. Tương tự, ablation C/P/N không phát hiện hiệu ứng tăng thêm có ý nghĩa nhưng không thiết lập tương đương. Việc rút lại diễn giải ``P/N chỉ chứa 12\% thông tin'' tránh gán ý nghĩa thông tin học cho một composite score không có đơn vị thống nhất.
+Silhouette thấp hơn không đồng nghĩa biểu diễn ResNet không hữu ích: chỉ số này ưu tiên các cụm gọn theo khoảng cách Euclid ở từng epoch, trong khi TCN có thể khai thác thông tin phân bố hoặc tính liên tục theo thời gian. Tương tự, phân tích loại bỏ C/P/N không phát hiện hiệu ứng tăng thêm có ý nghĩa nhưng không thiết lập tương đương. Việc rút lại diễn giải ``P/N chỉ chứa 12\% thông tin'' tránh gán ý nghĩa thông tin học cho một điểm tổng hợp không có đơn vị thống nhất.
 
 \subsection{Ý nghĩa của tiền xử lý và chuyển miền}
 
-E3--E2 trên SHHS lớn hơn rõ rệt so với trên Sleep-EDF. Phân tích E4 cho thấy chế độ chỉ lọc dải cũng cải thiện so với tín hiệu thô trong cùng giao thức, còn E4 cao hơn E3 trong phân tích mở rộng. Mẫu hình này cho thấy lựa chọn tiền xử lý ảnh hưởng mạnh đến chuyển miền, nhưng không xác định thao tác nào là nguyên nhân duy nhất vì E3 thay đổi đồng thời nhiều bước xử lý. Các kết quả không cho thấy thêm lợi ích của thao tác cắt biên độ trong Sleep-EDF hiện tại.
+E3--E2 trên SHHS lớn hơn rõ rệt so với trên Sleep-EDF. Phân tích E4 cho thấy chế độ chỉ lọc dải cũng cải thiện so với tín hiệu thô trong cùng giao thức, còn E4 cao hơn E3 trong phân tích mở rộng. Mẫu hình này cho thấy lựa chọn tiền xử lý ảnh hưởng mạnh đến chuyển miền, nhưng không xác định thao tác nào là nguyên nhân duy nhất vì E3 thay đổi đồng thời nhiều bước xử lý. Trong bộ dữ liệu dẫn xuất Sleep-EDF hiện tại, thao tác giới hạn biên độ không làm thay đổi dữ liệu so với điều kiện chỉ lọc dải, nên không tạo thành một đối chiếu độc lập.
 
 \subsection{Hạn chế}
 
-Các kết quả nên được diễn giải trong phạm vi dữ liệu và giao thức đã đánh giá. SHHS1 đại diện cho một cohort ngoài miền cụ thể, không phải toàn bộ quần thể. Lần lặp thứ hai củng cố hướng hiệu ứng nhưng chưa mô tả đầy đủ biến thiên do khởi tạo. Một số phân tích thành phần được thực hiện sau khi mở cohort và vì vậy có vai trò bổ trợ. EEG đơn kênh vẫn hạn chế khả năng phân biệt một số giai đoạn, đặc biệt N1 và REM; các bước xử lý dùng nhãn thật chỉ phù hợp với đánh giá ngoại tuyến. Những giới hạn này không làm thay đổi kết quả chính, nhưng cần được tính đến khi mở rộng sang dữ liệu lâm sàng hoặc thiết bị khác.
+Các kết quả nên được diễn giải trong phạm vi dữ liệu và giao thức đã đánh giá. SHHS1 đại diện cho một mẫu ngoài miền cụ thể, không phải toàn bộ quần thể. Lần lặp thứ hai củng cố hướng hiệu ứng nhưng chưa mô tả đầy đủ biến thiên do khởi tạo. Một số phân tích thành phần được thực hiện sau khi mở mẫu và vì vậy có vai trò bổ trợ. EEG đơn kênh vẫn hạn chế khả năng phân biệt một số giai đoạn, đặc biệt N1 và REM; các bước xử lý dùng nhãn thật chỉ phù hợp với đánh giá ngoại tuyến. Những giới hạn này không làm thay đổi kết quả chính, nhưng cần được tính đến khi mở rộng sang dữ liệu lâm sàng hoặc thiết bị khác.
 
 \section{Kết luận}
 
-Thiết kế thống nhất theo đối tượng và tập test cho phép đánh giá công bằng sáu cấu hình trên Sleep-EDF. Ở chiến dịch chính, E3 đạt \mf\ mô tả 0,7904 và tốt hơn E6 với CI hoàn toàn dương cùng ý nghĩa sau Holm. Lần lặp sau giao thức giữ hiệu ứng E3--E6 theo hướng dương, củng cố bằng chứng về lợi ích của chế độ chuẩn hóa được lựa chọn. TCN và ResNet-1D riêng lẻ cho cải thiện mô tả hoặc hiệu ứng phụ thuộc miền, nhưng chưa tách được ưu thế ổn định sau hiệu chỉnh nhiều kiểm định. ResNet-1D--TCN đơn giản hóa vận hành và tăng tốc xử lý, với đánh đổi là nhiều tham số và bộ nhớ hơn. Trong chiến dịch seed 123, E2 hoàn tất thời gian huấn luyện và validation của 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; đây là lợi ích wall-clock của giao thức cụ thể, không phải tuyên bố tốc độ độc lập phần cứng.
+Thiết kế thống nhất theo đối tượng và tập kiểm tra cho phép đánh giá công bằng sáu cấu hình trên Sleep-EDF. Ở chiến dịch chính, E3 đạt \mf\ mô tả 0,7904 và tốt hơn E6 với CI hoàn toàn dương cùng ý nghĩa sau Holm. Lần lặp sau giao thức giữ hiệu ứng E3--E6 theo hướng dương, củng cố bằng chứng về lợi ích của chế độ chuẩn hóa được lựa chọn. TCN và ResNet-1D riêng lẻ cho cải thiện mô tả hoặc hiệu ứng phụ thuộc miền, nhưng chưa tách được ưu thế ổn định sau hiệu chỉnh nhiều kiểm định. ResNet-1D--TCN đơn giản hóa vận hành và tăng tốc xử lý, với đánh đổi là nhiều tham số và bộ nhớ hơn. Trong chiến dịch seed 123, E2 hoàn tất huấn luyện và xác thực 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; đây là lợi ích về thời gian thực đo trong giao thức cụ thể, không phải tuyên bố tốc độ độc lập phần cứng.
 
-Trên SHHS1, E3 tốt hơn E0 và E6 theo tiêu chí bắt cặp đã khóa. Phân tích mở rộng cho thấy E4, chỉ sử dụng lọc dải, đạt kết quả cao hơn E2 và E3 trong giao thức tương ứng. Đây là bằng chứng rằng tiền xử lý ảnh hưởng đáng kể đến chuyển miền, không phải bằng chứng về ưu thế phổ quát hay quan hệ nhân quả của một thao tác. Phân tích thành phần cho thấy lợi ích của kiến trúc phụ thuộc vào miền và chế độ xử lý tín hiệu. Vì vậy, đóng góp chính của nghiên cứu là một quy trình có bằng chứng ngoài miền, phép đánh đổi vận hành được định lượng và giao thức thực nghiệm có khả năng truy nguyên, đồng thời phân biệt rõ kết quả của toàn hệ thống với đóng góp riêng của từng thành phần.
+Trên SHHS1, E3 tốt hơn E0 và E6 theo tiêu chí bắt cặp đã khóa. Phân tích mở rộng với seed 123 cho thấy E4, chỉ sử dụng lọc dải, đạt kết quả cao hơn E2 và E3 cùng seed trong giao thức tương ứng. Đây là bằng chứng rằng tiền xử lý ảnh hưởng đáng kể đến chuyển miền, không phải bằng chứng về ưu thế phổ quát hay quan hệ nhân quả của một thao tác. Phân tích thành phần cho thấy lợi ích của kiến trúc phụ thuộc vào miền và chế độ xử lý tín hiệu. Vì vậy, đóng góp chính của nghiên cứu là một quy trình có bằng chứng ngoài miền, phép đánh đổi vận hành được định lượng và giao thức thực nghiệm có khả năng truy nguyên, đồng thời phân biệt rõ kết quả của toàn hệ thống với đóng góp riêng của từng thành phần.
 
-\section*{Khả năng tái lập và tính sẵn có dữ liệu}
+\subsection*{Khả năng tái lập và tính sẵn có dữ liệu}
 
 Mã nguồn, giao thức thực nghiệm, phép chia dữ liệu, kết quả trung gian và bảng tổng hợp được lưu trong kho dự án. Sleep-EDF Expanded có sẵn công khai trên PhysioNet. SHHS được truy cập qua NSRR theo thỏa thuận sử dụng; dữ liệu dẫn xuất và mã định danh người tham gia không được đưa lên kho công khai. Các kết quả chính được đối chiếu với hồ sơ bằng chứng và các tệp kiểm kê đi kèm, cho phép truy nguyên từ dữ liệu đến phân tích mà không đưa chi tiết triển khai vào phần trình bày khoa học.
 
-\section*{Đạo đức nghiên cứu}
+\subsection*{Đạo đức nghiên cứu}
 
 Nghiên cứu chỉ phân tích lại dữ liệu đã được khử định danh từ các kho nghiên cứu có cơ chế quản trị riêng và không tuyển người tham gia mới. Việc sử dụng SHHS tuân theo điều kiện truy cập của NSRR. Mọi diễn giải trong bài chỉ áp dụng cho các mẫu và giao thức đã nêu, không được xem là xác nhận lâm sàng.
 
-\section*{Lời cảm ơn}
+\subsection*{Lời cảm ơn}
 
 Nghiên cứu sử dụng Sleep-EDF Expanded do PhysioNet phân phối và dữ liệu từ Sleep Heart Health Study qua National Sleep Research Resource. SHHS được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and Blood Institute: U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360, U01HL53938, U01HL53940, U01HL53941 và U01HL63463.
 
-\section*{Tuyên bố xung đột lợi ích}
+\subsection*{Tuyên bố xung đột lợi ích}
 
 Các tác giả tuyên bố không có xung đột lợi ích liên quan đến nghiên cứu này.
 
 \renewcommand{\refname}{Tài liệu tham khảo}
 \begingroup
-\footnotesize
+\scriptsize
 \bibliographystyle{ieeetr}
 \bibliography{references}
 \endgroup

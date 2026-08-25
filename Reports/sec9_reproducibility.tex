@@ -37,9 +37,9 @@ Các mô hình Sleep-EDF được khóa trước khi suy luận ngoài miền. M
 
 \subsection{Tình trạng dữ liệu dẫn xuất}
 
-Kiểm toán nội dung xác nhận các biến thể dữ liệu có cùng nhãn, vị trí thời gian, hình dạng và quan hệ biến đổi khoa học. Một phần mã băm toàn tệp của kho dữ liệu dẫn xuất hiện tại không trùng với manifest lịch sử, do đó báo cáo không tuyên bố đồng nhất byte theo byte với kho đã sử dụng trong các phiên huấn luyện trước. Đây là vấn đề về provenance của snapshot dữ liệu, không làm thay đổi các phép đối chiếu dựa trên artifact đã khóa trong gói kết quả.
+Snapshot dữ liệu dẫn xuất hiện tại gồm 765 tệp thuộc năm biến thể tiền xử lý. Kiểm toán độc lập xác nhận 765/765 tệp khớp SHA-256 trong manifest nội dung, có metadata ZIP chuẩn hóa, đọc được và giữ nhất quán nhãn, vị trí thời gian, hình dạng cùng quan hệ biến đổi khoa học. Các mã băm container lịch sử được bảo toàn trong trường truy nguyên riêng để không làm mất dấu vết của những phiên trước.
 
-Trước khi phát hành dữ liệu dẫn xuất, cần tái sinh từ dữ liệu thô trong môi trường được khóa hoặc lập manifest mới cho snapshot hiện tại. Gói mã nguồn đi kèm các tài liệu giao thức và công cụ kiểm định để thực hiện bước này một cách độc lập.
+Khóa byte của snapshot hiện tại bảo đảm tính toàn vẹn khi lưu trữ và trao đổi, nhưng không thay thế phép tái sinh độc lập từ EDF gốc trong môi trường phần mềm đã khóa. Gói mã nguồn đi kèm giao thức và công cụ kiểm định để thực hiện bước tái sinh đó.
 
 \subsection{Biên diễn giải khoa học}
 

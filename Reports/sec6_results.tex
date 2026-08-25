@@ -107,7 +107,7 @@ REM & 25.835 & 0,827439 & 0,841339 & 0,834331 & 0,822702 & 0,819741 & 0,821219 &
 \end{tabular}}
 \end{table}
 
-E3 giữ F1 cao nhất ở W và N2, trong khi N1 vẫn là lớp khó nhất. Chênh lệch F1 lớn nhất giữa E3 và E6 nằm ở N3 (+0,062782); các lớp còn lại tăng từ +0,002551 đến +0,015199. Ma trận nhầm lẫn của E3 và E6 được trình bày theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán.
+E3 có F1 cao hơn E6 ở cả năm lớp, trong khi N1 vẫn là lớp khó nhất của cả hai cấu hình. Chênh lệch lớn nhất nằm ở N3 (+0,062782); các lớp còn lại tăng từ +0,002551 đến +0,015199. Ma trận nhầm lẫn của E3 và E6 được trình bày theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán.
 
 \begin{table}[H]
 \centering
@@ -145,7 +145,7 @@ E3 có giá trị mô tả cao nhất trong chiến dịch chính. Bảng~\ref{t
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrl}
 \toprule
-\textbf{So sánh} & \textbf{$\Delta$ \mf} & \textbf{CI 95\% bootstrap} & \textbf{$p$ Wilcoxon} & \textbf{$p$ Holm} & \textbf{Thắng/Hòa/Thua} \\
+\textbf{So sánh} & \textbf{$\Delta$ \mf\ gộp} & \textbf{CI 95\% bootstrap} & \textbf{$p$ Wilcoxon} & \textbf{$p$ Holm} & \textbf{Thắng/Hòa/Thua} \\
 \midrule
 E1--E0 & 0,004811 & $[-0,000915;\ 0,010193]$ & 0,034064 & 0,102193 & 51/0/27 \\
 E2--E1 & 0,003251 & $[-0,002370;\ 0,008808]$ & 0,051777 & 0,103554 & 44/0/34 \\
@@ -162,7 +162,7 @@ E3--E6 & \textbf{0,021319} & $\mathbf{[0,012179;\ 0,030698]}$ & 0,000296 & \text
 \label{fig:primary_effects}
 \end{figure}
 
-E1--E0 và E2--E1 cho mức tăng mô tả nhỏ nhưng chưa đủ bằng chứng về ưu thế riêng sau hiệu chỉnh Holm. E3--E2 có chênh lệch gộp dương nhưng hiệu ứng không đồng đều theo đối tượng. E3--E6 là đối chiếu nhất quán nhất trong chiến dịch chính, với khoảng tin cậy hoàn toàn dương và $p$ Holm bằng 0,0012.
+E1--E0 và E2--E1 cho mức tăng mô tả nhỏ nhưng chưa đủ bằng chứng về ưu thế riêng sau hiệu chỉnh Holm. E3--E2 có chênh lệch gộp dương nhưng hiệu ứng không đồng đều theo đối tượng; sự khác nhau giữa CI bootstrap và Wilcoxon phản ánh hai đại lượng ước lượng đã nêu trong phương pháp, không phải hai kết quả của cùng một phép kiểm định. E3--E6 là đối chiếu nhất quán nhất trong chiến dịch chính, với khoảng tin cậy hoàn toàn dương và $p$ Holm bằng 0,0012.
 
 \subsubsection{Phân tích độ nhạy sau giao thức với seed 123}
 
@@ -439,7 +439,7 @@ E2--REM & 439 & 262 & 726 & 0 & 24.507 \\
 \end{tabular}}
 \end{table}
 
-Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số N2 bị gán thành REM và số N3 bị gán thành N2 đều giảm, phù hợp với mức tăng F1 mô tả ở các lớp liên quan; đây vẫn là diễn giải mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả.
+Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi. Đây là mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả.
 
 \subsection{Phân tích bổ sung thành phần E1/E2 trên SHHS1}
 
