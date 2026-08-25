@@ -154,6 +154,6 @@ nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang to�
 ## Trạng thái dừng
 
 Giao thức v2 được đóng tại Gate 8; zero-shot v1, phần bổ sung E1/E2, đối chiếu E3−E2 và độ nhạy
-seed 42/123 cũng đã đóng. Không mở lại test hoặc thay đổi giả thuyết của các chiến dịch này. Nếu tiếp tục bằng adaptation/fine-tuning,
-phải tạo giao thức mới, chỉ dùng tập adaptation đã khóa và giữ nguyên kết luận zero-shot; xem
-`NEXT_STEPS.md`.
+seed 42/123 cũng đã đóng. Không mở lại test hoặc thay đổi giả thuyết của các chiến dịch này. Mọi
+adaptation, fine-tuning, seed bổ sung hoặc cohort mới phải có giao thức đăng ký trước riêng và giữ
+nguyên kết luận của các chiến dịch đã khóa.

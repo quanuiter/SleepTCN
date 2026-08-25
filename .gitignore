@@ -36,8 +36,6 @@ runs/v2/gate8/*
 !runs/v2/gate8/test_campaign_seed42.json
 !runs/v2/publication/
 runs/v2/publication/*
-!runs/v2/publication/gate7/
-!runs/v2/publication/gate7/**
 !runs/v2/publication/gate8/
 !runs/v2/publication/gate8/**
 legacy/

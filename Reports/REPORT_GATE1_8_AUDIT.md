@@ -1,6 +1,6 @@
 # Biên bản kiểm định báo cáo Gate 1--8 và SHHS1 zero-shot
 
-Ngày cập nhật: 2026-08-22
+Ngày cập nhật: 2026-08-25
 
 Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch SHHS1 zero-shot bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4; nhánh `run-in-docker`.
 
@@ -8,11 +8,11 @@ Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau gia
 
 - Gate 1: manifest tiền xử lý, thống kê nhãn, manifest split và kiểm tra chống rò rỉ đối tượng.
 - Gate 2--4: manifest từng lượt chạy, checkpoint, dự đoán validation/test, báo cáo kiểm định SHA-256.
-- Gate 5: `runs/v2/analysis/gate5_paired_results_seed42.json` và `notebooks/docs/GATE5_STATISTICAL_RESULTS.md`.
-- Độ nhạy seed 123: `runs/v2/analysis/gate5_paired_results_seed123.json`, `runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json` và `notebooks/docs/MULTISEED_SENSITIVITY_RESULTS.md`.
+- Gate 5: `runs/v2/analysis/gate5_paired_results_seed42.json` và `docs/GATE5_STATISTICAL_RESULTS.md`.
+- Độ nhạy seed 123: `runs/v2/analysis/gate5_paired_results_seed123.json`, `runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json` và `docs/MULTISEED_SENSITIVITY_RESULTS.md`.
 - Đối chiếu bổ sung E3--E0: `Reports/POSTHOC_E3_E0_AUDIT.json`; được khóa nhãn `posthoc_audit_not_prespecified`, không nhập ngược vào bốn giả thuyết chính.
 - Gate 6: `runs/v2/analysis/gate6_validation_report.json`, `runs/v2/analysis/gate6_latency_fold00_seed42.json` và `runs/v2/analysis/gate6_feature_space/feature_space_report.json`.
-- Gate 7: gói công bố, bảng, hình và ma trận truy nguyên đã được kiểm tra bằng máy.
+- Gate 7: bước tạo bảng, hình và ma trận truy nguyên đã hoàn tất; đầu ra cuối được hợp nhất trong gói Gate 8.
 - Gate 8: `runs/v2/gate8/analysis_seed42.json`, `runs/v2/publication/gate8/publication_manifest.json`, `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` và `runs/v2/publication/gate8/gate8_validation_report.json`.
 - SHHS1: test gate SHA-256 `51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646` và phân tích bắt cặp SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`.
 - Thành phần SHHS1: test gate SHA-256 `fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c` và phân tích byte-giống-hệt SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
@@ -31,8 +31,9 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
 - Báo cáo phân biệt rõ kết quả mô tả, suy luận thống kê của chiến dịch chính và giới hạn của hai seed cố định, trong đó seed 123 là phân tích sau giao thức.
-- Toàn bộ 107 test `pytest` đạt, bao gồm hai test mới cho phân tích độ nhạy seed. Chỉ có một cảnh báo thu thập lớp dữ liệu `TestTarget`, không phải lỗi kiểm thử.
-- Đợt dọn tài liệu cuối đã xóa bảy Markdown lịch sử không còn được tham chiếu và chứa trạng thái cũ; `STATUS_V2.md` cùng `NEXT_STEPS.md` là nguồn duy nhất cho trạng thái hiện hành.
+- Toàn bộ 142 test `pytest` đạt sau refactor; các cảnh báo còn lại không phải lỗi kiểm thử.
+- Tài liệu hiện hành đã được gom vào `docs/`; gói publication Gate 7, runbook archive và các ghi chú
+  kế hoạch/baseline lỗi thời đã được bỏ. `docs/STATUS_V2.md` là nguồn duy nhất cho trạng thái hiện hành.
 
 ## Ranh giới diễn giải khoa học
 

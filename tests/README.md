@@ -10,8 +10,8 @@ $env:PYTHONPATH = "$PWD\src"
 python -m pytest -q
 ```
 
-Các validator gói công bố Gate 7 và Gate 8 chỉ dùng thư viện chuẩn và có thể kiểm tra riêng bằng:
+Validator của gói công bố cuối Gate 8 có thể kiểm tra riêng bằng:
 
 ```powershell
-python -m unittest tests.test_gate7_validator tests.test_gate8_validator -v
+python -m unittest tests.test_gate8_validator -v
 ```

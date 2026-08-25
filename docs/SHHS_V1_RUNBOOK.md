@@ -1,7 +1,7 @@
 # SHHS-v1: runbook và biên bản thực thi zero-shot
 
 > **FROZEN PROTOCOL:** Runbook này là quy trình tái lập chiến dịch SHHS đã đóng.
-> Không dùng để mở thêm cohort/adaptation; quyết định nghiên cứu mới nằm trong `NEXT_STEPS.md`.
+> Không dùng tài liệu này để mở thêm cohort hoặc adaptation; nghiên cứu mới phải có protocol riêng.
 
 ## Trạng thái hiện tại
 

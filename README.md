@@ -5,7 +5,7 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 
 > **Trạng thái ngày 2026-08-22:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích
 > thành phần E1/E2, đối chiếu hậu nghiệm E3−E2 và phân tích độ nhạy seed 42/123 đều đã hoàn tất. Không có chiến dịch GPU nào đang
-> chờ chạy. Xem `notebooks/docs/STATUS_V2.md`, `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` và báo cáo
+> chờ chạy. Xem `docs/STATUS_V2.md`, `docs/SHHS_ZERO_SHOT_RESULTS.md` và báo cáo
 > tại `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
 ## Kết quả chính
@@ -45,20 +45,17 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 ## Đọc theo thứ tự
 
 1. `docs/README.md` — cổng tài liệu hiện hành.
-2. `notebooks/docs/STATUS_V2.md` — nguồn duy nhất cho trạng thái cuối.
-3. `notebooks/docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
-4. `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
-5. `notebooks/docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
+2. `docs/STATUS_V2.md` — nguồn duy nhất cho trạng thái cuối.
+3. `docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
+4. `docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
+5. `docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
 6. `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` — báo cáo LaTeX hoàn chỉnh.
 7. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
-8. `notebooks/docs/REPRODUCIBILITY_PACKAGE.md` — lock môi trường, audit hash và quy trình tái sinh NPZ.
-9. `Reports/REPRODUCIBILITY_BASELINE.md` — mốc kiểm tra trước refactor.
-10. `docs/DOCUMENT_MATRIX.md` và `docs/SOURCE_ARCHITECTURE.md` — kế hoạch dọn tài liệu và source.
+8. `docs/REPRODUCIBILITY_PACKAGE.md` — lock môi trường, audit hash và quy trình tái sinh NPZ.
+9. `docs/SOURCE_ARCHITECTURE.md` — ranh giới module và nguyên tắc tổ chức source.
 
-`STATUS_V2.md` là nguồn duy nhất cho trạng thái hiện hành. `NEXT_STEPS.md` chỉ ghi điều kiện và giao
-thức cho một nghiên cứu mới trong tương lai. Các runbook còn lại mô tả cách tái tạo một cổng cụ thể;
-các bước tuần tự bên trong không phải danh sách công việc đang chờ ở thời điểm hiện tại. Ma trận dọn tài
-liệu nằm tại `docs/DOCUMENT_MATRIX.md`.
+`STATUS_V2.md` là nguồn duy nhất cho trạng thái hiện hành. Các runbook mô tả cách tái tạo một cổng
+cụ thể; các bước tuần tự bên trong không phải danh sách công việc đang chờ ở thời điểm hiện tại.
 
 ## Phạm vi và giới hạn
 
@@ -79,8 +76,8 @@ configs/          Cấu hình và giao thức đã khóa
 data/manifests/   Manifest nguồn và báo cáo kiểm định dữ liệu
 data/splits/      Split 10-fold theo đối tượng
 data/processed/   Dữ liệu NPZ lớn, không lưu Git
-notebooks/docs/   Giao thức, runbook, trạng thái và báo cáo
-runs/v2/          Checkpoint, prediction, metrics và gói công bố
+docs/             Giao thức, runbook, trạng thái và báo cáo
+runs/v2/          Phân tích nhẹ và gói công bố cuối; không lưu trọng số
 scripts/          CLI tiền xử lý, huấn luyện, kiểm định và phân tích
 src/sleeptcn/     Mã nguồn dùng chung
 tests/            Kiểm thử tự động
