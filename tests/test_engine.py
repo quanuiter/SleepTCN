@@ -109,7 +109,7 @@ class CheckpointTests(unittest.TestCase):
             )
             self.assertEqual(resumed.progress.completed_epochs, 3)
             self.assertEqual(resumed.progress.validation_events, 3)
-            self.assertEqual(len(resumed.history), 1)
+            self.assertEqual(len(resumed.history), 3)
             self.assertEqual(list(directory.glob("*.tmp")), [])
 
     def test_resumed_weights_equal_uninterrupted_training(self) -> None:

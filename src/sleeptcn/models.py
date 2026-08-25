@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
+from copy import deepcopy
+
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
@@ -109,15 +112,36 @@ class BiLSTMSleepNet(nn.Module):
 
 
 class ResNetBlock1D(nn.Module):
-    def __init__(self, in_channels: int, out_channels: int, stride: int = 1) -> None:
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        stride: int = 1,
+        kernel_size: int = 7,
+    ) -> None:
         super().__init__()
+        if min(in_channels, out_channels, stride, kernel_size) <= 0:
+            raise ValueError("ResNet block dimensions must be positive")
+        if kernel_size % 2 == 0:
+            raise ValueError("ResNet block kernel_size must be odd")
+        padding = kernel_size // 2
         self.conv1 = nn.Conv1d(
-            in_channels, out_channels, 7, stride=stride, padding=3, bias=False
+            in_channels,
+            out_channels,
+            kernel_size,
+            stride=stride,
+            padding=padding,
+            bias=False,
         )
         self.bn1 = nn.BatchNorm1d(out_channels)
         self.relu = nn.ReLU(inplace=True)
         self.conv2 = nn.Conv1d(
-            out_channels, out_channels, 7, stride=1, padding=3, bias=False
+            out_channels,
+            out_channels,
+            kernel_size,
+            stride=1,
+            padding=padding,
+            bias=False,
         )
         self.bn2 = nn.BatchNorm1d(out_channels)
         self.shortcut: nn.Module
@@ -137,26 +161,170 @@ class ResNetBlock1D(nn.Module):
 
 
 class EEGResNet1D(nn.Module):
-    def __init__(self, feature_dim: int = 128, n_classes: int = 5) -> None:
+    """Configurable one-dimensional ResNet extractor/classifier.
+
+    The default configuration is byte-for-byte equivalent in architecture to
+    the v2 model.  Explicit configuration is required for tuning so that the
+    resolved architecture cannot silently differ from the experiment JSON.
+    """
+
+    DEFAULT_CONFIG: dict[str, object] = {
+        "input_channels": 1,
+        "stem": {
+            "channels": 32,
+            "kernel_size": 50,
+            "stride": 5,
+            "padding": 25,
+            "max_pool_kernel": 3,
+            "max_pool_stride": 2,
+            "max_pool_padding": 1,
+        },
+        "residual_blocks": [
+            {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+            {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+            {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7},
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.5,
+    }
+
+    def __init__(
+        self,
+        feature_dim: int = 128,
+        n_classes: int = 5,
+        *,
+        config: Mapping[str, object] | None = None,
+    ) -> None:
         super().__init__()
+        if config is None:
+            resolved = deepcopy(self.DEFAULT_CONFIG)
+            resolved["feature_dim"] = feature_dim
+        else:
+            resolved = deepcopy(dict(config))
+        self.resolved_config = self._validate_config(resolved)
+        input_channels = int(self.resolved_config["input_channels"])
+        stem = self.resolved_config["stem"]
+        assert isinstance(stem, Mapping)
+        stem_channels = int(stem["channels"])
         self.stem = nn.Sequential(
-            nn.Conv1d(1, 32, 50, stride=5, padding=25, bias=False),
-            nn.BatchNorm1d(32),
+            nn.Conv1d(
+                input_channels,
+                stem_channels,
+                int(stem["kernel_size"]),
+                stride=int(stem["stride"]),
+                padding=int(stem["padding"]),
+                bias=False,
+            ),
+            nn.BatchNorm1d(stem_channels),
             nn.ReLU(inplace=True),
-            nn.MaxPool1d(3, stride=2, padding=1),
+            nn.MaxPool1d(
+                int(stem["max_pool_kernel"]),
+                stride=int(stem["max_pool_stride"]),
+                padding=int(stem["max_pool_padding"]),
+            ),
         )
-        self.layer1 = ResNetBlock1D(32, 64, stride=1)
-        self.layer2 = ResNetBlock1D(64, 128, stride=2)
-        self.layer3 = ResNetBlock1D(128, feature_dim, stride=2)
+        blocks = self.resolved_config["residual_blocks"]
+        assert isinstance(blocks, Sequence)
+        for index, block in enumerate(blocks, start=1):
+            setattr(
+                self,
+                f"layer{index}",
+                ResNetBlock1D(
+                    int(block["in_channels"]),
+                    int(block["out_channels"]),
+                    stride=int(block["stride"]),
+                    kernel_size=int(block["kernel_size"]),
+                ),
+            )
         self.pool = nn.AdaptiveAvgPool1d(1)
-        self.dropout = nn.Dropout(0.5)
-        self.classifier = nn.Linear(feature_dim, n_classes)
+        self.dropout = nn.Dropout(float(self.resolved_config["classifier_dropout"]))
+        self.classifier = nn.Linear(int(self.resolved_config["feature_dim"]), n_classes)
+
+    @classmethod
+    def from_config(
+        cls, config: Mapping[str, object], n_classes: int = 5
+    ) -> "EEGResNet1D":
+        return cls(config=config, n_classes=n_classes)
+
+    @property
+    def residual_layers(self) -> tuple[nn.Module, ...]:
+        blocks = self.resolved_config["residual_blocks"]
+        assert isinstance(blocks, Sequence)
+        return tuple(
+            getattr(self, f"layer{index}")
+            for index in range(1, len(blocks) + 1)
+        )
+
+    @classmethod
+    def _validate_config(cls, config: dict[str, object]) -> dict[str, object]:
+        required = {
+            "input_channels",
+            "stem",
+            "residual_blocks",
+            "feature_dim",
+            "classifier_dropout",
+        }
+        missing = sorted(required - set(config))
+        if missing:
+            raise ValueError(f"ResNet config is missing fields: {missing}")
+        if int(config["input_channels"]) != 1:
+            raise ValueError("SleepTCN EEG extractor currently requires one input channel")
+        if int(config["feature_dim"]) <= 0:
+            raise ValueError("feature_dim must be positive")
+        dropout = float(config["classifier_dropout"])
+        if not 0.0 <= dropout < 1.0:
+            raise ValueError("classifier_dropout must be in [0, 1)")
+        stem = config["stem"]
+        if not isinstance(stem, Mapping):
+            raise ValueError("stem must be a mapping")
+        for field in (
+            "channels",
+            "kernel_size",
+            "stride",
+            "max_pool_kernel",
+            "max_pool_stride",
+        ):
+            if field not in stem or int(stem[field]) <= 0:
+                raise ValueError(f"stem.{field} must be positive")
+        for field in ("padding", "max_pool_padding"):
+            if field not in stem or int(stem[field]) < 0:
+                raise ValueError(f"stem.{field} must be nonnegative")
+        blocks = config["residual_blocks"]
+        if not isinstance(blocks, Sequence) or not blocks:
+            raise ValueError("residual_blocks must be a non-empty sequence")
+        previous_channels = int(stem["channels"])
+        normalized_blocks: list[dict[str, int]] = []
+        for index, block in enumerate(blocks):
+            if not isinstance(block, Mapping):
+                raise ValueError(f"residual_blocks[{index}] must be a mapping")
+            values = {
+                field: int(block[field])
+                for field in ("in_channels", "out_channels", "stride", "kernel_size")
+                if field in block
+            }
+            if set(values) != {"in_channels", "out_channels", "stride", "kernel_size"}:
+                raise ValueError(f"residual_blocks[{index}] is incomplete")
+            if values["in_channels"] != previous_channels:
+                raise ValueError(
+                    f"residual_blocks[{index}].in_channels does not match previous output"
+                )
+            if min(values.values()) <= 0 or values["kernel_size"] % 2 == 0:
+                raise ValueError(f"invalid residual_blocks[{index}] dimensions")
+            normalized_blocks.append(values)
+            previous_channels = values["out_channels"]
+        if previous_channels != int(config["feature_dim"]):
+            raise ValueError("last residual block output must equal feature_dim")
+        config["input_channels"] = int(config["input_channels"])
+        config["feature_dim"] = int(config["feature_dim"])
+        config["classifier_dropout"] = dropout
+        config["stem"] = {field: int(stem[field]) for field in stem}
+        config["residual_blocks"] = normalized_blocks
+        return config
 
     def extract_features(self, x: torch.Tensor) -> torch.Tensor:
         output = self.stem(x)
-        output = self.layer1(output)
-        output = self.layer2(output)
-        output = self.layer3(output)
+        for layer in self.residual_layers:
+            output = layer(output)
         return self.pool(output).squeeze(-1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

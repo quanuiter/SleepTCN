@@ -27,6 +27,16 @@ def main() -> None:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--allow-test-evaluation", action="store_true")
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--config",
+        type=Path,
+        help="Resolved experiment config; defaults to configs/experiments_v2.json.",
+    )
+    parser.add_argument(
+        "--artifact-root",
+        type=Path,
+        help="External artifact root for runs and feature caches.",
+    )
     args = parser.parse_args()
     context = build_context(
         args.workspace,
@@ -38,6 +48,8 @@ def main() -> None:
         allow_test_evaluation=args.allow_test_evaluation,
         num_workers=args.num_workers,
         resume=args.resume,
+        config_path=args.config,
+        artifact_root=args.artifact_root,
     )
     result = run_experiment(context)
     print(json.dumps(result, indent=2))

@@ -75,6 +75,9 @@ class RunContext:
     config: dict[str, Any]
     config_sha256: str
     split_sha256: str
+    config_path: Path
+    split_path: Path
+    artifact_root: Path | None
     data_variant: str
     run_root: Path
     cache_root: Path
@@ -100,6 +103,13 @@ def _git_state(workspace: Path) -> tuple[str | None, bool]:
     return commit, dirty
 
 
+def _manifest_path(workspace: Path, path: Path) -> str:
+    try:
+        return path.resolve().relative_to(workspace.resolve()).as_posix()
+    except ValueError:
+        return str(path.resolve())
+
+
 def build_context(
     workspace: Path,
     experiment_id: str,
@@ -111,6 +121,8 @@ def build_context(
     allow_test_evaluation: bool,
     num_workers: int,
     resume: bool = False,
+    config_path: Path | None = None,
+    artifact_root: Path | None = None,
 ) -> RunContext:
     if num_workers < 0:
         raise ValueError("invalid fold, seed or num_workers")
@@ -122,14 +134,19 @@ def build_context(
         outer_fold,
         seed,
         smoke=smoke,
+        artifact_root=artifact_root,
     )
     workspace = layout.workspace
     torch_device = torch.device(device)
     if torch_device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but is unavailable")
-    config_path = workspace / "configs" / "experiments_v2.json"
-    split_path = workspace / "data" / "splits" / "sleepedf_sc_10fold_seed42_v2.json"
+    config_path = (
+        config_path.resolve()
+        if config_path is not None
+        else workspace / "configs" / "experiments_v2.json"
+    )
     config = read_json(config_path)
+    split_path = workspace / config["dataset"]["split_manifest"]
     if config["protocol"].get("validation_schedule") != "end_of_epoch":
         raise ValueError("runner only accepts the frozen end_of_epoch schedule")
     for component in ("cnn15", "bilstm", "resnet1d", "common_tcn"):
@@ -149,6 +166,9 @@ def build_context(
         config=config,
         config_sha256=sha256_file(config_path),
         split_sha256=sha256_file(split_path),
+        config_path=config_path,
+        split_path=split_path,
+        artifact_root=artifact_root.resolve() if artifact_root is not None else None,
         data_variant=experiment["data_variant"],
         run_root=layout.run_root,
         cache_root=layout.cache_root,
@@ -328,6 +348,8 @@ def load_cnn15_from_e0(context: RunContext) -> tuple[dict[str, SleepCNN], str]:
         allow_test_evaluation=False,
         num_workers=context.num_workers,
         resume=False,
+        config_path=context.config_path,
+        artifact_root=context.artifact_root,
     )
     models: dict[str, SleepCNN] = {}
     hashes: dict[str, str] = {}
@@ -386,7 +408,15 @@ def train_resnet(
     def loss_function(logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         return masked_cross_entropy(logits, targets, weights)
 
-    model = EEGResNet1D()
+    architecture_keys = (
+        "input_channels",
+        "stem",
+        "residual_blocks",
+        "feature_dim",
+        "classifier_dropout",
+    )
+    architecture_config = {key: cfg[key] for key in architecture_keys}
+    model = EEGResNet1D.from_config(architecture_config)
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=cfg["learning_rate"],
@@ -398,7 +428,7 @@ def train_resnet(
         context.resume
         and _stage_is_complete(context, checkpoint_dir, stage, context.seed)
     ):
-        fit_model(
+        fit_result = fit_model(
             model,
             train_loader,
             validation_loader,
@@ -415,6 +445,18 @@ def train_resnet(
                 generator=generator,
                 selection_metric="validation_macro_f1",
             ),
+        )
+        atomic_write_json(
+            checkpoint_dir / "training_history.json",
+            {
+                "schema_version": 1,
+                "stage": stage,
+                "best_checkpoint": str(checkpoint_dir / "best.pt"),
+                "best_epoch": fit_result.progress.best_epoch,
+                "completed_epochs": fit_result.progress.completed_epochs,
+                "stopped_early": fit_result.stopped_early,
+                "history": list(fit_result.history),
+            },
         )
         _mark_stage_complete(context, checkpoint_dir, stage, context.seed)
     best_path = load_verified_checkpoint(
@@ -637,15 +679,9 @@ def run_experiment(context: RunContext) -> dict[str, Any]:
     git_commit, git_dirty = _git_state(context.workspace)
     if not context.smoke and git_dirty:
         raise RuntimeError("full experiment requires a clean Git worktree")
-    split_path = (
-        context.workspace
-        / "data"
-        / "splits"
-        / "sleepedf_sc_10fold_seed42_v2.json"
-    )
     partitions = resolve_fold_partitions(
         context.workspace / "data" / "processed",
-        split_path,
+        context.split_path,
         context.outer_fold,
         context.data_variant,
     )
@@ -672,8 +708,8 @@ def run_experiment(context: RunContext) -> dict[str, Any]:
         "git_commit": git_commit,
         "git_dirty": git_dirty,
         "runner_code_sha256": runner_code_sha256(context.workspace),
-        "config_path": "configs/experiments_v2.json",
-        "split_path": "data/splits/sleepedf_sc_10fold_seed42_v2.json",
+        "config_path": _manifest_path(context.workspace, context.config_path),
+        "split_path": _manifest_path(context.workspace, context.split_path),
         "data_variant": context.data_variant,
         "role_records": {
             "train": [record.info.record_key for record in train_records],

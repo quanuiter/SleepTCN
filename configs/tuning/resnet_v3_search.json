@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "campaign_id": "resnet_tuning_v3",
+  "status": "development_only",
+  "dataset": "sleep-edf-expanded/sleep-cassette/1.0.0",
+  "data_variant": "paper_raw_v1",
+  "split_path": "data/splits/sleepedf_sc_10fold_seed42_v2.json",
+  "selection_role": "validation_only",
+  "test_policy": "test_loader_is_not_constructed",
+  "selection_metric": "validation_macro_f1",
+  "class_weighting": "balanced_from_train_subjects_only",
+  "candidates": {
+    "baseline_v2": {
+      "resnet1d": {
+        "input_channels": 1,
+        "stem": {
+          "channels": 32,
+          "kernel_size": 50,
+          "stride": 5,
+          "padding": 25,
+          "max_pool_kernel": 3,
+          "max_pool_stride": 2,
+          "max_pool_padding": 1
+        },
+        "residual_blocks": [
+          {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+          {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+          {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.5
+      },
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "batch_size_epochs": 64,
+      "max_epochs": 40,
+      "early_stopping_patience_epochs": 8
+    },
+    "budget_120": {
+      "resnet1d": {
+        "input_channels": 1,
+        "stem": {
+          "channels": 32,
+          "kernel_size": 50,
+          "stride": 5,
+          "padding": 25,
+          "max_pool_kernel": 3,
+          "max_pool_stride": 2,
+          "max_pool_padding": 1
+        },
+        "residual_blocks": [
+          {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+          {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+          {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.5
+      },
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "batch_size_epochs": 64,
+      "max_epochs": 120,
+      "early_stopping_patience_epochs": 20
+    },
+    "lr_3e4": {
+      "resnet1d": {
+        "input_channels": 1,
+        "stem": {
+          "channels": 32,
+          "kernel_size": 50,
+          "stride": 5,
+          "padding": 25,
+          "max_pool_kernel": 3,
+          "max_pool_stride": 2,
+          "max_pool_padding": 1
+        },
+        "residual_blocks": [
+          {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+          {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+          {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.5
+      },
+      "learning_rate": 0.0003,
+      "weight_decay": 0.0001,
+      "batch_size_epochs": 64,
+      "max_epochs": 120,
+      "early_stopping_patience_epochs": 20
+    },
+    "lr_3e3": {
+      "resnet1d": {
+        "input_channels": 1,
+        "stem": {
+          "channels": 32,
+          "kernel_size": 50,
+          "stride": 5,
+          "padding": 25,
+          "max_pool_kernel": 3,
+          "max_pool_stride": 2,
+          "max_pool_padding": 1
+        },
+        "residual_blocks": [
+          {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+          {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+          {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.5
+      },
+      "learning_rate": 0.003,
+      "weight_decay": 0.0001,
+      "batch_size_epochs": 64,
+      "max_epochs": 120,
+      "early_stopping_patience_epochs": 20
+    },
+    "weight_decay_0": {
+      "resnet1d": {
+        "input_channels": 1,
+        "stem": {
+          "channels": 32,
+          "kernel_size": 50,
+          "stride": 5,
+          "padding": 25,
+          "max_pool_kernel": 3,
+          "max_pool_stride": 2,
+          "max_pool_padding": 1
+        },
+        "residual_blocks": [
+          {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+          {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+          {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.5
+      },
+      "learning_rate": 0.001,
+      "weight_decay": 0.0,
+      "batch_size_epochs": 64,
+      "max_epochs": 120,
+      "early_stopping_patience_epochs": 20
+    },
+    "dropout_02": {
+      "resnet1d": {
+        "input_channels": 1,
+        "stem": {
+          "channels": 32,
+          "kernel_size": 50,
+          "stride": 5,
+          "padding": 25,
+          "max_pool_kernel": 3,
+          "max_pool_stride": 2,
+          "max_pool_padding": 1
+        },
+        "residual_blocks": [
+          {"in_channels": 32, "out_channels": 64, "stride": 1, "kernel_size": 7},
+          {"in_channels": 64, "out_channels": 128, "stride": 2, "kernel_size": 7},
+          {"in_channels": 128, "out_channels": 128, "stride": 2, "kernel_size": 7}
+        ],
+        "feature_dim": 128,
+        "classifier_dropout": 0.2
+      },
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "batch_size_epochs": 64,
+      "max_epochs": 120,
+      "early_stopping_patience_epochs": 20
+    }
+  }
+}

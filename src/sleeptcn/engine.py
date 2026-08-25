@@ -211,6 +211,7 @@ def _checkpoint_payload(
     data_variant: str,
     selection_metric: str,
     loader_generator: torch.Generator | None,
+    history: list[dict[str, object]],
 ) -> dict[str, Any]:
     _validate_hash(config_sha256, "config_sha256")
     _validate_hash(split_sha256, "split_sha256")
@@ -228,6 +229,7 @@ def _checkpoint_payload(
             "selection_metric": selection_metric,
         },
         "progress": asdict(progress),
+        "history": history,
         "model_state": model.state_dict(),
         "optimizer_state": optimizer.state_dict(),
         "rng_state": _rng_state(),
@@ -362,7 +364,9 @@ def fit_model(
         "selection_metric": selection_metric,
     }
     progress = TrainingProgress()
+    history: list[dict[str, object]] = []
     if resume_from is not None:
+        resume_payload = _load_and_validate_payload(resume_from, metadata)
         progress = load_checkpoint(
             resume_from,
             model,
@@ -371,12 +375,15 @@ def fit_model(
             device=device,
             loader_generator=loader_generator,
         )
+        stored_history = resume_payload.get("history", [])
+        if not isinstance(stored_history, list):
+            raise ValueError("checkpoint history must be a list")
+        history = list(stored_history)
     if progress.completed_epochs > max_epochs:
         raise ValueError("checkpoint is beyond requested max_epochs")
     checkpoint_dir = checkpoint_dir.resolve()
     best_path = checkpoint_dir / "best.pt"
     latest_path = checkpoint_dir / "latest.pt"
-    history: list[dict[str, object]] = []
     stopped_early = False
 
     for epoch in range(progress.completed_epochs, max_epochs):
@@ -421,10 +428,11 @@ def fit_model(
             {
                 "epoch": epoch,
                 "train_loss": train_summary.loss,
+                "train_metrics": train_summary.metrics,
                 "validation_loss": validation_summary.loss,
-                "validation_macro_f1": float(
-                    validation_summary.metrics["macro_f1"]
-                ),
+                "train_macro_f1": float(train_summary.metrics["macro_f1"]),
+                "validation_metrics": validation_summary.metrics,
+                "validation_macro_f1": float(validation_summary.metrics["macro_f1"]),
                 "selection_metric": selection_metric,
                 "selection_value": metric,
                 "improved": improved,
@@ -443,6 +451,7 @@ def fit_model(
             data_variant=data_variant,
             selection_metric=selection_metric,
             loader_generator=loader_generator,
+            history=history,
         )
         if improved:
             save_checkpoint_atomic(best_path, payload)

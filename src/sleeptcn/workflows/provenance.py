@@ -50,6 +50,22 @@ def runner_code_sha256(workspace: Path, *, include_gate8: bool = False) -> str:
     return combined_sha256({path: sha256_file(workspace / path) for path in paths})
 
 
+def resnet_tuning_code_sha256(workspace: Path) -> str:
+    """Hash the shared runner plus the validation-only ResNet tuning layer."""
+
+    return combined_sha256(
+        {
+            "shared_runner": runner_code_sha256(workspace),
+            "src/sleeptcn/resnet_tuning.py": sha256_file(
+                workspace / "src/sleeptcn/resnet_tuning.py"
+            ),
+            "scripts/run_resnet_tuning.py": sha256_file(
+                workspace / "scripts/run_resnet_tuning.py"
+            ),
+        }
+    )
+
+
 def clean_git_commit(
     workspace: Path,
     *,
@@ -77,4 +93,4 @@ def clean_git_commit(
     return commit.stdout.strip()
 
 
-__all__ = ["clean_git_commit", "runner_code_sha256"]
+__all__ = ["clean_git_commit", "resnet_tuning_code_sha256", "runner_code_sha256"]

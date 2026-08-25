@@ -29,6 +29,7 @@ def build_experiment_layout(
     seed: int,
     *,
     smoke: bool,
+    artifact_root: Path | None = None,
 ) -> ExperimentLayout:
     """Validate identifiers and return the canonical run/cache layout."""
 
@@ -38,25 +39,15 @@ def build_experiment_layout(
     if outer_fold not in range(10) or seed < 0:
         raise ValueError("invalid fold or seed")
     mode = "smoke" if smoke else "full"
-    run_root = (
-        workspace
-        / "runs"
-        / "v2"
-        / mode
-        / experiment_id
-        / f"fold_{outer_fold:02d}"
-        / f"seed_{seed}"
-    )
-    cache_root = (
-        workspace
-        / "data"
-        / "cache"
-        / "features"
-        / "v2"
-        / mode
-        / f"fold_{outer_fold:02d}"
-        / f"seed_{seed}"
-    )
+    if artifact_root is None:
+        run_base = workspace / "runs" / "v2"
+        cache_base = workspace / "data" / "cache" / "features" / "v2"
+    else:
+        artifact_root = artifact_root.resolve()
+        run_base = artifact_root
+        cache_base = artifact_root / "cache" / "features"
+    run_root = run_base / mode / experiment_id / f"fold_{outer_fold:02d}" / f"seed_{seed}"
+    cache_root = cache_base / mode / f"fold_{outer_fold:02d}" / f"seed_{seed}"
     return ExperimentLayout(
         workspace=workspace,
         experiment_id=experiment_id,

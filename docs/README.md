@@ -17,6 +17,7 @@ minh họa và kiểm tra môi trường.
 |---|---|
 | Kiến trúc phần mềm | [SOURCE_ARCHITECTURE.md](SOURCE_ARCHITECTURE.md) |
 | Chạy GPU/Docker | [DOCKER_GPU_RUNBOOK.md](DOCKER_GPU_RUNBOOK.md) |
+| Tuning ResNet-1D v3 | [RESNET_TUNING_V3.md](RESNET_TUNING_V3.md) |
 | Tái lập SHHS | [SHHS_V1_RUNBOOK.md](SHHS_V1_RUNBOOK.md) |
 | Tiền xử lý | [PREPROCESSING_SPEC.md](PREPROCESSING_SPEC.md) |
 | Chia fold | [SPLIT_SPEC.md](SPLIT_SPEC.md) |

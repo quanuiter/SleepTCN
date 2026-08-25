@@ -29,7 +29,11 @@ from .stages import (
     stage_is_complete,
     stage_marker_path,
 )
-from .provenance import clean_git_commit, runner_code_sha256
+from .provenance import (
+    clean_git_commit,
+    resnet_tuning_code_sha256,
+    runner_code_sha256,
+)
 
 __all__ = [
     "EXPERIMENT_IDS",
@@ -56,5 +60,6 @@ __all__ = [
     "load_shhs_preprocess_manifest",
     "load_shhs_protocol",
     "runner_code_sha256",
+    "resnet_tuning_code_sha256",
     "clean_git_commit",
 ]

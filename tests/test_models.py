@@ -39,6 +39,34 @@ class ResNetTests(unittest.TestCase):
         self.assertEqual(tuple(features.shape), (2, 128))
         self.assertEqual(tuple(logits.shape), (2, 5))
 
+    def test_explicit_config_changes_architecture(self) -> None:
+        config = {
+            "input_channels": 1,
+            "stem": {
+                "channels": 16,
+                "kernel_size": 50,
+                "stride": 2,
+                "padding": 25,
+                "max_pool_kernel": 3,
+                "max_pool_stride": 2,
+                "max_pool_padding": 1,
+            },
+            "residual_blocks": [
+                {"in_channels": 16, "out_channels": 32, "stride": 1, "kernel_size": 5},
+                {"in_channels": 32, "out_channels": 64, "stride": 2, "kernel_size": 5},
+            ],
+            "feature_dim": 64,
+            "classifier_dropout": 0.2,
+        }
+        model = EEGResNet1D.from_config(config).eval()
+        x = torch.randn(2, 1, 3000)
+        with torch.no_grad():
+            features = model.extract_features(x)
+            logits = model(x)
+        self.assertEqual(tuple(features.shape), (2, 64))
+        self.assertEqual(tuple(logits.shape), (2, 5))
+        self.assertEqual(model.resolved_config["stem"]["stride"], 2)
+
 
 class TCNTests(unittest.TestCase):
     def test_shape_and_receptive_field(self) -> None:
