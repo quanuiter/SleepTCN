@@ -146,6 +146,21 @@ def build_context(
         else workspace / "configs" / "experiments_v2.json"
     )
     config = read_json(config_path)
+    tuning_metadata = config.get("resnet_tuning")
+    if isinstance(tuning_metadata, dict):
+        selection_policy = tuning_metadata.get("selection_policy")
+        if selection_policy == "per_outer_fold_validation":
+            selected_fold = tuning_metadata.get("selected_outer_fold")
+            selected_seed = tuning_metadata.get("selected_seed")
+            if selected_fold is None or selected_seed is None:
+                raise ValueError(
+                    "per-fold ResNet tuning config must record selected fold and seed"
+                )
+            if int(selected_fold) != outer_fold or int(selected_seed) != seed:
+                raise ValueError(
+                    "locked ResNet tuning config was selected for a different "
+                    f"fold/seed ({selected_fold}, {selected_seed})"
+                )
     split_path = workspace / config["dataset"]["split_manifest"]
     if config["protocol"].get("validation_schedule") != "end_of_epoch":
         raise ValueError("runner only accepts the frozen end_of_epoch schedule")

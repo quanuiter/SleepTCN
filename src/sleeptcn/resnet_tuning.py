@@ -91,6 +91,14 @@ def _validate_search_document(document: dict[str, Any]) -> None:
         raise ValueError("tuning search must prohibit test-loader construction")
     if document.get("selection_metric") != "validation_macro_f1":
         raise ValueError("tuning runner requires validation_macro_f1")
+    if document.get("selection_policy") != "per_outer_fold_validation":
+        raise ValueError(
+            "tuning search must select candidates per outer fold; "
+            "a pooled ranking is descriptive only"
+        )
+    n_folds = document.get("n_folds")
+    if not isinstance(n_folds, int) or n_folds <= 1:
+        raise ValueError("tuning search must define n_folds > 1")
     candidates = document.get("candidates")
     if not isinstance(candidates, dict) or not candidates:
         raise ValueError("tuning search must define candidates")
@@ -210,13 +218,14 @@ def run_resnet_tuning(
     workspace = workspace.resolve()
     search_config_path = search_config_path.resolve()
     output_root = output_root.resolve()
-    if outer_fold not in range(10) or seed < 0:
+    search = read_json(search_config_path)
+    _validate_search_document(search)
+    n_folds = int(search["n_folds"])
+    if outer_fold not in range(n_folds) or seed < 0:
         raise ValueError("invalid outer_fold or seed")
     if num_workers < 0:
         raise ValueError("num_workers must be nonnegative")
 
-    search = read_json(search_config_path)
-    _validate_search_document(search)
     candidates = search["candidates"]
     if candidate_id not in candidates:
         raise ValueError(f"unknown candidate: {candidate_id}")
@@ -228,6 +237,7 @@ def run_resnet_tuning(
     split_path = workspace / search["split_path"]
     variant = str(search["data_variant"])
     processed_root = workspace / "data" / "processed"
+    search_config_sha256 = sha256_file(search_config_path)
     split_sha256 = sha256_file(split_path)
     torch_device = torch.device(device)
     if torch_device.type == "cuda" and not torch.cuda.is_available():
@@ -239,13 +249,16 @@ def run_resnet_tuning(
     resolved_config = {
         "schema_version": TUNING_SCHEMA_VERSION,
         "campaign_id": search["campaign_id"],
+        "n_folds": n_folds,
         "candidate_id": candidate_id,
         "candidate": candidate,
         "dataset": search["dataset"],
         "data_variant": variant,
         "split_path": str(search["split_path"]),
+        "search_config_sha256": search_config_sha256,
         "split_sha256": split_sha256,
         "selection_role": "validation_only",
+        "selection_policy": "per_outer_fold_validation",
         "test_policy": "test_loader_is_not_constructed",
     }
     atomic_write_json(resolved_config_path, resolved_config)
@@ -384,9 +397,11 @@ def run_resnet_tuning(
         "device": str(torch_device),
         "data_variant": variant,
         "selection_role": "validation_only",
+        "selection_policy": "per_outer_fold_validation",
         "test_policy": "test_loader_is_not_constructed",
         "test_records_loaded": False,
         "config_path": str(search_config_path),
+        "search_config_sha256": search_config_sha256,
         "resolved_config": str(resolved_config_path),
         "config_sha256": config_sha256,
         "split_path": str(split_path),

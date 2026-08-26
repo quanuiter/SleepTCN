@@ -62,6 +62,12 @@ def resnet_tuning_code_sha256(workspace: Path) -> str:
             "scripts/run_resnet_tuning.py": sha256_file(
                 workspace / "scripts/run_resnet_tuning.py"
             ),
+            "scripts/summarize_resnet_tuning.py": sha256_file(
+                workspace / "scripts/summarize_resnet_tuning.py"
+            ),
+            "scripts/create_resnet_locked_config.py": sha256_file(
+                workspace / "scripts/create_resnet_locked_config.py"
+            ),
         }
     )
 

@@ -67,50 +67,61 @@ python scripts/run_resnet_tuning.py \
 ```
 
 Thay `--candidate`, `--fold` và `--seed` theo chiến dịch đã định trước. Không dùng kết quả test
-để chọn ứng viên. Sau khi chọn được hai hoặc ba ứng viên tốt nhất trên validation, mới huấn luyện
-TCN trên embedding đã cache để quyết định cấu hình tốt nhất của toàn bộ ResNet--TCN.
+để chọn ứng viên. Nếu cần tối ưu toàn bộ ResNet--TCN thay vì chỉ extractor, hãy huấn luyện TCN
+cho các candidate đã định trước trên embedding tương ứng; bước đó vẫn chỉ dùng train/validation.
 
-Sau khi các run validation hoàn tất, xếp hạng bằng Macro-F1 trung bình ở cấp đối tượng:
+Runner vẫn dùng Macro-F1 gộp để chọn checkpoint trong từng run, còn việc chọn giữa các candidate
+dùng Macro-F1 trung bình theo đối tượng để phù hợp với đơn vị thống kê của paper. Báo cáo tổng hợp
+có hai phần: `ranking` gộp toàn bộ fold chỉ là mô tả phát triển; `selections` chọn candidate riêng
+cho từng `(seed, outer_fold)`. Chỉ phần `selections` được phép dùng để chạy test cùng split, vì
+candidate của fold đó chỉ nhìn validation của chính fold đó.
+
+## Khóa ứng viên và chạy E2--E6
+
+Sau khi các run validation hoàn tất, tạo báo cáo đầy đủ (lệnh này sẽ từ chối run thiếu candidate
+hoặc thiếu outer-fold):
 
 ```bash
 python scripts/summarize_resnet_tuning.py \
   --output-root /artifacts/sleeptcn/v3/resnet_tuning \
+  --search-config configs/tuning/resnet_v3_search.json \
+  --seed 42 \
   --output /artifacts/sleeptcn/v3/resnet_tuning/validation_ranking.json
 ```
 
-Runner vẫn dùng Macro-F1 gộp để chọn checkpoint trong từng run, còn việc chọn giữa các candidate
-dùng Macro-F1 trung bình theo đối tượng để phù hợp với đơn vị thống kê của paper.
-
-## Khóa ứng viên và chạy E2--E6
-
-Sau khi ứng viên được chọn bằng validation, tạo một config đầy đủ từ cấu hình v2:
+Với test theo outer-fold, tạo một config khóa cho từng fold từ phần `selections`:
 
 ```bash
 python scripts/create_resnet_locked_config.py \
   --base-config configs/experiments_v2.json \
   --search-config configs/tuning/resnet_v3_search.json \
-  --candidate budget_120 \
-  --output configs/tuning/experiments_resnet_v3_locked.json
+  --selection-report /artifacts/sleeptcn/v3/resnet_tuning/validation_ranking.json \
+  --outer-fold 0 \
+  --seed 42 \
+  --output configs/tuning/experiments_resnet_v3_locked_fold00_seed42.json
 ```
 
-Tệp này phải được kiểm tra, commit và giữ nguyên trước khi mở khóa test. Khi chạy E2--E6, dùng
-artifact root bên ngoài Git:
+Config khóa ghi lại fold/seed đã chọn và runner E0--E6 sẽ từ chối nếu dùng nhầm fold/seed. Tệp
+này phải được kiểm tra, commit và giữ nguyên trước khi mở khóa test. Khi chạy E2--E6, dùng artifact
+root bên ngoài Git:
 
 ```bash
 python scripts/run_experiment.py \
   --workspace /workspace/SleepTCN \
-  --config configs/tuning/experiments_resnet_v3_locked.json \
   --artifact-root /artifacts/sleeptcn/v3 \
   --experiment E2 \
   --fold 0 \
   --seed 42 \
+  --config configs/tuning/experiments_resnet_v3_locked_fold00_seed42.json \
   --device cuda \
   --num-workers 2
 ```
 
-Chỉ thêm `--allow-test-evaluation` sau khi toàn bộ cấu hình, seed và quy tắc phân tích đã được
-khóa. E2, E3, E4 và E6 phải được chạy lại từ đầu; TCN cũ không tương thích với embedding ResNet
-mới.
+Chỉ thêm `--allow-test-evaluation` sau khi toàn bộ config của từng fold, seed và quy tắc phân tích
+đã được khóa. E2, E3, E4 và E6 phải được chạy lại từ đầu; TCN cũ không tương thích với embedding
+ResNet mới. Nếu chỉ chọn một candidate gộp toàn bộ fold bằng tay, config đó chỉ được dùng cho
+external confirmation (ví dụ SHHS reserve), không được dùng để báo cáo test Sleep-EDF của cùng
+chiến dịch.
 
 ## Cấu trúc artifact
 
@@ -132,6 +143,6 @@ processed phải nằm ở volume hoặc kho artifact bên ngoài repository.
 
 ## Áp dụng vào E2--E6
 
-Sau khi khóa một cấu hình ResNet, dùng cùng kiến trúc và hyperparameter cho `E2`, `E3`, `E4` và
-`E6`. Mỗi E vẫn phải huấn luyện ResNet và TCN riêng cho từng fold/seed; không gắn ResNet mới vào
-TCN checkpoint cũ vì embedding đã thay đổi.
+Sau khi khóa cấu hình cho từng fold/seed, dùng đúng cấu hình đó cho `E2`, `E3`, `E4` và `E6` của
+fold/seed tương ứng. Mỗi E vẫn phải huấn luyện ResNet và TCN riêng; không gắn ResNet mới vào TCN
+checkpoint cũ vì embedding đã thay đổi.
