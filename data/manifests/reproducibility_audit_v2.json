@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "manifest": "data/manifests/processed_artifact_manifest_v2.json",
+  "summary": {
+    "files_checked": 765,
+    "canonical_zip_files": 765,
+    "errors": [],
+    "passed": true
+  }
+}

@@ -3,61 +3,51 @@
 
 \subsection{Sleep-EDF Expanded, phân tập Sleep Cassette}
 
-Sleep-EDF Expanded phiên bản 1.0.0 là bộ dữ liệu đa ký giấc ngủ công khai trên PhysioNet~\cite{kemp2000sleepEDF,physionetSleepEDF}. Nghiên cứu chỉ dùng phân tập Sleep Cassette (SC): 153 bản ghi của 78 đối tượng; 75 người có hai đêm và 3 người có một đêm. Kênh đầu vào là EEG Fpz-Cz, tần số lấy mẫu 100 Hz. Mỗi epoch dài 30 giây nên có 3.000 mẫu.
+Sleep-EDF Expanded là bộ dữ liệu đa ký giấc ngủ công khai trên PhysioNet~\cite{kemp2000sleepEDF,physionetSleepEDF}. Nghiên cứu sử dụng phân tập Sleep Cassette, gồm 153 bản ghi của 78 đối tượng. Kênh EEG Fpz--Cz được dùng làm tín hiệu đầu vào và chia thành các epoch 30 giây.
 
-Nhãn gốc được chấm theo R\&K. Báo cáo dùng ánh xạ năm lớp phổ biến: W$\to$0, stage 1$\to$N1, stage 2$\to$N2, stage 3 và 4$\to$N3, R$\to$REM. Movement và Unknown được gán $-1$, giữ tại đúng vị trí chuỗi nhưng che khỏi hàm mất mát và chỉ số. Việc gộp stage 3/4 chỉ là ánh xạ nhãn; không được mô tả là dữ liệu gốc đã được chấm lại theo AASM.
+Nhãn được ánh xạ thành năm lớp W, N1, N2, N3 và REM. Các giai đoạn 3 và 4 được gộp vào N3 theo quy ước của giao thức. Epoch Movement hoặc Unknown được giữ đúng vị trí thời gian nhưng không tham gia huấn luyện và đánh giá.
 
 \begin{table}[H]
 \centering
-\caption{Phân bố nhãn sau cắt cửa sổ, giống nhau ở mọi biến thể dữ liệu}
+\caption{Phân bố nhãn hợp lệ trên Sleep-EDF và mẫu SHHS1 test}
 \label{tab:label_distribution}
-\begin{tabular}{lrr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrr|rr}
 \toprule
-\textbf{Nhãn} & \textbf{Số epoch} & \textbf{Tỷ lệ trong 195.469 epoch hợp lệ} \\
+\textbf{Nhãn} & \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{2}{c}{\textbf{SHHS1 test}} \\
+ & \textbf{Số epoch} & \textbf{Tỷ lệ} & \textbf{Số epoch} & \textbf{Tỷ lệ} \\
 \midrule
-W & 65.941 & 33,73\% \\
-N1 & 21.522 & 11,01\% \\
-N2 & 69.132 & 35,37\% \\
-N3 & 13.039 & 6,67\% \\
-REM & 25.835 & 13,22\% \\
+W & 65.941 & 33,73\% & 36.983 & 21,88\% \\
+N1 & 21.522 & 11,01\% & 7.002 & 4,14\% \\
+N2 & 69.132 & 35,37\% & 76.287 & 45,14\% \\
+N3 & 13.039 & 6,67\% & 22.806 & 13,49\% \\
+REM & 25.835 & 13,22\% & 25.934 & 15,34\% \\
 \midrule
-Movement/Unknown & 298 & Không tính \\
+\textbf{Tổng hợp lệ} & \textbf{195.469} & \textbf{100\%} & \textbf{169.012} & \textbf{100\%} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
-Sau tiền xử lý, mỗi biến thể có 195.767 epoch, gồm 195.469 epoch hợp lệ và 298 epoch bị che. N1 và N3 ít hơn rõ rệt so với W/N2, vì vậy \mf\ và F1 từng lớp được ưu tiên hơn chỉ báo cáo độ chính xác.
+Sleep-EDF có 298 epoch Movement hoặc Unknown bị loại khỏi các chỉ số; số liệu SHHS trong bảng là toàn bộ 169.012 epoch hợp lệ của mẫu test đã khóa. Phân bố nhãn khác nhau giữa hai bộ dữ liệu: Sleep-EDF tập trung nhiều hơn ở W và N1, trong khi SHHS tập trung nhiều hơn ở N2. Đây là đặc điểm của mẫu dữ liệu và là cơ sở để báo cáo Macro-F1 cùng F1 theo lớp bên cạnh Accuracy; bảng này không phải là kết quả so sánh mô hình.
 
 \subsection{Cắt cửa sổ và bảo toàn trục thời gian}
 
-Cửa sổ được neo bởi epoch ngủ thật đầu/cuối trong N1, N2, N3 hoặc REM, rồi giữ tối đa 60 epoch Wake ở mỗi phía, tương ứng 30 phút. Annotation phải liên tục từ thời điểm 0 và có thời lượng là bội dương của 30 giây. Nếu annotation dài hơn PSG, chỉ phần dư cuối bị cắt và được ghi vào siêu dữ liệu; annotation ngắn hơn PSG làm quy trình dừng. Movement/Unknown nằm trong cửa sổ vẫn được giữ nên chỉ số epoch gốc và ngữ cảnh thời gian không bị dịch.
+Cửa sổ được xác định từ vùng ngủ thực tế và giữ một khoảng Wake ở hai đầu để bảo toàn ngữ cảnh chuyển tiếp. Epoch Movement hoặc Unknown nằm trong cửa sổ không bị xóa; chúng chỉ được loại khỏi loss và các chỉ số. Nhờ đó, vị trí thời gian và quan hệ lân cận được giữ nhất quán giữa các biến thể tiền xử lý.
 
-\subsection{Chia 10 fold theo đối tượng}
+\subsection{Chia theo đối tượng}
 
-Đơn vị độc lập là đối tượng, không phải epoch hoặc bản ghi. Danh sách 78 mã đối tượng được sắp xếp, hoán vị bằng \code{numpy.random.default\_rng(seed=42)} và chia thành 10 fold bằng \code{numpy.array\_split}. Kích thước fold là $[8,8,8,8,8,8,8,8,7,7]$ đối tượng.
-
-Với outer fold $i$:
-
-\begin{equation}
- \mathcal{D}_{test}=F_i,\qquad
- \mathcal{D}_{val}=F_{(i+1)\bmod 10},\qquad
- \mathcal{D}_{train}=\bigcup_{j\notin\{i,(i+1)\bmod 10\}}F_j.
-\end{equation}
-
-Hai đêm của cùng một người luôn cùng vai trò. Mỗi người xuất hiện đúng một lần ở test ngoài fold và đúng một lần ở validation. Manifest \code{sleepedf\_sc\_10fold\_seed42\_v2.json} là nguồn chân lý; notebook và runner không tự tạo lại fold.
+Đối tượng, không phải epoch, là đơn vị độc lập của phép chia. Dữ liệu được chia thành 10 fold theo đối tượng; hai đêm của cùng một người luôn thuộc cùng vai trò. Trong mỗi lượt đánh giá, một fold được giữ cho test, một fold dùng cho validation và các fold còn lại dùng cho huấn luyện. Mỗi đối tượng xuất hiện đúng một lần trong test ngoài fold và cùng phép chia được áp dụng cho mọi cấu hình.
 
 \subsection{Phòng tránh rò rỉ dữ liệu}
 
-Chia ngẫu nhiên theo epoch có thể đưa các đoạn lân cận hoặc hai đêm của cùng người vào cả train và test, làm kết quả lạc quan giả tạo. Giao thức v2 kiểm tra giao nhau theo đối tượng và bản ghi, tính đầy đủ của 78 đối tượng/153 bản ghi, sự đồng nhất khóa \code{(subject\_id, record\_key, original\_epoch\_index)} và mã băm manifest. Cùng manifest được dùng cho tất cả cấu hình và biến thể tiền xử lý. Đây là điều kiện để bootstrap và Wilcoxon được thực hiện bắt cặp theo cùng người.
+Phép chia theo epoch có thể đưa các đoạn tín hiệu lân cận hoặc các bản ghi của cùng đối tượng vào cả huấn luyện và kiểm tra. Giao thức hiện tại kiểm tra riêng biệt theo đối tượng, bản ghi và vị trí epoch gốc; đồng thời xác nhận sự đồng nhất của các khóa này giữa các cấu hình. Tập kiểm tra chỉ được mở sau khi hoàn tất lựa chọn mô hình trên validation.
 
-\subsection{Mẫu xác nhận ngoài miền SHHS Visit 1}
+\subsection{Mẫu đánh giá ngoài miền SHHS Visit 1}
 
-Chiến dịch ngoài miền dùng một mẫu SHHS Visit 1 được chọn bằng seed 42 trước khi xem hiệu năng mô hình. Điều kiện chọn chỉ dựa trên tính sẵn có và chất lượng kỹ thuật, không dùng kết cục lâm sàng hoặc phân bố nhãn. Danh sách gồm 5 đối tượng adaptation, 15 validation, 180 test và 20 reserve; 220/220 cặp EDF--Profusion XML vượt kiểm định kỹ thuật, không cần thay reserve. Phép zero-shot chỉ dùng 15 validation và 180 test; adaptation và reserve không tham gia cập nhật trọng số hoặc chỉ số báo cáo.
+Chiến dịch ngoài miền sử dụng một mẫu SHHS Visit 1 đã được khóa trước khi xem kết quả mô hình. SHHS là nghiên cứu đoàn hệ đa trung tâm và dữ liệu được phân phối qua National Sleep Research Resource~\cite{quan1997shhs,zhang2018nsrr}. Mẫu kiểm tra gồm 180 đối tượng; việc suy luận được thực hiện trên EEG C4--A1 và không cập nhật trọng số bằng dữ liệu SHHS. Các mô hình được đánh giá bằng toàn bộ các fold tương ứng, sau đó tổ hợp xác suất theo đối tượng.
 
-Kênh SHHS là EEG C4--A1 ở 125 Hz, khác montage Fpz--Cz và tần số 100 Hz của Sleep-EDF. Tín hiệu được đổi mẫu 125$\to$100 Hz bằng \code{resample\_poly} trước khi chia epoch 30 giây. Nhãn Profusion được ánh xạ $0\to$W, $1\to$N1, $2\to$N2, $3/4\to$N3, $5\to$REM$; 6/9\to-1$. Cửa sổ giữ từ epoch ngủ đầu đến cuối cộng tối đa 30 phút Wake mỗi phía, giống quy tắc benchmark Sleep-EDF. Ba nhánh đầu vào tương thích checkpoint là E0 \code{paper\_raw\_v1}, E3 \code{filtered\_v2} và E6 \code{filtered\_zscore\_v2}.
-
-Tiền xử lý chính tạo 600 NPZ cho 200 đối tượng, mỗi nhánh có 187.258 epoch, gồm 187.255 hợp lệ và 3 bị che. Tập test có 169.012 epoch hợp lệ với phân bố W/N1/N2/N3/REM lần lượt 36.983/7.002/76.287/22.806/25.934. Artifact chứa ID đối tượng và dữ liệu dẫn xuất được giữ ngoài Git theo điều kiện sử dụng NSRR; báo cáo chỉ công bố số tổng hợp và SHA-256.
+SHHS khác Sleep-EDF về quần thể, thiết bị, montage và tần số lấy mẫu. Vì vậy, kết quả SHHS được trình bày như bằng chứng ngoài miền cho mẫu và giao thức cụ thể, không phải phép xác nhận cho toàn bộ quần thể hoặc thực hành lâm sàng.
 
 \subsection{Giới hạn dữ liệu}
 
-SC không đại diện cho toàn bộ quần thể lâm sàng. Mẫu SHHS1 bổ sung bằng chứng ngoài miền nhưng chỉ gồm 180 đối tượng test từ một quy trình chọn mẫu giới hạn, một kênh EEG và nhãn của một nguồn chấm. Vì vậy kết quả không được khái quát sang toàn bộ hơn 6.000 bản ghi SHHS, thiết bị đeo, dữ liệu đa trung tâm hoặc thực hành lâm sàng.
+Sleep-EDF Expanded không đại diện cho toàn bộ quần thể lâm sàng. Mẫu SHHS bổ sung một đánh giá ngoài miền có giá trị kiểm chứng, nhưng chỉ bao gồm một cohort đã chọn, một kênh EEG và một nguồn nhãn. Các kết luận cần được giữ trong phạm vi này.

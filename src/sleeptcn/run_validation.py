@@ -8,24 +8,15 @@ from typing import Any
 
 import numpy as np
 
-from .artifacts import PredictionTable, combined_sha256, sha256_file
+from .io.hashing import combined_sha256, sha256_file
+from .evaluation import PredictionTable, load_prediction_table
 from .dataset import load_record
-from .experiment import runner_code_sha256
 from .features import expected_15cnn_keys
+from .workflows.provenance import runner_code_sha256
 
 
 def _prediction_table(path: Path) -> tuple[PredictionTable, dict[str, Any]]:
-    with np.load(path, allow_pickle=False) as npz:
-        metadata = json.loads(str(npz["metadata_json"].item()))
-        table = PredictionTable(
-            subject_id=npz["subject_id"].copy(),
-            record_key=npz["record_key"].copy(),
-            original_epoch_index=npz["original_epoch_index"].copy(),
-            true_label=npz["true_label"].copy(),
-            predicted_label=npz["predicted_label"].copy(),
-            logits=npz["logits"].copy(),
-        )
-    return table, metadata
+    return load_prediction_table(path)
 
 
 def _expected_sequence_checkpoint(run_root: Path, experiment_id: str) -> Path:

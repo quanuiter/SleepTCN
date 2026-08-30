@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import platform
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -65,17 +64,18 @@ def main() -> int:
         )
 
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "dataset": "sleep-edf-expanded/sleep-cassette/1.0.0",
-        "source_readonly": str(args.data_dir.resolve()),
-        "raw_manifest": str(args.raw_manifest.resolve()),
+        # Immutable source hashes, not local mount paths, identify the input.
+        "source_readonly": "sleep-edf-expanded/sleep-cassette/1.0.0",
+        "raw_manifest": args.raw_manifest.name,
         "config": asdict(config),
         "generation_environment": {
-            "python": sys.version,
-            "platform": platform.platform(),
+            "python_major_minor": f"{sys.version_info.major}.{sys.version_info.minor}",
             "numpy": numpy.__version__,
             "scipy": scipy.__version__,
             "pyedflib": pyedflib.__version__,
+            "npz_serialization": "sleeptcn_deterministic_npz_v1",
         },
         "variants": args.variants,
         "selected_record_keys": selected_keys,

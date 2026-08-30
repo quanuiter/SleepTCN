@@ -6,7 +6,6 @@ import argparse
 import json
 import platform
 import statistics
-import subprocess
 import sys
 import time
 from collections import Counter
@@ -19,7 +18,7 @@ from torch import nn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sleeptcn.artifacts import combined_sha256, sha256_file
+from sleeptcn.io.hashing import combined_sha256, sha256_file
 from sleeptcn.experiment import build_context
 from sleeptcn.features import MANIPULATIONS, MANIPULATION_PREFIX, STAGE_NAMES
 from sleeptcn.run_validation import validate_run
@@ -28,6 +27,7 @@ from sleeptcn.test_gate import (
     _load_extractor,
     _load_sequence_model,
 )
+from sleeptcn.workflows.provenance import clean_git_commit
 
 
 BENCHMARK_SCHEMA_VERSION = 2
@@ -93,23 +93,10 @@ class ResNetTCNPipeline(nn.Module):
 
 
 def _git_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return clean_git_commit(
+        workspace,
+        dirty_message="official benchmark requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode:
-        raise RuntimeError("workspace must be a readable Git repository")
-    if status.stdout.strip():
-        raise RuntimeError("official benchmark requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def _synchronize(device: torch.device) -> None:

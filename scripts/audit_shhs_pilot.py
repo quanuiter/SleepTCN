@@ -12,11 +12,16 @@ import hashlib
 import json
 import math
 import re
+import sys
 import warnings
 import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import sha256_file  # noqa: E402
 
 
 EDF_PATTERN = re.compile(r"^shhs1-(?P<id>\d+)\.edf$", re.IGNORECASE)
@@ -28,14 +33,6 @@ EXCLUDED_RAW_STAGES = {6, 9}
 PRIMARY_CHANNEL = "EEG"
 PRIMARY_SAMPLING_HZ = 125.0
 EPOCH_SECONDS = 30
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def _ascii_number(raw: bytes, cast: type[int] | type[float], name: str) -> Any:

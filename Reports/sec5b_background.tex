@@ -3,43 +3,16 @@
 
 \subsection{BiLSTM}
 
-LSTM dùng trạng thái ô nhớ và các cổng để điều tiết thông tin theo thời gian~\cite{hochreiter1997lstm}. BiLSTM xử lý chuỗi theo cả hai chiều rồi ghép trạng thái ẩn. Trong E0, chuỗi đặc trưng có kích thước $T\times75$, lớp BiLSTM có 128 đơn vị ẩn mỗi chiều và lớp tuyến tính xuất năm logit. Vì toàn bộ bản ghi có sẵn trong đánh giá ngoại tuyến, việc dùng ngữ cảnh tương lai là phù hợp với phạm vi nghiên cứu.
+BiLSTM xử lý chuỗi theo cả hai chiều thời gian, nhờ đó mỗi biểu diễn có thể tiếp nhận ngữ cảnh trước và sau vị trí đang xét. Đây là mô hình chuỗi được sử dụng trong cấu hình đối chứng và là mốc để đánh giá khả năng thay thế bằng mạng tích chập theo thời gian.
 
 \subsection{Mạng tích chập theo thời gian}
 
-TCN thay hồi quy bằng các lớp tích chập một chiều có dilation tăng theo cấp số hai~\cite{bai2018tcn}. Mỗi khối của SleepTCN có hai phép tích chập kernel 3, chuẩn hóa lớp, GELU, dropout và kết nối dư. Sáu khối dùng dilation $1,2,4,8,16,32$. Với hai phép tích chập mỗi khối, trường tiếp nhận là
-
-\begin{equation}
- R = 1 + 2(k-1)\sum_{i=0}^{5}2^i = 253\ \text{epoch}.
-\end{equation}
-
-TCN trong dự án dùng padding đối xứng, do đó là mô hình không nhân quả và có thể khai thác ngữ cảnh hai phía. Ưu điểm vận hành là các vị trí trong chuỗi có thể được tính song song; điều này không phải bằng chứng tự thân về chất lượng phân loại.
+Mạng tích chập theo thời gian sử dụng các phép tích chập giãn và cấu trúc nhân quả để mở rộng trường tiếp nhận theo chuỗi. So với mô hình hồi tiếp, cách biểu diễn này có tiềm năng xử lý song song và giảm độ trễ suy luận. Tuy nhiên, lợi thế kiến trúc chỉ có ý nghĩa khi được xác nhận bằng so sánh bắt cặp trên cùng dữ liệu.
 
 \subsection{ResNet-1D}
 
-Kết nối dư học ánh xạ $\mathcal{F}(x)$ rồi cộng lại đầu vào, giúp gradient đi qua mạng sâu ổn định hơn~\cite{he2016resnet}:
-
-\begin{equation}
- y=\mathcal{F}(x;W)+\mathcal{S}(x),
-\end{equation}
-
-trong đó $\mathcal{S}$ là đồng nhất hoặc phép chiếu $1\times1$ khi kích thước thay đổi. ResNet-1D của dự án có stem 32 kênh, kernel 50, stride 5; sau đó là ba khối dư 64, 128, 128 kênh. Global average pooling tạo embedding 128 chiều và lớp tuyến tính phân loại epoch trong giai đoạn huấn luyện bộ trích xuất.
+ResNet-1D sử dụng các kết nối dư để hỗ trợ tối ưu hóa mạng tích chập sâu trên tín hiệu một chiều. Trong nghiên cứu, ResNet-1D được dùng làm bộ trích đặc trưng trước mô hình chuỗi. Hiệu quả của nó được đánh giá ở hai mặt: chất lượng dự đoán và khả năng tạo ra biểu diễn hữu ích cho nhiệm vụ phân loại chuỗi.
 
 \subsection{Chỉ số đánh giá}
 
-Với lớp $c$, precision, recall và F1 là
-
-\begin{equation}
- P_c=\frac{TP_c}{TP_c+FP_c},\quad
- R_c=\frac{TP_c}{TP_c+FN_c},\quad
- F1_c=\frac{2P_cR_c}{P_c+R_c}.
-\end{equation}
-
-Chỉ số chính là trung bình không trọng số trên năm lớp:
-
-\begin{equation}
- \mf=\frac{1}{5}\sum_{c=1}^{5}F1_c.
-\end{equation}
-
-Độ chính xác và Cohen's $\kappa$ là chỉ số hỗ trợ. Silhouette đo độ gần trong cụm so với cụm gần nhất~\cite{rousseeuw1987silhouettes}; nó mô tả hình học của embedding từng epoch và không thay thế đánh giá dự đoán chuỗi.
-
+Macro-F1 là trung bình F1 của năm lớp và được chọn làm chỉ số chính vì phản ánh cân bằng giữa các lớp không đồng đều. Accuracy và Cohen's kappa được báo cáo bổ sung. F1 theo lớp, đặc biệt là N1, được dùng để mô tả các thay đổi mà chỉ số tổng hợp có thể che khuất.

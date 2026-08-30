@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import importlib.util
 import json
 import platform
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,38 +15,25 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import sha256_file  # noqa: E402
+from sleeptcn.io.serialization import read_json  # noqa: E402
+from sleeptcn.workflows.provenance import clean_git_commit as _require_clean_git  # noqa: E402
+
+file_sha256 = sha256_file  # compatibility alias for existing builder imports
+
 
 SCHEMA_VERSION = 1
 CONDITIONS = ("FULL_CPN", "C", "CP", "CN")
 COMPARISONS = ("FULL_CPN-C", "FULL_CPN-CP", "FULL_CPN-CN")
 
 
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def clean_git_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return _require_clean_git(
+        workspace,
+        dirty_message="official Gate-8 build requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode:
-        raise RuntimeError("workspace must be a readable Git repository")
-    if status.stdout.strip():
-        raise RuntimeError("official Gate-8 build requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def load_gate7_builder(workspace: Path) -> Any:
@@ -188,7 +173,7 @@ def append_ablation_tables(
     comparisons: list[dict[str, Any]],
 ) -> None:
     text = path.read_text(encoding="utf-8").replace(
-        "# Bảng Gate 7 sinh tự động", "# Bảng Gate 8 sinh tự động"
+        "# Bảng Gate 7 sinh tự động", "# Bảng Gate 8 — kết quả định lượng"
     )
     text += "\n## Gate 8 — ablation C/P/N\n\n"
     text += gate7.markdown_table(
@@ -222,7 +207,7 @@ def append_ablation_tables(
         ["---", "---:", "---:", "---:", "---:"],
     )
     text += (
-        "\nGate 8 là phân tích cơ chế bổ sung với một seed. p lớn không thiết lập tương đương; "
+        "\nGate 8 là phân tích cơ chế bổ sung với một seed. Giá trị p lớn không thiết lập tương đương; "
         "ablation không phải phép đo phần trăm thông tin.\n"
     )
     path.write_text(text, encoding="utf-8")
@@ -254,7 +239,7 @@ def gate8_evidence_rows(
             "claim_id": "C10",
             "claim": "Có thể quy P/N thành một tỷ lệ phần trăm thông tin.",
             "status": "withdrawn_unsupported",
-            "evidence": "Ablation chỉ đo hiệu ứng dự báo có điều kiện trong một pipeline; không đo lượng thông tin hay quan hệ nhân quả.",
+            "evidence": "Ablation chỉ đo hiệu ứng dự báo có điều kiện trong một quy trình; không đo lượng thông tin hay quan hệ nhân quả.",
             "source": "Gate 8 protocol claim boundary and group ablation design.",
             "allowed_wording": "Báo cáo chênh lệch dự báo, CI và kiểm định bắt cặp theo từng nhóm.",
             "prohibited_wording": "P/N chỉ chứa hoặc đóng góp 12% thông tin.",
@@ -290,18 +275,16 @@ def integrate_gate8_manuscript(
     comparison = {row["comparison"]: row for row in comparisons}
     text = path.read_text(encoding="utf-8").replace(
         "# Bản nháp bài viết/khóa luận — Gate 7",
-        "# Bản nháp bài viết/khóa luận — hoàn tất Gate 8",
+        "# Bản thảo nghiên cứu — Gate 8",
     )
     method = """
 ### 2.6. Ablation nhóm đặc trưng C/P/N
 
-Gate 8 đánh giá đóng góp dự báo có điều kiện của các nhóm C (epoch hiện tại), P (epoch liền trước) và
-N (epoch liền sau) trong E1. Full CPN tái sử dụng prediction E1; CP, CN và C huấn luyện lại TCN trên
-10 fold. Đầu vào luôn giữ 75 chiều và cùng kiến trúc TCN. Nhóm bị loại được thay bằng trung bình từng
-chiều chỉ tính từ epoch train hợp lệ trong fold, sau đó áp dụng nguyên vector cho train, validation và
-test. Tiêu chí chính là Macro-F1 tại vùng ±1 epoch quanh chuyển pha nhãn hợp lệ liên tiếp. Ba so sánh
-Full CPN−C, Full CPN−CP và Full CPN−CN dùng bootstrap cụm bắt cặp 10.000 lần, Wilcoxon theo đối tượng
-và hiệu chỉnh Holm. Gate 8 là phân tích cơ chế bổ sung với một training seed. Đây không phải phép đo phần trăm thông tin hay kiểm định tương đương.
+Gate 8 đánh giá đóng góp dự báo có điều kiện của ba nhóm ngữ cảnh: epoch hiện tại, epoch liền trước và
+epoch liền sau. Điều kiện đầy đủ được đối chiếu với các điều kiện lần lượt loại nhóm ngữ cảnh trước hoặc
+sau; nhóm bị loại được thay bằng giá trị trung bình ước lượng từ dữ liệu huấn luyện của từng fold. Tiêu
+chí chính là Macro-F1 tại vùng chuyển pha. Các so sánh dùng bootstrap cụm bắt cặp, Wilcoxon theo đối
+tượng và hiệu chỉnh Holm. Gate 8 là phân tích cơ chế bổ sung với một training seed. Phân tích này không phải phép đo phần trăm thông tin và không thiết lập tương đương.
 
 """
     result = f"""
@@ -325,11 +308,10 @@ hiện tại. Kết quả không thiết lập tương đương và không cho p
     discussion = """
 ### 4.1. Ý nghĩa của kết quả Gate 8
 
-Ablation theo nhóm không xác nhận cách diễn giải cũ rằng các CNN P/N chỉ đóng góp một tỷ lệ thông tin
-cố định. Full CPN có một số lợi thế mô tả ở F1 N1, nhưng hiệu ứng vùng chuyển pha nhỏ, CI chứa 0 và
-không nhất quán theo đối tượng. CN thậm chí có Macro-F1 toàn bộ mô tả cao hơn Full CPN. Cách trình bày
-đúng là báo cáo hiệu ứng tăng thêm có điều kiện và độ bất định, không quy đổi thành phần trăm thông tin.
-Việc không bác bỏ giả thuyết không cũng không chứng minh C/CP/CN tương đương Full CPN.
+Ablation theo nhóm không xác nhận cách diễn giải cũ rằng các nhóm ngữ cảnh chỉ đóng góp một tỷ lệ thông
+tin cố định. Hiệu ứng tại vùng chuyển pha nhỏ, khoảng tin cậy chứa 0 và không nhất quán theo đối tượng.
+Cách trình bày phù hợp là báo cáo hiệu ứng tăng thêm có điều kiện và độ bất định, không quy đổi thành
+phần trăm thông tin. Việc không bác bỏ giả thuyết không cũng không chứng minh các điều kiện tương đương.
 
 """
     text = text.replace("## 3. Kết quả", method + "## 3. Kết quả")
@@ -355,14 +337,14 @@ def append_gate8_checklist(path: Path) -> None:
     text = path.read_text(encoding="utf-8").replace("Gate 7", "Gate 8")
     text += """
 
-## Gate 8 — ablation C/P/N
+## Gate 8 — ablation nhóm đặc trưng C/P/N
 
-- [ ] Ghi rõ Full CPN tái sử dụng E1 còn CP/CN/C huấn luyện lại TCN.
-- [ ] Ghi rõ vector thay thế chỉ được tính từ train hợp lệ trong từng fold.
+- [ ] Ghi rõ Full CPN tái sử dụng E1, còn CP/CN/C được huấn luyện lại TCN.
+- [ ] Ghi rõ vector thay thế chỉ được tính từ dữ liệu train hợp lệ trong từng fold.
 - [ ] Tiêu chí chính là Macro-F1 vùng chuyển pha ±1; Holm gồm đúng ba so sánh Gate 8.
 - [ ] Không dùng cụm “12% thông tin” hoặc bất kỳ phần trăm thông tin nào.
 - [ ] Không diễn giải p lớn thành tương đương hoặc không thua kém.
-- [ ] Ghi rõ Gate 8 là phân tích cơ chế bổ sung và chỉ có một training seed.
+- [ ] Ghi rõ Gate 8 là phân tích cơ chế bổ sung với một training seed.
 - [ ] Không tuyên bố P/N vô dụng hoặc C đủ thay thế CPN.
 """
     path.write_text(text, encoding="utf-8")
@@ -486,8 +468,8 @@ def build(workspace: Path, output_dir: Path) -> dict[str, Any]:
             "numpy": np.__version__,
             "matplotlib": matplotlib.__version__,
         },
-        "input_sha256": {name: file_sha256(path) for name, path in inputs.items()},
-        "output_sha256": {name: file_sha256(path) for name, path in files.items()},
+        "input_sha256": {name: sha256_file(path) for name, path in inputs.items()},
+        "output_sha256": {name: sha256_file(path) for name, path in files.items()},
         "counts": {
             "experiments": len(performance),
             "comparisons": len(comparisons),

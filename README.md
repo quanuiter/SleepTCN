@@ -1,12 +1,12 @@
 # SleepTCN
 
-Kho nghiên cứu tái triển khai ZleepAnlystNet và đánh giá TCN, ResNet-1D cùng các biến thể tiền xử lý
-trên Sleep-EDF Expanded — Sleep Cassette.
+SleepTCN là kho nghiên cứu tái triển khai và đánh giá các quy trình phân giai đoạn giấc ngủ từ EEG một
+kênh trên Sleep-EDF Expanded — Sleep Cassette. Nghiên cứu tập trung vào sự khác biệt giữa 15CNN–BiLSTM,
+15CNN–TCN và ResNet-1D–TCN, đồng thời đánh giá các phương án tiền xử lý tín hiệu.
 
-> **Trạng thái ngày 2026-08-22:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích
-> thành phần E1/E2, đối chiếu hậu nghiệm E3−E2 và phân tích độ nhạy seed 42/123 đều đã hoàn tất. Không có chiến dịch GPU nào đang
-> chờ chạy. Xem `notebooks/docs/STATUS_V2.md`, `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` và báo cáo
-> tại `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
+> **Trạng thái ngày 2026-08-25:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích thành
+> phần E1/E2, đối chiếu E3−E2 và phân tích độ nhạy với seed 42/123 đã hoàn tất. Kết quả hiện hành được
+> trình bày tại `docs/STATUS_V2.md` và trong báo cáo `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
 ## Kết quả chính
 
@@ -42,20 +42,20 @@ trên Sleep-EDF Expanded — Sleep Cassette.
 | 7 | Gói bảng, hình, bản thảo và ma trận bằng chứng | ĐẠT |
 | 8 | Ablation C/P/N: 30 validation + 30 test | ĐẠT |
 
-## Đọc theo thứ tự
+## Tài liệu kết quả
 
-1. `notebooks/docs/STATUS_V2.md` — trạng thái cuối và phạm vi đã hoàn thành.
-2. `notebooks/docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
-3. `notebooks/docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
-4. `notebooks/docs/SHHS_E3_E2_PAIRED_RESULTS.md` — đối chiếu tiền xử lý E3−E2.
-5. `notebooks/docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
+1. `docs/README.md` — mục lục tài liệu.
+2. `docs/STATUS_V2.md` — nguồn duy nhất cho trạng thái cuối.
+3. `docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
+4. `docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
+5. `docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
 6. `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf` — báo cáo LaTeX hoàn chỉnh.
 7. `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` — phát biểu được phép và bị cấm.
-8. `notebooks/docs/NEXT_STEPS.md` — trạng thái dừng và điều kiện nếu mở nghiên cứu mới.
+8. `docs/REPRODUCIBILITY_PACKAGE.md` — lock môi trường, audit hash và quy trình tái sinh NPZ.
+9. `docs/SOURCE_ARCHITECTURE.md` — ranh giới module và nguyên tắc tổ chức source.
 
-`STATUS_V2.md` và `NEXT_STEPS.md` là hai nguồn duy nhất cho trạng thái và kế hoạch hiện hành. Các
-runbook còn lại mô tả cách tái tạo một cổng cụ thể; các bước tuần tự bên trong không phải danh sách
-công việc đang chờ ở thời điểm hiện tại.
+`STATUS_V2.md` là tài liệu chính thức về trạng thái và phạm vi kết luận. Các protocol và runbook ghi lại
+thiết kế thực nghiệm, điều kiện tái lập và nguồn gốc của từng nhóm kết quả.
 
 ## Phạm vi và giới hạn
 
@@ -76,18 +76,18 @@ configs/          Cấu hình và giao thức đã khóa
 data/manifests/   Manifest nguồn và báo cáo kiểm định dữ liệu
 data/splits/      Split 10-fold theo đối tượng
 data/processed/   Dữ liệu NPZ lớn, không lưu Git
-notebooks/docs/   Giao thức, runbook, trạng thái và báo cáo
-runs/v2/          Checkpoint, prediction, metrics và gói công bố
+docs/             Giao thức, runbook, trạng thái và báo cáo
+runs/v2/          Phân tích nhẹ và gói công bố cuối; không lưu trọng số
 scripts/          CLI tiền xử lý, huấn luyện, kiểm định và phân tích
 src/sleeptcn/     Mã nguồn dùng chung
 tests/            Kiểm thử tự động
 ```
 
-## Quy tắc bất biến sau Gate 8
+## Phạm vi kết luận
 
-- Không sửa kết quả E0–E6 hoặc Gate 8 dựa trên việc đã xem test.
-- Không gọi `p > 0,05` là bằng chứng tương đương.
-- Không gọi ablation C/P/N là phép đo phần trăm thông tin hay quan hệ nhân quả.
-- Không đưa dataset hoặc `data/cache/` lên kho Git.
-- Mọi mở rộng thêm seed, thích nghi SHHS hoặc cohort xác nhận mới phải là giao thức riêng, tách khỏi
-  kết quả Gate 1–8 và các phân tích SHHS đã đóng.
+- Các kết quả E0–E6 và Gate 8 được xem là các kết quả đã khóa; mọi phân tích mới phải dùng protocol riêng.
+- Giá trị p lớn hơn 0,05 không được diễn giải như bằng chứng về tính tương đương hoặc không thua kém.
+- Ablation C/P/N chỉ ước lượng hiệu ứng dự báo có điều kiện trong quy trình hiện tại, không đo tỷ lệ thông
+  tin và không xác lập quan hệ nhân quả.
+- Kết luận SHHS chỉ áp dụng cho cohort và giao thức zero-shot đã khóa; chưa có cơ sở để suy rộng sang toàn
+  bộ SHHS hoặc thực hành lâm sàng.

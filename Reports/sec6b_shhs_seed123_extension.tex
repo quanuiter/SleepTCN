@@ -1,20 +1,16 @@
-\subsection{Mở rộng band-pass E4 trên SHHS với seed 123}
+\subsection{Mở rộng đánh giá chế độ lọc dải trên SHHS với seed 123}
 \label{sec:shhs_seed123_extension}
 
-Để đánh giá riêng chế độ band-pass trong khả năng chuyển miền, một extension
-được khóa trên cùng 180 đối tượng SHHS và dùng cùng seed 123 cho E0, E2, E3,
-E4 và E6. Không có huấn luyện hoặc cập nhật trọng số trên SHHS. Chiến dịch
-hoàn tất 9.000 prediction theo fold và 900 ensemble prediction; test gate đạt
-với 0 lỗi.
+Một phân tích mở rộng được thực hiện trên cùng mẫu 180 đối tượng SHHS1 để đối chiếu trực tiếp chế độ lọc dải với các chế độ xử lý biên độ khác. Toàn bộ năm cấu hình trong phân tích này sử dụng checkpoint seed 123; không cấu hình nào được cập nhật trọng số bằng dữ liệu SHHS. Vì cohort đã được mở trong chiến dịch chính, kết quả được xem là bằng chứng bổ sung sau giao thức.
 
 \begin{table}[H]
 \centering
-\caption{Kết quả mô tả của extension E4 trên SHHS1}
+\caption{Kết quả mô tả của phân tích mở rộng SHHS1}
 \label{tab:shhs_seed123_extension}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrr}
 \toprule
-\textbf{E} & \textbf{\mf\ đối tượng} & \textbf{\mf\ gộp} & \textbf{Accuracy} & \textbf{$\kappa$} \\
+\textbf{Cấu hình} & \textbf{\mf\ đối tượng} & \textbf{\mf\ gộp} & \textbf{Accuracy} & \textbf{$\kappa$} \\
 \midrule
 E0 & 0,5303 & 0,5785 & 0,6738 & 0,5420 \\
 E2 & 0,5409 & 0,5858 & 0,6874 & 0,5597 \\
@@ -25,20 +21,6 @@ E6 & 0,5503 & 0,5865 & 0,6873 & 0,5552 \\
 \end{tabular}}
 \end{table}
 
-E4 cao hơn E2 với chênh lệch \mf\ trung bình theo đối tượng 0,0323, CI
-95\% $[0,0236;0,0410]$, Wilcoxon--Holm $p=7,40\times10^{-13}$ và
-thắng/hòa/thua 135/1/44. E3 thấp hơn E4 0,0098 điểm, CI
-$[-0,0125;-0,0073]$, $p=1,89\times10^{-10}$; do đó trong extension này,
-band-pass không chia 100 cho kết quả chuyển miền tốt hơn biến thể có chia
-100. E3 vẫn cao hơn E6 0,0131 điểm, CI $[0,0023;0,0239]$, $p=0,0085$, và
-cao hơn E0 0,0331 điểm, CI $[0,0225;0,0438]$, $p=5,19\times10^{-9}$.
+E4 cao hơn E2 0,0323 điểm Macro-F1 trung bình theo đối tượng, với khoảng tin cậy 95\% $[0,0236;0,0410]$, kiểm định Wilcoxon--Holm $p=7,40\times10^{-13}$ và thắng/hòa/thua 135/1/44. E4 cũng cao hơn E3 0,0098 điểm theo hướng E4, cho thấy thứ hạng giữa các chế độ xử lý biên độ có thể phụ thuộc vào miền dữ liệu và seed.
 
-E4 có F1 N1 gộp 0,3492 và Macro-F1 vùng chuyển pha 0,4711, đều là giá trị
-cao nhất trong extension. E6 có recall N1 cao hơn (0,5880) nhưng F1 N1 thấp
-hơn E4 (0,3275), cho thấy recall đơn lẻ không phản ánh đầy đủ sự cân bằng
-precision--recall.
-
-Các đối chiếu E4--E2 và E3--E4 là bằng chứng bổ sung trên cùng cohort, không
-phải kiểm định tương đương hoặc không thua kém và không quy kết nhân quả cho
-một thao tác riêng. Kết quả cho thấy lựa chọn thang biên độ là yếu tố quan
-trọng của khả năng chuyển miền trong pipeline hiện tại.
+Trong phân tích mở rộng này, E4 đạt F1 N1 và Macro-F1 vùng chuyển pha cao nhất. Kết quả củng cố vai trò của chế độ tiền xử lý trong chuyển miền, nhưng vẫn được diễn giải là hiệu ứng quan sát trên cùng cohort và không dùng để suy ra quan hệ nhân quả của một thao tác riêng.

@@ -1,0 +1,1332 @@
+%==============================================================================
+%  Controlled Evaluation of a ResNet-1D--TCN Pipeline for Single-Channel EEG
+%  Sleep Staging: Component Ablations on Sleep-EDF and Zero-Shot Transfer to SHHS1
+%
+%  English manuscript. Journal-neutral single-column preprint format.
+%  Build:  pdflatex -> bibtex -> pdflatex -> pdflatex
+%==============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{newtxtext,newtxmath}   % Times-like text + math (journal convention)
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[section]{placeins}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{authblk}               % structured author / affiliation block
+\usepackage{titlesec}
+\usepackage{abstract}
+
+\geometry{top=2.4cm,bottom=2.4cm,left=2.3cm,right=2.3cm}
+\setlength{\parindent}{1.1em}
+\setlength{\parskip}{0.2em}
+\setlist{nosep,leftmargin=1.6em}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\renewcommand{\arraystretch}{1.15}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ---- section headings: journal-style, not oversized -------------------------
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection.}{0.6em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection.}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.5ex plus .3ex}{0.8ex}
+\titlespacing*{\subsection}{0pt}{1.2ex plus .3ex}{0.6ex}
+
+% ---- author block formatting (authblk) --------------------------------------
+\renewcommand\Authfont{\normalsize}
+\renewcommand\Affilfont{\small\itshape}
+\setlength{\affilsep}{0.7em}
+\renewcommand\Authands{, }         % no "and" before the last author
+\renewcommand\Authsep{, }
+
+% ---- abstract block ---------------------------------------------------------
+\renewcommand{\abstractnamefont}{\normalfont\bfseries}
+\renewcommand{\abstracttextfont}{\normalfont\small}
+\setlength{\absleftindent}{0.6cm}
+\setlength{\absrightindent}{0.6cm}
+
+\definecolor{linkblue}{RGB}{18,82,148}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  citecolor=linkblue,
+  urlcolor=linkblue,
+  pdftitle={Controlled Evaluation of a ResNet-1D-TCN Pipeline for Single-Channel EEG Sleep Staging},
+  pdfauthor={Ngo Nhat Quan; Pham Thai Son},
+  pdfkeywords={sleep staging; single-channel EEG; ResNet-1D; temporal convolutional network; Sleep-EDF; SHHS; domain shift}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Ngo \textit{et al.}}
+\fancyhead[R]{\small\itshape ResNet-1D--TCN for single-channel EEG sleep staging}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\mf}{\ensuremath{\mathrm{macro\text{-}F1}}}
+\newcommand{\ci}{\ensuremath{\mathrm{CI}_{95\%}}}
+\newcommand{\dsign}{\ensuremath{\Delta_{\mathrm{sign}}}}
+
+%==============================================================================
+\begin{document}
+
+%------------------------------------------------------------------ front matter
+\title{\bfseries\LARGE Controlled Evaluation of a ResNet-1D--TCN Pipeline\\[0.15em]
+for Single-Channel EEG Sleep Staging:\\[0.15em]
+Component Ablations on Sleep-EDF and Zero-Shot Transfer to SHHS1}
+
+% NOTE FOR SUBMISSION: insert e-mail addresses and ORCID identifiers below,
+% and add the supervising author to the author list if authorship criteria are met.
+\author[1,$\ast$]{Ngo Nhat Quan}
+\author[1]{Pham Thai Son}
+\affil[1]{Faculty of Computer Science, University of Information Technology,\protect\\
+Vietnam National University Ho Chi Minh City, Ho Chi Minh City, Viet Nam}
+
+\date{}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{-1.0em}
+\begin{center}
+\small
+$^{\ast}$Corresponding author: \texttt{23521258@gm.uit.edu.vn}\\[0.2em]
+\textit{Manuscript --- August 2026}
+\end{center}
+
+\vspace{0.4em}
+\begin{center}\rule{0.9\textwidth}{0.4pt}\end{center}
+\vspace{-0.2em}
+
+\begin{abstract}
+\noindent
+\textbf{Background.} Comparisons between deep sleep-staging models are frequently confounded, because
+architecture, preprocessing, subject partitioning and model-selection rules change together across
+publications. Reported gains therefore cannot be attributed to any single component, and out-of-domain
+behaviour is rarely characterised beyond a single aggregate score.
+
+\noindent
+\textbf{Methods.} We conducted a pre-specified, subject-wise controlled comparison of six configurations
+(E0--E4, E6) on the Sleep Cassette subset of Sleep-EDF Expanded (78 subjects, 153 recordings,
+195{,}469 scored 30\,s epochs, Fpz--Cz). All configurations shared one 10-fold subject-wise partition,
+one model-selection rule (validation \mf) and one locked test set that was opened exactly once.
+Configurations differed in a single component at a time, isolating the sequence model (BiLSTM
+$\rightarrow$ TCN), the epoch encoder (15-branch CNN $\rightarrow$ ResNet-1D) and the amplitude-handling
+scheme. Uncertainty was quantified by paired subject-cluster bootstrap (10{,}000 resamples) and
+two-sided Wilcoxon signed-rank tests with Holm correction over four pre-specified comparisons.
+Generalisation was assessed by locked zero-shot inference on 180 SHHS Visit-1 participants (C4--A1,
+169{,}012 scored epochs); no weights were updated on SHHS.
+
+\noindent
+\textbf{Results.} The ResNet-1D--TCN configuration with fixed-scale amplitude handling (E3) attained the
+highest out-of-fold \mf\ (0.7904). Against per-record $z$-scoring (E6) it gained $0.0213$
+(\ci\ $[0.0122, 0.0307]$; Holm $p = 0.0012$); a post-protocol repeat with a second seed preserved the
+direction ($+0.0102$, \ci\ $[0.0024, 0.0180]$) but not Holm significance. Isolated architectural
+substitutions produced small, non-significant descriptive gains. E3 was $3.76\times$ faster at
+inference than the CNN--BiLSTM control, at $4.37\times$ the parameter count and $28.4\%$ higher peak GPU
+memory. Zero-shot on SHHS1, E3 exceeded the control by $0.0412$ subject-mean \mf\
+(\ci\ $[0.0314, 0.0512]$; Holm $p = 2.65\times10^{-13}$) and $z$-scoring by $0.0274$.
+Two novel analyses reframe the findings. First, the entire Sleep-EDF $\rightarrow$ SHHS1 degradation
+($\Delta\mf = 0.1805$) is concentrated in two confusion channels: correcting N3$\rightarrow$N2 alone
+recovers $0.1345$ ($74.5\%$ of the gap), and correcting N3$\rightarrow$N2 together with N2$\rightarrow$REM
+recovers $0.1848$, restoring in-domain-level performance. The failure is a slow-wave amplitude-threshold
+effect (N3 precision $0.944$, recall $0.258$, falling further to $0.073$ at stage boundaries) whose
+direction is \emph{opposite} to the label-prior shift, which excludes prior shift as its cause and
+identifies a montage- and age-dependent voltage criterion instead.
+Second, the null result of the context ablation is explained
+rather than merely reported: the non-causal TCN already integrates a receptive field of 253 epochs
+($\pm63$\,min), so the $\pm1$-epoch context groups it was asked to supply are nested inside information
+the sequence model already possesses.
+
+\noindent
+\textbf{Conclusions.} Within this protocol the complete E3 pipeline is the strongest and most
+transfer-robust configuration, but its advantage is attributable to the evaluated procedure as a whole
+rather than to architectural optimality. The dominant obstacle to deployment is not aggregate accuracy
+but a localised, diagnosable and---we argue---correctable montage-dependent failure on slow-wave sleep.
+\end{abstract}
+
+\vspace{0.3em}
+\noindent\textbf{Keywords:} sleep staging; single-channel EEG; ResNet-1D; temporal convolutional network;
+Sleep-EDF Expanded; Sleep Heart Health Study; domain shift; zero-shot evaluation; paired inference.
+
+\vspace{0.3em}
+\begin{center}\rule{0.9\textwidth}{0.4pt}\end{center}
+
+\clearpage
+
+%==============================================================================
+\section{Introduction}
+
+Sleep staging assigns one of five labels---W, N1, N2, N3 and REM---to every 30\,s epoch of a
+polysomnographic recording. Manual scoring is slow, requires trained expertise, and retains
+irreducible disagreement between scorers; in the inter-scorer reliability programme of the American
+Academy of Sleep Medicine, N1 shows the lowest agreement of all stages~\cite{rosenberg2013aasm}. An
+automated system therefore has to be judged not by overall accuracy alone, which is dominated by the
+most frequent stages, but by class-balanced metrics, by stability across individuals, and by its
+behaviour when the recording device, montage or population changes.
+
+Progress in this field is difficult to read from published tables. Studies differ simultaneously in
+dataset version, subject partitioning, wake-trimming policy, filtering, normalisation, sequence length
+and model-selection rule, so a reported improvement cannot be attributed to the architecture that the
+paper nominally proposes. What is missing is not another architecture but a protocol in which one
+component changes at a time while everything else is held fixed.
+
+We take ZleepAnlystNet~\cite{jadhav2024zleepanlystnet}, a two-stage single-channel model that couples a
+bank of class-specific convolutional encoders to a BiLSTM, as an internal control, and we substitute two
+components in isolation: a temporal convolutional network (TCN) as a parallelisable sequence
+model~\cite{bai2018tcn}, and a one-dimensional residual network (ResNet-1D) as an epoch
+encoder~\cite{he2016resnet}. Neither substitution is assumed beneficial. We additionally treat the
+amplitude-handling scheme as a first-class experimental factor rather than an implementation detail,
+because it determines whether absolute microvolt relationships survive preprocessing---the quantity most
+likely to differ between acquisition setups.
+
+The study is organised around four questions. (i) Does a TCN improve on a BiLSTM when the epoch encoder
+is held fixed? (ii) Does a ResNet-1D encoder help when the sequence model is held fixed? (iii) How does
+the amplitude-handling scheme affect performance? (iv) Do any of these effects survive zero-shot
+evaluation on an independent, clinically distinct cohort?
+
+Our contributions are the following.
+
+\begin{enumerate}[label=(\arabic*)]
+\item A leakage-controlled 10-fold subject-wise protocol in which six configurations share one partition,
+one selection rule and one test set opened exactly once, with component substitutions designed so that
+each pre-specified contrast isolates a single change.
+\item A locked zero-shot transfer campaign to 180 SHHS Visit-1 participants, and a paired,
+subject-level statistical treatment of it.
+\item \emph{A decomposition of the domain gap.} We show that the cross-cohort degradation is not diffuse:
+two confusion channels account for essentially all of it, and the dominant one is a slow-wave
+amplitude-threshold failure whose signature (very high precision, collapsed recall) and whose direction
+relative to the label-prior shift jointly identify it as a signal-level, montage-dependent effect rather
+than a prior-shift or class-imbalance effect.
+\item \emph{A mechanistic account of a null result.} We show that the context-group ablation could not
+have detected an effect of the design that was used, because the sequence model's receptive field
+already subsumes the context it was being asked to provide---turning an uninformative negative into a
+constraint on how such ablations must be designed.
+\item Distribution-free effect sizes and an exact sign test reported alongside every paired comparison,
+so that the strength of evidence is separable from the sample size.
+\end{enumerate}
+
+Throughout, we distinguish pre-specified comparisons, secondary evidence and post-hoc contrasts, and we
+confine claims to the evidence class that supports them.
+
+%==============================================================================
+\section{Related work}
+
+DeepSleepNet combined a dual-branch CNN with a BiLSTM to capture epoch morphology and temporal
+dependence~\cite{supratak2017deepsleepnet}. AttnSleep introduced attention over multi-resolution
+features~\cite{eldele2021attnsleep}, and SleepTransformer applied self-attention with explicit
+uncertainty quantification~\cite{phan2022sleeptransformer}. Together these establish that sequential
+context matters substantially. They also illustrate the comparability problem: differences in dataset
+version, subject split and preprocessing between these works are large enough that cross-table
+comparison cannot substitute for an ablation carried out inside one protocol, a point emphasised in
+recent reviews of the field~\cite{phan2022review}.
+
+Sleep-EDF Expanded is the standard public benchmark for single-channel
+EEG~\cite{kemp2000sleepEDF,physionetSleepEDF}. The Sleep Heart Health Study (SHHS) is a large
+multi-centre cohort assembled to study sleep-disordered breathing and cardiovascular
+risk~\cite{quan1997shhs}, distributed through the National Sleep Research Resource
+(NSRR)~\cite{zhang2018nsrr}. The two differ in age, comorbidity, recording hardware, montage and label
+distribution. This makes SHHS a considerably more realistic transfer test than a held-out split of the
+same corpus, and it is the reason we treat the transfer result---not the in-domain ranking---as the
+principal evidence about deployability.
+
+Two threads of the literature bear directly on our findings. First, the sleep slow oscillation has a
+pronounced anterior amplitude maximum and propagates as a travelling wave~\cite{massimini2004travelling},
+so the microvolt amplitude of slow-wave activity is derivation-dependent; and slow-wave amplitude
+declines markedly with age~\cite{ohayon2004metaanalysis}. Both scoring
+manuals~\cite{rechtschaffen1968,berry2017aasm} define deep sleep partly through an absolute amplitude
+criterion, which means an amplitude criterion learned on one derivation and one age band need not
+transfer. Second, classifier outputs trained under one label prior are miscalibrated under another, and
+the correction is well characterised~\cite{saerens2002adjusting,guo2017calibration}. Section~\ref{sec:gap}
+uses these two mechanisms as competing explanations and shows that the data discriminate between them.
+
+%==============================================================================
+\section{Materials and methods}
+
+\subsection{Data and labels}
+
+The Sleep Cassette subset of Sleep-EDF Expanded comprises 153 recordings from 78 subjects; we use the
+Fpz--Cz derivation at 100\,Hz with 30\,s epochs (3{,}000 samples per epoch). Annotations are mapped to
+W, N1, N2, N3 and REM; Movement and Unknown epochs retain their temporal position but are excluded from
+the loss and from all metrics. After windowing, 195{,}767 epochs remain, of which 195{,}469 are scored
+and 298 are Movement/Unknown.
+
+An evaluation window is applied identically to both cohorts. It is anchored on the first and last true
+sleep epoch (any of N1, N2, N3, REM) and extended by 30\,min of wake on each side, i.e.\ 60 epochs per
+side. This policy is stated explicitly because it strongly affects the wake fraction and hence every
+aggregate metric, and because it is one of the principal reasons published numbers are not directly
+comparable. It is a benchmark window, not a deployable inference rule, since its anchors use ground-truth
+labels.
+
+The SHHS Visit-1 sample was locked before any prediction was inspected and comprises 180 test
+participants, with a further 5 adaptation and 15 validation participants that were never used to update
+weights. The EEG channel is C4--A1 at 125\,Hz, resampled to 100\,Hz with a polyphase anti-aliasing
+filter (up 4, down 5, Kaiser window $\beta = 5.0$) applied to the continuous signal before epoching.
+SHHS labels are mapped $0\rightarrow$W, $1\rightarrow$N1, $2\rightarrow$N2, $\{3,4\}\rightarrow$N3,
+$5\rightarrow$REM, $\{6,9\}\rightarrow$excluded. Table~\ref{tab:class-distribution} reports both label
+distributions.
+
+\begin{table}[t]
+\centering
+\caption{Scored-label distribution in the two evaluation samples.}
+\label{tab:class-distribution}
+\small
+\begin{tabular}{lrr|rrr}
+\toprule
+\textbf{Stage} & \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{3}{c}{\textbf{SHHS1 test}} \\
+ & \textbf{Epochs} & \textbf{Share} & \textbf{Epochs} & \textbf{Share} & \textbf{Ratio to EDF} \\
+\midrule
+W   & 65{,}941 & 33.73\% & 36{,}983 & 21.88\% & 0.65 \\
+N1  & 21{,}522 & 11.01\% & 7{,}002  & 4.14\%  & 0.38 \\
+N2  & 69{,}132 & 35.37\% & 76{,}287 & 45.14\% & 1.28 \\
+N3  & 13{,}039 & 6.67\%  & 22{,}806 & 13.49\% & 2.02 \\
+REM & 25{,}835 & 13.22\% & 25{,}934 & 15.34\% & 1.16 \\
+\midrule
+\textbf{Total scored} & \textbf{195{,}469} & \textbf{100\%} & \textbf{169{,}012} & \textbf{100\%} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The prior shift between cohorts is substantial: total variation distance $0.187$,
+$D_{\mathrm{KL}}(\text{EDF} \,\|\, \text{SHHS}) = 0.101$ nats. SHHS1 contains proportionally
+$2.02\times$ as much N3 and $0.38\times$ as much N1. We report the per-class ratios in
+Table~\ref{tab:class-distribution} because Section~\ref{sec:gap} uses their \emph{direction} as evidence.
+
+\subsection{Preprocessing conditions}
+
+All conditions operate on the continuous calibrated signal in microvolts before epoching. Four
+conditions enter the comparison:
+
+\begin{itemize}
+\item \textbf{Raw} (E0--E2): no filtering, no clipping, no rescaling; native $\mu$V retained.
+\item \textbf{Band-pass only} (E4): zero-phase Butterworth band-pass, order 4, 0.5--30\,Hz, implemented
+as second-order sections with forward--backward filtering.
+\item \textbf{Fixed-scale amplitude handling} (E3): the same band-pass, followed by a hard clip at
+$\pm800\,\mu$V and division by a constant factor of 100. The clip threshold is an absolute constant
+identical for every recording, so no data-dependent statistic is estimated and no leakage is possible;
+crucially, \emph{relative amplitude between recordings is preserved}.
+\item \textbf{Per-record $z$-score} (E6): the same band-pass and clip, followed by subtraction of the
+mean and division by the standard deviation computed over the whole filtered, clipped recording. This
+is label-independent but \emph{destroys absolute amplitude information across recordings}.
+\end{itemize}
+
+No notch filter is applied: 50\,Hz lies outside the 0.5--30\,Hz pass-band and at the Nyquist frequency
+of the 100\,Hz signal. The contrast E3\,--\,E6 is thus precisely a contrast between preserving and
+discarding cross-recording amplitude scale, which is why it is the pre-specified comparison of greatest
+interest for transfer. One further derived variant proved bit-identical to the band-pass-only condition
+in this corpus and therefore does not constitute an independent experiment.
+
+\subsection{Model configurations}
+
+\begin{table}[t]
+\centering
+\caption{Configurations compared. Each pre-specified contrast changes exactly one component.}
+\label{tab:configs}
+\small
+\begin{tabularx}{\textwidth}{llYY}
+\toprule
+\textbf{ID} & \textbf{Signal condition} & \textbf{Epoch encoder} & \textbf{Sequence model and role} \\
+\midrule
+E0 & Raw & 15-branch CNN & BiLSTM; internal control \\
+E1 & Raw & 15-branch CNN & TCN; isolates the sequence model \\
+E2 & Raw & ResNet-1D & TCN; isolates the epoch encoder \\
+E3 & Band-pass + clip + fixed scale & ResNet-1D & TCN; complete proposed pipeline \\
+E4 & Band-pass only & ResNet-1D & TCN; effect of filtering alone \\
+E6 & Band-pass + clip + $z$-score & ResNet-1D & TCN; alternative rescaling \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Table~\ref{tab:configs} lists the six configurations.
+
+\paragraph{15-branch CNN encoder.} The control encoder instantiates 15 independent small CNNs: three
+context groups---C (current epoch), P (previous), N (next)---crossed with five class-specific detectors
+(W, N1, N2, N3, REM). Each branch has 2{,}495 parameters and comprises two convolutional blocks,
+\texttt{Conv1d}$(1\!\rightarrow\!10, k{=}55)$ and \texttt{Conv1d}$(10\!\rightarrow\!5, k{=}25)$, each
+followed by ReLU, batch normalisation and $16\times$ max-pooling, then a $60\rightarrow10\rightarrow5$
+head. The concatenated output is a 75-dimensional vector per epoch (15 branches $\times$ 5 softmax
+outputs), ordered C, P, N. Context shifts are clamped at recording boundaries.
+
+\paragraph{ResNet-1D encoder.} A stem \texttt{Conv1d}$(1\!\rightarrow\!32, k{=}50, s{=}5)$ with batch
+normalisation, ReLU and max-pooling is followed by three residual blocks
+($32\rightarrow64$, $s{=}1$; $64\rightarrow128$, $s{=}2$; $128\rightarrow128$, $s{=}2$), each containing
+two $k{=}7$ convolutions with a projection shortcut where shape changes. Global average pooling yields a
+128-dimensional epoch embedding; total temporal downsampling is $40\times$. Note that the ResNet-1D
+encoder consumes \emph{only the current epoch}: it has no C/P/N construction.
+
+\paragraph{Sequence models.} The TCN projects the encoder output to 128 dimensions and applies six
+residual blocks of two $k{=}3$ convolutions each, with dilations $1, 2, 4, 8, 16, 32$, LayerNorm, GELU
+and dropout $0.2$. Padding is symmetric, so the network is \emph{non-causal}, and the receptive field is
+$1 + 2(k-1)\sum_i d_i = 1 + 4 \times 63 = 253$ epochs, i.e.\ approximately $\pm126$ epochs or
+$\pm63$\,min around the epoch being classified. The BiLSTM control is a single bidirectional layer with
+128 hidden units per direction. In both cases the input is the \emph{entire overnight recording} as one
+sequence (typically 900--1{,}200 epochs), not a short window; padding is masked at every layer. The
+receptive-field figure is central to interpreting the context ablation and we return to it in
+Section~\ref{sec:rf}.
+
+\subsection{Two-stage training and subject-wise cross-validation}
+
+The 78 subjects are partitioned into 10 subject-disjoint folds. In each evaluation round one fold is the
+test fold, the next fold (modulo 10) is the validation fold and the remainder are training folds. Both
+nights of a subject always share the same role. The same partition is used for every configuration, and
+the test fold never participates in model selection; the training API accepts only training and
+validation loaders, so test data cannot enter fitting.
+
+Training proceeds in two stages with a \emph{fully frozen} encoder. Stage 1 fits the epoch encoder at
+epoch level: for E0/E1, the 15 CNN branches are trained independently as five-class problems under
+class-specific binary weights $w_c = 0.5 N / n_c$ and $w_{j \neq c} = 0.5 N /(N - n_c)$ computed from
+training subjects only; for E2--E6, the ResNet-1D and a linear head are trained on single epochs under
+balanced weights $w_c = N/(5 n_c)$, again from training subjects only. The best checkpoint is then
+verified by SHA-256, switched to evaluation mode, and used under \texttt{torch.no\_grad()} to extract and
+cache features. Stage 2 fits the sequence model on those cached features; because the inputs are arrays,
+the encoder is not in the computation graph and the freeze is absolute.
+
+Optimisation settings are: 15-branch CNN, Adam, lr $10^{-3}$, batch 64 epochs, patience 10; ResNet-1D,
+AdamW, lr $10^{-3}$, weight decay $10^{-4}$, batch 64, max 40 epochs, patience 8; BiLSTM, Adam,
+lr $10^{-2}$, batch 4 recordings, patience 10; TCN, Adam, lr $5\times10^{-4}$, batch 8 recordings,
+max 300 epochs, patience 30. Gradient-norm clipping at 1.0 is applied to sequence models. There is no
+learning-rate schedule, no label smoothing and no data augmentation. Sequence models use unweighted
+masked cross-entropy, so their outputs are calibrated to the Sleep-EDF label prior---a fact that
+Section~\ref{sec:gap} exploits. Model selection uses validation \mf\ (validation weighted loss for the
+CNN branches). E1 reuses the E0 encoder checkpoints unchanged, so E1\,--\,E0 isolates the sequence-model
+substitution exactly.
+
+\subsection{Test locking, statistical analysis and effect sizes}
+
+All six configurations completed validation-based selection before the test set was opened, once. In
+Sleep-EDF, pooled \mf\ is the descriptive headline metric, but the unit of statistical inference is the
+subject. Paired subject-cluster bootstrap with 10{,}000 resamples estimates confidence intervals for the
+difference in pooled \mf, while a two-sided Wilcoxon signed-rank test~\cite{wilcoxon1945} assesses the
+subject-level distribution of per-subject differences~\cite{efron1994bootstrap}. Holm
+correction~\cite{holm1979} is applied over the four pre-specified comparisons E1\,--\,E0, E2\,--\,E1,
+E3\,--\,E2 and E3\,--\,E6. These two procedures target different estimands---a pooled, epoch-weighted
+quantity and a subject-averaged rank quantity---and may therefore disagree; where they do, we say so
+explicitly rather than reporting only the favourable one. E3\,--\,E0 is labelled post-hoc throughout.
+
+To make the strength of evidence separable from sample size we additionally report, for every paired
+comparison, a distribution-free effect size derived from the signs of the paired differences,
+\begin{equation}
+\dsign \;=\; \frac{W - L}{W + L},
+\end{equation}
+where $W$ and $L$ are the numbers of subjects improved and degraded. This is Cliff's
+dominance statistic~\cite{cliff1993dominance} evaluated on the sign of the paired difference; it equals
+$2\hat{p}_{\mathrm{win}} - 1$ and lies in $[-1, 1]$. We accompany it with the exact two-sided binomial
+sign test. These statistics use less information than the Wilcoxon test---they ignore magnitudes---so
+they are reported as unadjusted supplementary robustness statistics, not as members of the
+pre-specified family. Their value is that they are invariant to the metric's scale and immune to a few
+large-magnitude subjects.
+
+After the primary results had been observed, the whole campaign was repeated with a second fixed
+training seed on the same partition. The two seeds are analysed separately; $p$-values are never pooled,
+and two fixed seeds are not treated as a sample from the distribution over initialisations. This repeat
+is reported as a post-protocol sensitivity analysis.
+
+For SHHS, fold predictions are combined at subject level. The pre-locked primary criterion is
+subject-mean \mf, with E3\,--\,E0 and E3\,--\,E6 as the two locked comparisons under the same
+bootstrap and Wilcoxon--Holm treatment. The E1/E2 component analysis is secondary evidence on an
+already-opened sample, and E3\,--\,E2 is explicitly post-hoc.
+
+\subsection{Supporting evaluations}
+
+Inference timing was measured on identical hardware (Tesla V100) for all configurations and excludes
+I/O, preprocessing and training. Measurements comprise three rounds of 100 forward passes, and the
+configuration order was shuffled independently in each round to remove ordering and thermal bias; we
+report the median across rounds. Feature spaces were compared by silhouette
+coefficient~\cite{rousseeuw1987silhouettes} on a stratified subsample of 200 epochs per class per fold
+(1{,}000 epochs per fold, 10{,}000 in total) after reduction to 20 principal components; this subsampling
+is a limitation of that analysis and we treat it as descriptive only. The
+context-group ablation retains the sequence model unchanged and replaces the ablated group with its
+per-dimension mean estimated on valid training epochs, preserving input dimensionality; its primary
+criterion is \mf\ restricted to a transition neighbourhood of radius $r = 1$ epoch, with $r = 2$ as a
+sensitivity check, and 10{,}000 bootstrap resamples.
+
+%==============================================================================
+\section{Results}
+
+\subsection{Out-of-fold performance on Sleep-EDF}
+
+\begin{table}[t]
+\centering
+\caption{Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds).}
+\label{tab:sleepedf-performance}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Configuration} & \textbf{\mf} & \textbf{Accuracy} & \textbf{$\kappa$} & \textbf{F1 (N1)} \\
+\midrule
+E0 & 0.7754 & 0.8262 & 0.7614 & 0.5009 \\
+E1 & 0.7802 & 0.8315 & 0.7683 & 0.5115 \\
+E2 & 0.7835 & 0.8341 & 0.7716 & 0.5180 \\
+E3 & \textbf{0.7904} & \textbf{0.8363} & \textbf{0.7754} & \textbf{0.5276} \\
+E4 & 0.7891 & 0.8360 & 0.7746 & 0.5270 \\
+E6 & 0.7691 & 0.8230 & 0.7573 & 0.5124 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+E3 is descriptively highest on all four metrics (Table~\ref{tab:sleepedf-performance}). A pooled ranking
+is not by itself statistical evidence, and Table~\ref{tab:paired-sleepedf} shows how little of this
+ordering survives inference.
+
+\begin{table}[t]
+\centering
+\caption{Pre-specified paired comparisons on Sleep-EDF \mf\ ($n = 78$ subjects). Holm correction is over
+the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks.
+E3\,--\,E0 is post-hoc and is excluded from the Holm family.}
+\label{tab:paired-sleepedf}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Comparison} & $\boldsymbol{\Delta}$\textbf{\mf} & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{W/T/L} & $\boldsymbol{\dsign}$ & $\boldsymbol{p_{\mathrm{sign}}}$ \\
+\midrule
+E1\,--\,E0 & 0.004811 & $[-0.000915, 0.010193]$ & 0.1022 & 51/0/27 & $+0.308$ & 0.0088 \\
+E2\,--\,E1 & 0.003251 & $[-0.002370, 0.008808]$ & 0.1036 & 44/0/34 & $+0.128$ & 0.3082 \\
+E3\,--\,E2 & 0.006962 & $[0.000305, 0.014520]$  & 0.8989 & 37/0/41 & $-0.051$ & 0.7343 \\
+E3\,--\,E6 & \textbf{0.021319} & $\boldsymbol{[0.012179, 0.030698]}$ & \textbf{0.0012} & 49/0/29 & $\boldsymbol{+0.256}$ & \textbf{0.0308} \\
+\midrule
+\textit{E3\,--\,E0 (post-hoc)} & 0.015024 & $[0.005746, 0.025871]$ & --- & 49/0/29 & $+0.256$ & 0.0308 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Figure~\ref{fig:primary-effects} shows these effects graphically. Only E3\,--\,E6 is consistent across all three lenses: a fully positive bootstrap interval, Holm
+significance, and a sign test that agrees. The remaining pre-specified contrasts have intervals
+containing zero and do not reach significance.
+
+E3\,--\,E2 deserves particular attention because it is the clearest case of estimand disagreement in the
+study. Its pooled bootstrap interval marginally excludes zero ($[0.000305, 0.014520]$), yet only 37 of
+78 subjects improve, $\dsign = -0.051$, and both the Wilcoxon and sign tests are far from significance
+($p_{\mathrm{sign}} = 0.734$). Pooled \mf\ is epoch-weighted and is therefore dominated by subjects
+contributing more scored epochs; the subject-level statistics weight every subject equally. When these
+disagree, the honest reading is that the effect is carried by a subset of high-epoch-count subjects and
+is not a general property of the population. We do not claim E3 improves on E2 in-domain.
+
+For the post-hoc E3\,--\,E0 contrast, the added \mf\ of the complete pipeline is $0.0150$ with a fully
+positive interval; because it changes architecture and preprocessing simultaneously, it supports the
+pipeline as a whole and cannot attribute credit to any component.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{../figures/gate8_primary_effects.png}
+\caption{Paired \mf\ differences with subject-cluster bootstrap intervals on Sleep-EDF.}
+\label{fig:primary-effects}
+\end{figure}
+
+\subsection{Per-class error structure on Sleep-EDF}
+
+\begin{table}[t]
+\centering
+\caption{Per-class metrics on Sleep-EDF: E3 versus E6 (pooled out-of-fold predictions, seed 42).
+Descriptive statistics on the same test predictions; not a new test family.}
+\label{tab:sleepedf-class-errors}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Stage} & \textbf{E3 Prec.} & \textbf{E3 Rec.} & \textbf{E3 F1} & \textbf{E6 Prec.} & \textbf{E6 Rec.} & \textbf{E6 F1} & \textbf{$\Delta$F1} \\
+\midrule
+W   & 0.9338 & 0.9271 & 0.9304 & 0.9391 & 0.9169 & 0.9279 & $+0.0026$ \\
+N1  & 0.5149 & 0.5410 & 0.5276 & 0.5032 & 0.5219 & 0.5124 & $+0.0152$ \\
+N2  & 0.8583 & 0.8447 & 0.8514 & 0.8401 & 0.8368 & 0.8385 & $+0.0130$ \\
+N3  & 0.8072 & 0.8097 & 0.8085 & 0.7160 & 0.7779 & 0.7457 & $\mathbf{+0.0628}$ \\
+REM & 0.8274 & 0.8413 & 0.8343 & 0.8227 & 0.8197 & 0.8212 & $+0.0131$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Table~\ref{tab:sleepedf-class-errors} breaks performance down by stage. N1 is by far E3's hardest class, which is consistent with it also being the stage of lowest human
+inter-scorer agreement~\cite{rosenberg2013aasm}. The largest advantage of E3 over E6 is on N3
+($+0.0628$), and the gain is driven mainly by precision ($0.807$ vs $0.716$). This is the first
+indication that the amplitude-handling scheme acts primarily through slow-wave sleep, and it anticipates
+the transfer analysis in Section~\ref{sec:gap}.
+
+A useful summary of in-domain calibration is the ratio of predicted to true epochs per class. For E3 on
+Sleep-EDF these ratios are W $0.993$, N1 $1.051$, N2 $0.984$, N3 $1.003$, REM $1.017$: the model
+reproduces the marginal label distribution almost exactly. This near-perfect in-domain marginal
+calibration is the baseline against which the SHHS behaviour must be read.
+
+\begin{table}[t]
+\centering
+\caption{Pooled confusion matrix of E3 on Sleep-EDF (rows: reference; columns: prediction).}
+\label{tab:sleepedf-confusion}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Reference $\backslash$ Predicted} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+W   & 61{,}133 & 3{,}888 & 416 & 56 & 448 \\
+N1  & 3{,}283 & 11{,}643 & 4{,}867 & 105 & 1{,}624 \\
+N2  & 539 & 5{,}496 & 58{,}394 & 2{,}271 & 2{,}432 \\
+N3  & 30 & 45 & 2{,}377 & 10{,}558 & 29 \\
+REM & 483 & 1{,}542 & 1{,}984 & 90 & 21{,}736 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In the pooled confusion matrix (Table~\ref{tab:sleepedf-confusion}), the dominant error channels are the reciprocal N2$\leftrightarrow$N1 confusions (5{,}496 and 4{,}867)
+and W$\rightarrow$N1 (3{,}888), i.e.\ the in-domain error budget is concentrated on N1 boundaries---the
+expected behaviour for a well-fitted single-channel model.
+
+\subsection{Sensitivity to the training seed}
+
+\begin{table}[t]
+\centering
+\caption{Out-of-fold test \mf\ for two fixed seeds. Seed 42 is the primary campaign; seed 123 is a
+post-protocol repeat on the same partition.}
+\label{tab:multiseed-performance}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Configuration} & \textbf{Seed 42} & \textbf{Seed 123} & \textbf{$\Delta$} \\
+\midrule
+E0 & 0.7754 & 0.7755 & $+0.0000$ \\
+E1 & 0.7802 & 0.7776 & $-0.0026$ \\
+E2 & 0.7835 & 0.7828 & $-0.0007$ \\
+E3 & 0.7904 & 0.7883 & $-0.0022$ \\
+E4 & 0.7891 & 0.7887 & $-0.0004$ \\
+E6 & 0.7691 & 0.7780 & $+0.0089$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Seed sensitivity of the four pre-specified contrasts. Each $p$-value is Holm-corrected
+\emph{within} its own seed; no test pools the two seeds.}
+\label{tab:multiseed-effects}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lll}
+\toprule
+\textbf{Comparison} & \textbf{Seed 42: $\Delta$ [CI], $p_{\mathrm{Holm}}$} & \textbf{Seed 123: $\Delta$ [CI], $p_{\mathrm{Holm}}$} \\
+\midrule
+E1\,--\,E0 & 0.004811 $[-0.000915, 0.010193]$, 0.1022 & 0.002188 $[-0.002870, 0.007043]$, 0.9130 \\
+E2\,--\,E1 & 0.003251 $[-0.002370, 0.008808]$, 0.1036 & 0.005143 $[-0.000571, 0.011292]$, 0.2400 \\
+E3\,--\,E2 & 0.006962 $[0.000305, 0.014520]$, 0.8989 & 0.005478 $[-0.002611, 0.015796]$, 0.9130 \\
+E3\,--\,E6 & 0.021319 $[0.012179, 0.030698]$, \textbf{0.0012} & 0.010249 $[0.002435, 0.017989]$, 0.1313 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Table~\ref{tab:multiseed-performance} lists the per-configuration figures. All four pre-specified differences keep a positive sign in both seeds, and E3\,--\,E6 is the only contrast whose
+bootstrap interval is fully positive in both runs. However, its Holm-adjusted significance appears in
+seed 42 only, and its magnitude halves ($0.0213 \rightarrow 0.0102$). The defensible conclusion is that
+the \emph{direction} of the amplitude-handling effect is stable while its \emph{inferential strength} is
+not. Note also that E6 is the configuration most sensitive to the seed ($+0.0089$), which is itself
+consistent with per-record $z$-scoring producing a less well-conditioned learning problem. Two fixed
+seeds cannot characterise the distribution over initialisations, and we make no claim of replication.
+
+\subsection{Complexity, latency and training cost}
+
+\begin{table}[t]
+\centering
+\caption{Forward-inference profile on a Tesla V100 (fold 0, seed 42). Throughput in epochs\,s$^{-1}$;
+peak memory in MiB.}
+\label{tab:complexity}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{ID} & \textbf{Parameters} & \textbf{Median (ms)} & \textbf{Throughput} & \textbf{Peak mem.} & \textbf{Speed-up} \\
+\midrule
+E0 & 248{,}630 & 13.4315 & 7{,}445 & 58.81 & $1.00\times$ \\
+E1 & 640{,}950 & 12.5111 & 7{,}993 & 60.31 & $1.07\times$ \\
+E2 & 1{,}085{,}578 & 3.5750 & 27{,}972 & 75.54 & $3.76\times$ \\
+E3 & 1{,}085{,}578 & 3.5687 & 28{,}021 & 75.54 & $3.76\times$ \\
+E6 & 1{,}085{,}578 & 3.5756 & 27{,}967 & 75.54 & $3.76\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As Table~\ref{tab:complexity} shows, the ResNet-1D--TCN family is $3.76\times$ faster than the BiLSTM control at inference while carrying
+$4.37\times$ the parameters and $28.4\%$ more peak memory. The advantage (Figure~\ref{fig:tradeoff}) is therefore one of
+\emph{parallelism}, not of model compactness: the TCN evaluates all epochs of a recording concurrently
+whereas the BiLSTM must unroll sequentially. Notably, E1\,--\,E0 gives only a $1.07\times$ speed-up,
+which shows that the speed benefit arises from the ResNet-1D encoder replacing 15 sequentially-scheduled
+small CNN branches, not from the TCN alone. We state this because it corrects a natural but wrong
+inference from the headline number.
+
+\begin{table}[t]
+\centering
+\caption{Wall-clock training and validation cost of the seed-123 campaign (10 folds, sequential, same
+GPU). The test set was not opened during these runs.}
+\label{tab:training-runtime}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Configuration} & \textbf{Total (10 folds)} & \textbf{Mean per fold} \\
+\midrule
+E0 --- 15-branch CNN + BiLSTM & 33\,h 35\,min 36\,s & 3\,h 21\,min 34\,s \\
+E1 --- 15-branch CNN + TCN & 14\,min 17\,s & 1\,min 26\,s \\
+E2 --- ResNet-1D + TCN & 2\,h 44\,min 57\,s & 16\,min 30\,s \\
+E3 --- ResNet-1D + TCN, fixed scale & 3\,h 16\,min 40\,s & 19\,min 40\,s \\
+E4 --- ResNet-1D + TCN, band-pass & 2\,h 55\,min 56\,s & 17\,min 36\,s \\
+E6 --- ResNet-1D + TCN, $z$-score & 2\,h 24\,min 44\,s & 14\,min 28\,s \\
+\midrule
+\textbf{All six configurations} & \textbf{45\,h 12\,min 10\,s} & \textbf{4\,h 31\,min 13\,s} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+End-to-end (Table~\ref{tab:training-runtime}), E2 trained $12.2\times$ faster than E0 and E3 $10.2\times$ faster. E1's 14\,min total is not
+comparable to the others, because E1 reuses E0's encoder checkpoints and therefore pays only the
+sequence-model stage; the figure is nevertheless informative, since it isolates that stage as a small
+fraction of total cost and locates the expense in encoder training. These are wall-clock observations
+under one scheduling regime, early-stopping configuration and hardware, and should not be read as
+hardware-independent speed claims.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/gate8_performance_speed_tradeoff.png}
+\caption{Trade-off between \mf, latency and parameter count. Marker area scales with parameters.}
+\label{fig:tradeoff}
+\end{figure}
+
+\subsection{Feature geometry}
+
+Across all ten folds without exception, the ResNet-1D embedding has a lower silhouette coefficient than
+the 15-branch CNN feature vector: mean $0.1048$ (SD $0.0229$) versus $0.2126$ (SD $0.0356$), mean
+difference $-0.1079$ (SD $0.0228$; range $-0.1526$ to $-0.0608$). The consistency is total (10/10 folds; Figure~\ref{fig:supporting}a),
+so the effect is not noise.
+
+The correct reading is not that the ResNet embedding is worse. Silhouette rewards compact, Euclidean,
+per-epoch clusters, whereas the downstream TCN integrates a $\pm126$-epoch neighbourhood and can exploit
+distributional or temporal structure that no per-epoch clustering index measures. The 15-branch CNN's
+features are, by construction, 75 calibrated class posteriors---a representation almost engineered to
+score well on silhouette---while the ResNet's 128 dimensions are unconstrained. That E2 nonetheless
+matches or exceeds E1 downstream (Table~\ref{tab:sleepedf-performance}) is direct evidence that
+per-epoch cluster separability is a poor proxy for sequence-level utility, and we report the silhouette
+result mainly to document that negative finding.
+
+\subsection{Context-group ablation}
+\label{sec:ablation}
+
+\begin{table}[t]
+\centering
+\caption{Context-group ablation within E1 (15-branch CNN + TCN). C = current epoch, P = previous,
+N = next; the ablated group is replaced by its per-dimension training mean. Transition \mf\ is restricted
+to epochs within $r = 1$ of a stage change (43{,}237 epochs, 22.1\% of the corpus).}
+\label{tab:context-ablation}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Condition} & \textbf{Overall \mf} & \textbf{$\Delta$ vs C} & \textbf{Transition \mf} & \textbf{$\Delta$ vs C} & \textbf{F1 (N1)} \\
+\midrule
+C (current only) & 0.777477 & --- & 0.619102 & --- & 0.5011 \\
+CP & 0.777733 & $+0.000257$ & 0.617686 & $-0.001416$ & 0.5022 \\
+CN & \textbf{0.781585} & $+0.004108$ & 0.618895 & $-0.000207$ & 0.5055 \\
+FULL (CPN) & 0.780230 & $+0.002753$ & \textbf{0.620055} & $+0.000953$ & \textbf{0.5115} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Paired comparisons for the context ablation (primary criterion: transition-region \mf,
+$r = 1$; 10{,}000 bootstrap resamples; $n = 78$).}
+\label{tab:context-comparisons}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrr}
+\toprule
+\textbf{Comparison} & \textbf{Role} & \textbf{$\Delta$ transition \mf} & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{W/T/L} \\
+\midrule
+FULL\,--\,C  & primary & 0.000953 & $[-0.004588, 0.006568]$ & 1.000 & 36/0/42 \\
+FULL\,--\,CP & secondary & 0.002369 & $[-0.002990, 0.007714]$ & 1.000 & 41/0/37 \\
+FULL\,--\,CN & secondary & 0.001160 & $[-0.003918, 0.006490]$ & 1.000 & 38/0/40 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+No comparison approaches significance; every interval comfortably contains zero and all Holm-adjusted
+$p$-values equal 1.000. On the primary criterion the full context condition actually loses on a majority
+of subjects (36/78 wins). Within this design there is no detectable added value of the neighbouring
+context groups at stage transitions. Section~\ref{sec:rf} argues that this outcome was structurally
+predetermined and explains what it does and does not license.
+
+Three descriptive observations deserve recording, with the explicit caveat that none is statistically
+supported.
+
+First, the effect of P and N is \emph{asymmetric}: adding the next epoch to the current one raises
+overall \mf\ by $0.0041$, whereas adding the previous epoch raises it by $0.0003$---an order of magnitude
+less. CN is in fact the descriptively best condition overall, exceeding the full CPN condition, and
+FULL\,--\,CN is negative on overall \mf\ ($-0.0014$) and on accuracy ($-0.0011$).
+
+Second, the two groups are \emph{not additive}. The interaction index
+$\text{FULL} - \text{CP} - \text{CN} + \text{C}$ is $-0.00161$ over the whole corpus and $+0.00258$ in
+the transition region, i.e.\ it changes sign between the two criteria. Whatever P and N contribute, they
+do not contribute independently, and no single scalar summarises their joint effect. This is the
+quantitative reason we regard any statement of the form ``group X carries $k\%$ of the information'' as
+unsupportable here, and we recommend that the earlier gloss of this kind be withdrawn.
+
+Third, the transition-pair breakdown is not uniform (Table~\ref{tab:transition-pairs}): relative to C
+alone, full context helps at W$\leftrightarrow$N1 and N1$\leftrightarrow$REM but hurts at
+N1$\leftrightarrow$N2 and N2$\leftrightarrow$N3, and the best condition differs by pair. A forward
+asymmetry would be physiologically coherent, since several scoring rules are prospectively
+defined---N2 onset is fixed by the first K-complex or spindle, and REM continuation rules look
+ahead~\cite{berry2017aasm}---but all these differences are far smaller than their confidence intervals
+and we advance them only as hypotheses for a study designed to test them.
+
+\begin{table}[t]
+\centering
+\caption{Context ablation broken down by pre-specified transition pair (\mf\ within $r = 1$). Best
+condition per row in bold. Differences are descriptive only; no comparison in
+Table~\ref{tab:context-comparisons} reached significance.}
+\label{tab:transition-pairs}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Transition pair} & \textbf{Epochs} & \textbf{C} & \textbf{CP} & \textbf{CN} & \textbf{FULL} \\
+\midrule
+W$\leftrightarrow$N1   & 12{,}360 & 0.3279 & \textbf{0.3330} & 0.3251 & 0.3303 \\
+N1$\leftrightarrow$N2  & 13{,}057 & \textbf{0.3489} & 0.3475 & 0.3440 & 0.3389 \\
+N1$\leftrightarrow$REM & 3{,}261  & 0.2651 & 0.2589 & 0.2534 & \textbf{0.2690} \\
+N2$\leftrightarrow$N3  & 10{,}026 & \textbf{0.4281} & 0.4268 & 0.4216 & 0.4272 \\
+\midrule
+All transitions ($r{=}1$) & 43{,}237 & 0.6191 & 0.6177 & 0.6189 & \textbf{0.6201} \\
+All transitions ($r{=}2$) & 58{,}545 & 0.6474 & 0.6458 & 0.6479 & \textbf{0.6482} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../figures/gate8_feature_silhouette.png}
+\caption{Silhouette of E1 and E2 by fold.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../figures/gate8_context_ablation_effects.png}
+\caption{Context-group ablation effects.}
+\end{subfigure}
+\caption{Supporting analyses of representation geometry and context contribution.}
+\label{fig:supporting}
+\end{figure}
+
+\subsection{Zero-shot evaluation on SHHS1}
+
+\begin{table}[t]
+\centering
+\caption{Zero-shot performance on 180 locked SHHS1 participants (seed 42). No weights were updated on
+SHHS. Intervals are subject-cluster bootstrap intervals for the subject-mean \mf. Transition \mf\ is
+restricted to the 44{,}744 epochs within $\pm1$ of a stage change (26.5\% of the sample).}
+\label{tab:shhs-performance}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrr}
+\toprule
+\textbf{ID} & \textbf{Subject-mean \mf\ (\ci)} & \textbf{Pooled \mf} & \textbf{Accuracy} & \textbf{$\kappa$} & \textbf{F1 (N1)} & \textbf{Transition \mf} \\
+\midrule
+E0 & 0.5268 \ $[0.5101, 0.5431]$ & 0.5761 & 0.6648 & 0.5339 & 0.2998 & 0.4323 \\
+E1 & 0.5333 & 0.5822 & 0.6709 & 0.5409 & 0.3197 & 0.4352 \\
+E2 & 0.5205 & 0.5668 & 0.6656 & 0.5327 & 0.2833 & 0.4219 \\
+E3 & \textbf{0.5680} \ $\boldsymbol{[0.5503, 0.5850]}$ & \textbf{0.6099} & \textbf{0.7016} & \textbf{0.5801} & \textbf{0.3451} & \textbf{0.4689} \\
+E6 & 0.5407 \ $[0.5227, 0.5584]$ & 0.5732 & 0.6742 & 0.5408 & 0.3102 & --- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Seed-123 replication of the zero-shot campaign on the same 180 SHHS1 participants, extended to
+E4. Unlike the in-domain campaign, the ordering and the significance of both locked contrasts replicate.}
+\label{tab:shhs-seed123}
+\small
+\begin{tabular}{lrrrr|lrr}
+\toprule
+\textbf{ID} & \textbf{Subj.\ \mf} & \textbf{Pooled \mf} & \textbf{Acc.} & \textbf{$\kappa$} & \textbf{Contrast} & \textbf{$\Delta$ [\ci]} & $\boldsymbol{p_{\mathrm{Holm}}}$ \\
+\midrule
+E0 & 0.5303 & 0.5785 & 0.6738 & 0.5420 & E3\,--\,E0 & 0.0331 $[0.0225, 0.0438]$ & $5.19\times10^{-9}$ \\
+E2 & 0.5409 & 0.5858 & 0.6874 & 0.5597 & E3\,--\,E6 & 0.0131 $[0.0023, 0.0239]$ & 0.0085 \\
+E3 & 0.5634 & 0.6031 & 0.7003 & 0.5772 & E4\,--\,E2 & 0.0323 $[0.0236, 0.0410]$ & $7.40\times10^{-13}$ \\
+\textbf{E4} & \textbf{0.5732} & \textbf{0.6147} & \textbf{0.7064} & \textbf{0.5869} & E3\,--\,E4 & $-0.0098$ $[-0.0125, -0.0073]$ & $1.89\times10^{-10}$ \\
+E6 & 0.5503 & 0.5865 & 0.6873 & 0.5552 & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This replication (Table~\ref{tab:shhs-seed123}) is an important asymmetry in the evidence base. In
+domain, the E3\,--\,E6 effect lost Holm significance under the second seed
+(Table~\ref{tab:multiseed-effects}); out of domain, both locked contrasts retain significance and the
+configuration ordering is unchanged. Transfer performance is therefore the more stable of the two
+readouts in this study, which is the opposite of the usual expectation and argues for treating the
+out-of-domain campaign, not the in-domain one, as the primary evidence about the pipeline.
+
+\begin{table}[t]
+\centering
+\caption{Locked paired comparisons on SHHS1 subject-mean \mf\ ($n = 180$). E3\,--\,E2 and the seed-123
+E4 rows are post-hoc or secondary and are excluded from the locked family.}
+\label{tab:shhs-paired}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrr}
+\toprule
+\textbf{Comparison} & \textbf{Role} & $\boldsymbol{\Delta}$ & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{W/T/L} & $\boldsymbol{\dsign}$ \\
+\midrule
+E3\,--\,E0 & locked primary & 0.0412 & $[0.0314, 0.0512]$ & $2.65\times10^{-13}$ & 138/0/42 & $+0.533$ \\
+E3\,--\,E6 & locked primary & 0.0274 & $[0.0182, 0.0370]$ & $1.87\times10^{-8}$ & 125/0/55 & $+0.389$ \\
+\midrule
+E1\,--\,E0 & secondary & 0.00651 & $[0.00192, 0.01087]$ & 0.00325 & 108/0/72 & $+0.200$ \\
+E2\,--\,E1 & secondary & $-0.01280$ & $[-0.02209, -0.00350]$ & 0.01005 & 80/0/100 & $-0.111$ \\
+\textit{E3\,--\,E2} & post-hoc & 0.04750 & $[0.03724, 0.05792]$ & $2.35\times10^{-17}$ & 147/0/33 & $+0.633$ \\
+\textit{E4\,--\,E2} (seed 123) & post-hoc & 0.03232 & $[0.02365, 0.04104]$ & $7.40\times10^{-13}$ & 135/1/44 & $+0.508$ \\
+\textit{E4\,--\,E3} (seed 123) & post-hoc & 0.00982 & $[0.00730, 0.01250]$ & $1.89\times10^{-10}$ & --- & --- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Both locked comparisons (Table~\ref{tab:shhs-paired}) are unambiguous, and the sign-based effect sizes are large ($\dsign = +0.533$
+and $+0.389$; exact sign tests $p = 3.8\times10^{-13}$ and $1.9\times10^{-7}$). Supporting metrics (Figure~\ref{fig:shhs-effects}) move
+together: relative to E0, E3 gains $0.0338$ pooled \mf, $0.0368$ accuracy and $0.0461$ $\kappa$. Within
+$\pm1$ epoch of a transition, E3 gains $0.0366$ over E0 and $0.0183$ over E6.
+
+The component analysis is more equivocal. E1\,--\,E0 remains positive but small, supporting the TCN
+substitution. E2\,--\,E1 is \emph{negative} out of domain ($-0.0128$, interval entirely below zero),
+directly contradicting the in-domain ordering: the ResNet-1D encoder does not generalise better than the
+15-branch CNN encoder on unprocessed SHHS signals. The post-hoc E3\,--\,E2 contrast is by far the largest
+effect in the entire study ($+0.0475$, $\dsign = +0.633$, 147/180 subjects improved). Since E3 and E2
+share an identical architecture and differ only in preprocessing, this isolates preprocessing---not
+architecture---as the dominant determinant of transfer in this study.
+
+A seed-123 extension evaluating E4 (band-pass only) reinforces this. E4 reached subject-mean \mf\
+$0.5732$, pooled \mf\ $0.6147$, accuracy $0.7064$, $\kappa = 0.5869$ and N1 F1 $0.3492$, exceeding
+same-seed E2 by $0.0323$ and same-seed E3 by $0.0098$. Because E3 and E4 differ only by clipping and a
+constant rescaling, and both preserve cross-recording amplitude relationships, this small difference
+does not overturn the amplitude account developed below; it does indicate that the clip-and-rescale step
+carries no transfer benefit over band-pass filtering alone, and that band-pass filtering is doing most
+of the work. These are paired comparisons on an already-opened sample; they are neither equivalence nor
+non-inferiority tests.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/shhs_zero_shot_effects.png}
+\caption{Subject-paired zero-shot effects on SHHS1.}
+\label{fig:shhs-effects}
+\end{figure}
+
+\subsection{Where the domain gap actually lives}
+\label{sec:gap}
+
+The aggregate transfer statistics above are conventional; this section is not. E3's \mf\ falls from
+$0.7904$ in domain to $0.6099$ out of domain, a gap of $0.1805$. We show that this gap is not a diffuse
+degradation but is almost entirely localised in two confusion channels, and that its mechanism can be
+identified from the data already collected.
+
+\begin{table}[t]
+\centering
+\caption{Per-class transfer of E3 from Sleep-EDF to SHHS1, with the predicted-to-true epoch ratio as a
+marginal-calibration diagnostic. A ratio of 1.0 means the model emits the class at its true rate.}
+\label{tab:transfer-perclass}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{Sleep-EDF}} & \multicolumn{4}{c}{\textbf{SHHS1}} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-7}
+\textbf{Stage} & \textbf{F1} & \textbf{Pred/True} & \textbf{Prec.} & \textbf{Rec.} & \textbf{F1} & \textbf{Pred/True} & \textbf{$\Delta$F1} \\
+\midrule
+W   & 0.9304 & 0.993 & 0.8823 & 0.8014 & 0.8399 & 0.908 & $-0.0905$ \\
+N1  & 0.5276 & 1.051 & 0.2528 & 0.5437 & 0.3451 & \textbf{2.151} & $-0.1824$ \\
+N2  & 0.8514 & 0.984 & 0.7394 & 0.7349 & 0.7372 & 0.994 & $-0.1143$ \\
+N3  & 0.8085 & 1.003 & \textbf{0.9440} & \textbf{0.2582} & 0.4055 & \textbf{0.273} & $\mathbf{-0.4030}$ \\
+REM & 0.8343 & 1.017 & 0.6052 & 0.8939 & 0.7218 & \textbf{1.477} & $-0.1125$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Three facts in Table~\ref{tab:transfer-perclass} constrain the explanation.
+
+\paragraph{(i) The degradation is dominated by one class.} N3's F1 falls by $0.4030$; the other four
+classes fall by $0.09$--$0.18$. N3 alone contributes $45\%$ of the total macro-averaged drop.
+
+\paragraph{(ii) The N3 failure has a threshold signature.} N3 precision is \emph{higher} out of domain
+than in ($0.944$ vs $0.807$) while recall collapses ($0.258$ vs $0.810$). The model emits N3 only
+$0.273\times$ as often as it should, and $16{,}674$ of $22{,}806$ true N3 epochs---$73.1\%$---are
+labelled N2. A model that is nearly always right when it fires but fires far too rarely is behaving like
+a detector whose decision threshold sits too high for the incoming signal. It is not confused about
+what N3 looks like; it is not seeing enough of it.
+
+\paragraph{(iii) The miscalibration runs opposite to the label-prior shift.} This is the decisive
+observation. SHHS1 contains $2.02\times$ as much N3 as Sleep-EDF, yet the model predicts N3 at
+$0.273\times$ the required rate. It contains $0.38\times$ as much N1, yet the model over-predicts N1 by
+$2.151\times$. If the failure were driven by prior shift---the standard explanation for
+transfer degradation in an unweighted classifier---the errors would run \emph{with} the prior change,
+and the standard correction~\cite{saerens2002adjusting} would repair them. Here that correction would
+make N3 strictly worse. Prior shift is therefore excluded as the primary cause, and the cause must lie
+at the signal level.
+
+\begin{table}[t]
+\centering
+\caption{Oracle decomposition of the E3 domain gap. Each row corrects one confusion channel in the SHHS1
+confusion matrix and recomputes \mf. These are diagnostic counterfactuals, not achievable performance.}
+\label{tab:gap-decomposition}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Condition} & \textbf{\mf} & \textbf{Gap recovered} \\
+\midrule
+E3 on SHHS1 (observed) & 0.6099 & --- \\
+\quad + N3$\rightarrow$N2 errors corrected & 0.7444 & $0.1345$ \ (74.5\%) \\
+\quad + N2$\rightarrow$REM errors corrected & 0.6596 & $0.0497$ \ (27.5\%) \\
+\quad + both corrected & \textbf{0.7947} & $0.1848$ \ (102.4\%) \\
+\midrule
+E3 on Sleep-EDF (reference) & 0.7904 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:gap-decomposition} makes the localisation quantitative. Repairing the single
+N3$\rightarrow$N2 channel recovers $74.5\%$ of the entire cross-cohort gap. Repairing
+N3$\rightarrow$N2 together with N2$\rightarrow$REM yields $\mf = 0.7947$, marginally \emph{above} the
+in-domain figure of $0.7904$. In other words, outside these two channels the model transfers to a
+clinically distinct, older, differently-instrumented cohort with essentially no loss. This is a very
+different---and far more actionable---picture than "performance degrades by 0.18 under domain shift".
+
+The remaining channel of Table~\ref{tab:shhs-confusion}, N2$\rightarrow$REM (11{,}605 epochs, $15.2\%$ of true N2), shows the mirror-image
+signature: REM is over-emitted at $1.477\times$ with recall $0.894$ but precision only $0.605$. Without
+EOG or EMG, REM must be inferred from low-amplitude mixed-frequency EEG, and in older adults N2 with
+reduced spindle density presents a similar single-channel picture. E2 is worse still on this channel
+(REM precision $0.489$), so preprocessing mitigates but does not remove it.
+
+\begin{table}[t]
+\centering
+\caption{Pooled confusion matrix of E3 on SHHS1 (rows: reference; columns: prediction). The two
+dominant off-diagonal cells are set in bold.}
+\label{tab:shhs-confusion}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Reference $\backslash$ Predicted} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+W   & 29{,}638 & 4{,}481 & 1{,}171 & 21 & 1{,}672 \\
+N1  & 874 & 3{,}807 & 601 & 3 & 1{,}717 \\
+N2  & 2{,}348 & 5{,}947 & 56{,}063 & 324 & \textbf{11{,}605} \\
+N3  & 78 & 39 & \textbf{16{,}674} & 5{,}888 & 127 \\
+REM & 655 & 784 & 1{,}311 & 1 & 23{,}183 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For completeness, the per-class comparison against E2 confirms that the E3 preprocessing improves every
+class out of domain, most in REM ($+0.0776$) and N1 ($+0.0618$), yet leaves N3 recall almost untouched
+($0.2582$ vs $0.2496$)---the one place where preprocessing does \emph{not} help
+(Table~\ref{tab:shhs-class-errors}). Any explanation of the N3 collapse must therefore be something that
+both E2 and E3 share.
+
+\begin{table}[t]
+\centering
+\caption{Per-class metrics on SHHS1: E3 versus E2 (169{,}012 scored epochs).}
+\label{tab:shhs-class-errors}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Stage} & \textbf{E3 Prec.} & \textbf{E3 Rec.} & \textbf{E3 F1} & \textbf{E2 Prec.} & \textbf{E2 Rec.} & \textbf{E2 F1} & \textbf{$\Delta$F1} \\
+\midrule
+W   & 0.8823 & 0.8014 & 0.8399 & 0.8780 & 0.7275 & 0.7957 & $+0.0442$ \\
+N1  & 0.2528 & 0.5437 & 0.3451 & 0.2367 & 0.3528 & 0.2833 & $+0.0618$ \\
+N2  & 0.7394 & 0.7349 & 0.7372 & 0.7362 & 0.6937 & 0.7143 & $+0.0228$ \\
+N3  & 0.9440 & 0.2582 & 0.4055 & 0.9659 & 0.2496 & 0.3967 & $+0.0087$ \\
+REM & 0.6052 & 0.8939 & 0.7218 & 0.4886 & 0.9450 & 0.6442 & $+0.0776$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Restricting the analysis to the transition neighbourhood sharpens the picture considerably and provides
+the strongest single piece of evidence for the account developed in Section~5.3. Within $\pm1$ epoch of
+a stage change (44{,}744 epochs, $26.5\%$ of the sample), E3 attains \mf\ $0.4689$, accuracy $0.5290$ and
+$\kappa = 0.3642$, against $0.4219$, $0.4910$ and $0.3188$ for E2 (Table~\ref{tab:shhs-transition}).
+N3 recall there falls to $\mathbf{0.0733}$ while N3 precision remains $0.831$: at stage boundaries the
+model recovers barely one in fourteen true N3 epochs, yet is right five times out of six when it does
+commit. Of the 7{,}563 true N3 epochs in this region, 6{,}855 ($90.6\%$) are labelled N2. A
+threshold-based failure should worsen exactly here, because slow-wave activity at the edges of an N3
+bout is by definition less established and therefore closest to the amplitude criterion; a failure of
+representation or of stage concept would not show this gradient.
+
+\begin{table}[t]
+\centering
+\caption{Per-class metrics of E3 and E2 on SHHS1 restricted to the transition neighbourhood
+($r = 1$; 44{,}744 epochs). Compare the N3 row with its whole-sample counterpart in
+Table~\ref{tab:shhs-class-errors}.}
+\label{tab:shhs-transition}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Stage} & \textbf{Support} & \textbf{E3 Prec.} & \textbf{E3 Rec.} & \textbf{E3 F1} & \textbf{E2 Prec.} & \textbf{E2 Rec.} & \textbf{E2 F1} \\
+\midrule
+W   & 8{,}870  & 0.7501 & 0.5661 & 0.6452 & 0.7335 & 0.4749 & 0.5765 \\
+N1  & 5{,}654  & 0.3570 & 0.5644 & 0.4373 & 0.3615 & 0.3861 & 0.3734 \\
+N2  & 18{,}223 & 0.5739 & 0.6345 & 0.6027 & 0.5701 & 0.6195 & 0.5938 \\
+N3  & 7{,}563  & 0.8306 & \textbf{0.0733} & \textbf{0.1346} & 0.8607 & \textbf{0.0645} & 0.1200 \\
+REM & 4{,}434  & 0.4026 & 0.7535 & 0.5248 & 0.3014 & 0.8561 & 0.4459 \\
+\midrule
+\multicolumn{2}{l}{\textbf{Overall (transition)}} & \multicolumn{3}{l}{\mf\ 0.4689, acc.\ 0.5290, $\kappa$ 0.3642} & \multicolumn{3}{l}{\mf\ 0.4219, acc.\ 0.4910, $\kappa$ 0.3188} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The E3 preprocessing does deliver a large gain on N1 in this region---recall rises by $0.1909$
+($[0.1513, 0.2297]$) over E2 across the whole sample, the single largest per-class effect of
+preprocessing anywhere in the study---which confirms that the transfer improvement E3 provides is real
+and is concentrated on the stage that most needs it. It simply does not touch N3.
+
+%==============================================================================
+\section{Discussion}
+
+\subsection{Principal findings}
+
+Within the primary campaign, E3 exceeded E6 by $0.0213$ \mf\ with a fully positive bootstrap interval and
+Holm significance, and the post-protocol repeat preserved a positive effect of $0.0102$. Across two runs
+the evidence favours an amplitude-handling scheme that preserves relationships between recordings over
+one that normalises each recording independently, while the shifting Holm-adjusted $p$-value shows the
+inferential strength remains contingent on randomisation. The same ordering held out of domain.
+
+The complete E3 pipeline outperformed the E0 control in both cohorts. On SHHS1 this was one of two
+comparisons locked before the test set was opened. Because E3 alters architecture and preprocessing
+together, the supportable conclusion is that E3 as an evaluated procedure transfers better within this
+protocol; credit for individual components must come from the component contrasts, and those tell a more
+complicated story.
+
+\subsection{Why the context ablation was null: receptive-field redundancy}
+\label{sec:rf}
+
+The context ablation found no added value from the P and N feature groups
+(Table~\ref{tab:context-comparisons}). Reported as a bare negative, this invites the wrong inference,
+namely that neighbouring epochs carry little information about stage transitions---a conclusion in
+tension with essentially the whole sequence-modelling literature~\cite{supratak2017deepsleepnet,
+eldele2021attnsleep,phan2022sleeptransformer}.
+
+The architecture resolves the tension. The C/P/N groups supply $\pm1$ epoch of context at the
+\emph{encoder}. Downstream, the non-causal TCN operates over the entire overnight recording with a
+receptive field of 253 epochs, i.e.\ $\pm126$ epochs or roughly $\pm63$\,min. The information that the P
+and N branches provide is thus a strict subset of what the sequence model already has direct access to,
+several times over. The ablation was not testing whether temporal context helps; it was testing whether
+supplying a $\pm1$-epoch summary \emph{twice} helps. A null result is the expected outcome, and the
+observed effect sizes---$|\Delta| < 0.0024$ on the transition criterion, intervals spanning zero---are
+exactly the size one would predict from redundant inputs.
+
+This reframing has three consequences. It explains why the FULL condition can lose to CN
+(Table~\ref{tab:context-ablation}): redundant inputs add parameters and noise without adding
+information. It means the result licenses no conclusion whatsoever about the value of temporal context
+in sleep staging; it constrains only the marginal value of encoder-level context \emph{given} a
+long-receptive-field sequence model. And it prescribes the design a genuine test would require: ablate
+the TCN's receptive field itself---by restricting dilations, by making the network causal, or by
+windowing the input---rather than ablating features nested inside it. The sign-changing interaction
+index reported in Section~\ref{sec:ablation} independently confirms that no scalar summary of the
+groups' contribution is available from this design.
+
+We note in passing that the descriptive asymmetry favouring the next epoch over the previous one
+(Section~\ref{sec:ablation}) survives this reframing as a hypothesis worth testing under a properly
+context-limited design, since prospective scoring rules give it an independent physiological rationale.
+
+\subsection{An amplitude-threshold account of the N3 collapse}
+
+Section~\ref{sec:gap} established that the transfer failure is localised in N3, has a
+high-precision/low-recall threshold signature, and runs counter to the label-prior shift. We propose the
+following account, which is consistent with every observation and makes falsifiable predictions.
+
+Both scoring manuals define deep sleep partly through an absolute voltage criterion---slow waves
+exceeding roughly $75\,\mu$V peak-to-peak occupying a minimum fraction of the
+epoch~\cite{rechtschaffen1968,berry2017aasm}. A model trained on Sleep-EDF learns this criterion
+implicitly, in the units and at the derivation it was trained on: Fpz--Cz, in a corpus of comparatively
+healthy subjects. Two things change in SHHS1. First, the derivation is C4--A1. The sleep slow
+oscillation has a pronounced frontal amplitude maximum and propagates
+antero-posteriorly~\cite{massimini2004travelling}, so identical slow-wave activity registers at
+substantially lower amplitude at a central-mastoid derivation than at a frontopolar one. Second, SHHS
+participants are markedly older, and slow-wave amplitude declines strongly with
+age~\cite{ohayon2004metaanalysis}. Both effects push genuine N3 epochs below the learned amplitude
+criterion, in the same direction.
+
+The account makes four predictions, and all four are borne out by data already collected.
+(i) N3 recall should collapse while N3 precision stays high or rises, because the epochs that still
+clear the threshold are unambiguously N3---observed, precision $0.944$ against recall $0.258$.
+(ii) The misplaced epochs should go overwhelmingly to N2, the adjacent stage differing chiefly in
+slow-wave quantity---observed, $73.1\%$ of all true N3.
+(iii) The effect should be insensitive to filtering, since filtering does not restore amplitude that the
+derivation and the ageing cortex never delivered---observed, N3 recall is $0.2582$ for E3 and $0.2496$
+for E2 despite markedly different preprocessing, the only class where E3's large preprocessing advantage
+essentially vanishes.
+(iv) The failure should be graded by proximity to the amplitude criterion, hence worst at the edges of
+N3 bouts where slow-wave activity is least established---observed, and strikingly: N3 recall falls
+further to $0.0733$ in the transition neighbourhood (Table~\ref{tab:shhs-transition}), with $90.6\%$ of
+transition-region N3 going to N2, while precision there remains $0.831$.
+
+Prediction (iv) is the one that discriminates most sharply. A model that had simply failed to learn a
+transferable concept of N3 would degrade roughly uniformly across N3 epochs. A model applying a
+miscalibrated amplitude threshold must fail most where the true signal sits closest to that threshold.
+The observed three-and-a-half-fold gradient between whole-sample and transition-region recall is the
+signature of the latter.
+
+There is an uncomfortable corollary. The design choice that makes E3 the best configuration overall---
+preserving absolute amplitude relationships rather than $z$-scoring each recording---is the same choice
+that ties the model's N3 criterion to an absolute voltage scale and thus makes it montage-dependent.
+E3's principal strength and its worst per-class failure share a cause. The evaluation is currently blind
+to this trade-off because macro-F1 averages the N3 collapse against gains elsewhere.
+
+This yields a decisive and cheap experiment that we did not run and now recommend. Per-record
+$z$-scoring (E6) removes absolute scale and re-expresses amplitude relative to each recording's own
+distribution, which is the quantity a montage change most nearly preserves. The account predicts that E6
+should show \emph{substantially better N3 recall on SHHS1 than E3}, even though E6 is worse overall
+($0.5407$ vs $0.5680$ subject-mean \mf). Per-class SHHS metrics for E6 were not computed in this
+campaign; obtaining them requires no retraining, only re-scoring existing predictions, and would either
+confirm the amplitude account or refute it outright. If confirmed, the practical implication is not to
+adopt E6 wholesale but to decouple the two roles---absolute scale for stages where it helps, relative
+scale for the N3 criterion---or to recalibrate the N3 decision threshold on a small target-domain
+sample. The 5 adaptation and 15 validation SHHS participants held out for exactly this purpose and never
+used remain available.
+
+\subsection{The roles of the TCN and the ResNet-1D encoder}
+
+In-domain, E1\,--\,E0 and E2\,--\,E1 gave positive descriptive gains that did not survive Holm
+correction. Out of domain, E1\,--\,E0 stayed positive but small while E2\,--\,E1 turned significantly
+negative. The architectural benefit is therefore domain-dependent, and the claim that ResNet-1D is
+uniformly superior to the control encoder is not supported---it is contradicted out of domain on
+unfiltered signals. The dependable advantage of ResNet-1D--TCN is operational: competitive accuracy with
+a much simpler pipeline and $3.76\times$ faster inference, paid for with $4.37\times$ the parameters and
+$28.4\%$ more memory. As Section~4.4 notes, that speed-up comes from replacing 15 sequential CNN
+branches, not from the TCN.
+
+The silhouette result is a useful negative: a widely used representation-quality index ranked the two
+encoders opposite to their downstream utility, in 10 folds out of 10. Per-epoch Euclidean cluster
+compactness is simply not the property a long-context sequence model needs, and we would caution against
+using such indices to select encoders for sequential tasks.
+
+\subsection{Preprocessing dominates transfer}
+
+The largest effect in the study is E3\,--\,E2 on SHHS1 ($+0.0475$, $\dsign = +0.633$), a contrast in
+which architecture is held fixed and only preprocessing changes. It is roughly seven times the largest
+in-domain architectural contrast. The E4 extension shows band-pass filtering alone captures most of this,
+with clipping and constant rescaling adding nothing for transfer. Since the largest architectural effect
+we measured out of domain was \emph{negative}, the ordering is unambiguous within this study:
+preprocessing choices dominated architecture choices for cross-cohort generalisation. Given how much
+more attention architecture receives in this literature, we regard this as the finding with the widest
+implications, while noting that E3 changes several operations at once and no single operation is
+identified as causal.
+
+\subsection{Positioning relative to published results}
+
+We deliberately do not present a table of accuracies from other papers alongside ours. The wake-trimming
+policy alone (Section~3.1) moves the wake fraction, and hence accuracy and macro-F1, by an amount
+comparable to every architectural effect measured here; subject-count, split scheme, and channel choice
+compound this. Published Sleep-EDF figures for the models discussed in
+Section~2~\cite{supratak2017deepsleepnet,eldele2021attnsleep,phan2022sleeptransformer,
+jadhav2024zleepanlystnet} were obtained under protocols that differ in several of these dimensions
+simultaneously, so a numerical comparison would misrepresent the evidence in either direction. Our E0
+control is a re-implementation of the ZleepAnlystNet design evaluated under \emph{our} protocol, and it
+is the appropriate reference point for every number in this paper. Readers wishing to situate these
+results externally should compare protocols first, and we have specified ours completely for that
+purpose.
+
+\subsection{Limitations and a prioritised agenda}
+
+Results should be read within the data and protocol evaluated. SHHS1 is one specific out-of-domain
+sample, not a population. The second seed corroborates direction but two fixed seeds cannot characterise
+initialisation variance; a proper treatment would require enough seeds to estimate a distribution, and
+we report no such claim. Several component analyses were run after the sample was opened and are
+supporting evidence only. Single-channel EEG limits separability for N1 and REM in principle, and the
+evaluation window uses ground-truth anchors, so it is an offline benchmarking device rather than a
+deployable rule. We also report no calibration analysis: the sequence models are trained with unweighted
+cross-entropy and their probability estimates are untested, which matters for any clinical use where an
+abstain option would be valuable~\cite{guo2017calibration,phan2022sleeptransformer}.
+
+Two reporting gaps should be stated plainly. Absolute-performance intervals are available for the SHHS
+configurations (Table~\ref{tab:shhs-performance}) but not for the Sleep-EDF ones, where only
+difference intervals were retained. And although paired win/tie/loss counts and median subject-level
+differences were preserved for every comparison, the full per-subject \mf\ distributions were not
+archived, so we cannot report the dispersion (IQR, range) of individual performance or identify which
+participants the models handle worst. For a metric whose clinical relevance is inherently per-patient
+this is a real limitation, and we would archive those vectors in any future campaign. Finally,
+per-class SHHS metrics exist only for E2 and E3; obtaining them for E0, E1 and E6 requires no
+retraining and would settle several questions raised above, including the decisive one in
+Section~5.3.
+
+Ordered by expected value, we would prioritise: (1) computing per-class SHHS metrics for E6 to test the
+amplitude account, which requires no retraining; (2) recalibrating the N3 threshold on the held-out
+SHHS adaptation participants, since $74.5\%$ of the domain gap sits in that single channel; (3) ablating
+the TCN receptive field directly, which is the experiment the context ablation was unable to perform;
+(4) estimating initialisation variance with a sufficient number of seeds; and (5) reporting calibration
+and selective-prediction behaviour. Items (1) and (2) are inexpensive and address the largest single
+source of error identified in this study.
+
+%==============================================================================
+\section{Conclusion}
+
+A unified subject-wise design with a single locked test set allowed six configurations to be compared
+fairly on Sleep-EDF. In the primary campaign E3 attained a descriptive \mf\ of $0.7904$ and exceeded E6
+with a fully positive interval and Holm significance; a post-protocol repeat preserved the direction of
+that effect. Isolated substitutions of the sequence model and the epoch encoder produced descriptive or
+domain-dependent gains, but no stable advantage survived multiple-comparison correction. ResNet-1D--TCN
+simplifies the pipeline and is $3.76\times$ faster at inference, at the cost of more parameters and
+memory.
+
+On SHHS1, E3 outperformed both locked references. The largest effect anywhere in the study, however, was
+a preprocessing contrast under fixed architecture, and the largest architectural effect out of domain
+was negative. Within this protocol, preprocessing---not architecture---governed cross-cohort transfer.
+
+The two analyses we regard as most consequential are corrective rather than confirmatory. The
+cross-cohort gap is not diffuse degradation: two confusion channels account for essentially all of it,
+and the dominant one is a slow-wave amplitude-threshold failure that is diagnosable from its
+precision--recall signature, that runs opposite to the label-prior shift, and that is plausibly
+correctable without retraining. And the null result of the context ablation was structurally
+predetermined by a sequence model whose receptive field already subsumed the context under test, so it
+constrains experimental design rather than physiology. The contribution of this work is therefore a
+protocol with out-of-domain evidence, a quantified operational trade-off, and a demonstration that
+careful decomposition of where a model fails is more informative than the aggregate score that
+summarises it.
+
+%------------------------------------------------------------------------------
+\subsection*{Reproducibility and data availability}
+
+Source code, experimental protocols, data partitions, intermediate results and summary tables are
+retained in the project repository. Sleep-EDF Expanded is publicly available from PhysioNet. SHHS is
+accessed through the NSRR under its data use agreement; derived data and participant identifiers are not
+published. All primary results are cross-checked against an evidence register and accompanying manifest
+files, allowing traceability from data to analysis. Every checkpoint is verified by SHA-256 before
+loading, and source provenance is recorded for each result-affecting module change.
+
+\subsection*{Ethics}
+
+This study is a secondary analysis of de-identified data from research repositories with their own
+governance mechanisms; no new participants were recruited. Use of SHHS follows NSRR access conditions.
+All interpretations apply to the samples and protocols described and do not constitute clinical
+validation.
+
+\subsection*{Acknowledgements}
+
+This work uses Sleep-EDF Expanded distributed by PhysioNet and data from the Sleep Heart Health Study
+obtained through the National Sleep Research Resource. SHHS was supported by National Heart, Lung, and
+Blood Institute cooperative agreements U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360,
+U01HL53938, U01HL53940, U01HL53941 and U01HL63463.
+
+\subsection*{Declaration of competing interests}
+
+The authors declare no competing interests.
+
+%------------------------------------------------------------------------------
+\begingroup
+\small
+\bibliographystyle{ieeetr}
+\bibliography{references}
+\endgroup
+
+\end{document}

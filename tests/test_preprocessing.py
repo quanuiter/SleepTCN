@@ -1,10 +1,15 @@
 import unittest
+import hashlib
+import tempfile
+import zipfile
+from pathlib import Path
 
 import numpy as np
 
 from sleeptcn.preprocessing import (
     PreprocessConfig,
     annotations_to_labels,
+    atomic_savez,
     filtered_v2,
     preprocess_signal_variant,
     trim_sleep_window,
@@ -87,6 +92,29 @@ class FilterTests(unittest.TestCase):
         self.assertAlmostEqual(
             float(outputs["filtered_zscore_v2"].std()), 1.0, places=5
         )
+
+
+class SerializationTests(unittest.TestCase):
+    def test_npz_serialization_is_byte_stable(self) -> None:
+        arrays = {
+            "x": np.arange(12, dtype=np.float32).reshape(3, 4),
+            "label": np.array("Sleep stage 2"),
+            "mask": np.array([True, False, True]),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            first = Path(directory) / "first.npz"
+            second = Path(directory) / "second.npz"
+            atomic_savez(first, arrays)
+            atomic_savez(second, arrays)
+            self.assertEqual(
+                hashlib.sha256(first.read_bytes()).digest(),
+                hashlib.sha256(second.read_bytes()).digest(),
+            )
+            with zipfile.ZipFile(first) as archive:
+                self.assertTrue(all(info.create_system == 3 for info in archive.infolist()))
+                self.assertTrue(
+                    all(info.date_time == (1980, 1, 1, 0, 0, 0) for info in archive.infolist())
+                )
 
 
 if __name__ == "__main__":

@@ -11,9 +11,14 @@ import csv
 import hashlib
 import json
 import re
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Iterable
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.hashing import sha256_file  # noqa: E402
 
 
 ROLE_COUNTS = {
@@ -24,14 +29,6 @@ ROLE_COUNTS = {
 }
 QUALITY_VALUES = {3, 4, 5, 6, 7}
 ID_PATTERN = re.compile(r"^(?:shhs1-)?(?P<id>\d+)(?:\.0)?$", re.IGNORECASE)
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def stable_key(namespace: str, seed: int, subject_id: str) -> str:

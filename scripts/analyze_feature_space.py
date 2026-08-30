@@ -6,7 +6,6 @@ import argparse
 import csv
 import hashlib
 import json
-import subprocess
 import sys
 from collections import defaultdict
 from dataclasses import asdict, dataclass
@@ -23,12 +22,13 @@ from sklearn.preprocessing import StandardScaler
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sleeptcn.artifacts import sha256_file
+from sleeptcn.io.hashing import sha256_file
 from sleeptcn.experiment import _selected_records, build_context
 from sleeptcn.features import MANIPULATIONS, MANIPULATION_PREFIX, STAGE_NAMES
 from sleeptcn.run_validation import validate_run
 from sleeptcn.test_gate import _load_extractor
 from sleeptcn.training_data import resolve_fold_partitions
+from sleeptcn.workflows.provenance import clean_git_commit
 
 
 STAGES = ("W", "N1", "N2", "N3", "REM")
@@ -45,23 +45,10 @@ class SampleEpoch:
 
 
 def _clean_git_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return clean_git_commit(
+        workspace,
+        dirty_message="official feature analysis requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode:
-        raise RuntimeError("workspace must be a readable Git repository")
-    if status.stdout.strip():
-        raise RuntimeError("official feature analysis requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def _lf_sha256(path: Path) -> str:

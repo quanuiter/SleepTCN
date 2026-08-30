@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -12,14 +11,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from sleeptcn.seed_sensitivity import compare_seed_reports
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
+from sleeptcn.io.hashing import sha256_file
+from sleeptcn.io.serialization import read_json
 
 
 def main() -> int:
@@ -31,7 +24,7 @@ def main() -> int:
 
     inputs = {42: args.seed42_report.resolve(), 123: args.seed123_report.resolve()}
     reports = {
-        seed: json.loads(path.read_text(encoding="utf-8"))
+        seed: read_json(path)
         for seed, path in inputs.items()
     }
     result = compare_seed_reports(reports)

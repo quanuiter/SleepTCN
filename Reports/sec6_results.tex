@@ -11,52 +11,35 @@
 \toprule
 \textbf{Gate} & \textbf{Trạng thái} & \textbf{Bằng chứng đạt} \\
 \midrule
-1 & Đạt & 765 NPZ; 153 bản ghi/biến thể; split 10 fold không giao nhau \\
-2 & Đạt & Smoke CPU/GPU, checkpoint, resume và kiểm định artifact \\
-3 & Đạt & 60/60 lần chạy validation-only hoàn tất và giữ test khóa \\
-4 & Đạt & 60/60 dự đoán và chỉ số test sinh đúng một chiến dịch \\
+1 & Đạt & Dữ liệu, nhãn, tiền xử lý và phép chia theo đối tượng \\
+2 & Đạt & Khả năng chạy, phục hồi và tính toàn vẹn của artifact \\
+3 & Đạt & Hoàn tất lựa chọn mô hình trên validation với test được giữ kín \\
+4 & Đạt & Hoàn tất đánh giá ngoài fold theo quy tắc đã khóa \\
 5 & Đạt & Bootstrap cụm và Wilcoxon bắt cặp trên 78 đối tượng \\
-6 & Đạt & Số tham số, benchmark V100 và Silhouette 10 fold \\
-7 & Đạt & Bảng, hình, bản thảo và ma trận tuyên bố--bằng chứng \\
-8 & Đạt & 30/30 ablation validation, 30/30 test và kiểm toán mã băm \\
+6 & Đạt & Độ phức tạp, tốc độ và hình học biểu diễn \\
+7 & Đạt & Bảng, hình và ma trận bằng chứng \\
+8 & Đạt & Ablation nhóm ngữ cảnh và kiểm toán toàn vẹn \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Gate 1: dữ liệu, tiền xử lý và split}
 
-Gate 1 kiểm tra đủ năm biến thể, tổng 765 tệp. Mỗi biến thể có 153 bản ghi, 78 đối tượng, 195.767 epoch, trong đó 195.469 epoch hợp lệ và 298 Movement/Unknown. Không có tệp lỗi. Nhãn, mặt nạ và chỉ số epoch gốc khớp giữa năm biến thể. Manifest split có SHA-256 \code{6bc7ad74...de}; mỗi đối tượng test đúng một lần và validation đúng một lần.
+Gate 1 xác nhận tính nhất quán của dữ liệu, nhãn, mặt nạ và vị trí thời gian giữa các chế độ tiền xử lý. Mỗi chế độ bao phủ cùng 78 đối tượng và 153 bản ghi, với 195.469 epoch hợp lệ. Mỗi đối tượng xuất hiện đúng một lần ở test ngoài fold và phép chia được giữ nguyên giữa các cấu hình.
 
-E4/E5 trùng bitwise ở 153/153 bản ghi và \code{clip\_fraction=0}. Kết quả này làm phép cắt $\pm800\,\mu$V không quan sát được trên Sleep-EDF hiện tại; nó không chứng minh phép cắt vô dụng trên dữ liệu khác.
+Hai chế độ có giới hạn biên độ và lọc dải được xác định trùng dữ liệu trên toàn bộ bản ghi hiện có, nên không được xem là hai điều kiện độc lập. Kết quả này chỉ cho biết giới hạn biên độ không tạo ra thay đổi quan sát được trong mẫu hiện tại.
 
-\subsubsection{Độ trung thực của mốc E0 so với bài báo gốc}
+\subsubsection{Vai trò của mốc tham chiếu}
 
-\begin{table}[H]
-\centering
-\caption{Đối chiếu mô tả bài báo gốc và E0 v2; hai cột không cùng quần thể và giao thức}
-\label{tab:e0_fidelity}
-\begin{tabular}{lrr}
-\toprule
-\textbf{Chỉ số} & \textbf{Bài báo gốc, Fpz--Cz} & \textbf{E0 v2} \\
-\midrule
-Số epoch được đánh giá & 195.479 & 195.469 \\
-Accuracy & 0,8409 & 0,826233 \\
-Macro-F1 & 0,7826 & 0,775419 \\
-$\kappa$ Cohen & 0,7790 & 0,761431 \\
-F1 N1 & 0,4831 & 0,500915 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Các số ở cột bài báo gốc lấy từ Hình 3C cho Sleep-EDF-18, Fpz--Cz~\cite{jadhav2024zleepanlystnet}. E0 v2 dùng tập Sleep-EDF Expanded SC 78 đối tượng và quy tắc nhãn/split đã hiệu chỉnh, nên bảng chỉ kiểm tra mức độ gần về mô tả, không phải kiểm định tái lập trực tiếp. Chênh lệch mẫu số đánh giá và chỉ số xác nhận rằng không được gọi E0 là bản sao số học của bài báo. Vai trò đúng của E0 là đối chứng nội bộ đã khóa, dùng cùng người, cùng fold và cùng seed với E1--E6.
+Mốc E0 được xây dựng để làm đối chứng nội bộ cho các cấu hình còn lại. Do khác biệt về quần thể, quy tắc nhãn và giao thức đánh giá, kết quả của E0 không được diễn giải như phép tái lập định lượng trực tiếp bài báo gốc. Giá trị của mốc này nằm ở việc mọi so sánh trong nghiên cứu được thực hiện trên cùng đối tượng, cùng phép chia và cùng tiêu chí.
 
 \subsection{Gate 2: khả năng chạy và phục hồi}
 
-Smoke chạy xuyên suốt các giai đoạn trích xuất, tạo cache, huấn luyện chuỗi, dự đoán validation và kiểm định độc lập. Cơ chế \code{latest.pt}/\code{best.pt}, tiếp tục từ epoch hoàn tất gần nhất và từ chối metadata sai đều đạt. Test không được sinh trong smoke. Vì mỗi giai đoạn chỉ chạy một batch hoặc một epoch, chỉ số smoke không có ý nghĩa về chất lượng dự đoán.
+Gate 2 xác nhận quy trình có thể khởi chạy, phục hồi và từ chối artifact không hợp lệ. Các kiểm tra này chỉ đánh giá tính đúng đắn của vận hành, không được dùng như chỉ số chất lượng dự đoán.
 
 \subsection{Gate 3: chiến dịch validation-only}
 
-Sáu cấu hình E0, E1, E2, E3, E4 và E6 hoàn tất 10 fold, tổng 60 lần chạy. Mỗi run có manifest sạch, checkpoint, prediction validation, metrics và báo cáo kiểm định khớp SHA-256. Cùng fold, sáu cấu hình có khóa epoch và nhãn thật giống nhau. Bảng~\ref{tab:validation_descriptive} chỉ mô tả quá trình chọn checkpoint, không dùng để kết luận cuối.
+Sáu cấu hình hoàn tất chiến dịch validation trên 10 fold theo đối tượng. Các artifact lựa chọn mô hình, dự đoán và chỉ số đều vượt kiểm tra toàn vẹn; cùng fold, các cấu hình có chung khóa thời gian và nhãn thật. Bảng~\ref{tab:validation_descriptive} chỉ mô tả quá trình lựa chọn mô hình.
 
 \begin{table}[H]
 \centering
@@ -78,7 +61,7 @@ E6 & $0,7732\pm0,0368$ & 0,8287 & 0,7642 \\
 
 \subsection{Gate 4: mở tập test đã khóa}
 
-Sau khi đủ 60 run validation-only, dry-run trả \code{status=prepared} và \code{target\_count=60}. Chiến dịch test chỉ nạp \code{best.pt}, không huấn luyện hoặc chọn lại checkpoint. Kết quả cuối gồm 60 prediction test và 60 metrics test; mỗi cấu hình phủ đúng 153 bản ghi, 78 đối tượng và 195.469 epoch hợp lệ. Dữ liệu bắt cặp giữa các cấu hình đạt kiểm tra toàn vẹn.
+Sau khi hoàn tất validation, tập test được mở theo đúng quy tắc đã định trước và không tham gia lựa chọn lại mô hình. Mỗi cấu hình bao phủ cùng 78 đối tượng, 153 bản ghi và 195.469 epoch hợp lệ; dữ liệu giữa các cấu hình được căn chỉnh để thực hiện so sánh bắt cặp.
 
 \subsection{Gate 5: hiệu năng ngoài fold và thống kê bắt cặp}
 
@@ -100,7 +83,60 @@ E6 & 0,769124 & 0,822969 & 0,757320 & 0,512397 \\
 \end{tabular}
 \end{table}
 
-E3 có giá trị mô tả cao nhất trong chiến dịch chính seed 42, nhưng thứ hạng này không tự tạo bằng chứng thống kê. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước.
+\subsubsection{Phân tích lỗi theo lớp trên Sleep-EDF}
+
+Phân tích bổ sung được tính trên các dự đoán ngoài fold gộp của seed 42. Bảng~\ref{tab:sleepedf_class_errors} cho thấy chất lượng theo từng lớp của E3 và E6; $\Delta$F1 là chênh lệch E3--E6. Đây là phân tích mô tả của cùng artifact test, không mở thêm một họ kiểm định thống kê.
+
+\begin{table}[H]
+\centering
+\caption{Precision, recall và F1 theo lớp trên Sleep-EDF: E3 so với E6}
+\label{tab:sleepedf_class_errors}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Lớp} & \textbf{Hỗ trợ} & \multicolumn{3}{c}{\textbf{E3}} & \multicolumn{3}{c}{\textbf{E6}} & \textbf{$\Delta$F1} \\
+ & & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \\
+\midrule
+W & 65.941 & 0,933784 & 0,927086 & 0,930423 & 0,939099 & 0,916911 & 0,927872 & +0,002551 \\
+N1 & 21.522 & 0,514858 & 0,540981 & 0,527597 & 0,503248 & 0,521885 & 0,512397 & +0,015199 \\
+N2 & 69.132 & 0,858256 & 0,844674 & 0,851411 & 0,840123 & 0,836805 & 0,838460 & +0,012950 \\
+N3 & 13.039 & 0,807187 & 0,809725 & 0,808454 & 0,716010 & 0,777897 & 0,745672 & +0,062782 \\
+REM & 25.835 & 0,827439 & 0,841339 & 0,834331 & 0,822702 & 0,819741 & 0,821219 & +0,013113 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+E3 có F1 cao hơn E6 ở cả năm lớp, trong khi N1 vẫn là lớp khó nhất của cả hai cấu hình. Chênh lệch lớn nhất nằm ở N3 (+0,062782); các lớp còn lại tăng từ +0,002551 đến +0,015199. Ma trận nhầm lẫn của E3 và E6 được trình bày theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán.
+
+\begin{table}[H]
+\centering
+\caption{Ma trận nhầm lẫn gộp trên Sleep-EDF, hàng là nhãn thật và cột là nhãn dự đoán}
+\label{tab:sleepedf_confusion}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Mô hình--nhãn thật} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+E3--W & 61.133 & 3.888 & 416 & 56 & 448 \\
+E3--N1 & 3.283 & 11.643 & 4.867 & 105 & 1.624 \\
+E3--N2 & 539 & 5.496 & 58.394 & 2.271 & 2.432 \\
+E3--N3 & 30 & 45 & 2.377 & 10.558 & 29 \\
+E3--REM & 483 & 1.542 & 1.984 & 90 & 21.736 \\
+\midrule
+E6--W & 60.462 & 4.420 & 528 & 61 & 470 \\
+E6--N1 & 2.940 & 11.232 & 5.524 & 231 & 1.595 \\
+E6--N2 & 429 & 4.842 & 57.850 & 3.544 & 2.467 \\
+E6--N3 & 25 & 73 & 2.766 & 10.143 & 32 \\
+E6--REM & 527 & 1.752 & 2.191 & 187 & 21.178 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này cho thấy sai số tập trung ở các giai đoạn có đặc trưng biên gần nhau; nó mô tả vị trí sai số trong mẫu hiện tại, không xác định nguyên nhân sinh lý hay quan hệ nhân quả của tiền xử lý.
+
+E3 có giá trị mô tả cao nhất trong chiến dịch chính. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước, trong đó E3--E6 là đối chiếu có bằng chứng mạnh nhất.
 
 \begin{table}[H]
 \centering
@@ -109,7 +145,7 @@ E3 có giá trị mô tả cao nhất trong chiến dịch chính seed 42, nhưn
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrl}
 \toprule
-\textbf{So sánh} & \textbf{$\Delta$ \mf} & \textbf{CI 95\% bootstrap} & \textbf{$p$ Wilcoxon} & \textbf{$p$ Holm} & \textbf{Thắng/Hòa/Thua} \\
+\textbf{So sánh} & \textbf{$\Delta$ \mf\ gộp} & \textbf{CI 95\% bootstrap} & \textbf{$p$ Wilcoxon} & \textbf{$p$ Holm} & \textbf{Thắng/Hòa/Thua} \\
 \midrule
 E1--E0 & 0,004811 & $[-0,000915;\ 0,010193]$ & 0,034064 & 0,102193 & 51/0/27 \\
 E2--E1 & 0,003251 & $[-0,002370;\ 0,008808]$ & 0,051777 & 0,103554 & 44/0/34 \\
@@ -126,17 +162,17 @@ E3--E6 & \textbf{0,021319} & $\mathbf{[0,012179;\ 0,030698]}$ & 0,000296 & \text
 \label{fig:primary_effects}
 \end{figure}
 
-E1--E0 và E2--E1 có mức tăng mô tả nhỏ, nhưng CI chứa 0 và $p$ Holm lớn hơn 0,05. Vì vậy chưa đủ bằng chứng rằng TCN tốt hơn BiLSTM hoặc ResNet-1D tốt hơn 15CNN về \mf. E3--E2 có CI gộp vừa dương nhưng chỉ 37/78 người tăng, median chênh lệch theo người âm và Wilcoxon không có ý nghĩa; lợi ích không đồng đều theo đối tượng. Trong seed 42, E3--E6 là kết quả nhất quán nhất theo cả bootstrap và Wilcoxon-Holm.
+E1--E0 và E2--E1 cho mức tăng mô tả nhỏ nhưng chưa đủ bằng chứng về ưu thế riêng sau hiệu chỉnh Holm. E3--E2 có chênh lệch gộp dương nhưng hiệu ứng không đồng đều theo đối tượng; sự khác nhau giữa CI bootstrap và Wilcoxon phản ánh hai đại lượng ước lượng đã nêu trong phương pháp, không phải hai kết quả của cùng một phép kiểm định. E3--E6 là đối chiếu nhất quán nhất trong chiến dịch chính, với khoảng tin cậy hoàn toàn dương và $p$ Holm bằng 0,0012.
 
 \subsubsection{Phân tích độ nhạy sau giao thức với seed 123}
 
-Chiến dịch seed 123 hoàn tất 60/60 lượt validation và 60/60 lượt test. Mỗi cấu hình vẫn phủ đúng 153 bản ghi, 78 đối tượng và 195.469 epoch hợp lệ; trình kiểm định sâu xác nhận đủ prediction, metrics, checkpoint và căn chỉnh bắt cặp cho cả 60 lượt. Bảng~\ref{tab:seed_sensitivity_models} và~\ref{tab:seed_sensitivity_contrasts} đối chiếu hai seed mà không gộp phép kiểm định.
+Lần lặp seed 123 hoàn tất trên cùng phép chia và cùng cấu hình. Bảng~\ref{tab:seed_sensitivity_models} và~\ref{tab:seed_sensitivity_contrasts} đối chiếu hai seed riêng biệt, không gộp phép kiểm định.
 
 \begin{table}[H]
 \centering
 \caption{\mf\ test ngoài fold của hai seed cố định}
 \label{tab:seed_sensitivity_models}
-\begin{tabular}{lrr}
+\begin{tabularx}{\textwidth}{Yrr}
 \toprule
 \textbf{Cấu hình} & \textbf{Seed 42 (chính)} & \textbf{Seed 123 (độ nhạy)} \\
 \midrule
@@ -147,7 +183,7 @@ E3 & \textbf{0,790443} & \textbf{0,788265} \\
 E4 & 0,789067 & 0,788673 \\
 E6 & 0,769124 & 0,778016 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{table}[H]
@@ -171,7 +207,7 @@ Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối 
 
 \begin{table}[H]
 \centering
-\caption{Đối chiếu hậu nghiệm toàn pipeline E3 với mốc E0}
+\caption{Đối chiếu hậu nghiệm toàn bộ quy trình E3 với mốc E0}
 \label{tab:posthoc_e3_e0}
 \begin{tabular}{lrrrr}
 \toprule
@@ -182,7 +218,7 @@ E3--E0 & 0,015024 & $[0,005746;\ 0,025871]$ & 0,012321 & 49/0/29 \\
 \end{tabular}
 \end{table}
 
-Đây là phân tích \emph{hậu nghiệm}, không thuộc bốn đối chiếu xác nhận ở Bảng~\ref{tab:primary_stats}. Nếu chỉ tham khảo phép Holm khi ghép nó thành so sánh thứ năm với bốn so sánh cũ, $p$ hiệu chỉnh là 0,049282; con số này không biến giả thuyết hậu nghiệm thành giả thuyết định trước. Kết quả hỗ trợ rằng toàn bộ pipeline E3 cao hơn E0 trong chiến dịch seed 42 hiện tại. Vì E3 và E0 đồng thời khác mô hình chuỗi, bộ trích xuất và tiền xử lý, đối chiếu này không xác định thành phần nào gây ra chênh lệch, không chứng minh ưu thế trên quần thể khác và không phải kiểm định tương đương hoặc không thua kém.
+Đây là phân tích \emph{hậu nghiệm}, không thuộc bốn đối chiếu xác nhận ở Bảng~\ref{tab:primary_stats}. Kết quả hỗ trợ rằng toàn bộ quy trình E3 cao hơn E0 trong chiến dịch hiện tại; do nhiều thành phần thay đổi đồng thời, đối chiếu này không xác định nguyên nhân riêng lẻ và không phải kiểm định tương đương hoặc không thua kém.
 
 Chênh lệch F1 E3--E6 theo lớp lần lượt là W $+0,00255$, N1 $+0,01520$, N2 $+0,01295$, N3 $+0,06278$ và REM $+0,01311$. E4--E2, phân tích thứ cấp riêng lọc dải, có $\Delta=0,005586$, CI $[-0,001699;0,013618]$, $p=0,902877$ và thắng/thua 38/40; chưa có bằng chứng về cải thiện đồng đều.
 
@@ -190,12 +226,12 @@ Chênh lệch F1 E3--E6 theo lớp lần lượt là W $+0,00255$, N1 $+0,01520$
 
 \begin{table}[H]
 \centering
-\caption{Benchmark forward trên Tesla V100, 100 epoch mỗi lượt}
+\caption{Đánh đổi độ trễ và độ phức tạp trên cùng phần cứng}
 \label{tab:complexity}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
-\textbf{E} & \textbf{Tham số} & \textbf{Độ trễ trung vị (ms)} & \textbf{p95 (ms)} & \textbf{Epoch/s} & \textbf{Peak MiB} & \textbf{Nhanh hơn E0} \\
+\textbf{E} & \textbf{Tham số} & \textbf{Độ trễ trung vị (ms)} & \textbf{Độ trễ p95 (ms)} & \textbf{Tốc độ xử lý} & \textbf{Bộ nhớ đỉnh} & \textbf{Nhanh hơn E0} \\
 \midrule
 E0 & 248.630 & 13,4315 & 15,4400 & 7.445 & 58,81 & 1,00$\times$ \\
 E1 & 640.950 & 12,5111 & 13,6892 & 7.993 & 60,31 & 1,07$\times$ \\
@@ -214,28 +250,54 @@ E6 & 1.085.578 & 3,5756 & 3,6426 & 27.967 & 75,54 & 3,76$\times$ \\
 \label{fig:tradeoff}
 \end{figure}
 
-ResNet-1D--TCN giảm từ 16 xuống 2 mô hình thành phần và nhanh hơn E0 khoảng 3,76 lần. Đổi lại, số tham số tăng 4,37 lần và peak VRAM tăng 28,4\%. Vì vậy kết quả hỗ trợ ``gọn hơn về vận hành'', không hỗ trợ ``mô hình nhẹ'' hoặc ``tiết kiệm tham số''.
+ResNet-1D--TCN sử dụng ít mô hình thành phần hơn và nhanh hơn E0 khoảng 3,76 lần. Đổi lại, số tham số tăng 4,37 lần và bộ nhớ GPU cực đại tăng 28,4\%. Kết quả hỗ trợ sự gọn hơn về vận hành, không phải giảm tài nguyên mô hình.
+
+\subsubsection{Thời gian huấn luyện và hoàn thiện artifact}
+
+Benchmark độ trễ không phản ánh thời gian cần thiết để tạo ra các mô hình. Vì vậy, báo cáo bổ sung thời gian wall-clock của chiến dịch seed 123, được chạy tuần tự trên cùng một GPU Tesla V100 qua 10 fold. Khoảng thời gian bao gồm huấn luyện, đánh giá validation và hoàn thiện artifact của từng lượt; test chưa được mở trong các lượt này. Đây là số đo vận hành của giao thức hiện tại, không phải hằng số độc lập với phần cứng.
+
+\begin{table}[H]
+\centering
+\caption{Thời gian chạy huấn luyện và validation của chiến dịch seed 123}
+\label{tab:training_runtime}
+\begin{tabularx}{\textwidth}{Yrr}
+\toprule
+\textbf{Cấu hình} & \textbf{Tổng 10 fold} & \textbf{Trung bình/fold} \\
+\midrule
+E0 --- CNN đối chứng + BiLSTM & 33 giờ 35 phút 36 giây & 3 giờ 21 phút 34 giây \\
+E1 --- CNN đối chứng + TCN & 14 phút 17 giây & 1 phút 26 giây \\
+E2 --- ResNet-1D + TCN & 2 giờ 44 phút 57 giây & 16 phút 30 giây \\
+E3 --- ResNet-1D + TCN, xử lý chính & 3 giờ 16 phút 40 giây & 19 phút 40 giây \\
+E4 --- ResNet-1D + TCN, lọc dải & 2 giờ 55 phút 56 giây & 17 phút 36 giây \\
+E6 --- ResNet-1D + TCN, z-score & 2 giờ 24 phút 44 giây & 14 phút 28 giây \\
+\midrule
+\textbf{Toàn bộ sáu cấu hình} & \textbf{45 giờ 12 phút 10 giây} & \textbf{4 giờ 31 phút 13 giây} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Trong chiến dịch này, E2 hoàn tất nhanh hơn E0 khoảng 12,2 lần về thời gian chạy huấn luyện và validation tổng cộng; E3 nhanh hơn khoảng 10,2 lần. Kết quả cho thấy lợi ích vận hành bổ sung của cấu trúc ít thành phần hơn, bên cạnh lợi thế suy luận đã nêu ở trên. Tuy nhiên, thời gian wall-clock còn phụ thuộc vào số epoch thực tế, dừng sớm, điều phối lượt chạy và phần cứng; do đó không được diễn giải thành ưu thế tốc độ phổ quát.
 
 \subsection{Gate 6: không gian đặc trưng}
 
-Silhouette E2 thấp hơn E1 trong 10/10 fold. Chênh lệch E2--E1 trung bình là $-0,107851$, trung vị $-0,110025$ và khoảng quan sát $[-0,152622;-0,060811]$.
+Silhouette E2 thấp hơn E1 trong toàn bộ các fold. Chênh lệch E2--E1 trung bình là $-0,107851$, trung vị $-0,110025$ và khoảng quan sát $[-0,152622;-0,060811]$.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/gate8_feature_silhouette.png}
-\caption{Silhouette bắt cặp E1/E2 sau StandardScaler và PCA 20 chiều.}
+\caption{Silhouette bắt cặp E1/E2 sau bước chuẩn hóa và giảm chiều thống nhất.}
 \label{fig:silhouette}
 \end{figure}
 
-Phép đo này không hỗ trợ giả thuyết rằng embedding ResNet có cụm Euclid tách biệt hơn softmax 15CNN. Nó cũng không chứng minh 15CNN tốt hơn cho dự đoán chuỗi, vì TCN có thể khai thác thông tin không biểu hiện dưới dạng cụm compact.
+Phép đo này không hỗ trợ giả thuyết rằng biểu diễn ResNet tạo cụm Euclid tách biệt hơn biểu diễn của mô hình CNN đối chứng. Nó cũng không chứng minh mô hình đối chứng tốt hơn cho dự đoán chuỗi, vì TCN có thể khai thác thông tin không biểu hiện dưới dạng cụm gọn trong không gian đặc trưng.
 
 \subsection{Gate 7: gói công bố và truy nguyên}
 
-Gate 7 không huấn luyện hoặc mở lại test. Cổng này sinh bảng CSV, hình, bản thảo tiếng Việt, ma trận tuyên bố--bằng chứng, manifest SHA-256 và trình kiểm định độc lập từ artifact Gate 5--6. Việc tách dữ liệu máy đọc khỏi văn bản giúp ngăn chép sai số và cho phép xây lại gói công bố.
+Gate 7 tập hợp bảng, hình, bản thảo và ma trận bằng chứng từ các artifact đã khóa. Việc tách số liệu khỏi phần diễn giải giúp hạn chế sai khác khi biên tập và bảo đảm khả năng kiểm tra lại.
 
 \subsection{Gate 8: ablation nhóm C/P/N}
 
-Gate 8 hoàn tất 30/30 lần huấn luyện validation và 30/30 lần suy luận test cho C, CP và CN; Full CPN tái sử dụng E1. Mỗi điều kiện phủ 78 đối tượng, 153 bản ghi và 195.469 epoch hợp lệ.
+Gate 8 hoàn tất các điều kiện ablation trên cùng 78 đối tượng và 153 bản ghi; điều kiện đầy đủ được đối chiếu với các điều kiện lần lượt loại nhóm ngữ cảnh trước hoặc sau.
 
 \begin{table}[H]
 \centering
@@ -280,7 +342,7 @@ Cả ba CI chứa 0, $p$ Holm đều bằng 1 và số người thắng/thua kh�
 
 \subsection{Chiến dịch SHHS1 zero-shot}
 
-Tiền xử lý và hai cổng suy luận SHHS được thực hiện sau khi Gate 8 đã đóng. Validation gồm 15 đối tượng, 450 dự đoán theo fold và 45 tổ hợp; test gồm 180 đối tượng, 5.400 dự đoán theo fold và 540 tổ hợp. Hai cổng độc lập đều trả \code{PASSED} với 0 lỗi. Test có 169.012 epoch hợp lệ và mất 6.692,6 giây trên CPU 12 luồng.
+Chiến dịch SHHS được thực hiện sau khi Gate 8 đã đóng. Các cổng kỹ thuật xác nhận tải mô hình, căn chỉnh dữ liệu và tính đầy đủ của dự đoán trên mẫu test gồm 180 đối tượng. Trọng số không được cập nhật bằng dữ liệu SHHS.
 
 \begin{table}[H]
 \centering
@@ -298,7 +360,7 @@ E6 & 0,5407 & $[0,5227;0,5584]$ & 0,5732 & 0,6742 & 0,5408 & 0,3102 \\
 \end{tabular}}
 \end{table}
 
-\mf\ đối tượng là trung bình của 180 \mf\ tính riêng từng người và là tiêu chí chính. \mf\ gộp cho trọng số lớn hơn đối tượng có nhiều epoch nên chỉ là mô tả thứ cấp. E3 có giá trị cao nhất theo cả hai cách tổng hợp, accuracy, $\kappa$ và F1 N1.
+\mf\ đối tượng là tiêu chí chính vì mỗi người có cùng trọng số. E3 có giá trị cao nhất theo cả hai cách tổng hợp và đồng thời dẫn đầu các chỉ số hỗ trợ trong bảng.
 
 \begin{table}[H]
 \centering
@@ -322,13 +384,66 @@ E3--E6 & \textbf{0,0274} & $\mathbf{[0,0182;0,0370]}$ & 0,0292 & 125/0/55 & $1,8
 \label{fig:shhs_effects}
 \end{figure}
 
-Cả hai CI chính hoàn toàn dương và Wilcoxon vẫn có ý nghĩa sau Holm. Do đó E3 có \mf\ trung bình theo đối tượng cao hơn E0 và E6 trong mẫu SHHS1 và giao thức zero-shot đã khóa. Các chỉ số hỗ trợ nhất quán: E3--E0 tăng \mf\ gộp 0,0338, accuracy 0,0368 và $\kappa$ 0,0461; E3--E6 tăng lần lượt 0,0367, 0,0274 và 0,0392. Tại 44.744 epoch nằm trong $\pm1$ epoch quanh chuyển pha thật liên tiếp, E3 tăng \mf\ so với E0 0,0366, CI $[0,0262;0,0471]$, và so với E6 0,0183, CI $[0,0092;0,0268]$.
+Cả hai khoảng tin cậy chính đều hoàn toàn dương và Wilcoxon vẫn có ý nghĩa sau Holm. Vì vậy E3 có Macro-F1 trung bình theo đối tượng cao hơn E0 và E6 trong mẫu SHHS1 và giao thức zero-shot đã khóa. Các chỉ số hỗ trợ cũng cùng chiều.
 
 N1 vẫn là lớp khó nhất. E3 có F1 N1 cao hơn E0/E6, nhưng recall N1 của E0 là 0,5841, cao hơn E3 0,5437; precision N1 của E3 là 0,2528, cao hơn E0 0,2017. Vì vậy lợi ích F1 của E3 phản ánh cân bằng precision--recall tốt hơn, không phải tăng đồng thời mọi chỉ số N1.
 
+\subsubsection{Phân tích lỗi theo lớp trên SHHS1}
+
+Trên SHHS1, phân tích lớp được thực hiện trên 169.012 epoch hợp lệ của mẫu test đã khóa. E3 được đối chiếu với E2 vì hai cấu hình dùng cùng họ ResNet-1D--TCN và khác chế độ xử lý tín hiệu; $\Delta$F1 là chênh lệch E3--E2. Các con số dưới đây là mô tả gộp, không thay thế cho phân tích bắt cặp ở cấp đối tượng.
+
+\begin{table}[H]
+\centering
+\caption{Precision, recall và F1 theo lớp trên SHHS1: E3 so với E2}
+\label{tab:shhs_class_errors}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Lớp} & \textbf{Hỗ trợ} & \multicolumn{3}{c}{\textbf{E3}} & \multicolumn{3}{c}{\textbf{E2}} & \textbf{$\Delta$F1} \\
+ & & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \\
+\midrule
+W & 36.983 & 0,882267 & 0,801395 & 0,839889 & 0,878039 & 0,727469 & 0,795694 & +0,044195 \\
+N1 & 7.002 & 0,252822 & 0,543702 & 0,345150 & 0,236726 & 0,352756 & 0,283322 & +0,061828 \\
+N2 & 76.287 & 0,739422 & 0,734896 & 0,737152 & 0,736197 & 0,693735 & 0,714336 & +0,022816 \\
+N3 & 22.806 & 0,944044 & 0,258178 & 0,405468 & 0,965898 & 0,249627 & 0,396725 & +0,008743 \\
+REM & 25.934 & 0,605237 & 0,893923 & 0,721785 & 0,488616 & 0,944976 & 0,644158 & +0,077626 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+E3 cải thiện F1 ở cả năm lớp so với E2, với mức tăng lớn nhất ở REM (+0,077626) và N1 (+0,061828). Tuy nhiên, recall N3 vẫn thấp (0,258178), còn recall REM cao nhưng precision thấp; đây là dấu hiệu của sự đánh đổi giữa các lớp trong điều kiện ngoài miền và cần được đọc cùng ma trận nhầm lẫn.
+
+\begin{table}[H]
+\centering
+\caption{Ma trận nhầm lẫn gộp trên SHHS1, hàng là nhãn thật và cột là nhãn dự đoán}
+\label{tab:shhs_confusion}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Mô hình--nhãn thật} & \textbf{W} & \textbf{N1} & \textbf{N2} & \textbf{N3} & \textbf{REM} \\
+\midrule
+E3--W & 29.638 & 4.481 & 1.171 & 21 & 1.672 \\
+E3--N1 & 874 & 3.807 & 601 & 3 & 1.717 \\
+E3--N2 & 2.348 & 5.947 & 56.063 & 324 & 11.605 \\
+E3--N3 & 78 & 39 & 16.674 & 5.888 & 127 \\
+E3--REM & 655 & 784 & 1.311 & 1 & 23.183 \\
+\midrule
+E2--W & 26.904 & 4.174 & 1.066 & 17 & 4.822 \\
+E2--N1 & 811 & 2.470 & 645 & 2 & 3.074 \\
+E2--N2 & 2.375 & 3.500 & 52.923 & 182 & 17.307 \\
+E2--N3 & 112 & 28 & 16.527 & 5.693 & 446 \\
+E2--REM & 439 & 262 & 726 & 0 & 24.507 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi. Đây là mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả.
+
 \subsection{Phân tích bổ sung thành phần E1/E2 trên SHHS1}
 
-Sau chiến dịch zero-shot v1, một giao thức riêng được khóa trước lần suy luận SHHS đầu tiên của E1/E2. E0 được tái sử dụng nguyên trạng từ v1; E1 và E2 cùng dùng \code{paper\_raw\_v1}, đủ 10 checkpoint theo fold và không cập nhật trọng số bằng SHHS. Validation kỹ thuật gồm 300 dự đoán fold và 30 ensemble; test gồm 3.600 dự đoán fold và 360 ensemble. Hai cổng đều \code{PASSED} với 0 lỗi. Test dùng 180 đối tượng, 169.012 epoch và mất 5.681,1 giây trên CPU 12 luồng.
+Sau chiến dịch zero-shot chính, một giao thức riêng được khóa trước khi suy luận E1/E2. Các mô hình không được cập nhật trọng số bằng SHHS và được đánh giá trên cùng 180 đối tượng.
 
 \begin{table}[H]
 \centering
@@ -365,7 +480,7 @@ E1--E0 thỏa đồng thời điều kiện CI chính hoàn toàn dương và Wi
 
 \subsection{Đối chiếu hậu nghiệm E3--E2 trên SHHS1}
 
-E2 và E3 cùng dùng ResNet-1D--TCN nhưng khác chế độ dữ liệu: E2 dùng \code{paper\_raw\_v1}, còn E3 dùng \code{filtered\_v2}. Mọi dự đoán được ghép đúng 180 đối tượng và 169.012 epoch trước khi tính hiệu ứng.
+E2 và E3 cùng dùng ResNet-1D--TCN nhưng khác chế độ xử lý tín hiệu. Đối chiếu được thực hiện theo cặp trên cùng 180 đối tượng trước khi tính hiệu ứng.
 
 \begin{table}[H]
 \centering
@@ -387,4 +502,4 @@ Recall N1 & 0,19095 & $[0,15125;0,22966]$ & Chỉ số hỗ trợ \\
 \end{tabular}}
 \end{table}
 
-Trung vị chênh lệch \mf\ theo người là 0,04194 và E3 thắng/hòa/thua E2 trên 147/0/33 đối tượng. Tất cả CI hỗ trợ trong Bảng~\ref{tab:shhs_e3_e2} đều hoàn toàn dương. Vì vậy có bằng chứng hỗ trợ mạnh rằng toàn pipeline E3 tổng quát zero-shot tốt hơn E2 trên mẫu SHHS1 này. Trái lại, E3--E2 trên Sleep-EDF chỉ tăng \mf\ gộp 0,00696 nhưng Wilcoxon $p=0,89893$ và thắng/thua 37/41. Mẫu hình kết hợp phù hợp với cách diễn giải rằng lợi ích của chế độ tiền xử lý E3 biểu hiện rõ hơn khi chuyển miền; nó không chứng minh cơ chế nhân quả của từng thao tác tiền xử lý.
+Trung vị chênh lệch Macro-F1 theo đối tượng là 0,04194 và E3 thắng E2 ở 147/180 đối tượng. Tất cả khoảng tin cậy trong Bảng~\ref{tab:shhs_e3_e2} đều hoàn toàn dương. Kết quả cung cấp bằng chứng mạnh rằng toàn bộ chế độ xử lý E3 hoạt động tốt hơn đầu vào thô dưới cùng họ ResNet-1D--TCN trên mẫu SHHS1 này. Mẫu hình này không xác định cơ chế nhân quả của từng thao tác tiền xử lý.

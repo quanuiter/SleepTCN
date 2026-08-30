@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import argparse
-import json
+import sys
 from pathlib import Path
 
 import torch
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sleeptcn.io.serialization import read_json
 
 
 def main() -> int:
@@ -24,7 +28,7 @@ def main() -> int:
             status = "pending"
             detail = ""
             if manifest_path.is_file():
-                status = json.loads(manifest_path.read_text(encoding="utf-8"))["status"]
+                status = read_json(manifest_path)["status"]
             if latest.is_file() and status == "training":
                 payload = torch.load(latest, map_location="cpu", weights_only=False)
                 progress = payload["progress"]

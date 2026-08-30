@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -13,7 +12,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sleeptcn.artifacts import combined_sha256, sha256_file
+from sleeptcn.io.hashing import combined_sha256, sha256_file
 from sleeptcn.metrics import STAGE_NAMES, compute_metrics
 from sleeptcn.statistics import (
     PredictionArrays,
@@ -22,6 +21,8 @@ from sleeptcn.statistics import (
     paired_cluster_bootstrap,
     paired_subject_wilcoxon,
 )
+from sleeptcn.io.serialization import read_json
+from sleeptcn.workflows.provenance import clean_git_commit
 
 
 ACTIVE_EXPERIMENTS = ("E0", "E1", "E2", "E3", "E4", "E6")
@@ -31,28 +32,12 @@ EXPECTED_RECORDS = 153
 EXPECTED_VALID_EPOCHS = 195_469
 
 
-def _read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def _clean_git_commit(workspace: Path) -> str:
-    commit = subprocess.run(
-        ["git", "-C", str(workspace), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    return clean_git_commit(
+        workspace,
+        unreadable_message="analysis workspace must be a readable Git repository",
+        dirty_message="official Gate-5 analysis requires a clean Git worktree",
     )
-    status = subprocess.run(
-        ["git", "-C", str(workspace), "status", "--porcelain"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if commit.returncode or status.returncode:
-        raise RuntimeError("analysis workspace must be a readable Git repository")
-    if status.stdout.strip():
-        raise RuntimeError("official Gate-5 analysis requires a clean Git worktree")
-    return commit.stdout.strip()
 
 
 def _parse_comparison(value: str) -> tuple[str, str]:
@@ -277,8 +262,8 @@ def build_report(
     config_path = workspace / "configs" / "experiments_v2.json"
     split_path = workspace / "data" / "splits" / "sleepedf_sc_10fold_seed42_v2.json"
     campaign_path = workspace / "runs" / "v2" / f"test_campaign_seed{seed}.json"
-    config = _read_json(config_path)
-    campaign = _read_json(campaign_path)
+    config = read_json(config_path)
+    campaign = read_json(campaign_path)
     _validate_campaign(campaign, seed)
     primary_comparisons, secondary_comparisons = locked_comparisons(config)
     frozen = config["statistical_analysis"]

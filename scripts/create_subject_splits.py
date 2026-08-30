@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import subprocess
 import sys
@@ -16,6 +15,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from sleeptcn.dataset import inspect_record
+from sleeptcn.io.hashing import sha256_file
+from sleeptcn.io.paths import portable_path
 from sleeptcn.splits import (
     LABELS,
     aggregate_subjects,
@@ -23,14 +24,6 @@ from sleeptcn.splits import (
     make_outer_runs,
     validate_split_structure,
 )
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def git_commit(root: Path) -> str:
@@ -95,7 +88,7 @@ def main() -> int:
     outer_runs = make_outer_runs(folds, subject_data)
 
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "dataset": "sleep-edf-expanded/sleep-cassette/1.0.0",
         "subject_id_rule": "first_5_characters_of_record_key",
         "split_method": "sorted_subjects_then_numpy_default_rng_permutation_then_array_split",
@@ -104,7 +97,9 @@ def main() -> int:
         "validation_policy": "validation_fold=(test_fold+1)%n_folds",
         "compatible_variants": ["paper_raw_v1", "filtered_v2"],
         "source_variant": args.variant,
-        "source_preprocess_manifest": str(args.preprocess_manifest.resolve()),
+        "source_preprocess_manifest": portable_path(
+            args.preprocess_manifest, args.workspace
+        ),
         "source_preprocess_manifest_sha256": sha256_file(args.preprocess_manifest.resolve()),
         "source_git_commit": git_commit(args.workspace.resolve()),
         "numpy_version": np.__version__,

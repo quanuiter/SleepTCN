@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -11,24 +10,14 @@ import numpy as np
 from scipy.stats import wilcoxon
 
 from .gate8_analysis import transition_mask
+from .io.hashing import sha256_file
+from .io.serialization import read_json
 from .metrics import confusion_matrix_5, metrics_from_confusion
 from .statistics import PredictionArrays, assert_paired, holm_adjust
 
 
 EXPERIMENTS = ("E0", "E3", "E6")
 PRIMARY_COMPARISONS = (("E3", "E0"), ("E3", "E6"))
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def load_ensemble_predictions(
@@ -205,9 +194,9 @@ def analyze_zero_shot(
     gate_path: Path,
     protocol_path: Path,
 ) -> dict[str, Any]:
-    manifest = _load_json(run_manifest_path)
-    gate = _load_json(gate_path)
-    protocol = _load_json(protocol_path)
+    manifest = read_json(run_manifest_path)
+    gate = read_json(gate_path)
+    protocol = read_json(protocol_path)
     manifest_hash = sha256_file(run_manifest_path)
     protocol_hash = sha256_file(protocol_path)
     if manifest.get("status") != "complete" or manifest.get("role") != "test":

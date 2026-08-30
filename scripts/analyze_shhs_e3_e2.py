@@ -6,9 +6,9 @@ import argparse
 import json
 from pathlib import Path
 
-from sleeptcn.artifacts import sha256_file
+from sleeptcn.io.hashing import sha256_file
 from sleeptcn.shhs_e3_e2_analysis import analyze_e3_e2
-from sleeptcn.shhs_zero_shot import atomic_json
+from sleeptcn.io.serialization import atomic_write_json
 
 
 def main() -> int:
@@ -27,7 +27,7 @@ def main() -> int:
         e2_gate_path=args.e2_test_gate.resolve(),
         protocol_path=args.protocol.resolve(),
     )
-    atomic_json(args.output, report)
+    atomic_write_json(args.output, report, ensure_ascii=False, sort_keys=False)
     digest = sha256_file(args.output)
     args.output.with_suffix(args.output.suffix + ".sha256").write_text(
         f"{digest}  {args.output.name}\n", encoding="ascii"

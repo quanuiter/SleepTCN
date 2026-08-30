@@ -4,15 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
-from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sleeptcn.artifacts import sha256_file
+from sleeptcn.io.hashing import sha256_file
 from sleeptcn.gate8 import (
     CONDITIONS,
     build_gate8_context,
@@ -21,22 +18,8 @@ from sleeptcn.gate8 import (
     run_validation_condition,
     validate_gate8_run,
 )
-
-
-def write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w", encoding="utf-8", dir=path.parent, delete=False
-        ) as handle:
-            temporary = Path(handle.name)
-            json.dump(payload, handle, indent=2, sort_keys=True)
-            handle.write("\n")
-        os.replace(temporary, path)
-    finally:
-        if temporary is not None and temporary.exists():
-            temporary.unlink()
+from sleeptcn.io.serialization import atomic_write_json
+from sleeptcn.io.serialization import read_json
 
 
 def target_key(condition: str, fold: int) -> str:
@@ -56,7 +39,7 @@ def main() -> int:
     if args.resume:
         if not journal_path.is_file():
             raise FileNotFoundError("Gate 8 validation journal does not exist")
-        journal = json.loads(journal_path.read_text(encoding="utf-8"))
+        journal = read_json(journal_path)
         if journal.get("source_git_commit") != clean_git_commit(workspace):
             raise RuntimeError("Git HEAD differs from the Gate 8 validation campaign")
     else:
@@ -76,7 +59,7 @@ def main() -> int:
                 for condition in CONDITIONS
             },
         }
-        write_json_atomic(journal_path, journal)
+        atomic_write_json(journal_path, journal)
 
     index = 0
     for fold in range(10):
@@ -98,7 +81,7 @@ def main() -> int:
             else:
                 print(f"[{index:02d}/30] {key}: dang chay validation", flush=True)
                 journal["targets"][key]["state"] = "running"
-                write_json_atomic(journal_path, journal)
+                atomic_write_json(journal_path, journal)
                 run_validation_condition(context)
                 report = validate_gate8_run(workspace, context.run_root)
             validation = report["roles"]["validation"]
@@ -114,10 +97,10 @@ def main() -> int:
                 "validation_records": validation["records"],
                 "validation_valid_epochs": validation["valid_epochs"],
             }
-            write_json_atomic(journal_path, journal)
+            atomic_write_json(journal_path, journal)
             print(f"[{index:02d}/30] {key}: dat", flush=True)
     journal["status"] = "validation_complete"
-    write_json_atomic(journal_path, journal)
+    atomic_write_json(journal_path, journal)
     print(json.dumps({
         "status": journal["status"],
         "completed": sum(v["state"] == "complete" for v in journal["targets"].values()),

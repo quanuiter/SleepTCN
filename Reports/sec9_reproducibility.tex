@@ -1,136 +1,62 @@
-\appendix
-\section{Phụ lục tái lập và truy nguyên}
+\section{Hồ sơ tái lập và truy nguyên}
 \label{sec:reproducibility}
 
-\subsection{Nguồn chân lý của số liệu}
+\subsection{Nguồn bằng chứng}
+
+Các kết quả trong báo cáo được tổng hợp từ bốn nhóm bằng chứng: dữ liệu và phép chia đã kiểm định; artifact huấn luyện và dự đoán; các báo cáo thống kê bắt cặp; và gói công bố gồm bảng, hình cùng ma trận bằng chứng. Mỗi nhóm được lưu kèm thông tin phiên bản và kiểm tra toàn vẹn để bảo đảm số liệu trong văn bản có thể đối chiếu với nguồn gốc.
 
 \begin{table}[H]
 \centering
-\caption{Bản đồ kết quả tới artifact máy đọc}
-\label{tab:artifact_map}
+\caption{Các nhóm bằng chứng được sử dụng trong báo cáo}
+\label{tab:reproducibility_evidence}
 \begin{tabularx}{\textwidth}{lY}
 \toprule
-\textbf{Nội dung} & \textbf{Artifact} \\
+\textbf{Nhóm} & \textbf{Vai trò} \\
 \midrule
-Dữ liệu đã xử lý & \code{data/manifests/processed\_validation\_v2.json} \\
-Split đối tượng & \code{data/splits/sleepedf\_sc\_10fold\_seed42\_v2.json} \\
-Chiến dịch test & \code{runs/v2/test\_campaign\_seed42.json} \\
-Thống kê Gate 5 & \code{runs/v2/analysis/gate5\_paired\_results\_seed42.json} \\
-Chiến dịch test độ nhạy & \code{runs/v2/test\_campaign\_seed123.json} \\
-Thống kê seed 123 & \code{runs/v2/analysis/gate5\_paired\_results\_seed123.json} \\
-Đối chiếu hai seed & \path{runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json} \\
-Đối chiếu hậu nghiệm E3--E0 & \code{Reports/POSTHOC\_E3\_E0\_AUDIT.json} \\
-Benchmark Gate 6 & \code{runs/v2/analysis/gate6\_latency\_fold00\_seed42.json} \\
-Không gian đặc trưng & \path{runs/v2/analysis/gate6_feature_space/feature_space_report.json} \\
-Ablation Gate 8 & \code{runs/v2/gate8/analysis\_seed42.json} \\
-Gói công bố cuối & \path{runs/v2/publication/gate8/publication_manifest.json} \\
-Biên tuyên bố & \code{runs/v2/publication/gate8/CLAIM\_EVIDENCE\_MATRIX.md} \\
-Giao thức zero-shot SHHS & \code{configs/shhs\_zero\_shot\_v1.json} \\
-Cổng test SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json} \\
-Phân tích bắt cặp SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_v1/analysis/zero_shot_analysis.json} \\
-Giao thức thành phần SHHS & \code{configs/shhs\_component\_extension\_v1.json} \\
-Cổng test thành phần SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/test_gate.json} \\
-Phân tích thành phần SHHS & \path{E:/research/Dataset/SHHS_v1/zero_shot_components_v1/analysis/component_analysis.json} \\
-Giao thức hậu nghiệm E3--E2 & \code{configs/shhs\_e3\_e2\_paired\_v1.json} \\
-Kiểm toán E3--E2 & \code{Reports/SHHS\_E3\_E2\_PAIRED\_AUDIT.json} \\
+Dữ liệu và phép chia & Xác nhận đối tượng, bản ghi, nhãn và nguyên tắc tách mẫu \\
+Kết quả huấn luyện & Xác nhận mô hình đã chọn, dự đoán, chỉ số và sự tương thích giữa các cấu hình \\
+Phân tích thống kê & Cung cấp chênh lệch, khoảng tin cậy và kiểm định bắt cặp \\
+Gói công bố & Cung cấp bảng, hình, ma trận bằng chứng và kiểm tra toàn vẹn độc lập \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Mã băm split là {\ttfamily\small\seqsplit{6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de}}. Artifact Gate 5 seed 42 và seed 123 dùng trong đối chiếu hiện tại lần lượt có SHA-256 {\ttfamily\small\seqsplit{ee6302f5ebb9781406c3a77b45c631a17b7dab5889420e6730d5b50524767cb0}} và {\ttfamily\small\seqsplit{ea669e1f869f4234f1c887ae6e1490870597470d59c1ab58e67f1ac029263980}}. Báo cáo đối chiếu hai seed có SHA-256 {\ttfamily\small\seqsplit{a9b2ef93aa9af937ecb7bfc41d6bc8eae5db78344188be647533616c9c3e9fee}}. Benchmark JSON Gate 6 có SHA-256 {\ttfamily\small\seqsplit{e1cdba979d9f434bb19803ea5341052239f0e98c89f1bff95c21287e99d81cc7}}.
+\subsection{Nguyên tắc kiểm tra}
 
-Manifest test SHHS có SHA-256 {\ttfamily\small\seqsplit{f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf}}; cổng test có SHA-256 {\ttfamily\small\seqsplit{51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646}}. Phân tích bắt cặp được chạy lại byte-giống-hệt với SHA-256 {\ttfamily\small\seqsplit{83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df}}. Các artifact này chứa dữ liệu chịu điều kiện NSRR nên nằm ngoài Git; báo cáo chỉ công bố thống kê tổng hợp và mã băm.
+Kiểm tra tái lập được thực hiện theo ba lớp. Lớp thứ nhất xác nhận cấu trúc, độ phủ và khóa bắt cặp của dữ liệu. Lớp thứ hai đối chiếu các artifact với thông tin phiên bản và mã băm. Lớp thứ ba kiểm tra các bảng, hình và tuyên bố trong gói công bố có khớp với dữ liệu nguồn hay không.
 
-Phần bổ sung E1/E2 có inventory SHA-256 {\ttfamily\small\seqsplit{0f33782e6ff2ed0455695c97bca3cc1f8a9e881ba97e38d413a7deaf204d1e3a}}, manifest test {\ttfamily\small\seqsplit{064a7c1ca586e0f19bfa753017edd5ba2a5be1b8476b9767e69ce46d8e12f174}}, cổng test {\ttfamily\small\seqsplit{fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c}} và phân tích byte-giống-hệt {\ttfamily\small\seqsplit{39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c}}.
+Các phép kiểm tra báo cáo đều là phép đọc và đối chiếu artifact đã khóa; chúng không huấn luyện lại mô hình và không mở lại tập test. Vì vậy, việc kiểm định không làm thay đổi kết quả khoa học đã công bố.
 
-Đối chiếu hậu nghiệm E3--E2 khóa chính xác bốn artifact nguồn bằng SHA-256, kiểm tra lại cổng test và căn chỉnh đủ 180 đối tượng/169.012 epoch trước khi tính. Bản kiểm toán được phát hành trong Git có SHA-256 {\ttfamily\small\seqsplit{d654e4f47140ae3f2a35ae7737b98c5ba0ee4a2e5dc45242c5171de2bd9d938a}}.
+\subsection{Tái lập chiến dịch độ nhạy}
 
-\subsection{Lệnh kiểm tra gói Gate 8}
+Lần lặp với seed thứ hai sử dụng cùng dữ liệu, cùng phép chia và cùng họ cấu hình. Các chỉ số được tính lại độc lập cho từng seed. Kết quả được trình bày song song để đánh giá độ bền của hướng hiệu ứng, không gộp kiểm định và không suy ra phân phối của mọi khởi tạo.
 
-\begin{lstlisting}[language=bash]
-export PYTHONPATH="$PWD/src"
-python scripts/validate_gate8_artifacts.py \
-  --package-dir runs/v2/publication/gate8 \
-  --output runs/v2/publication/gate8/gate8_validation_report.json
-python -m pytest -q tests
-\end{lstlisting}
+\subsection{Tái lập đánh giá SHHS1}
 
-Khi kiểm tra lại, không chạy huấn luyện và không tạo lại prediction test. Trình kiểm định chỉ đọc artifact đã khóa, đối chiếu lược đồ, độ phủ, khóa bắt cặp và SHA-256.
+Các mô hình Sleep-EDF được khóa trước khi suy luận ngoài miền. Mẫu SHHS1, quy tắc tiền xử lý, căn chỉnh epoch và quy tắc tổ hợp được xác định trong giao thức riêng. Kiểm tra kỹ thuật xác nhận khả năng sử dụng mô hình, tính đầy đủ của dự đoán và sự phù hợp của các khóa theo đối tượng trước khi tính chỉ số.
 
-Phân tích độ nhạy hai seed chỉ đọc hai báo cáo Gate 5 đã khóa:
+\subsection{Tình trạng dữ liệu dẫn xuất}
 
-\begin{lstlisting}[language=bash]
-python scripts/analyze_seed_sensitivity.py \
-  --seed42-report runs/v2/analysis/gate5_paired_results_seed42.json \
-  --seed123-report runs/v2/analysis/gate5_paired_results_seed123.json \
-  --output runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json
-\end{lstlisting}
+Snapshot dữ liệu dẫn xuất hiện tại gồm 765 tệp thuộc năm biến thể tiền xử lý. Kiểm toán độc lập xác nhận 765/765 tệp khớp SHA-256 trong manifest nội dung, có metadata ZIP chuẩn hóa, đọc được và giữ nhất quán nhãn, vị trí thời gian, hình dạng cùng quan hệ biến đổi khoa học. Các mã băm container lịch sử được bảo toàn trong trường truy nguyên riêng để không làm mất dấu vết của những phiên trước.
 
-Script kiểm tra cùng split, cùng sáu cấu hình, đủ 78 đối tượng/153 bản ghi/195.469 epoch và cùng họ bốn đối chiếu. Nó giữ thống kê từng seed riêng biệt, không gộp $p$-value và không xem hai seed cố định là mẫu ngẫu nhiên.
+Khóa byte của snapshot hiện tại bảo đảm tính toàn vẹn khi lưu trữ và trao đổi, nhưng không thay thế phép tái sinh độc lập từ EDF gốc trong môi trường phần mềm đã khóa. Gói mã nguồn đi kèm giao thức và công cụ kiểm định để thực hiện bước tái sinh đó.
 
-Phân tích SHHS có thể tái chạy mà không suy luận lại:
-
-\begin{lstlisting}[language=bash]
-python scripts/analyze_shhs_zero_shot.py \
-  --run-manifest E:/research/Dataset/SHHS_v1/zero_shot_v1/test/run_manifest.json \
-  --test-gate E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json \
-  --protocol configs/shhs_zero_shot_v1.json \
-  --output E:/research/Dataset/SHHS_v1/zero_shot_v1/analysis/zero_shot_analysis.json
-\end{lstlisting}
-
-Phân tích thành phần có thể tái chạy từ prediction đã khóa mà không suy luận lại:
-
-\begin{lstlisting}[language=bash]
-python scripts/analyze_shhs_component_extension.py \
-  --component-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/run_manifest.json \
-  --component-test-gate E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/test_gate.json \
-  --reference-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_v1/test/run_manifest.json \
-  --reference-test-gate E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json \
-  --protocol configs/shhs_component_extension_v1.json \
-  --output E:/research/Dataset/SHHS_v1/zero_shot_components_v1/analysis/component_analysis.json
-\end{lstlisting}
-
-Đối chiếu E3--E2 cũng chỉ đọc prediction đã khóa:
-
-\begin{lstlisting}[language=bash]
-python scripts/analyze_shhs_e3_e2.py \
-  --e3-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_v1/test/run_manifest.json \
-  --e3-test-gate E:/research/Dataset/SHHS_v1/zero_shot_v1/test/test_gate.json \
-  --e2-run-manifest E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/run_manifest.json \
-  --e2-test-gate E:/research/Dataset/SHHS_v1/zero_shot_components_v1/test/test_gate.json \
-  --protocol configs/shhs_e3_e2_paired_v1.json \
-  --output Reports/SHHS_E3_E2_PAIRED_AUDIT.json
-\end{lstlisting}
-
-\subsection{Khoảng trống truy nguyên của kho NPZ cục bộ}
-
-Lần kiểm toán nội dung gần nhất xác nhận đủ 765 tệp, đúng số bản ghi/đối tượng/epoch, nhãn, chỉ số epoch, hình dạng và các quan hệ biến đổi số. Tuy nhiên, mã băm SHA-256 toàn tệp của 459 tệp thuộc \code{bandpass\_v2}, \code{bandpass\_clip\_v2} và \code{filtered\_zscore\_v2} không khớp manifest lịch sử; 306 tệp của hai biến thể còn lại khớp. Sai khác có thể do tuần tự hóa lại kho NPZ hoặc môi trường thư viện, nhưng chưa đủ bằng chứng để khẳng định nguyên nhân. Các mảng E4/E5 vẫn trùng bitwise 153/153 và các kiểm tra nội dung không phát hiện sai khác khoa học có ý nghĩa.
-
-Vì dữ liệu thô không còn tại đường dẫn đã ghi trong môi trường kiểm toán và manifest run chưa khóa mã băm nội dung của tệp tiền xử lý, báo cáo không tuyên bố kho cục bộ hiện tại giống byte-theo-byte với kho dùng khi huấn luyện. Trước khi phát hành dữ liệu dẫn xuất, cần tái sinh từ dữ liệu thô trong môi trường đã khóa hoặc lập một manifest chuẩn mới kèm phiên bản thư viện và mã băm nội dung mảng.
-
-\subsection{Biên câu chữ khoa học}
+\subsection{Biên diễn giải khoa học}
 
 \begin{table}[H]
 \centering
-\caption{Tóm tắt câu chữ được phép và không được phép}
+\caption{Phạm vi diễn giải của các kết quả chính}
 \label{tab:claim_boundaries}
 \begin{tabularx}{\textwidth}{YY}
 \toprule
-\textbf{Được phép} & \textbf{Không được phép} \\
+\textbf{Kết luận được hỗ trợ} & \textbf{Diễn giải vượt quá bằng chứng} \\
 \midrule
-E3 có \mf\ mô tả cao nhất trong sáu cấu hình & E3 là mô hình tốt nhất nói chung \\
-E3--E6 dương và CI dương ở cả hai seed; Holm chỉ đạt ở seed 42 & Ý nghĩa thống kê đã lặp lại qua seed hoặc chuẩn hóa giải quyết dịch chuyển miền \\
-Hậu nghiệm: toàn pipeline E3 cao hơn E0 trong chiến dịch seed 42 & E3--E0 là giả thuyết xác nhận định trước hoặc chỉ ra thành phần gây cải thiện \\
-ResNet-1D--TCN ít mô hình thành phần và forward nhanh hơn & Mô hình nhẹ hoặc tiết kiệm tham số \\
-Trên Sleep-EDF, E1/E2 tăng mô tả nhẹ nhưng chưa đủ bằng chứng & TCN/ResNet vượt trội in-domain có ý nghĩa \\
-Trên mẫu SHHS đã dùng, E1 cao hơn E0 theo phân tích thứ cấp khóa trước suy luận E1/E2 & TCN luôn tốt hơn BiLSTM hoặc đây là cohort xác nhận độc lập \\
-Trên mẫu SHHS đã dùng, E2 thấp hơn E1 & ResNet luôn kém hơn 15CNN \\
-Hậu nghiệm: E3 cao hơn E2 trên mẫu SHHS đã mở & Đây là xác nhận độc lập hoặc một thao tác tiền xử lý riêng gây toàn bộ hiệu ứng \\
-Silhouette E2 thấp hơn E1 theo phép đo đã khóa & ResNet luôn tạo đặc trưng kém hơn \\
-Chưa thấy lợi ích tăng thêm có ý nghĩa của P/N & P/N vô dụng hoặc chỉ có 12\% thông tin \\
-Chưa kiểm định tương đương & Các cấu hình tương đương \\
-Kết quả Sleep-EDF in-domain gồm seed 42 chính và seed 123 độ nhạy & Hai seed là mẫu đại diện mọi khởi tạo hoặc là xác nhận độc lập \\
-E3 cao hơn E0/E6 trên mẫu SHHS1 zero-shot đã khóa & Đã giải quyết domain shift hoặc xác nhận lâm sàng \\
+E3 có Macro-F1 cao nhất trong chiến dịch Sleep-EDF & E3 là mô hình tốt nhất trong mọi điều kiện \\
+E3 cao hơn E6 trong các mẫu và giao thức đã đánh giá & Chuẩn hóa biên độ luôn tạo lợi ích \\
+E3 cao hơn E0 và E6 trên mẫu SHHS1 đã khóa & Đã giải quyết hoàn toàn dịch chuyển miền \\
+ResNet-1D--TCN nhanh hơn và gọn hơn về vận hành & Mô hình nhẹ hơn về tham số hoặc bộ nhớ \\
+Gate 8 chưa cho thấy lợi ích tăng thêm của P/N & P/N hoàn toàn không có vai trò \\
+Các điều kiện chưa được kiểm định tương đương & Giá trị p lớn chứng minh tương đương \\
 \bottomrule
 \end{tabularx}
 \end{table}
