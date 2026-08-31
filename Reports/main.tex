@@ -47,7 +47,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{SleepTCN -- Gate 1--8 và SHHS1 zero-shot}
+\fancyhead[L]{SleepTCN -- EEG đơn kênh và SHHS1}
 \fancyhead[R]{\nouppercase{\leftmark}}
 \fancyfoot[C]{\thepage}
 \setlength{\headheight}{14pt}
@@ -75,13 +75,14 @@
 
 \section*{Tóm tắt}
 \addcontentsline{toc}{section}{Tóm tắt}
-Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên phân tập Sleep Cassette của Sleep-EDF Expanded. Dữ liệu gồm 78 đối tượng và 153 bản ghi; sáu cấu hình được so sánh trên cùng phép chia theo đối tượng, cùng quy tắc lựa chọn mô hình và cùng tập kiểm tra ngoài fold. Thiết kế bắt cặp theo đối tượng giúp tách ảnh hưởng của mô hình khỏi khác biệt do thành phần dữ liệu. Hiệu năng được đánh giá bằng Macro-F1, kết hợp với khoảng tin cậy bootstrap và kiểm định Wilcoxon có hiệu chỉnh Holm.
+\markboth{Tóm tắt}{Tóm tắt}
+Nghiên cứu xây dựng một hồ sơ đánh giá có kiểm soát cho phân giai đoạn giấc ngủ từ EEG đơn kênh, với mục tiêu hỗ trợ ba quyết định thực tế: có nên thay kiến trúc, lựa chọn pipeline nào đáng mang sang dữ liệu mới, và lỗi chuyển miền nào cần ưu tiên thích nghi. Trên phân tập Sleep Cassette của Sleep-EDF Expanded, sáu cấu hình hoạt động được so sánh trên cùng 78 đối tượng, 153 bản ghi, phép chia theo đối tượng, quy tắc lựa chọn mô hình và tập kiểm tra ngoài fold. Macro-F1 được phân tích bằng bootstrap bắt cặp theo cụm đối tượng và Wilcoxon có hiệu chỉnh Holm; tám cổng kiểm soát nội bộ (Gate 1--8) được giữ để truy nguyên tính hợp lệ của bằng chứng.
 
-Trong chiến dịch chính, cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt Macro-F1 bằng 0,7904, cao nhất trong sáu cấu hình. So với chế độ z-score theo bản ghi, cấu hình này tăng 0,0213 điểm, với \ci=[0,0122;0,0307] và $p$ Holm bằng 0,0012. Lần lặp sau giao thức vẫn giữ hướng hiệu ứng dương. ResNet-1D--TCN có thời gian suy luận nhanh hơn khoảng 3,76 lần, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Các so sánh thay đổi mô hình chuỗi và bộ trích đặc trưng cho mức tăng mô tả nhỏ hơn, chưa đủ bằng chứng để khẳng định ưu thế riêng sau hiệu chỉnh đa kiểm định.
+Các thay thế kiến trúc riêng lẻ chỉ tạo chênh lệch nhỏ và chưa đủ bằng chứng về ưu thế dự báo sau hiệu chỉnh đa kiểm định. Lợi ích được hỗ trợ của ResNet-1D--TCN chủ yếu là vận hành: suy luận nhanh hơn khoảng 3,76 lần; trong chiến dịch seed 123 chạy tuần tự trên cùng GPU, toàn bộ 10 fold của E3 hoàn tất huấn luyện, validation và artifact trong 3 giờ 16 phút 40 giây, so với 33 giờ 35 phút 36 giây của E0 (nhanh hơn khoảng 10,2 lần). E2 hoàn tất trong 2 giờ 44 phút 57 giây (nhanh hơn khoảng 12,2 lần). Đánh đổi là số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trong khi đó, toàn bộ pipeline E3 đạt \mf\ 0,7904 trên Sleep-EDF và cao hơn E6 dùng z-score theo bản ghi 0,0213 điểm, với \ci=[0,0122;0,0307] và $p$ Holm bằng 0,0012; seed thứ hai giữ hướng hiệu ứng nhưng không giữ mức ý nghĩa sau Holm.
 
-Đánh giá zero-shot trên 180 đối tượng SHHS1 đã khóa tiếp tục cho thấy cấu hình này cao hơn các mốc đối chứng: E3 cao hơn E0 0,0412 điểm Macro-F1 trung bình theo đối tượng và cao hơn E6 0,0274 điểm, với khoảng tin cậy hoàn toàn dương và kiểm định sau Holm đạt ý nghĩa. Gate 8 không tìm thấy lợi ích tăng thêm có ý nghĩa của các nhóm ngữ cảnh liền trước/liền sau tại vùng chuyển pha. Các kết quả ủng hộ giá trị của toàn bộ quy trình đã đánh giá, đồng thời được giới hạn theo mẫu, dữ liệu và giao thức hiện tại.
+Trên 180 đối tượng SHHS1 zero-shot đã khóa, E3 cao hơn E0 0,0412 điểm \mf\ trung bình theo đối tượng và cao hơn E6 0,0274 điểm. Tuy vậy, \mf\ gộp của E3 giảm còn 0,6099; N3 có recall 0,2582 và 16.674/22.806 epoch N3 bị gán thành N2. Phân tích phản thực cho thấy riêng kênh N3$\rightarrow$N2 chiếm đòn bẩy tương đương 74,5\% khoảng hụt \mf\ giữa hai cohort. Z-score theo bản ghi không khắc phục lỗi này: E6 có recall N3 0,2005 và recall N3 tại vùng chuyển pha 0,0721, gần như không đổi so với 0,0733 của E3. Vì vậy, kết luận thực dụng không phải một cơ chế biên độ, mà là ưu tiên thí nghiệm thích nghi có nhãn, theo lớp, tại ranh giới N2--N3; N2--REM là mục tiêu thứ hai. Gate 8 và phân tích hình học biểu diễn được giữ như bằng chứng hỗ trợ, không phải đóng góp chính hay tuyên bố vượt SOTA.
 
-\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; mạng tích chập theo thời gian; Sleep-EDF Expanded; SHHS1; đánh giá bắt cặp.
+\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; đánh giá bắt cặp; chuyển miền; phân tích sai số; Sleep-EDF Expanded; SHHS1.
 
 \clearpage
 \pagenumbering{arabic}
@@ -99,6 +100,7 @@ Trong chiến dịch chính, cấu hình ResNet-1D--TCN với chế độ xử l
 \input{sec8b_shhs_seed123_extension.tex}
 \input{sec9_reproducibility.tex}
 
+\clearpage
 \bibliographystyle{ieeetr}
 \bibliography{references}
 

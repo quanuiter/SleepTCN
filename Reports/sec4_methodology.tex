@@ -1,23 +1,24 @@
 \section{Phương pháp và thiết kế thực nghiệm}
 \label{sec:methodology}
 
-\subsection{Các cấu hình so sánh}
+\subsection{Các mã cấu hình thí nghiệm}
 
-Sáu cấu hình chính được xây dựng theo nguyên tắc thay đổi từng nhóm thành phần trong cùng giao thức:
+Bảy mã E0--E6 được định nghĩa trong giao thức; sáu cấu hình hoạt động được đưa vào chiến dịch so sánh cuối cùng. Ký hiệu E chỉ là mã cấu hình thí nghiệm để rút gọn bảng và truy nguyên artifact, không biểu thị thứ hạng hay phiên bản mô hình.
 
 \begin{table}[H]
 \centering
-\caption{Các cấu hình và mục tiêu so sánh}
+\caption{Các mã cấu hình, mục tiêu và trạng thái phân tích}
 \label{tab:experiment_matrix}
 \begin{tabularx}{\textwidth}{lYYY}
 \toprule
-\textbf{Mã} & \textbf{Bộ trích đặc trưng} & \textbf{Mô hình chuỗi} & \textbf{Mục tiêu} \\
+\textbf{Mã} & \textbf{Bộ trích đặc trưng/tiền xử lý} & \textbf{Mô hình chuỗi} & \textbf{Mục tiêu hoặc trạng thái} \\
 \midrule
 E0 & CNN của mốc tham chiếu & BiLSTM & Đối chứng nội bộ \\
 E1 & Giữ mốc tham chiếu & TCN & Đánh giá thay đổi mô hình chuỗi \\
 E2 & ResNet-1D & TCN & Đánh giá thay đổi bộ trích đặc trưng \\
 E3 & ResNet-1D và xử lý biên độ chính & TCN & Cấu hình đề xuất \\
 E4 & ResNet-1D và lọc dải & TCN & Đối chiếu tiền xử lý \\
+E5 & ResNet-1D, lọc dải và cắt $\pm800~\mu\mathrm{V}$ & TCN & Loại trước phân tích hiệu năng \\
 E6 & ResNet-1D và z-score theo bản ghi & TCN & Đối chiếu đổi thang \\
 \bottomrule
 \end{tabularx}
@@ -25,13 +26,36 @@ E6 & ResNet-1D và z-score theo bản ghi & TCN & Đối chiếu đổi thang \\
 
 E0 là đối chứng nội bộ đã hiệu chỉnh theo giao thức v2, không phải bản sao định lượng của bài báo gốc. Vì vậy, các đối chiếu trong nghiên cứu được hiểu là so sánh giữa các cấu hình trong cùng thí nghiệm.
 
+E5 ban đầu được dùng để tách tác động của phép cắt biên $\pm800~\mu\mathrm{V}$ khỏi lọc dải E4. Kiểm toán toàn bộ 153 bản ghi cho thấy E4 và E5 giống nhau từng bit và tỷ lệ mẫu bị cắt bằng 0; do đó E5 không tạo điều kiện dữ liệu độc lập. Fold 00 được giữ làm bằng chứng kiểm toán, còn E5 bị loại trước các bảng hiệu năng và kiểm định thống kê để tránh một đối chiếu giả tạo giữa hai đầu vào đồng nhất.
+
+\subsection{Bản đồ câu hỏi, bằng chứng và quyết định}
+
+Không phải mọi Gate đều được xem là một đóng góp khoa học độc lập. Chuỗi Gate được dùng để bảo vệ đường đi từ dữ liệu đến kết luận, còn quyết định phát triển chỉ được rút ra khi có đại lượng và đối chứng phù hợp.
+
+\begin{table}[H]
+\centering
+\caption{Câu hỏi thực tế và bằng chứng dùng để trả lời}
+\label{tab:question_evidence_map}
+\begin{tabularx}{\textwidth}{YYY}
+\toprule
+\textbf{Quyết định} & \textbf{Bằng chứng chính} & \textbf{Đầu ra được phép kết luận} \\
+\midrule
+Có nên thay kiến trúc? & Gate 5, Gate 6; E1--E0 và E2--E1 & Lợi ích dự báo riêng và đánh đổi tốc độ--tài nguyên \\
+Pipeline nào đáng mang sang miền mới? & E3--E6 trong miền; E3--E0/E6 trên SHHS1; E3--E2 và E4 mở rộng & Thứ hạng toàn pipeline; không quy nhân quả cho một thao tác \\
+Thích nghi miền nên nhắm vào đâu? & F1 theo lớp, tỷ lệ dự đoán/nhãn thật, ma trận nhầm lẫn, vùng chuyển pha & Ưu tiên ranh giới lớp; không suy ra cơ chế sinh lý \\
+Các phân tích phụ có thay đổi quyết định không? & Silhouette và Gate 8 & Giới hạn của proxy hình học và ngữ cảnh mã hóa trùng lặp \\
+Kết quả có truy nguyên được không? & Gate 1--4, Gate 7 và manifest & Tính hợp lệ của artifact; không phải bằng chứng về độ chính xác \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsection{Huấn luyện và khóa đánh giá}
 
 Mỗi cấu hình được huấn luyện riêng trên cùng các fold theo đối tượng. Mô hình được lựa chọn bằng Macro-F1 trên validation. Tập test được giữ kín trong toàn bộ giai đoạn huấn luyện và chỉ được mở sau khi hoàn tất tất cả lượt validation. Sau khi mở, mỗi đối tượng được đánh giá đúng một lần ở vai trò test ngoài fold.
 
 Quy trình này tách lựa chọn mô hình khỏi đánh giá cuối và bảo đảm các cấu hình sử dụng cùng khóa thời gian, cùng nhãn và cùng đơn vị suy luận. Mô hình đã chọn, dự đoán và chỉ số được kiểm tra tính nhất quán trước khi tổng hợp.
 
-\subsection{Quy trình kiểm định Gate 1--8}
+\subsection{Quy trình kiểm soát và khóa đánh giá (mã nội bộ Gate 1--8)}
 
 Các cổng được tổ chức theo chuỗi bằng chứng:
 
@@ -41,9 +65,9 @@ Các cổng được tổ chức theo chuỗi bằng chứng:
   \item Gate 3 hoàn tất lựa chọn mô hình trên validation mà không sử dụng test.
   \item Gate 4 mở test theo quy tắc đã khóa và kiểm tra tính đầy đủ của dự đoán.
   \item Gate 5 thực hiện các so sánh hiệu năng bắt cặp.
-  \item Gate 6 đánh giá độ phức tạp, tốc độ và hình học biểu diễn.
+  \item Gate 6 đánh giá độ phức tạp, tốc độ và hình học biểu diễn; chỉ hai đại lượng đầu trực tiếp trả lời quyết định vận hành.
   \item Gate 7 tập hợp bảng, hình và ma trận bằng chứng.
-  \item Gate 8 khảo sát bổ sung vai trò của các nhóm ngữ cảnh tại vùng chuyển pha.
+  \item Gate 8 khảo sát bổ sung giá trị dự báo biên của các nhóm ngữ cảnh mã hóa liền trước/liền sau tại vùng chuyển pha.
 \end{enumerate}
 
 \subsection{Phân tích thống kê}
@@ -60,7 +84,7 @@ Toàn bộ chiến dịch được lặp lại với một seed huấn luyện t
 
 Benchmark được thực hiện trên cùng phần cứng cho tất cả cấu hình. Phép đo phản ánh suy luận forward và không bao gồm đọc dữ liệu, tiền xử lý, lưu trữ trung gian hoặc huấn luyện. Thời gian wall-clock của chiến dịch seed 123 được báo cáo riêng, bao gồm huấn luyện, validation và hoàn thiện artifact trên 10 fold; các lượt được chạy tuần tự và test chưa được mở. Phân tích không gian đặc trưng so sánh các biểu diễn trên cùng epoch và cùng fold; Silhouette được dùng như chỉ số hỗ trợ~\cite{rousseeuw1987silhouettes}, còn t-SNE chỉ dùng để minh họa.
 
-\subsection{Ablation nhóm ngữ cảnh Gate 8}
+\subsection{Ablation nhóm ngữ cảnh (Gate 8 nội bộ)}
 
 Gate 8 giữ nguyên mô hình chuỗi và chỉ thay đổi sự hiện diện của ba nhóm ngữ cảnh: epoch hiện tại, epoch liền trước và epoch liền sau. Nhóm bị loại được thay bằng giá trị trung bình ước lượng từ dữ liệu huấn luyện của từng fold; validation và test không tham gia bước ước lượng.
 
@@ -71,3 +95,9 @@ Tiêu chí chính là Macro-F1 tại vùng chuyển pha. Ba so sánh ablation d�
 Chiến dịch SHHS được tiến hành độc lập sau khi các mô hình Sleep-EDF đã được khóa. Trọng số không được cập nhật bằng dữ liệu SHHS. Mỗi cấu hình sử dụng các mô hình tương ứng với các fold đã huấn luyện, sau đó tổ hợp dự đoán ở cấp đối tượng. Các kiểm tra kỹ thuật xác nhận khả năng sử dụng mô hình, căn chỉnh epoch và tính đầy đủ của dự đoán trước khi tính chỉ số.
 
 Kết quả SHHS không được nhập ngược vào Gate 1--8. Đây là đánh giá ngoài miền trên mẫu đã khóa, nhằm kiểm tra độ bền của hướng hiệu ứng chứ không phải kiểm định lâm sàng hoặc đánh giá trên toàn bộ cohort SHHS.
+
+\subsection{Định vị lỗi chuyển miền và phân tích phản thực}
+
+Để biến chênh lệch tổng hợp thành quyết định thích nghi, báo cáo phân tích precision, recall, F1, tỷ lệ số dự đoán trên số nhãn thật và ma trận nhầm lẫn theo lớp. Phân tích được lặp tại vùng $\pm1$ epoch quanh chuyển pha vì đây là nơi các ranh giới giai đoạn khó nhất. E6 được dùng như một đối chứng độ nhạy: nếu loại bỏ mức biên độ tuyệt đối theo từng bản ghi là biện pháp đủ dùng, lỗi N3 của E6 phải giảm so với E3.
+
+Phân tích phản thực lần lượt sửa một kênh nhầm lẫn trong ma trận dự đoán E3 rồi tính lại \mf. Đây là phép xếp hạng đòn bẩy tiềm năng cho can thiệp, không phải hiệu năng có thể đạt được, không bảo toàn mọi tương tác giữa lớp và không chứng minh nguyên nhân tạo ra lỗi. Vì \mf\ phi tuyến, tổng phần trăm khoảng hụt được phục hồi bởi nhiều kênh có thể vượt 100\%.

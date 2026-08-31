@@ -7,7 +7,7 @@ BiLSTM xử lý chuỗi theo cả hai chiều thời gian, nhờ đó mỗi bi�
 
 \subsection{Mạng tích chập theo thời gian}
 
-Mạng tích chập theo thời gian sử dụng các phép tích chập giãn và cấu trúc nhân quả để mở rộng trường tiếp nhận theo chuỗi. So với mô hình hồi tiếp, cách biểu diễn này có tiềm năng xử lý song song và giảm độ trễ suy luận. Tuy nhiên, lợi thế kiến trúc chỉ có ý nghĩa khi được xác nhận bằng so sánh bắt cặp trên cùng dữ liệu.
+Mạng tích chập theo thời gian trong nghiên cứu sử dụng các phép tích chập giãn không nhân quả với padding đối xứng, nhờ đó mỗi vị trí có thể sử dụng ngữ cảnh ở cả hai phía. Cấu hình hiện tại có trường tiếp nhận lý thuyết 253 epoch. So với mô hình hồi tiếp, cách biểu diễn này có tiềm năng xử lý song song và giảm độ trễ suy luận. Tuy nhiên, lợi thế kiến trúc chỉ có ý nghĩa khi được xác nhận bằng so sánh bắt cặp trên cùng dữ liệu.
 
 \subsection{ResNet-1D}
 

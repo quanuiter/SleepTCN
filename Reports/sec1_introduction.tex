@@ -1,35 +1,36 @@
 \section{Giới thiệu}
 \label{sec:introduction}
 
-Phân giai đoạn giấc ngủ là nhiệm vụ nền tảng trong phân tích đa ký giấc ngủ. Các phương pháp tự động từ EEG một kênh có thể giảm yêu cầu về thiết bị và chi phí xử lý, nhưng hiệu quả của chúng phụ thuộc đáng kể vào cách chia dữ liệu, lựa chọn mô hình và xử lý tín hiệu. Đặc biệt, N1 thường khó nhận diện và có mức đồng thuận liên chấm thấp~\cite{rosenberg2013aasm}; chênh lệch giữa các mô hình cũng dễ bị lẫn với khác biệt giữa đối tượng nếu không sử dụng thiết kế đánh giá bắt cặp.
+Phân giai đoạn giấc ngủ là nhiệm vụ nền tảng trong phân tích đa ký giấc ngủ. Các phương pháp tự động từ EEG một kênh có thể giảm yêu cầu về thiết bị và chi phí xử lý, nhưng điểm số trong một bộ dữ liệu chưa đủ trả lời liệu hệ thống có đáng được phát triển hoặc chuyển sang một cohort khác. Hiệu năng có thể thay đổi do phép chia đối tượng, lựa chọn mô hình, xử lý tín hiệu, montage, quần thể và quy tắc chấm. Đặc biệt, N1 thường khó nhận diện và có mức đồng thuận liên chấm thấp~\cite{rosenberg2013aasm}; chênh lệch nhỏ giữa các mô hình cũng dễ bị lẫn với khác biệt giữa đối tượng nếu không sử dụng thiết kế đánh giá bắt cặp.
 
-ZleepAnlystNet đề xuất một quy trình hai giai đoạn, kết hợp các bộ trích đặc trưng CNN với mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu này khảo sát một hướng thay thế dựa trên ResNet-1D và mạng tích chập theo thời gian, đồng thời đánh giá vai trò của chế độ xử lý biên độ. Mục tiêu không chỉ là tìm cấu hình có điểm số cao, mà còn xác định sự đánh đổi giữa hiệu năng, tốc độ suy luận và độ phức tạp vận hành.
+ZleepAnlystNet đề xuất một quy trình hai giai đoạn, kết hợp các bộ trích đặc trưng CNN với mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu này dùng mốc đó để khảo sát ResNet-1D, mạng tích chập theo thời gian và các pipeline tiền xử lý. Trọng tâm không phải chứng minh một kiến trúc mới hoặc vượt SOTA, mà là tránh hai quyết định tốn kém nhưng thiếu căn cứ: tiếp tục thay kiến trúc khi lợi ích chỉ mang tính mô tả, và áp dụng một biện pháp chuẩn hóa chung khi lỗi ngoài miền thực tế tập trung ở một số ranh giới lớp.
 
 \subsection{Câu hỏi nghiên cứu}
 
-Nghiên cứu tập trung vào bốn câu hỏi:
+Nghiên cứu tập trung vào bốn câu hỏi gắn với quyết định phát triển:
 
 \begin{enumerate}
-  \item Việc thay mô hình chuỗi BiLSTM bằng mạng tích chập theo thời gian có cải thiện hiệu năng khi giữ nguyên bộ trích đặc trưng hay không?
-  \item ResNet-1D có tạo ra lợi ích dự báo rõ ràng hơn bộ trích đặc trưng CNN ban đầu khi sử dụng cùng mô hình chuỗi hay không?
-  \item Chế độ xử lý biên độ nào cho kết quả ổn định hơn trong miền Sleep-EDF và khi chuyển sang SHHS1?
-  \item Một quy trình ít thành phần hơn có đem lại lợi ích vận hành đủ rõ ràng để cân bằng chi phí tham số và bộ nhớ hay không?
+  \item Các thay thế BiLSTM$\rightarrow$TCN và CNN$\rightarrow$ResNet-1D có tạo lợi ích dự báo đủ ổn định để biện minh cho thay đổi kiến trúc, hay giá trị chính chỉ nằm ở vận hành?
+  \item Trong cùng họ ResNet-1D--TCN, pipeline xử lý tín hiệu nào giữ thứ hạng tốt hơn khi đi từ Sleep-EDF sang SHHS1 zero-shot?
+  \item Khoảng hụt ngoài miền tập trung ở lớp và kênh nhầm lẫn nào; một biện pháp rẻ là z-score theo bản ghi có giải quyết được lỗi chi phối hay không?
+  \item Quy trình kiểm soát có đủ để phân biệt kết quả dự báo chính với bằng chứng hỗ trợ về tốc độ, hình học biểu diễn và ngữ cảnh cục bộ hay không?
 \end{enumerate}
 
-Ngoài bốn câu hỏi chính, Gate 8 thực hiện một phân tích bổ sung về vai trò của ngữ cảnh thời gian tại vùng chuyển pha. Phân tích này được trình bày như bằng chứng cơ chế, không thay thế các so sánh hiệu năng đã đăng ký trước.
+Các cổng kiểm soát nội bộ Gate 1--4 và Gate 7 chủ yếu bảo vệ tính hợp lệ, khóa test và khả năng truy nguyên; chúng không tự thân là đóng góp khoa học về mô hình. Gate 6 và Gate 8 cung cấp bằng chứng hỗ trợ cho quyết định vận hành và thiết kế ngữ cảnh. Các kết luận chính được đặt ở phân tích hiệu năng bắt cặp (Gate 5) và chiến dịch SHHS1, nơi có độ bất định và phân tích sai số ngoài miền. Tên Gate chỉ được giữ để ánh xạ với artifact nội bộ.
 
 \subsection{Đóng góp và phạm vi}
 
-Nghiên cứu đóng góp:
+Trong phạm vi một nghiên cứu thực nghiệm, báo cáo đóng góp:
 
 \begin{itemize}
-  \item một thiết kế thực nghiệm bắt cặp theo đối tượng trên Sleep-EDF Expanded, trong đó mọi cấu hình dùng cùng phép chia và cùng nguyên tắc lựa chọn mô hình;
-  \item một đánh giá thống nhất về hiệu năng dự đoán, độ phức tạp vận hành và khả năng zero-shot trên mẫu SHHS1 đã khóa;
-  \item một lần lặp sau giao thức để kiểm tra độ bền của hướng hiệu ứng theo seed huấn luyện thứ hai;
-  \item một phân tích ablation có kiểm soát thay cho cách quy đổi tầm quan trọng đặc trưng thành tỷ lệ phần trăm thông tin.
+  \item một hồ sơ thực nghiệm bắt cặp theo đối tượng, tách rõ kiểm soát tính hợp lệ, kết quả xác nhận, phân tích hậu nghiệm và phần mở rộng sau giao thức;
+  \item bằng chứng rằng các thay thế kiến trúc riêng lẻ chưa tạo ưu thế dự báo ổn định, trong khi ResNet-1D--TCN đem lại đánh đổi vận hành đo được;
+  \item một đánh giá zero-shot trên mẫu SHHS1 đã khóa, cho thấy toàn bộ pipeline E3 giữ lợi thế so với hai đối chứng đã định trước nhưng vẫn chịu khoảng hụt chuyển miền lớn;
+  \item định vị định lượng lỗi N3$\rightarrow$N2 và N2$\rightarrow$REM để chuyển kết quả thành ưu tiên thích nghi; đối chứng E6 cho thấy z-score theo bản ghi không phải biện pháp độc lập đủ để sửa lỗi N3;
+  \item các phân tích hỗ trợ về ngữ cảnh và không gian đặc trưng, được giữ đúng vai trò thay vì nâng thành cơ chế hoặc đóng góp chính.
 \end{itemize}
 
-Kết luận trong miền áp dụng cho Sleep-EDF Expanded và các seed cố định đã đánh giá. Kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức zero-shot tương ứng. Các phát biểu về tối ưu phổ quát, tương đương mô hình, thích nghi miền hoặc giá trị lâm sàng nằm ngoài phạm vi của nghiên cứu.
+Kết luận trong miền áp dụng cho Sleep-EDF Expanded và hai seed cố định đã đánh giá. Kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức zero-shot tương ứng. Báo cáo không đề xuất thuật toán thích nghi mới, không tuyên bố vượt SOTA, không xác lập cơ chế sinh lý và không suy rộng sang giá trị lâm sàng. Giá trị của nó nằm ở việc thu hẹp quyết định tiếp theo bằng bằng chứng bắt cặp và sai số định vị được.
 
 \subsection{Cấu trúc báo cáo}
 

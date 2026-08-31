@@ -45,9 +45,9 @@ correspondence line, and a horizontal rule separating front matter from the abst
 were reduced to journal scale via `titlesec`. The abstract is now structured
 (Background / Methods / Results / Conclusions), which is the norm for biomedical venues.
 
-**Before submission** you must still: insert e-mail addresses and ORCID identifiers; decide whether the
-supervising author meets authorship criteria and should be added; and replace the front matter with the
-target venue's template.
+**Before submission** you must still: add ORCID identifiers if available; decide whether the supervising
+author meets authorship criteria and should be added; confirm the CRediT contribution statement; and
+replace the front matter with the target venue's template.
 
 ### Scientific scope (unchanged rules, inherited from `Reports/paper/BUILD.md`)
 
@@ -58,41 +58,52 @@ target venue's template.
   split. The seeds are reported separately and their p-values are never pooled.
 - Do not claim equivalence, non-inferiority, that P/N are useless, that ResNet is universally better,
   or that the model is parameter-efficient.
+- E5 is an audit-only identifier: 153/153 E4--E5 input records were bitwise identical and the clipping
+  fraction was zero. It was excluded before performance analysis and must never be described as a
+  score-based negative result.
 
-### New analyses added in the English version
+### Current scientific narrative
 
-These are derived from artefacts already in the repository; no new training was performed.
+The manuscript answers three practical questions rather than claiming a new state-of-the-art model:
 
-1. **Domain-gap decomposition** (§4.9, Table `tab:gap-decomposition`). Oracle correction of the
-   N3→N2 channel alone recovers 74.5% of the Sleep-EDF→SHHS1 macro-F1 gap; N3→N2 together with
-   N2→REM recovers 102.4%. Computed from the published confusion matrices.
-2. **Predicted-to-true epoch ratio** as a marginal-calibration diagnostic (Table `tab:transfer-perclass`).
-   Shows the SHHS miscalibration runs *opposite* to the label-prior shift, which excludes prior shift as
-   the cause and rules out the standard Saerens correction as a remedy.
-3. **Amplitude-threshold account of the N3 collapse** (§5.3), with four predictions, all verified
-   against existing data — including the transition-region gradient (N3 recall 0.258 overall → 0.0733
-   at stage boundaries).
-4. **Receptive-field explanation of the Gate 8 null** (§5.2). The non-causal TCN spans 253 epochs
-   (±63 min), so the ±1-epoch C/P/N groups are nested inside information the sequence model already has.
-   The null was structurally predetermined and licenses no conclusion about temporal context.
-5. **Sign-based effect size** Δ_sign = (W−L)/(W+L) with exact binomial sign tests, reported alongside
-   every paired comparison as unadjusted supplementary robustness statistics.
-6. Previously unused repository data now included: the transition-pair breakdown of the context
-   ablation, the group-interaction index, SHHS transition-region per-class metrics, silhouette standard
-   deviations, seed-123 SHHS replication, and absolute bootstrap intervals for SHHS.
+1. Do the TCN and ResNet-1D substitutions provide stable incremental value under a shared subject-wise
+   protocol? They do not establish a stable predictive advantage; the supported benefit is operational:
+   lower measured forward latency and lower observed training-and-validation wall-clock time, paid for
+   with more parameters and peak memory.
+2. Which development axis matters more under zero-shot transfer? In this experiment, preprocessing
+   contrasts are larger than architectural contrasts, but the strongest such comparison is post-hoc and
+   does not identify a single causal operation.
+3. Where should target-domain adaptation focus? N3→N2 and N2→REM have the greatest diagnostic
+   leverage, especially near stage transitions.
 
-### Proposed follow-up (stated in §5.7, not performed)
+Per-class E6 metrics have now been recovered from the locked SHHS artifacts. E6 does not rescue N3:
+recall is 0.2005 overall and 0.0721 near transitions, compared with 0.2582 and 0.0733 for E3. This result
+rules out record-wise z-scoring as a sufficient stand-alone remedy. It does **not** identify z-scoring's
+failure as a contribution by itself, and it does not establish a montage-dependent amplitude mechanism.
 
-The highest-value next step is computing **per-class SHHS metrics for E6**. The amplitude account
-predicts E6 should show substantially better N3 recall than E3 despite being worse overall. This
-requires no retraining — only re-scoring existing predictions — and would confirm or refute the
-central mechanistic claim of the paper. The 5 adaptation and 15 validation SHHS participants held out
-and never used remain available for threshold recalibration.
+The predicted-to-true class ratio is a marginal emission diagnostic, not probability calibration.
+Label-prior shift remains a plausible contributor: a prior correction would move N3 and N1 in the
+required directions, but it was not fitted or validated and is not claimed as either sufficient or
+irrelevant.
+
+The context-group and silhouette analyses are supporting checks only. They should not appear in the
+title, abstract contribution list, or conclusion.
+
+### Highest-value follow-up
+
+The next experiment, if one is performed, should use the held-out SHHS adaptation participants for a
+small class-specific calibration or limited fine-tuning study. Its primary readout should be N3 recall
+and false-positive rate near N2--N3 transitions, with N2--REM as the secondary target. More generic
+hyperparameter tuning does not answer the deployment question developed in the paper.
 
 ## Pre-submission checklist
 
 1. Swap the front matter for the target venue's template.
-2. Add e-mail addresses, ORCID identifiers and author contribution statements if required.
-3. Check the venue's ethics policy and its required SHHS/NSRR acknowledgement wording.
+2. Add ORCID identifiers and author contribution statements if required.
+3. Check the venue's ethics policy. The SHHS/NSRR acknowledgement text in the manuscript was verified
+   against the official NSRR dataset page on 31 August 2026.
 4. Run BibTeX and two full LaTeX passes; leave no undefined citations or references.
 5. Render every page to an image and check tables, figures and page numbering.
+6. Before releasing a reproducibility package, reconcile the SHHS run-manifest protocol hash
+   `165d7cdf...fe93` with the currently checked-out protocol hash `9541e233...fe9`. The locked prediction
+   hashes and recomputed metrics are verified, but the source-protocol package is not yet release-ready.

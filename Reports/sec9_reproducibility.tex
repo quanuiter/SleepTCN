@@ -3,7 +3,7 @@
 
 \subsection{Nguồn bằng chứng}
 
-Các kết quả trong báo cáo được tổng hợp từ bốn nhóm bằng chứng: dữ liệu và phép chia đã kiểm định; artifact huấn luyện và dự đoán; các báo cáo thống kê bắt cặp; và gói công bố gồm bảng, hình cùng ma trận bằng chứng. Mỗi nhóm được lưu kèm thông tin phiên bản và kiểm tra toàn vẹn để bảo đảm số liệu trong văn bản có thể đối chiếu với nguồn gốc.
+Các kết quả được tổng hợp từ bốn nhóm bằng chứng: dữ liệu và phép chia đã kiểm định; artifact huấn luyện/dự đoán; báo cáo thống kê bắt cặp; và gói công bố gồm bảng, hình cùng ma trận bằng chứng. Vai trò của truy nguyên là bảo đảm mỗi con số và kết luận có thể quay lại đúng artifact, không phải làm tăng điểm số hay thay thế xác nhận trên mẫu độc lập.
 
 \begin{table}[H]
 \centering
@@ -14,7 +14,7 @@ Các kết quả trong báo cáo được tổng hợp từ bốn nhóm bằng c
 \textbf{Nhóm} & \textbf{Vai trò} \\
 \midrule
 Dữ liệu và phép chia & Xác nhận đối tượng, bản ghi, nhãn và nguyên tắc tách mẫu \\
-Kết quả huấn luyện & Xác nhận mô hình đã chọn, dự đoán, chỉ số và sự tương thích giữa các cấu hình \\
+Kết quả huấn luyện & Xác nhận mô hình đã chọn, dự đoán, chỉ số và sự tương thích giữa cấu hình \\
 Phân tích thống kê & Cung cấp chênh lệch, khoảng tin cậy và kiểm định bắt cặp \\
 Gói công bố & Cung cấp bảng, hình, ma trận bằng chứng và kiểm tra toàn vẹn độc lập \\
 \bottomrule
@@ -23,23 +23,21 @@ Gói công bố & Cung cấp bảng, hình, ma trận bằng chứng và kiểm 
 
 \subsection{Nguyên tắc kiểm tra}
 
-Kiểm tra tái lập được thực hiện theo ba lớp. Lớp thứ nhất xác nhận cấu trúc, độ phủ và khóa bắt cặp của dữ liệu. Lớp thứ hai đối chiếu các artifact với thông tin phiên bản và mã băm. Lớp thứ ba kiểm tra các bảng, hình và tuyên bố trong gói công bố có khớp với dữ liệu nguồn hay không.
+Kiểm tra tái lập được thực hiện theo ba lớp: (1) cấu trúc, độ phủ và khóa bắt cặp; (2) phiên bản, mã băm và tính đầy đủ của artifact; (3) sự khớp nhau giữa bảng/hình/tuyên bố và dữ liệu nguồn. Các phép kiểm tra chỉ đọc artifact đã khóa, không huấn luyện lại mô hình hoặc mở lại test để chọn kết quả.
 
-Các phép kiểm tra báo cáo đều là phép đọc và đối chiếu artifact đã khóa; chúng không huấn luyện lại mô hình và không mở lại tập test. Vì vậy, việc kiểm định không làm thay đổi kết quả khoa học đã công bố.
+Lần lặp seed 123 dùng cùng dữ liệu, phép chia và họ cấu hình. Các seed được báo cáo riêng, không gộp $p$-value và không được xem như mẫu đầy đủ của biến thiên khởi tạo. Các phân tích SHHS thành phần, E3--E2 và E4 được ghi rõ là thứ cấp hoặc hậu nghiệm trên cohort đã mở.
 
-\subsection{Tái lập chiến dịch độ nhạy}
+\subsection{Tái phân tích E6 và tình trạng provenance SHHS1}
 
-Lần lặp với seed thứ hai sử dụng cùng dữ liệu, cùng phép chia và cùng họ cấu hình. Các chỉ số được tính lại độc lập cho từng seed. Kết quả được trình bày song song để đánh giá độ bền của hướng hiệu ứng, không gộp kiểm định và không suy ra phân phối của mọi khởi tạo.
+Phân tích E6 theo lớp được tính trực tiếp từ 180 artifact dự đoán zero-shot đã khóa trên ổ ngoài. Chiến dịch được đánh dấu hoàn tất, test gate đạt, toàn bộ 180 mã băm artifact E6 khớp run manifest, và ma trận nhầm lẫn tính lại theo từng bản ghi khớp giá trị trong manifest. Vì vậy, các chỉ số E6 mới trong báo cáo là phép tái phân tích mô tả của dự đoán đã tồn tại, không phải một lượt suy luận mới.
 
-\subsection{Tái lập đánh giá SHHS1}
-
-Các mô hình Sleep-EDF được khóa trước khi suy luận ngoài miền. Mẫu SHHS1, quy tắc tiền xử lý, căn chỉnh epoch và quy tắc tổ hợp được xác định trong giao thức riêng. Kiểm tra kỹ thuật xác nhận khả năng sử dụng mô hình, tính đầy đủ của dự đoán và sự phù hợp của các khóa theo đối tượng trước khi tính chỉ số.
+Một điểm provenance phải được giải quyết trước khi phát hành gói tái lập: run manifest trên ổ ngoài ghi protocol SHA-256 là \seqsplit{165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93}, trong khi tệp protocol đang checkout có SHA-256 \seqsplit{9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9}. Sai khác này không làm thay đổi dự đoán đã khóa hoặc phép tính lại, nhưng ngăn việc tuyên bố rằng báo cáo vừa được tái sinh từ protocol hiện tại. Trước khi nộp, cần khôi phục đúng phiên bản protocol tương ứng với run manifest hoặc lập biên bản đối chiếu thay đổi và khóa lại gói provenance.
 
 \subsection{Tình trạng dữ liệu dẫn xuất}
 
-Snapshot dữ liệu dẫn xuất hiện tại gồm 765 tệp thuộc năm biến thể tiền xử lý. Kiểm toán độc lập xác nhận 765/765 tệp khớp SHA-256 trong manifest nội dung, có metadata ZIP chuẩn hóa, đọc được và giữ nhất quán nhãn, vị trí thời gian, hình dạng cùng quan hệ biến đổi khoa học. Các mã băm container lịch sử được bảo toàn trong trường truy nguyên riêng để không làm mất dấu vết của những phiên trước.
+Snapshot dữ liệu dẫn xuất gồm 765 tệp thuộc năm biến thể tiền xử lý. Kiểm toán độc lập xác nhận 765/765 tệp khớp SHA-256 trong manifest nội dung, có metadata ZIP chuẩn hóa, đọc được và nhất quán về nhãn, vị trí thời gian, hình dạng cùng quan hệ biến đổi khoa học. Mã băm container lịch sử được bảo toàn trong trường truy nguyên riêng.
 
-Khóa byte của snapshot hiện tại bảo đảm tính toàn vẹn khi lưu trữ và trao đổi, nhưng không thay thế phép tái sinh độc lập từ EDF gốc trong môi trường phần mềm đã khóa. Gói mã nguồn đi kèm giao thức và công cụ kiểm định để thực hiện bước tái sinh đó.
+Khóa byte của snapshot bảo đảm tính toàn vẹn khi lưu trữ và trao đổi, nhưng không thay thế phép tái sinh độc lập từ EDF gốc trong môi trường phần mềm đã khóa. Gói mã nguồn đi kèm giao thức và công cụ kiểm định cho bước tái sinh đó.
 
 \subsection{Biên diễn giải khoa học}
 
@@ -51,12 +49,15 @@ Khóa byte của snapshot hiện tại bảo đảm tính toàn vẹn khi lưu t
 \toprule
 \textbf{Kết luận được hỗ trợ} & \textbf{Diễn giải vượt quá bằng chứng} \\
 \midrule
-E3 có Macro-F1 cao nhất trong chiến dịch Sleep-EDF & E3 là mô hình tốt nhất trong mọi điều kiện \\
-E3 cao hơn E6 trong các mẫu và giao thức đã đánh giá & Chuẩn hóa biên độ luôn tạo lợi ích \\
-E3 cao hơn E0 và E6 trên mẫu SHHS1 đã khóa & Đã giải quyết hoàn toàn dịch chuyển miền \\
+Thay kiến trúc riêng lẻ chưa cho ưu thế dự báo ổn định & ResNet-1D hoặc TCN vượt trội phổ quát \\
 ResNet-1D--TCN nhanh hơn và gọn hơn về vận hành & Mô hình nhẹ hơn về tham số hoặc bộ nhớ \\
-Gate 8 chưa cho thấy lợi ích tăng thêm của P/N & P/N hoàn toàn không có vai trò \\
-Các điều kiện chưa được kiểm định tương đương & Giá trị p lớn chứng minh tương đương \\
+E3 cao hơn E0/E6 trên mẫu SHHS1 đã khóa & E3 đã giải quyết dịch chuyển miền hoặc vượt SOTA \\
+E3--E2/E4 gợi ý ưu tiên trục tiền xử lý & Một thao tác tiền xử lý riêng là nguyên nhân \\
+N3$\rightarrow$N2 có đòn bẩy phản thực lớn nhất & Sửa kênh này chắc chắn đạt \mf\ 0,7444 \\
+E6 không sửa được lỗi N3 trong pipeline này & Biên độ tuyệt đối không liên quan đến N3 \\
+Gate 8 chưa cho thấy giá trị biên của P/N & Ngữ cảnh thời gian hoàn toàn vô dụng \\
+Silhouette không phù hợp để chọn encoder ở đây & Embedding CNN tốt hơn ResNet cho mọi nhiệm vụ \\
+Các điều kiện chưa được kiểm định tương đương & Giá trị $p$ lớn chứng minh tương đương \\
 \bottomrule
 \end{tabularx}
 \end{table}

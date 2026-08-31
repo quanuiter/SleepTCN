@@ -7,6 +7,8 @@ Các phương pháp học sâu cho phân giai đoạn giấc ngủ thường k�
 
 Các chỉ số giữa những công trình khác nhau không thể xếp hạng trực tiếp nếu khác bộ dữ liệu, kênh EEG, quy tắc tạo cửa sổ hoặc cách chia đối tượng. Vì vậy, báo cáo chỉ thực hiện so sánh nội bộ giữa các cấu hình trong cùng một giao thức, thay vì suy ra thứ hạng giữa các bài báo.
 
+Các nghiên cứu chuyển kịch bản đã cho thấy transfer learning có thể cải thiện phân giai đoạn giấc ngủ EEG khi miền nguồn và đích khác nhau~\cite{he2023crossscenario}. Đồng thời, các phương pháp máy học truyền thống vẫn có thể cạnh tranh nếu đặc trưng và giao thức đánh giá được xây dựng cẩn thận~\cite{vdd2023traditional}. Hai hướng này củng cố một điểm phương pháp luận: kiến trúc sâu hơn không tự động là đóng góp; trước khi chọn thuật toán thích nghi, cần xác định rõ lỗi chuyển miền nào đang chi phối và một thay đổi pipeline đơn giản có đủ hay không.
+
 \subsection{Mốc tham chiếu và hướng thay thế}
 
 ZleepAnlystNet là mốc tham chiếu quan trọng của nghiên cứu, với quy trình gồm bộ trích đặc trưng CNN và mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Ý tưởng thay thế được khảo sát theo hai hướng. Thứ nhất, mạng tích chập theo thời gian có khả năng xử lý chuỗi song song và mô hình hóa quan hệ theo trường tiếp nhận mở rộng~\cite{bai2018tcn}. Thứ hai, ResNet-1D sử dụng kết nối dư để xây dựng biểu diễn tín hiệu sâu hơn~\cite{he2016resnet}.
@@ -17,7 +19,7 @@ Hai hướng thay thế không mặc nhiên bảo đảm hiệu năng cao hơn. 
 
 Khoảng trống chính của các so sánh mô hình là sự thiếu nhất quán về đối tượng, phép chia và cách chọn mô hình. Giao thức hiện tại khắc phục điểm này bằng phép chia theo đối tượng, khóa tập kiểm tra cho đến khi hoàn tất lựa chọn trên validation và sử dụng kiểm định bắt cặp ở cấp đối tượng.
 
-Bên cạnh hiệu năng trong miền, nghiên cứu xem xét khả năng chuyển sang mẫu SHHS1. Phân tích này được giữ độc lập với chiến dịch chính, nhằm đánh giá liệu thứ hạng quan sát trên Sleep-EDF có còn xuất hiện trong một mẫu ngoài miền đã khóa hay không.
+Bên cạnh hiệu năng trong miền, nghiên cứu xem xét khả năng chuyển sang mẫu SHHS1. Phân tích này được giữ độc lập với chiến dịch chính, nhằm đánh giá liệu thứ hạng quan sát trên Sleep-EDF có còn xuất hiện trong một mẫu ngoài miền đã khóa hay không. Báo cáo không cạnh tranh trực tiếp với các phương pháp domain adaptation; nó trả lời bước đứng ngay trước chúng: xác định có cần thích nghi hay không, nên ưu tiên ranh giới lớp nào, và liệu chuẩn hóa theo bản ghi có phải một biện pháp đủ dùng hay không.
 
 \subsection{Nguyên tắc diễn giải}
 

@@ -7,6 +7,7 @@ Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau gia
 ## Nguồn bằng chứng khóa
 
 - Gate 1: manifest tiền xử lý, thống kê nhãn, manifest split và kiểm tra chống rò rỉ đối tượng.
+- E5: phép cắt biên độ $\pm800~\mu\mathrm{V}$ không tạo điều kiện dữ liệu độc lập vì 153/153 bản ghi E4--E5 giống hệt từng bit và tỷ lệ bị cắt bằng 0; fold 00 được giữ để kiểm toán, còn E5 được loại trước phân tích hiệu năng.
 - Gate 2--4: manifest từng lượt chạy, checkpoint, dự đoán validation/test, báo cáo kiểm định SHA-256.
 - Gate 5: `runs/v2/analysis/gate5_paired_results_seed42.json` và `docs/GATE5_STATISTICAL_RESULTS.md`.
 - Độ nhạy seed 123: `runs/v2/analysis/gate5_paired_results_seed123.json`, `runs/v2/analysis/multiseed_sensitivity_seed42_seed123.json` và `docs/MULTISEED_SENSITIVITY_RESULTS.md`.
@@ -28,8 +29,8 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Các phép kiểm tra tài liệu
 
-- Báo cáo và bài báo đã được biên dịch bằng TeX Live 2026 theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. Một cảnh báo vi kiểu chữ T5 không ảnh hưởng đến PDF.
-- PDF cuối gồm 30 trang cho báo cáo dài và 10 trang cho bản thảo bài báo. Các tệp đã được kiểm tra trực quan sau khi dựng lại; bảng và hình của phần Kết quả nằm trước phần Thảo luận, không còn trôi xuống sau tài liệu tham khảo.
+- Báo cáo dài đã được biên dịch bằng MiKTeX 25.12 theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. Hai cảnh báo hệ thống về hyphenation tiếng Việt và protrusion T5 không ảnh hưởng đến PDF.
+- PDF cuối gồm 38 trang cho báo cáo dài và 10 trang cho bản thảo bài báo tiếng Việt. Toàn bộ 38 trang báo cáo đã được kết xuất thành ảnh và kiểm tra trực quan; bảng và hình của phần Kết quả nằm trước phần Thảo luận, không còn trôi xuống sau tài liệu tham khảo.
 - Không có tham chiếu hoặc trích dẫn chưa xác định, nhãn trùng, hộp tràn lề hay trang bị cắt.
 - Nhãn tự động của mục lục, bảng, hình và tài liệu tham khảo đều bằng tiếng Việt.
 - Các bảng số liệu được đối chiếu với artifact có cấu trúc; số làm tròn không được dùng để tính kiểm định.
@@ -54,10 +55,13 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Thời gian huấn luyện/validation được báo cáo riêng từ chiến dịch seed 123: E2 nhanh hơn E0 khoảng 12,2 lần theo wall-clock của giao thức; đây là số đo vận hành quan sát được, phụ thuộc vào phần cứng, dừng sớm và điều phối lượt chạy.
 - Chiến dịch SHHS chính đã đạt: 180 test, 169.012 epoch hợp lệ, 5.400 dự đoán theo fold, 540 tổ hợp và 0 lỗi cổng test.
 - Phân tích lỗi theo lớp cho thấy Sleep-EDF tập trung nhầm lẫn ở các cặp N1/N2, còn SHHS1 có sai số nổi bật N3--N2 và N2--REM; đây là mô tả trên dự đoán gộp, không phải bằng chứng cơ chế.
+- Tái phân tích trực tiếp 180 artifact E6 đã khóa cho thấy recall/F1 N3 bằng 0,2005/0,3283; tại vùng chuyển pha recall N3 bằng 0,0721, gần như không đổi so với 0,0733 của E3. E6 không hỗ trợ z-score theo bản ghi như một biện pháp độc lập để sửa lỗi N3.
+- Phân tích phản thực xếp N3--N2 là kênh ưu tiên: sửa riêng kênh này đưa Macro-F1 mô tả từ 0,6099 lên 0,7444, tương ứng 74,5% khoảng hụt giữa cohort. Đây là xếp hạng đòn bẩy, không phải hiệu năng có thể đạt hoặc kết luận nhân quả.
 - E3--E0 zero-shot tăng 0,041219 Macro-F1 trung bình theo đối tượng, CI 95% [0,031367; 0,051196], p Holm `2,65e-13`, thắng/hòa/thua 138/0/42.
 - E3--E6 zero-shot tăng 0,027359, CI [0,018172; 0,036979], p Holm `1,87e-08`, thắng/hòa/thua 125/0/55.
 - Hai kết quả SHHS cho phép kết luận E3 tốt hơn E0/E6 trên mẫu đã khóa, không cho phép quy nguyên nhân riêng cho kiến trúc/tiền xử lý hoặc tuyên bố xác nhận lâm sàng.
 - Extension seed 123 đã đạt 180 test, 169.012 epoch hợp lệ, 9.000 dự đoán theo fold, 900 tổ hợp và 0 lỗi cổng test. E4 đạt Macro-F1 theo đối tượng 0,5732; cao hơn E2 `+0,032320`, CI `[0,023649;0,041035]`, p Holm `7,40e-13`, thắng/hòa/thua `135/1/44`; cao hơn E3 theo hướng E4 `+0,009820`, CI `[0,007298;0,012503]`, p Holm `1,89e-10`. Đây là bằng chứng bắt cặp mở rộng trên cùng cohort, không phải kiểm định tương đương/không thua kém, không tách nhân quả của riêng band-pass.
+- Provenance E6 đã kiểm tra đủ 180/180 artifact và ma trận nhầm lẫn khớp run manifest. Tuy nhiên, protocol hash trong run manifest (`165d7cdf...fe93`) khác protocol đang checkout (`9541e233...fe9`); phải khôi phục đúng protocol hoặc lập biên bản đối chiếu trước khi phát hành gói tái lập SHHS.
 - E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của bài báo MATLAB gốc. Báo cáo đã bổ sung bảng đối chiếu trực tiếp và nêu rõ khác quần thể/giao thức.
 - Gói NPZ đã được chuẩn hóa bằng serializer `sleeptcn_deterministic_npz_v1`. Manifest nội dung
   `data/manifests/processed_artifact_manifest_v2.json` và audit độc lập xác nhận 765/765 tệp khớp
@@ -67,11 +71,11 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Trạng thái
 
-Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, extension E4, phân tích E1/E2 và E3−E2; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng cho bản thảo nghiên cứu. Báo cáo ghi nhận lợi ích quan sát được của các quy trình trong những giao thức SHHS đã thực hiện cùng các đánh đổi vận hành; các tuyên bố về tương đương, không thua kém, suy rộng cho toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
+Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, SHHS zero-shot, extension E4, phân tích E1/E2, E3−E2, E6 theo lớp và xếp hạng lỗi phản thực; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng cho bản thảo nghiên cứu. Trước khi nộp kèm artifact tái lập, cần đóng điểm sai khác protocol hash SHHS nêu trên. Các tuyên bố về tương đương, không thua kém, suy rộng cho toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
 
 PDF hiện hành trong kho: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 báo cáo dài: `7671450d7e3b2174eee6466da1c05740b2c4a417e861846c73115822d61740ac`.
+SHA-256 báo cáo dài: `7a2795f206f07e4ad633d2e359fd0e2576e0f743a0044c6e7987e6921f1b598c`.
 
 PDF bài báo hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 
