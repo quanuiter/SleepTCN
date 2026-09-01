@@ -98,7 +98,11 @@ không phải một họ kiểm định mới.
 E3 tăng F1 ở cả năm lớp; mức tăng lớn nhất nằm ở REM và N1. Mẫu hình này đi kèm đánh đổi giữa
 precision và recall: recall N3 vẫn thấp, còn precision REM còn hạn chế. Các cặp nhầm lẫn lớn nhất của
 E3 là N3→N2 (16.674), N2→REM (11.605), N2→N1 (5.947), W→N1 (4.481) và N1→REM (1.717) epoch.
-Ma trận đầy đủ được giữ trong `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`.
+Đối chiếu E0 cho thấy N3→N2 không phải lỗi riêng của E3: E0 có 16.480/22.806 epoch N3 bị gán N2
+(72,3%) và recall N3 0,2610, gần như E3 với 73,1% và recall 0,2582. Vì vậy, E3 cải thiện hiệu năng
+tổng thể nhưng không cải thiện nhận diện N3 so với 15-CNN--BiLSTM. Ma trận E3--E2 đầy đủ được giữ
+trong `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`; đối chiếu E0/E3/E6 được giữ trong
+`Reports/SHHS_E0_E3_E6_N3_AUDIT.json`.
 
 ## Điều không được suy ra
 

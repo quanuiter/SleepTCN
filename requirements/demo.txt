@@ -1,0 +1,2 @@
+-r base.txt
+streamlit==1.62.0

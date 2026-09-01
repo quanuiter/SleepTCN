@@ -140,7 +140,7 @@ E6--REM & 527 & 1.752 & 2.191 & 187 & 21.178 \\
 \end{tabular}}
 \end{table}
 
-Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này cho thấy sai số tập trung ở các giai đoạn có đặc trưng biên gần nhau; nó mô tả vị trí sai số trong mẫu hiện tại, không xác định nguyên nhân sinh lý hay quan hệ nhân quả của tiền xử lý.
+Trong toàn bộ phân tích ma trận nhầm lẫn, ký hiệu A$\rightarrow$B nghĩa là epoch mang nhãn tham chiếu A nhưng được mô hình dự đoán thành B; ký hiệu này không biểu thị một chuyển pha sinh lý theo thời gian. Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này cho thấy sai số tập trung ở các giai đoạn có đặc trưng biên gần nhau; nó mô tả vị trí sai số trong mẫu hiện tại, không xác định nguyên nhân sinh lý hay quan hệ nhân quả của tiền xử lý.
 
 E3 có giá trị mô tả cao nhất trong chiến dịch chính. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước, trong đó E3--E6 là đối chiếu có bằng chứng mạnh nhất.
 
@@ -454,7 +454,24 @@ E2--REM & 439 & 262 & 726 & 0 & 24.507 \\
 \end{tabular}}
 \end{table}
 
-Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi. Đây là mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả.
+Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch; nhãn tham chiếu N3, dự đoán N2), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi. Đây là mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả hay một thống kê về chuyển pha giấc ngủ.
+
+Đối chiếu với mốc 15-CNN--BiLSTM E0 cho thấy lỗi N3 không phát sinh riêng ở E3. Trên cùng 22.806 epoch N3, E0 gán 16.480 epoch thành N2 (72,3\%) và đạt recall N3 0,2610; E3 gán 16.674 epoch thành N2 (73,1\%) và đạt recall 0,2582. F1 N3 của hai mô hình gần như bằng nhau (0,4048 và 0,4055), mặc dù \mf\ gộp của E3 cao hơn E0. Bảng~\ref{tab:shhs_n3_crossmodel} vì vậy tách hai kết luận: E3 cải thiện hiệu năng tổng thể, nhưng thay đổi kiến trúc và pipeline không giải quyết được nhận diện N3 ngoài miền.
+
+\begin{table}[H]
+\centering
+\caption{Đối chiếu lỗi N3 trên SHHS1 giữa các cấu hình đã khóa}
+\label{tab:shhs_n3_crossmodel}
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Cấu hình} & \textbf{Precision N3} & \textbf{Recall N3} & \textbf{F1 N3} & \textbf{N3$\rightarrow$N2} & \textbf{Tỷ lệ} \\
+\midrule
+E0 (15-CNN--BiLSTM) & 0,9007 & 0,2610 & 0,4048 & 16.480 & 72,3\% \\
+E3 (ResNet-1D--TCN) & 0,9440 & 0,2582 & 0,4055 & 16.674 & 73,1\% \\
+E6 (E3 + z-score bản ghi) & 0,9052 & 0,2005 & 0,3283 & 17.764 & 77,9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsubsection{Đối chứng z-score E6 và lỗi N3}
 
@@ -497,7 +514,7 @@ Tại vùng chuyển pha, recall N3 của E6 là 0,0721, gần như không đổ
 
 \subsubsection{Đòn bẩy phản thực cho quyết định thích nghi}
 
-\mf\ gộp của E3 giảm từ 0,7904 trên Sleep-EDF xuống 0,6099 trên SHHS1, tạo khoảng hụt 0,1805. N3 giảm F1 0,4030 và tự nó chiếm khoảng 45\% tổng mức giảm Macro-F1 theo năm lớp. Trên SHHS1, mô hình chỉ phát N3 bằng 0,273 lần tần suất thật; 16.674/22.806 epoch N3 (73,1\%) bị gán thành N2. Mẫu precision rất cao nhưng recall thấp phù hợp với một ranh giới quyết định N3 quá bảo thủ trên mẫu này, nhưng không xác định nguyên nhân là montage, tuổi, quy tắc chấm hay hình thái tín hiệu.
+\mf\ gộp của E3 giảm từ 0,7904 trên Sleep-EDF xuống 0,6099 trên SHHS1, tạo khoảng hụt 0,1805. N3 giảm F1 0,4030 và tự nó chiếm khoảng 45\% tổng mức giảm Macro-F1 theo năm lớp. Trên SHHS1, E3 chỉ phát N3 bằng 0,273 lần tần suất thật; 16.674/22.806 epoch N3 (73,1\%) bị gán thành N2. Mẫu precision rất cao nhưng recall thấp phù hợp với một ranh giới quyết định N3 quá bảo thủ trên mẫu này. Việc E0 biểu hiện gần như cùng mức thiếu N3 cho thấy đây là failure mode bền vững qua hai kiến trúc được đánh giá, nhưng không xác định nguyên nhân là montage, tuổi, quy tắc chấm hay hình thái tín hiệu.
 
 \begin{table}[H]
 \centering
@@ -517,7 +534,7 @@ E3 trên Sleep-EDF tham chiếu & 0,7904 & -- \\
 \end{tabular}
 \end{table}
 
-Đây không phải hiệu năng mà một thuật toán thực tế chắc chắn đạt được. Phép tính chỉ cho thấy N3$\rightarrow$N2 có đòn bẩy lớn nhất, tiếp theo là N2$\rightarrow$REM; tổng phần trăm có thể vượt 100\% vì Macro-F1 phi tuyến và hai cohort có phân bố lớp khác nhau. Do đó, thí nghiệm tiếp theo hợp lý hơn một vòng thay kiến trúc hoặc chuẩn hóa chung là hiệu chỉnh/fine-tune có nhãn theo lớp, báo cáo riêng recall và false-positive N3 tại ranh giới N2--N3.
+Đây không phải hiệu năng mà một thuật toán thực tế chắc chắn đạt được. Phép tính được thực hiện trên dự đoán E3 và chỉ cho thấy N3$\rightarrow$N2 có đòn bẩy lớn nhất, tiếp theo là N2$\rightarrow$REM; nó không quy lỗi này cho E3. Tổng phần trăm có thể vượt 100\% vì Macro-F1 phi tuyến và hai cohort có phân bố lớp khác nhau. Việc N3$\rightarrow$N2 cũng chiếm 72,3\% số epoch N3 ở E0 củng cố lựa chọn mục tiêu thích nghi, nhưng không biến phân tích E3 thành một đối chiếu nhân quả giữa kiến trúc. Do đó, thí nghiệm tiếp theo hợp lý hơn một vòng thay kiến trúc hoặc chuẩn hóa chung là hiệu chỉnh/fine-tune có nhãn theo lớp, báo cáo riêng recall và false-positive N3 tại ranh giới N2--N3.
 
 \subsection{Phân tích bổ sung thành phần E1/E2 trên SHHS1}
 

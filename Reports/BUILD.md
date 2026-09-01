@@ -52,6 +52,7 @@ tồn tại và SHA-256 khớp.
 - `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/analysis/diagnostics.json`
 - `SHHS_SEED123_E4_EXTENSION.md`
 - `SHHS_E6_PER_CLASS_REANALYSIS.md` (tái phân tích mô tả trực tiếp 180 artifact E6 đã khóa)
+- `SHHS_E0_E3_E6_N3_AUDIT.json` (đối chiếu N3 gộp từ run manifest SHHS test đã khóa; SHA-256 `d16f1ba3f13680df12bf4aac0d5a1b5a9507616a0d40bafd05225d621e15b058`)
 
 Các bảng phải lấy số liệu từ những artifact đã khóa; không sử dụng lại kết quả lịch sử từ notebook cũ.
 Mọi thay đổi ở phần Tóm tắt, Kết luận hoặc slide phải được đối chiếu với
@@ -76,3 +77,4 @@ các artifact khóa không đổi.
    `python -m unittest tests.test_gate8_validator -v`.
 9. Seed 42 luôn được ghi là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức. Báo cáo riêng từng seed và không gộp p-value.
 10. Trước khi phát hành gói tái lập SHHS, đối chiếu sai khác giữa protocol hash trong run manifest `165d7cdf...fe93` và protocol hiện tại `9541e233...fe9`; không mô tả phép tái phân tích E6 như một lượt chạy lại từ protocol hiện tại.
+11. Mọi tuyên bố về N3 phải tách hiệu năng tổng thể khỏi hiệu năng theo lớp: E0/E3 có recall N3 0,2610/0,2582 và tỷ lệ N3→N2 72,3%/73,1%; phép phản thực 74,5% chỉ được tính trên E3 và không phải đối chiếu nhân quả kiến trúc.

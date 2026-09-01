@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.27)  30 AUG 2026 20:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.14)  31 AUG 2026 22:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -81,12 +81,6 @@ Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
 Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
 (babel)             (\language73). Reported on input line 108.
 ))
-! Interruption.
-<argument> \__file_size:n {newtxtext.sty}
-                                         
-l.14 \usepackage
-                {microtype}
-? 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\newtxtext.sty
 Package: newtxtext 2024/04/01 v1.744(Michael Sharpe) latex and unicode latex su
 pport for TeXGyreTermesX
@@ -427,245 +421,9 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@dimlist=\toks31
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
-Package: amssymb 2013/01/14 v3.01 AMS font symbols
-
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
-Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
-\symAMSa=\mathgroup8
-\symAMSb=\mathgroup9
-LaTeX Font Info:    Redeclaring math delimiter \ulcorner on input line 74.
-LaTeX Font Info:    Redeclaring math delimiter \urcorner on input line 75.
-LaTeX Font Info:    Redeclaring math delimiter \llcorner on input line 76.
-LaTeX Font Info:    Redeclaring math delimiter \lrcorner on input line 77.
-LaTeX Font Info:    Redeclaring math symbol \square on input line 141.
-LaTeX Font Info:    Redeclaring math symbol \lozenge on input line 142.
-)
-LaTeX Font Info:    Redeclaring math symbol \boxdot on input line 44.
-LaTeX Font Info:    Redeclaring math symbol \boxplus on input line 45.
-LaTeX Font Info:    Redeclaring math symbol \boxtimes on input line 46.
-LaTeX Font Info:    Redeclaring math symbol \blacksquare on input line 48.
-LaTeX Font Info:    Redeclaring math symbol \centerdot on input line 49.
-LaTeX Font Info:    Redeclaring math symbol \blacklozenge on input line 51.
-LaTeX Font Info:    Redeclaring math symbol \circlearrowright on input line 52.
-
-LaTeX Font Info:    Redeclaring math symbol \circlearrowleft on input line 53.
-LaTeX Font Info:    Redeclaring math symbol \leftrightharpoons on input line 56
-.
-LaTeX Font Info:    Redeclaring math symbol \boxminus on input line 57.
-LaTeX Font Info:    Redeclaring math symbol \Vdash on input line 58.
-LaTeX Font Info:    Redeclaring math symbol \Vvdash on input line 59.
-LaTeX Font Info:    Redeclaring math symbol \vDash on input line 60.
-LaTeX Font Info:    Redeclaring math symbol \twoheadrightarrow on input line 61
-.
-LaTeX Font Info:    Redeclaring math symbol \twoheadleftarrow on input line 62.
-
-LaTeX Font Info:    Redeclaring math symbol \leftleftarrows on input line 63.
-LaTeX Font Info:    Redeclaring math symbol \rightrightarrows on input line 64.
-
-LaTeX Font Info:    Redeclaring math symbol \upuparrows on input line 65.
-LaTeX Font Info:    Redeclaring math symbol \downdownarrows on input line 66.
-LaTeX Font Info:    Redeclaring math symbol \upharpoonright on input line 67.
-LaTeX Font Info:    Redeclaring math symbol \downharpoonright on input line 69.
-
-LaTeX Font Info:    Redeclaring math symbol \upharpoonleft on input line 70.
-LaTeX Font Info:    Redeclaring math symbol \downharpoonleft on input line 71.
-LaTeX Font Info:    Redeclaring math symbol \rightarrowtail on input line 72.
-LaTeX Font Info:    Redeclaring math symbol \leftarrowtail on input line 73.
-LaTeX Font Info:    Redeclaring math symbol \leftrightarrows on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \rightleftarrows on input line 75.
-LaTeX Font Info:    Redeclaring math symbol \Lsh on input line 76.
-LaTeX Font Info:    Redeclaring math symbol \Rsh on input line 77.
-LaTeX Font Info:    Redeclaring math symbol \leftrightsquigarrow on input line 
-79.
-LaTeX Font Info:    Redeclaring math symbol \looparrowleft on input line 80.
-LaTeX Font Info:    Redeclaring math symbol \looparrowright on input line 81.
-LaTeX Font Info:    Redeclaring math symbol \circeq on input line 82.
-LaTeX Font Info:    Redeclaring math symbol \succsim on input line 83.
-LaTeX Font Info:    Redeclaring math symbol \gtrsim on input line 84.
-LaTeX Font Info:    Redeclaring math symbol \gtrapprox on input line 85.
-LaTeX Font Info:    Redeclaring math symbol \multimap on input line 86.
-LaTeX Font Info:    Redeclaring math symbol \therefore on input line 87.
-LaTeX Font Info:    Redeclaring math symbol \because on input line 88.
-LaTeX Font Info:    Redeclaring math symbol \doteqdot on input line 89.
-LaTeX Font Info:    Redeclaring math symbol \triangleq on input line 91.
-LaTeX Font Info:    Redeclaring math symbol \precsim on input line 92.
-LaTeX Font Info:    Redeclaring math symbol \lesssim on input line 93.
-LaTeX Font Info:    Redeclaring math symbol \lessapprox on input line 94.
-LaTeX Font Info:    Redeclaring math symbol \eqslantless on input line 95.
-LaTeX Font Info:    Redeclaring math symbol \eqslantgtr on input line 96.
-LaTeX Font Info:    Redeclaring math symbol \curlyeqprec on input line 97.
-LaTeX Font Info:    Redeclaring math symbol \curlyeqsucc on input line 98.
-LaTeX Font Info:    Redeclaring math symbol \preccurlyeq on input line 99.
-LaTeX Font Info:    Redeclaring math symbol \leqq on input line 100.
-LaTeX Font Info:    Redeclaring math symbol \leqslant on input line 101.
-LaTeX Font Info:    Redeclaring math symbol \lessgtr on input line 102.
-LaTeX Font Info:    Redeclaring math symbol \backprime on input line 103.
-LaTeX Font Info:    Redeclaring math symbol \risingdotseq on input line 104.
-LaTeX Font Info:    Redeclaring math symbol \fallingdotseq on input line 105.
-LaTeX Font Info:    Redeclaring math symbol \succcurlyeq on input line 106.
-LaTeX Font Info:    Redeclaring math symbol \geqq on input line 107.
-LaTeX Font Info:    Redeclaring math symbol \geqslant on input line 108.
-LaTeX Font Info:    Redeclaring math symbol \gtrless on input line 109.
-LaTeX Font Info:    Redeclaring math symbol \bigstar on input line 117.
-LaTeX Font Info:    Redeclaring math symbol \between on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \blacktriangledown on input line 11
-9.
-LaTeX Font Info:    Redeclaring math symbol \blacktriangleright on input line 1
-20.
-LaTeX Font Info:    Redeclaring math symbol \blacktriangleleft on input line 12
-1.
-LaTeX Font Info:    Redeclaring math symbol \vartriangle on input line 122.
-LaTeX Font Info:    Redeclaring math symbol \blacktriangle on input line 123.
-LaTeX Font Info:    Redeclaring math symbol \triangledown on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \eqcirc on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \lesseqgtr on input line 126.
-LaTeX Font Info:    Redeclaring math symbol \gtreqless on input line 127.
-LaTeX Font Info:    Redeclaring math symbol \lesseqqgtr on input line 128.
-LaTeX Font Info:    Redeclaring math symbol \gtreqqless on input line 129.
-LaTeX Font Info:    Redeclaring math symbol \Rrightarrow on input line 130.
-LaTeX Font Info:    Redeclaring math symbol \Lleftarrow on input line 131.
-LaTeX Font Info:    Redeclaring math symbol \veebar on input line 132.
-LaTeX Font Info:    Redeclaring math symbol \barwedge on input line 133.
-LaTeX Font Info:    Redeclaring math symbol \doublebarwedge on input line 134.
-LaTeX Font Info:    Redeclaring math symbol \measuredangle on input line 137.
-LaTeX Font Info:    Redeclaring math symbol \sphericalangle on input line 138.
-LaTeX Font Info:    Redeclaring math symbol \varpropto on input line 139.
-LaTeX Font Info:    Redeclaring math symbol \smallsmile on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \smallfrown on input line 141.
-LaTeX Font Info:    Redeclaring math symbol \Subset on input line 142.
-LaTeX Font Info:    Redeclaring math symbol \Supset on input line 143.
-LaTeX Font Info:    Redeclaring math symbol \Cup on input line 144.
-LaTeX Font Info:    Redeclaring math symbol \Cap on input line 146.
-LaTeX Font Info:    Redeclaring math symbol \curlywedge on input line 148.
-LaTeX Font Info:    Redeclaring math symbol \curlyvee on input line 149.
-LaTeX Font Info:    Redeclaring math symbol \leftthreetimes on input line 150.
-LaTeX Font Info:    Redeclaring math symbol \rightthreetimes on input line 151.
-
-LaTeX Font Info:    Redeclaring math symbol \subseteqq on input line 152.
-LaTeX Font Info:    Redeclaring math symbol \supseteqq on input line 153.
-LaTeX Font Info:    Redeclaring math symbol \bumpeq on input line 154.
-LaTeX Font Info:    Redeclaring math symbol \Bumpeq on input line 155.
-LaTeX Font Info:    Redeclaring math symbol \lll on input line 156.
-LaTeX Font Info:    Redeclaring math symbol \ggg on input line 158.
-LaTeX Font Info:    Redeclaring math symbol \circledS on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \pitchfork on input line 161.
-LaTeX Font Info:    Redeclaring math symbol \dotplus on input line 162.
-LaTeX Font Info:    Redeclaring math symbol \backsim on input line 163.
-LaTeX Font Info:    Redeclaring math symbol \backsimeq on input line 164.
-LaTeX Font Info:    Redeclaring math symbol \complement on input line 165.
-LaTeX Font Info:    Redeclaring math symbol \intercal on input line 166.
-LaTeX Font Info:    Redeclaring math symbol \circledcirc on input line 167.
-LaTeX Font Info:    Redeclaring math symbol \circledast on input line 168.
-LaTeX Font Info:    Redeclaring math symbol \circleddash on input line 169.
-LaTeX Font Info:    Redeclaring math symbol \lvertneqq on input line 171.
-LaTeX Font Info:    Redeclaring math symbol \gvertneqq on input line 172.
-LaTeX Font Info:    Redeclaring math symbol \nleq on input line 173.
-LaTeX Font Info:    Redeclaring math symbol \ngeq on input line 174.
-LaTeX Font Info:    Redeclaring math symbol \nless on input line 175.
-LaTeX Font Info:    Redeclaring math symbol \ngtr on input line 176.
-LaTeX Font Info:    Redeclaring math symbol \nprec on input line 177.
-LaTeX Font Info:    Redeclaring math symbol \nsucc on input line 178.
-LaTeX Font Info:    Redeclaring math symbol \lneqq on input line 179.
-LaTeX Font Info:    Redeclaring math symbol \gneqq on input line 180.
-LaTeX Font Info:    Redeclaring math symbol \nleqslant on input line 181.
-LaTeX Font Info:    Redeclaring math symbol \ngeqslant on input line 182.
-LaTeX Font Info:    Redeclaring math symbol \lneq on input line 183.
-LaTeX Font Info:    Redeclaring math symbol \gneq on input line 184.
-LaTeX Font Info:    Redeclaring math symbol \npreceq on input line 185.
-LaTeX Font Info:    Redeclaring math symbol \nsucceq on input line 186.
-LaTeX Font Info:    Redeclaring math symbol \precnsim on input line 187.
-LaTeX Font Info:    Redeclaring math symbol \succnsim on input line 188.
-LaTeX Font Info:    Redeclaring math symbol \lnsim on input line 189.
-LaTeX Font Info:    Redeclaring math symbol \gnsim on input line 190.
-LaTeX Font Info:    Redeclaring math symbol \nleqq on input line 191.
-LaTeX Font Info:    Redeclaring math symbol \ngeqq on input line 192.
-LaTeX Font Info:    Redeclaring math symbol \precneqq on input line 193.
-LaTeX Font Info:    Redeclaring math symbol \succneqq on input line 194.
-LaTeX Font Info:    Redeclaring math symbol \precnapprox on input line 195.
-LaTeX Font Info:    Redeclaring math symbol \succnapprox on input line 196.
-LaTeX Font Info:    Redeclaring math symbol \lnapprox on input line 197.
-LaTeX Font Info:    Redeclaring math symbol \gnapprox on input line 198.
-LaTeX Font Info:    Redeclaring math symbol \nsim on input line 199.
-LaTeX Font Info:    Redeclaring math symbol \ncong on input line 200.
-LaTeX Font Info:    Redeclaring math symbol \diagup on input line 201.
-LaTeX Font Info:    Redeclaring math symbol \diagdown on input line 202.
-LaTeX Font Info:    Redeclaring math symbol \varsubsetneq on input line 203.
-LaTeX Font Info:    Redeclaring math symbol \varsupsetneq on input line 204.
-LaTeX Font Info:    Redeclaring math symbol \nsubseteqq on input line 205.
-LaTeX Font Info:    Redeclaring math symbol \nsupseteqq on input line 206.
-LaTeX Font Info:    Redeclaring math symbol \subsetneqq on input line 207.
-LaTeX Font Info:    Redeclaring math symbol \supsetneqq on input line 208.
-LaTeX Font Info:    Redeclaring math symbol \varsubsetneqq on input line 209.
-LaTeX Font Info:    Redeclaring math symbol \varsupsetneqq on input line 210.
-LaTeX Font Info:    Redeclaring math symbol \subsetneq on input line 211.
-LaTeX Font Info:    Redeclaring math symbol \supsetneq on input line 212.
-LaTeX Font Info:    Redeclaring math symbol \nsubseteq on input line 213.
-LaTeX Font Info:    Redeclaring math symbol \nsupseteq on input line 214.
-LaTeX Font Info:    Redeclaring math symbol \nparallel on input line 215.
-LaTeX Font Info:    Redeclaring math symbol \nmid on input line 216.
-LaTeX Font Info:    Redeclaring math symbol \nshortmid on input line 217.
-LaTeX Font Info:    Redeclaring math symbol \nshortparallel on input line 218.
-LaTeX Font Info:    Redeclaring math symbol \nvdash on input line 219.
-LaTeX Font Info:    Redeclaring math symbol \nVdash on input line 220.
-LaTeX Font Info:    Redeclaring math symbol \nvDash on input line 221.
-LaTeX Font Info:    Redeclaring math symbol \nVDash on input line 222.
-LaTeX Font Info:    Redeclaring math symbol \ntrianglerighteq on input line 223
-.
-LaTeX Font Info:    Redeclaring math symbol \ntrianglelefteq on input line 224.
-
-LaTeX Font Info:    Redeclaring math symbol \ntriangleleft on input line 225.
-LaTeX Font Info:    Redeclaring math symbol \ntriangleright on input line 226.
-LaTeX Font Info:    Redeclaring math symbol \nleftarrow on input line 227.
-LaTeX Font Info:    Redeclaring math symbol \nrightarrow on input line 228.
-LaTeX Font Info:    Redeclaring math symbol \nLeftarrow on input line 229.
-LaTeX Font Info:    Redeclaring math symbol \nRightarrow on input line 230.
-LaTeX Font Info:    Redeclaring math symbol \nLeftrightarrow on input line 231.
-
-LaTeX Font Info:    Redeclaring math symbol \nleftrightarrow on input line 232.
-
-LaTeX Font Info:    Redeclaring math symbol \divideontimes on input line 233.
-LaTeX Font Info:    Redeclaring math symbol \varnothing on input line 234.
-LaTeX Font Info:    Redeclaring math symbol \nexists on input line 235.
-LaTeX Font Info:    Redeclaring math symbol \Finv on input line 236.
-LaTeX Font Info:    Redeclaring math symbol \Game on input line 237.
-LaTeX Font Info:    Redeclaring math symbol \eth on input line 240.
-LaTeX Font Info:    Redeclaring math symbol \eqsim on input line 241.
-LaTeX Font Info:    Redeclaring math symbol \beth on input line 242.
-LaTeX Font Info:    Redeclaring math symbol \gimel on input line 243.
-LaTeX Font Info:    Redeclaring math symbol \daleth on input line 244.
-LaTeX Font Info:    Redeclaring math symbol \lessdot on input line 245.
-LaTeX Font Info:    Redeclaring math symbol \gtrdot on input line 246.
-LaTeX Font Info:    Redeclaring math symbol \ltimes on input line 247.
-LaTeX Font Info:    Redeclaring math symbol \rtimes on input line 248.
-LaTeX Font Info:    Redeclaring math symbol \shortmid on input line 249.
-LaTeX Font Info:    Redeclaring math symbol \shortparallel on input line 250.
-LaTeX Font Info:    Redeclaring math symbol \smallsetminus on input line 251.
-LaTeX Font Info:    Redeclaring math symbol \thicksim on input line 252.
-LaTeX Font Info:    Redeclaring math symbol \thickapprox on input line 253.
-LaTeX Font Info:    Redeclaring math symbol \approxeq on input line 254.
-LaTeX Font Info:    Redeclaring math symbol \succapprox on input line 255.
-LaTeX Font Info:    Redeclaring math symbol \precapprox on input line 256.
-LaTeX Font Info:    Redeclaring math symbol \curvearrowleft on input line 257.
-LaTeX Font Info:    Redeclaring math symbol \curvearrowright on input line 258.
-
-LaTeX Font Info:    Redeclaring math symbol \digamma on input line 259.
-LaTeX Font Info:    Redeclaring math symbol \varkappa on input line 260.
-
-
-! LaTeX Error: Command `\Bbbk' already defined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.261 ...ol{\Bbbk}           {\mathord}{AMSb}{"7C}
-                                                  
-? 
-LaTeX Font Info:    Redeclaring math symbol \hslash on input line 262.
-LaTeX Font Info:    Redeclaring math symbol \backepsilon on input line 265.
-) (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
 
@@ -950,12 +708,13 @@ File: t1ntxtlf.fd 2021/05/24 v1.1 font definition file for T1/ntx/tlf
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
 (Font)              scaled to size 10.95pt on input line 87.
 
-No file main.aux.
+(main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 87.
 LaTeX Font Info:    Trying to load font information for OML+ntxmi on input line
  87.
+
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlntxmi.fd
 File: omlntxmi.fd 2015/08/25 Fontinst v1.933 font definitions for OML/ntxmi.
 )
@@ -1087,200 +846,186 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring ON on input line 87.
+(main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 17.28pt on input line 103.
+(Font)              scaled to size 17.28pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 17.28pt on input line 103.
+(Font)              scaled to size 17.28pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 12.0pt on input line 103.
+(Font)              scaled to size 12.0pt on input line 101.
 LaTeX Font Info:    Trying to load font information for OT1+minntx on input lin
-e 103.
+e 101.
+
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\ot1minntx.fd
 File: ot1minntx.fd 2023/09/09 v1.1 font definition file for OT1/minntx
 )
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `minntx' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Trying to load font information for U+ntxmia on input line 
-103.
+101.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxmia.fd
 File: untxmia.fd 2024/04/09 Fontinst v1.933 font definitions for U/ntxmia.
 )
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Trying to load font information for U+ntxsym on input line 
-103.
+101.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsym.fd
 File: untxsym.fd 2023/08/16 Fontinst v1.933 font definitions for U/ntxsym.
 )
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Trying to load font information for U+ntxsyc on input line 
-103.
+101.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsyc.fd
 File: untxsyc.fd 2012/04/12 Fontinst v1.933 font definitions for U/ntxsyc.
 )
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 6.1pt on input line 103.
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 10.95pt on input line 103.
+(Font)              scaled to size 10.95pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 6.1pt on input line 103.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 103
-.
-
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
-File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 103
-.
-
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
-File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-)
+(Font)              scaled to size 6.1pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 8.0pt on input line 103.
+(Font)              scaled to size 8.0pt on input line 101.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 6.0pt on input line 103.
+(Font)              scaled to size 6.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 5.5pt on input line 103.
+(Font)              scaled to size 5.5pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 10.0pt on input line 103.
+(Font)              scaled to size 10.0pt on input line 101.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 7.3pt on input line 103.
+(Font)              scaled to size 7.3pt on input line 101.
 LaTeX Font Info:    Trying to load font information for T1+ntxtt on input line 
-109.
+107.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\t1ntxtt.fd
 File: t1ntxtt.fd 2012/04/20 v3.1
 )
 LaTeX Font Info:    Font shape `T1/ntxtt/m/n' will be
-(Font)              scaled to size 10.0pt on input line 109.
+(Font)              scaled to size 10.0pt on input line 107.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `ntxtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 10.95pt on input line 117.
+(Font)              scaled to size 10.95pt on input line 115.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 10.0pt on input line 119.
+(Font)              scaled to size 10.0pt on input line 117.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 5.5pt on input line 128.
+(Font)              scaled to size 5.5pt on input line 134.
+LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
+(Font)              scaled to size 12.0pt on input line 163.
 
 [1
 
@@ -1288,501 +1033,119 @@ LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
 N/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ec-tlf.enc}{C:/Users/
 ADMIN/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ot1-tlf.enc}]
 [2]
-LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 12.0pt on input line 174.
-
-
-LaTeX Warning: Citation `rosenberg2013aasm' on page 3 undefined on input line 1
-79.
-
-
-LaTeX Warning: Citation `jadhav2024zleepanlystnet' on page 3 undefined on input
- line 190.
-
-
-LaTeX Warning: Citation `bai2018tcn' on page 3 undefined on input line 193.
-
-
-LaTeX Warning: Citation `he2016resnet' on page 3 undefined on input line 194.
-
-LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
-(Font)              scaled to size 10.95pt on input line 212.
-
-LaTeX Warning: Citation `supratak2017deepsleepnet' on page 3 undefined on input
- line 232.
-
-
-LaTeX Warning: Citation `eldele2021attnsleep' on page 3 undefined on input line
- 233.
-
-
-LaTeX Warning: Citation `phan2022sleeptransformer' on page 3 undefined on input
- line 234.
-
-
-LaTeX Warning: Citation `phan2022review' on page 3 undefined on input line 238.
-
-
-
-LaTeX Warning: Citation `kemp2000sleepEDF' on page 3 undefined on input line 24
-1.
-
-
-LaTeX Warning: Citation `physionetSleepEDF' on page 3 undefined on input line 2
-41.
-
-
-LaTeX Warning: Citation `quan1997shhs' on page 3 undefined on input line 243.
-
-
-LaTeX Warning: Citation `zhang2018nsrr' on page 3 undefined on input line 244.
-
-[3
-
-]
-
-LaTeX Warning: Citation `massimini2004travelling' on page 4 undefined on input 
-line 250.
-
-
-LaTeX Warning: Citation `ohayon2004metaanalysis' on page 4 undefined on input l
-ine 252.
-
-
-LaTeX Warning: Citation `rechtschaffen1968' on page 4 undefined on input line 2
-53.
-
-
-LaTeX Warning: Citation `berry2017aasm' on page 4 undefined on input line 253.
-
-
-LaTeX Warning: Citation `saerens2002adjusting' on page 4 undefined on input lin
-e 256.
-
-
-LaTeX Warning: Citation `guo2017calibration' on page 4 undefined on input line 
-256.
-
-
-LaTeX Warning: Reference `sec:gap' on page 4 undefined on input line 256.
-
-
-LaTeX Warning: Reference `tab:class-distribution' on page 4 undefined on input 
-line 282.
-
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 6.1pt on input line 307.
-
-LaTeX Warning: Reference `tab:class-distribution' on page 4 undefined on input 
-line 309.
-
-
-LaTeX Warning: Reference `sec:gap' on page 4 undefined on input line 309.
-
+(Font)              scaled to size 6.1pt on input line 305.
+LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
+(Font)              scaled to size 10.95pt on input line 307.
 LaTeX Font Info:    Trying to load font information for TS1+ntxtlf on input lin
-e 317.
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\ts1ntxtlf.fd
+e 316.
+ (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\ts1ntxtlf.fd
 File: ts1ntxtlf.fd 2015/01/18 v1.0 fd file for TS1/ntxtlf
 )
 LaTeX Font Info:    Font shape `TS1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.95pt on input line 317.
-
-[4]
-
-LaTeX Warning: Reference `tab:configs' on page 5 undefined on input line 356.
-
+(Font)              scaled to size 10.95pt on input line 316.
+[3{C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/tex-gyre/q-ts1.
+enc}]
 LaTeX Font Info:    Font shape `T1/ntxtt/m/n' will be
-(Font)              scaled to size 10.95pt on input line 361.
-
-LaTeX Warning: Reference `sec:rf' on page 5 undefined on input line 381.
-
-[5]
-
-LaTeX Warning: Reference `sec:gap' on page 6 undefined on input line 406.
-
-
-LaTeX Warning: Citation `wilcoxon1945' on page 6 undefined on input line 415.
-
-
-LaTeX Warning: Citation `efron1994bootstrap' on page 6 undefined on input line 
-416.
-
-
-LaTeX Warning: Citation `holm1979' on page 6 undefined on input line 417.
-
-
-LaTeX Warning: Citation `cliff1993dominance' on page 6 undefined on input line 
-428.
-
-
-LaTeX Warning: Citation `rousseeuw1987silhouettes' on page 6 undefined on input
- line 451.
-
-[6]
+(Font)              scaled to size 10.95pt on input line 371.
+ [4] [5]
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 7.3pt on input line 471.
+(Font)              scaled to size 7.3pt on input line 473.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 5.5pt on input line 471.
-
-
-LaTeX Warning: Reference `tab:sleepedf-performance' on page 7 undefined on inpu
-t line 483.
-
-
-LaTeX Warning: Reference `tab:paired-sleepedf' on page 7 undefined on input lin
-e 484.
-
+(Font)              scaled to size 5.5pt on input line 473.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 5.5pt on input line 506.
+(Font)              scaled to size 5.5pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 10.0pt on input line 506.
+(Font)              scaled to size 10.0pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 7.3pt on input line 506.
+(Font)              scaled to size 7.3pt on input line 508.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 5.5pt on input line 506.
-
-LaTeX Warning: Reference `fig:primary-effects' on page 7 undefined on input lin
-e 509.
-
-<../figures/gate8_primary_effects.png, id=56, 650.43pt x 397.485pt>
-File: ../figures/gate8_primary_effects.png Graphic file (type png)
-<use ../figures/gate8_primary_effects.png>
-Package pdftex.def Info: ../figures/gate8_primary_effects.png  used on input li
-ne 527.
-(pdftex.def)             Requested size: 429.29416pt x 262.35303pt.
-
-LaTeX Warning: Reference `tab:sleepedf-class-errors' on page 7 undefined on inp
-ut line 554.
-
-
-LaTeX Warning: Citation `rosenberg2013aasm' on page 7 undefined on input line 5
-55.
-
+(Font)              scaled to size 5.5pt on input line 508.
+ [6]
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 10.95pt on input line 556.
+(Font)              scaled to size 10.95pt on input line 552.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 8.0pt on input line 556.
+(Font)              scaled to size 8.0pt on input line 552.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 6.1pt on input line 556.
+(Font)              scaled to size 6.1pt on input line 552.
+ [7] [8] [9] [10] [11] [12
 
-LaTeX Warning: Reference `sec:gap' on page 7 undefined on input line 558.
+] [13] [14] [15
 
-
-LaTeX Warning: Reference `tab:sleepedf-confusion' on page 7 undefined on input 
-line 583.
-
-
-LaTeX Warning: Reference `tab:multiseed-performance' on page 7 undefined on inp
-ut line 628.
-
-[7]
-
-LaTeX Warning: Reference `tab:complexity' on page 8 undefined on input line 657
-.
-
-
-LaTeX Warning: Reference `fig:tradeoff' on page 8 undefined on input line 658.
-
-
-LaTeX Warning: Reference `tab:training-runtime' on page 8 undefined on input li
-ne 687.
-
-<../figures/gate8_performance_speed_tradeoff.png, id=67, 650.43pt x 469.755pt>
-File: ../figures/gate8_performance_speed_tradeoff.png Graphic file (type png)
-<use ../figures/gate8_performance_speed_tradeoff.png>
-Package pdftex.def Info: ../figures/gate8_performance_speed_tradeoff.png  used 
-on input line 696.
-(pdftex.def)             Requested size: 396.63411pt x 286.46413pt.
-
-LaTeX Warning: Reference `fig:supporting' on page 8 undefined on input line 705
-.
-
-
-LaTeX Warning: Reference `tab:sleepedf-performance' on page 8 undefined on inpu
-t line 713.
-
-[8]
-
-LaTeX Warning: Reference `sec:rf' on page 9 undefined on input line 760.
-
-[9 <../figures/gate8_primary_effects.png>]
-
-LaTeX Warning: Reference `tab:transition-pairs' on page 10 undefined on input l
-ine 778.
-
-
-LaTeX Warning: Citation `berry2017aasm' on page 10 undefined on input line 783.
-
-
-
-LaTeX Warning: Reference `tab:context-comparisons' on page 10 undefined on inpu
-t line 790.
-
-
-LaTeX Warning: Reference `tab:context-comparisons' on page 10 undefined on inpu
-t line 790.
-
-<../figures/gate8_feature_silhouette.png, id=88, 650.43pt x 397.485pt>
-File: ../figures/gate8_feature_silhouette.png Graphic file (type png)
-<use ../figures/gate8_feature_silhouette.png>
-Package pdftex.def Info: ../figures/gate8_feature_silhouette.png  used on input
- line 812.
-(pdftex.def)             Requested size: 228.64882pt x 139.72833pt.
-LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 9.0pt on input line 813.
-LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 9.0pt on input line 813.
-<../figures/gate8_context_ablation_effects.png, id=89, 650.43pt x 346.896pt>
-File: ../figures/gate8_context_ablation_effects.png Graphic file (type png)
-<use ../figures/gate8_context_ablation_effects.png>
-Package pdftex.def Info: ../figures/gate8_context_ablation_effects.png  used on
- input line 818.
-(pdftex.def)             Requested size: 228.64882pt x 121.94473pt.
-
-Overfull \hbox (37.19267pt too wide) in paragraph at lines 854--865
- [][] 
- []
-
-
-LaTeX Warning: Reference `tab:shhs-seed123' on page 10 undefined on input line 
-867.
-
-
-LaTeX Warning: Reference `tab:multiseed-effects' on page 10 undefined on input 
-line 869.
-
-
-LaTeX Warning: Reference `tab:shhs-paired' on page 10 undefined on input line 8
-97.
-
-
-LaTeX Warning: Reference `fig:shhs-effects' on page 10 undefined on input line 
-898.
-
-[10]
-<../figures/shhs_zero_shot_effects.png, id=97, 584.9855pt x 267.399pt>
-File: ../figures/shhs_zero_shot_effects.png Graphic file (type png)
-<use ../figures/shhs_zero_shot_effects.png>
-Package pdftex.def Info: ../figures/shhs_zero_shot_effects.png  used on input l
-ine 921.
-(pdftex.def)             Requested size: 396.63411pt x 181.30664pt.
-
-
-LaTeX Warning: Reference `tab:transfer-perclass' on page 11 undefined on input 
-line 956.
-
-
-LaTeX Warning: Citation `saerens2002adjusting' on page 11 undefined on input li
-ne 973.
-
-
-LaTeX Warning: Reference `tab:gap-decomposition' on page 11 undefined on input 
-line 997.
-
-[11]
-
-LaTeX Warning: Reference `tab:shhs-confusion' on page 12 undefined on input lin
-e 1004.
-
-
-LaTeX Warning: Reference `tab:shhs-class-errors' on page 12 undefined on input 
-line 1032.
-
-
-LaTeX Warning: Reference `tab:shhs-transition' on page 12 undefined on input li
-ne 1057.
-
-[12 <../figures/gate8_performance_speed_tradeoff.png>]
-
-LaTeX Warning: Reference `tab:shhs-class-errors' on page 13 undefined on input 
-line 1069.
-
-
-LaTeX Warning: Reference `tab:shhs-class-errors' on page 13 undefined on input 
-line 1069.
-
-
-Overfull \hbox (4.38893pt too wide) in paragraph at lines 1088--1092
-[]\T1/ntxtlf/m/n/10.95 (-20) The E3 pre-pro-cess-ing does de-liver a large gain
- on N1 in this region---recall rises by $\OT1/minntx/m/n/10.95 0\OML/ntxmi/m/it
-/10.95 :\OT1/minntx/m/n/10.95 1909$ \T1/ntxtlf/m/n/10.95 (-20) ($\LMS/ntxsy/m/n
-/10.95 »\OT1/minntx/m/n/10.95 0\OML/ntxmi/m/it/10.95 :\OT1/minntx/m/n/10.95 151
-3\OML/ntxmi/m/it/10.95 ; \OT1/minntx/m/n/10.95 0\OML/ntxmi/m/it/10.95 :\OT1/min
-ntx/m/n/10.95 2297\LMS/ntxsy/m/n/10.95 ¼$\T1/ntxtlf/m/n/10.95 (-20) )
- []
-
-[13] [14 <../figures/gate8_feature_silhouette.png> <../figures/gate8_context_ab
-lation_effects.png>] [15 <../figures/shhs_zero_shot_effects.png>] [16]
-
-LaTeX Warning: Reference `tab:context-comparisons' on page 17 undefined on inpu
-t line 1114.
-
-
-LaTeX Warning: Citation `supratak2017deepsleepnet' on page 17 undefined on inpu
-t line 1117.
-
-
-LaTeX Warning: Citation `eldele2021attnsleep' on page 17 undefined on input lin
-e 1117.
-
-
-LaTeX Warning: Citation `phan2022sleeptransformer' on page 17 undefined on inpu
-t line 1117.
-
-
-LaTeX Warning: Reference `tab:context-ablation' on page 17 undefined on input l
-ine 1129.
-
-
-LaTeX Warning: Reference `sec:ablation' on page 17 undefined on input line 1135
-.
-
-
-LaTeX Warning: Reference `sec:ablation' on page 17 undefined on input line 1139
-.
-
-
-LaTeX Warning: Reference `sec:gap' on page 17 undefined on input line 1144.
-
-
-LaTeX Warning: Citation `rechtschaffen1968' on page 17 undefined on input line 
-1150.
-
-
-LaTeX Warning: Citation `berry2017aasm' on page 17 undefined on input line 1150
-.
-
-
-LaTeX Warning: Citation `massimini2004travelling' on page 17 undefined on input
- line 1154.
-
-
-LaTeX Warning: Citation `ohayon2004metaanalysis' on page 17 undefined on input 
-line 1157.
-
-
-LaTeX Warning: Reference `tab:shhs-transition' on page 17 undefined on input li
-ne 1171.
-
-[17
-
-] [18]
-
-LaTeX Warning: Citation `supratak2017deepsleepnet' on page 19 undefined on inpu
-t line 1233.
-
-
-LaTeX Warning: Citation `eldele2021attnsleep' on page 19 undefined on input lin
-e 1233.
-
-
-LaTeX Warning: Citation `phan2022sleeptransformer' on page 19 undefined on inpu
-t line 1233.
-
-
-LaTeX Warning: Citation `jadhav2024zleepanlystnet' on page 19 undefined on inpu
-t line 1233.
-
-
-LaTeX Warning: Citation `guo2017calibration' on page 19 undefined on input line
- 1250.
-
-
-LaTeX Warning: Citation `phan2022sleeptransformer' on page 19 undefined on inpu
-t line 1250.
-
-
-LaTeX Warning: Reference `tab:shhs-performance' on page 19 undefined on input l
-ine 1253.
-
-[19]
-No file main.bbl.
-[20] (main.aux)
+] [16] (main.bbl
+[17] [18]) [19] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2020/03/25>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  350B752547EEDBFCA4072E416A9C7FD4;5618.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: E11B365FFEFFB5E583D2E6E8D7051232;5106.
  ) 
 Here is how much of TeX's memory you used:
- 20682 strings out of 467871
- 331597 string characters out of 5418376
- 800828 words of memory out of 5000000
- 48891 multiletter control sequences out of 15000+600000
- 754854 words of font info for 317 fonts, out of 8000000 for 9000
+ 20569 strings out of 467871
+ 328023 string characters out of 5418376
+ 787510 words of memory out of 5000000
+ 48778 multiletter control sequences out of 15000+600000
+ 746413 words of font info for 303 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,16n,117p,1003b,704s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\ADMIN\AppData\Local\MiKTeX\fonts/pk/modeless/public/tex-gyre/dpi65
-7\ts1-qtmr.pk><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/
-newtx/NewTXBMI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/pu
-blic/newtx/NewTXMI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/newtx/NewTXMI7.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/txfonts/t1xtt.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/newtx/txbmiaX.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/newtx/txbsys.pfb><C:/Users/ADMIN/AppData/Local/Programs/M
-iKTeX/fonts/type1/public/newtx/txexs.pfb><C:/Users/ADMIN/AppData/Local/Programs
-/MiKTeX/fonts/type1/public/newtx/txmiaX.pfb><C:/Users/ADMIN/AppData/Local/Progr
-ams/MiKTeX/fonts/type1/public/newtx/txsys.pfb><C:/Users/ADMIN/AppData/Local/Pro
-grams/MiKTeX/fonts/type1/public/newtx/ztmb.pfb><C:/Users/ADMIN/AppData/Local/Pr
-ograms/MiKTeX/fonts/type1/public/newtx/ztmr.pfb><C:/Users/ADMIN/AppData/Local/P
-rograms/MiKTeX/fonts/type1/public/newtx/ztmri.pfb>
-Output written on main.pdf (20 pages, 706049 bytes).
+ 75i,16n,117p,1003b,686s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/NewTXB
+MI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/N
+ewTXMI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/new
+tx/NewTXMI7.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/tex-gyre/qtmr.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/txfonts/t1xtt.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/newtx/txbmiaX.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/newtx/txbsys.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fo
+nts/type1/public/newtx/txexs.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/newtx/txmiaX.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/newtx/txsys.pfb><C:/Users/ADMIN/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/newtx/ztmb.pfb><C:/Users/ADMIN/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/newtx/ztmr.pfb><C:/Users/ADMIN/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/newtx/ztmri.pfb>
+Output written on main.pdf (19 pages, 310765 bytes).
 PDF statistics:
- 250 PDF objects out of 1000 (max. 8388607)
- 79 named destinations out of 1000 (max. 500000)
- 48666 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 377 PDF objects out of 1000 (max. 8388607)
+ 90 named destinations out of 1000 (max. 500000)
+ 44737 words of extra memory for PDF output out of 51595 (max. 10000000)
 

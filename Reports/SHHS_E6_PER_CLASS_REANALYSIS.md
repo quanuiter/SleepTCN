@@ -26,6 +26,7 @@ the locked predictions, not as a newly regenerated protocol-approved report.
 
 | Experiment | Accuracy | Macro-F1 | Cohen's kappa | N3 precision | N3 recall | N3 F1 | N3 predicted/true |
 |---|---:|---:|---:|---:|---:|---:|---:|
+| E0 | 0.6648 | 0.5761 | 0.5339 | 0.9007 | 0.2610 | 0.4048 | 0.2898 |
 | E3 | 0.7016 | 0.6099 | 0.5801 | 0.9440 | 0.2582 | 0.4055 | 0.2735 |
 | E6 | 0.6742 | 0.5732 | 0.5408 | 0.9052 | 0.2005 | 0.3283 | 0.2215 |
 | E6 − E3 | −0.0274 | −0.0367 | −0.0392 | −0.0389 | −0.0577 | −0.0772 | −0.0520 |
@@ -55,6 +56,12 @@ Using the existing radius-1 transition definition, 44,744 epochs were selected;
 
 ## Interpretation for the manuscript
 
+The E0 control shows that the N3 failure is not specific to E3: E0 and E3 have
+near-identical N3 recall (0.2610 and 0.2582), and 16,480 (72.3%) versus 16,674
+(73.1%) of 22,806 reference N3 epochs are predicted as N2. E3 improves pooled
+performance overall but does not materially improve N3 detection over the
+15-CNN--BiLSTM control.
+
 The pre-specified follow-up hypothesis that per-record z-scoring would rescue
 N3 detection on SHHS1 is not supported. E6 has lower overall N3 recall than E3
 (0.2005 vs 0.2582), lower N3 F1 (0.3283 vs 0.4055), and remains strongly
@@ -62,7 +69,7 @@ under-emitting for N3 (predicted/true ratio 0.2215). In the transition region,
 N3 recall is essentially unchanged (0.0721 vs 0.0733).
 
 The defensible claim is consequently that per-record z-scoring does not resolve
-the observed cross-dataset N3 failure in this pipeline. The result is useful as
+the cross-model N3 failure observed on SHHS1. The result is useful as
 a negative control/sensitivity analysis, but should not be presented as an
 improvement or as proof that absolute amplitude scale alone explains the domain
 gap.

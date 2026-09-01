@@ -2,7 +2,8 @@ numpy==1.26.4
 scipy==1.13.1
 pandas==2.2.2
 scikit-learn==1.5.1
-matplotlib==3.9.1
+matplotlib==3.9.1; platform_system != "Windows"
+matplotlib==3.9.2; platform_system == "Windows"
 seaborn==0.13.2
 pyedflib==0.1.38
 PyYAML==6.0.1

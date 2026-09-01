@@ -73,13 +73,19 @@ The manuscript answers three practical questions rather than claiming a new stat
 2. Which development axis matters more under zero-shot transfer? In this experiment, preprocessing
    contrasts are larger than architectural contrasts, but the strongest such comparison is post-hoc and
    does not identify a single causal operation.
-3. Where should target-domain adaptation focus? N3→N2 and N2→REM have the greatest diagnostic
-   leverage, especially near stage transitions.
+3. Where should target-domain adaptation focus? N3→N2 is a cross-model failure in E0 and E3 and has
+   the greatest diagnostic leverage in the E3 oracle analysis; N2→REM is the second E3 target,
+   especially near stage transitions.
 
 Per-class E6 metrics have now been recovered from the locked SHHS artifacts. E6 does not rescue N3:
 recall is 0.2005 overall and 0.0721 near transitions, compared with 0.2582 and 0.0733 for E3. This result
 rules out record-wise z-scoring as a sufficient stand-alone remedy. It does **not** identify z-scoring's
 failure as a contribution by itself, and it does not establish a montage-dependent amplitude mechanism.
+
+Pooled E0 class metrics recovered from the locked run manifest show the same N3 failure: recall 0.2610
+and 16,480/22,806 N3 epochs predicted as N2, versus 0.2582 and 16,674/22,806 for E3. Therefore E3's
+overall advantage must not be described as an N3 improvement, and the 74.5% oracle value must remain
+explicitly scoped to E3 predictions.
 
 The predicted-to-true class ratio is a marginal emission diagnostic, not probability calibration.
 Label-prior shift remains a plausible contributor: a prior correction would move N3 and N1 in the

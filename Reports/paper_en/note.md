@@ -17,10 +17,10 @@
 *(Trích xuất hoàn toàn từ dữ liệu thực nghiệm sẵn có – Không cần tốn chi phí huấn luyện lại)*
 
 ### 🔹 2.1. Phân Rã Khoảng Cách Miền (Domain Gap Decomposition)
-* Khoảng cách sụt giảm khi chuyển miền **Sleep-EDF $\rightarrow$ SHHS1** ($\Delta\text{Macro-F1} = 0.1805$) không phải là sự suy giảm khuếch tán diện rộng mà tập trung vào **hai kênh nhầm lẫn chính**:
+* Phân tích phản thực trên E3 cho thấy khoảng sụt giảm **Sleep-EDF $\rightarrow$ SHHS1** ($\Delta\text{Macro-F1} = 0.1805$) có hai kênh mang đòn bẩy số học lớn nhất:
   * **Sửa riêng $N3 \rightarrow N2$:** Phục hồi **$74.5\%$** khoảng cách hiệu năng.
   * **Sửa đồng thời $N3 \rightarrow N2$ & $N2 \rightarrow \text{REM}$:** Phục hồi **$102.4\%$**, đưa Macro-F1 về ngang mức trong miền ($0.7947$ so với $0.7904$).
-* **Kết luận:** Ngoài 2 kênh lỗi đặc thù trên, mô hình hầu như bảo toàn trọn vẹn khả năng biểu diễn khi chuyển miền.
+* **Diễn giải giới hạn:** Đây là phép phản thực trên dự đoán E3 để xếp hạng đòn bẩy, không chứng minh mô hình có thể đạt mức điểm đó hoặc rằng phần biểu diễn còn lại được bảo toàn. E0 cũng có lỗi N3→N2 gần tương đương (72,3% so với 73,1% ở E3), nên đây là failure mode chuyển miền chung chứ không phải lỗi riêng của E3.
 
 ### 🔹 2.2. Loại Trừ Giả Thuyết Dịch Chuyển Tiên Nghiệm (Prior Shift)
 * Phân tích tỷ lệ $\text{Dự đoán} / \text{Thực tế}$ theo từng lớp tín hiệu:

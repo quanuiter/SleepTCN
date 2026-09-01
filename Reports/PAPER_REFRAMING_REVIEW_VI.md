@@ -20,7 +20,7 @@ sequence model, preprocessing và thu thập nhiều nhãn target-domain mà v�
 |---|---|---|---|---|
 | RQ1. TCN và ResNet-1D có tạo ra incremental benefit đủ ổn định để đáng thay kiến trúc không? | Có nên tiếp tục đầu tư vào architecture search hay không? | E1−E0 và E2−E1 trên cùng 10 fold, cùng subject, cùng protocol; kiểm định theo subject; hai seed | Không thiết lập được lợi thế dự đoán ổn định. Lợi ích chắc hơn là vận hành: pipeline nhanh hơn, nhưng lớn hơn về parameter và memory. | Ngăn việc diễn giải các chênh lệch benchmark nhỏ như bằng chứng kiến trúc vượt trội. |
 | RQ2. Lựa chọn pipeline/preprocessing nào giữ được lợi ích khi zero-shot sang SHHS1? | Trước khi có target labels, nên giữ hoặc thay phần nào của pipeline? | Hai locked comparisons E3−E0 và E3−E6 trên 180 SHHS subject; các component contrasts phụ; seed-123 sensitivity | E3 tốt hơn hai locked references; các preprocessing contrasts quan sát được lớn hơn architecture contrasts. Band-pass là ứng viên giải thích phần lớn khác biệt, nhưng E3−E2 và E4 extension là secondary/post-hoc nên chưa chứng minh nhân quả cho một operation. | Chuyển ưu tiên từ tiếp tục đổi backbone sang signal handling và target-domain evaluation. |
-| RQ3. Lỗi nào phải xử lý trước khi triển khai và generic normalisation có đủ không? | Nếu chỉ có ít nhãn SHHS, nên dùng chúng ở đâu và đánh giá metric nào? | Class-wise F1, confusion channels, transition-region metrics và E6 sensitivity | N3→N2 là ưu tiên thứ nhất; N2→REM là ưu tiên thứ hai. Per-record z-score không cứu N3, do đó không phải stand-alone remedy. Thí nghiệm kế tiếp nên là class-specific calibration hoặc limited fine-tuning có nhãn. | Biến một aggregate domain gap thành mục tiêu thích nghi và tiêu chí đánh giá cụ thể. |
+| RQ3. Lỗi nào phải xử lý trước khi triển khai và generic normalisation có đủ không? | Nếu chỉ có ít nhãn SHHS, nên dùng chúng ở đâu và đánh giá metric nào? | Class-wise F1, confusion channels, đối chiếu E0/E3, transition-region metrics và E6 sensitivity | N3→N2 là failure mode chung của E0/E3 và là ưu tiên thứ nhất; N2→REM trên E3 là ưu tiên thứ hai. Per-record z-score không cứu N3, do đó không phải stand-alone remedy. Thí nghiệm kế tiếp nên là class-specific calibration hoặc limited fine-tuning có nhãn. | Biến một aggregate domain gap thành mục tiêu thích nghi, đồng thời tránh quy sai lỗi N3 cho riêng kiến trúc E3. |
 
 ## Vai trò đúng của E6 và z-score
 
@@ -45,7 +45,7 @@ coi một thay đổi scale toàn cục là giải pháp deployment cho lỗi N3
 3. Bốn pre-specified contrasts và nhãn rõ ràng cho secondary/post-hoc analyses.
 4. Một bảng kết quả Sleep-EDF, một bảng paired effects và seed sensitivity.
 5. Locked SHHS results của E0, E3, E6; component contrasts chỉ dùng để hỗ trợ diễn giải.
-6. N3→N2 và N2→REM error channels, cùng transition-region N3 recall.
+6. Đối chiếu E0/E3 cho N3→N2, phân tích N2→REM của E3 và transition-region N3 recall; ghi rõ phản thực 74,5% được tính trên E3.
 7. E6 N3 metrics như sensitivity result, không gọi là contribution.
 8. Operational trade-off: latency, parameter count và memory.
 9. Limitations ảnh hưởng trực tiếp đến inference: hai seed, một external cohort, ground-truth-anchored

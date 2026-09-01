@@ -57,6 +57,22 @@ kênh trên Sleep-EDF Expanded — Sleep Cassette. Nghiên cứu tập trung và
 `STATUS_V2.md` là tài liệu chính thức về trạng thái và phạm vi kết luận. Các protocol và runbook ghi lại
 thiết kế thực nghiệm, điều kiện tái lập và nguồn gốc của từng nhóm kết quả.
 
+## Demo bảo vệ khóa luận
+
+Giao diện Streamlit được giữ ở một màn hình trực quan: chọn bản ghi, xem số epoch W/N1/N2/N3/REM, đọc
+timeline bậc thang của cả đêm ngủ và lọc epoch theo W/N1/N2/N3/REM để xem 30 giây EEG cùng giai đoạn tương ứng.
+Người xem chọn một model E3 hoặc E0; cả bản ghi mẫu lẫn EDF tải lên đều hiển thị rõ đây là dự đoán của model đã
+chọn. Toàn bộ so sánh model, kiểm định và số liệu nghiên cứu được giữ trong báo cáo thay vì nhồi vào demo.
+
+```powershell
+python -m pip install -e ".[demo]"
+python -m streamlit run demo/app.py
+```
+
+Chuẩn bị prediction artifact/checkpoint local cho E3/E0 bằng
+`python scripts/prepare_demo_assets.py --ref run-in-docker --fold 0 --seed 123`.
+Hướng dẫn đầy đủ và kịch bản trình bày: `docs/DEMO_STREAMLIT.md`.
+
 ## Phạm vi và giới hạn
 
 - Sleep-EDF Expanded 1.0.0, Sleep Cassette, EEG Fpz-Cz 100 Hz, epoch 30 giây.

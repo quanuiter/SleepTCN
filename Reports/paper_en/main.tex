@@ -139,9 +139,11 @@ Tesla V100 benchmark, the ResNet-1D--TCN pipeline had $3.76\times$ lower forward
 memory. Observed training-and-validation wall-clock time was 10.2--12.2$\times$ lower for the
 ResNet-1D--TCN configurations. On SHHS1, E3 exceeded the control by $0.0412$ subject-mean \mf\
 (\ci\ $[0.0314,0.0512]$; Holm $p=2.65\times10^{-13}$) and E6 by $0.0274$. Its pooled \mf\ nevertheless
-fell to 0.6099. N3 F1 decreased by 0.4030; 73.1\% of true N3 epochs were assigned to N2, and N3 recall
-was 0.2582 overall and 0.0733 near stage transitions. E6 did not resolve this error (N3 recall 0.2005
-overall and 0.0721 near transitions).
+fell to 0.6099. Its overall advantage did not extend to N3: E0 and E3 assigned 72.3\% and 73.1\% of
+true N3 epochs to N2 and achieved near-identical N3 recall (0.2610 and 0.2582). Thus, N3
+under-detection was a shared transfer failure across the two evaluated pipelines rather than an
+E3-specific defect. E6 did
+not resolve it (N3 recall 0.2005 overall and 0.0721 near transitions, versus 0.0733 for E3).
 
 \noindent
 \textbf{Conclusions.} The architectural substitutions offered an operational advantage but did not
@@ -199,9 +201,10 @@ Our contributions are the following.
 sequence-model, encoder and preprocessing changes under shared partitions and model-selection rules.
 \item A locked zero-shot evaluation on 180 SHHS Visit-1 participants, showing that the ranking and
 magnitude of design choices can differ between internal validation and cross-cohort use.
-\item A class- and confusion-channel analysis that turns an aggregate transfer loss into two priorities
-for adaptation: under-detection of N3 as N2 and over-detection of REM from N2. The accompanying E6
-sensitivity analysis shows that per-record normalisation alone does not resolve the N3 failure.
+\item A class- and confusion-channel analysis showing that under-detection of N3 as N2 recurs in both
+the 15-CNN--BiLSTM control and ResNet-1D--TCN, while over-detection of REM from N2 is a second E3
+priority. The accompanying E6 sensitivity analysis shows that per-record normalisation alone does not
+resolve the cross-model N3 failure.
 \item A quantified operational trade-off: the implemented ResNet-1D--TCN pipeline reduces measured
 forward latency and training-and-validation wall-clock time relative to the 15-branch CNN--BiLSTM
 control, while increasing parameter count and peak memory and without establishing predictive
@@ -921,7 +924,9 @@ E3's pooled \mf\ falls from $0.7904$ in domain to $0.6099$ out of domain, a gap 
 aggregate gap does not indicate whether adaptation requires broad retraining or a targeted correction.
 We therefore localise the loss by class and confusion channel. This is a prioritisation analysis: it
 identifies where an intervention could recover the most performance, but does not by itself identify
-the physiological or acquisition mechanism that generated the errors.
+the physiological or acquisition mechanism that generated the errors. Throughout this analysis,
+A$\rightarrow$B denotes a reference-labelled A epoch predicted as B; it does not denote a physiological
+stage transition over time.
 
 \begin{table}[t]
 \centering
@@ -946,7 +951,30 @@ REM & 0.8343 & 1.017 & 0.6052 & 0.8939 & 0.7218 & \textbf{1.477} & $-0.1125$ \\
 \end{tabular}}
 \end{table}
 
-Three facts in Table~\ref{tab:transfer-perclass} constrain the next intervention.
+The N3 failure is not unique to E3 (Table~\ref{tab:n3-crossmodel}). On the same 22{,}806 reference N3
+epochs, E0 predicts 16{,}480 as N2 (72.3\%) and attains N3 recall 0.2610; E3 predicts 16{,}674 as N2
+(73.1\%) and attains recall 0.2582. Their N3 F1 scores are also nearly identical (0.4048 and 0.4055),
+although E3 has higher pooled \mf\ overall. The architecture-and-pipeline replacement therefore improves
+aggregate transfer performance but does not resolve N3 detection.
+
+\begin{table}[t]
+\centering
+\caption{Cross-model N3 behaviour on the locked SHHS1 sample. N3$\rightarrow$N2 denotes a
+reference-labelled N3 epoch predicted as N2.}
+\label{tab:n3-crossmodel}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Configuration} & \textbf{Pooled \mf} & \textbf{N3 Prec.} & \textbf{N3 Rec.} & \textbf{N3 F1} & \textbf{N3$\rightarrow$N2} \\
+\midrule
+E0: 15-CNN--BiLSTM & 0.5761 & 0.9007 & 0.2610 & 0.4048 & 16{,}480 (72.3\%) \\
+E3: ResNet-1D--TCN & 0.6099 & 0.9440 & 0.2582 & 0.4055 & 16{,}674 (73.1\%) \\
+E6: E3 + record $z$-score & 0.5732 & 0.9052 & 0.2005 & 0.3283 & 17{,}764 (77.9\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Four facts constrain the next intervention.
 
 \paragraph{(i) The degradation is dominated by one class.} N3's F1 falls by $0.4030$; the other four
 classes fall by $0.09$--$0.18$. N3 alone contributes $45\%$ of the total macro-averaged drop.
@@ -958,7 +986,12 @@ labelled N2. This precision--recall asymmetry is consistent with an N3 decision 
 conservative for SHHS1, although it does not reveal whether the cause is montage, age, scoring practice,
 signal morphology or a combination of these factors.
 
-\paragraph{(iii) Label-prior shift is plausible but not sufficient as an explanation.} SHHS1 contains
+\paragraph{(iii) The N3 deficit persists across model families.} E0 and E3 have nearly identical N3
+recall and N3$\rightarrow$N2 rates despite different epoch encoders, sequence models and input
+processing. This recurrence argues against attributing the failure specifically to ResNet-1D or TCN;
+because several components differ simultaneously, it does not identify a common causal mechanism.
+
+\paragraph{(iv) Label-prior shift is plausible but not sufficient as an explanation.} SHHS1 contains
 $2.02\times$ the N3 share of Sleep-EDF, while E3 emits N3 at only $0.273\times$ its required rate. It
 contains $0.38\times$ the N1 share, while E3 over-emits N1 by $2.151\times$. A prior-shift correction
 would directionally increase N3 and decrease N1 probabilities~\cite{saerens2002adjusting}; it could
@@ -986,11 +1019,12 @@ E3 on Sleep-EDF (reference) & 0.7904 & --- \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:gap-decomposition} makes the prioritisation quantitative. An oracle correction of the
-single N3$\rightarrow$N2 channel recovers 74.5\% of the numerical cross-cohort gap, while the
+Table~\ref{tab:gap-decomposition} makes the E3 prioritisation quantitative. An oracle correction of the
+single N3$\rightarrow$N2 channel in E3 recovers 74.5\% of its numerical cross-cohort gap, while the
 N2$\rightarrow$REM channel recovers 27.5\%. Macro-F1 is nonlinear, so these percentages are not
 additive; neither value is achievable performance or evidence of a causal mechanism. They rank the two
-error channels by potential leverage for a subsequent adaptation study.
+E3 error channels by potential leverage for a subsequent adaptation study. The similar N3 deficit in
+E0 supports the adaptation target, but the 74.5\% value itself is not an E0--E3 architectural contrast.
 
 The second channel, N2$\rightarrow$REM (11{,}605 epochs, $15.2\%$ of true N2), shows the
 mirror-image pattern: REM is over-emitted at $1.477\times$ with recall $0.894$ but precision only
@@ -1082,10 +1116,12 @@ difference and provide no evidence that fixed scaling adds a transfer benefit. T
 identify preprocessing as the more promising development axis, but they do not establish a causal or
 universal contribution for any single operation.
 
-The third question asked where adaptation should focus. N3$\rightarrow$N2 and N2$\rightarrow$REM carry
-the greatest oracle leverage, with the N3 deficit becoming extreme near stage transitions.
-Record-wise $z$-scoring does not repair N3, so the evidence favours a labelled, class-specific
-target-domain calibration experiment over another generic normalisation change.
+The third question asked where adaptation should focus. N3$\rightarrow$N2 recurs at essentially the
+same rate in E0 and E3, while the E3 oracle analysis ranks it above N2$\rightarrow$REM in potential
+leverage; the N3 deficit becomes extreme near stage transitions. The evidence therefore identifies a
+target-domain failure shared across the evaluated pipelines, not an E3-specific weakness. Record-wise $z$-scoring does not
+repair N3, so a labelled, class-specific target-domain calibration experiment is better motivated than
+another generic architecture or normalisation change.
 
 \iffalse
 \subsection{Interpretation of the supporting analyses}
@@ -1104,7 +1140,9 @@ cross-cohort comparisons.
 \subsection{From error localisation to an adaptation decision}
 
 The high precision and low recall of N3, the concentration of N3 errors in N2, and the further recall
-loss near stage transitions are consistent with a conservative N3 decision boundary in SHHS1. Montage
+loss near stage transitions are consistent with a conservative N3 decision boundary in SHHS1. E0's
+near-identical N3 recall and N3$\rightarrow$N2 rate show that this failure persists across the two model
+families evaluated; they do not identify a shared causal mechanism. Montage
 and age are plausible contributors: the model was trained on Fpz--Cz in a younger cohort and evaluated
 on C4--A1 in an older cohort, while slow-wave amplitude varies with both derivation and
 age~\cite{massimini2004travelling,ohayon2004metaanalysis}. However, montage, population, acquisition and
@@ -1191,7 +1229,9 @@ differences were preserved for every comparison, the full per-subject \mf\ distr
 archived, so we cannot report the dispersion (IQR, range) of individual performance or identify which
 participants the models handle worst. For a metric whose clinical relevance is inherently per-patient
 this is a limitation. Per-class SHHS metrics have now been recovered for E6 from the locked prediction
-artifacts; corresponding class-wise results for E0 and E1 remain unavailable.
+artifacts. Pooled class-wise results for E0 have also been recovered from the locked run manifest and
+support the cross-model N3 comparison; corresponding class-wise results for E1 and transition-region
+N3 metrics for E0 remain unavailable.
 
 Ordered by expected practical value, we would prioritise: (1) class-specific calibration or limited
 fine-tuning on the held-out SHHS adaptation participants, evaluated on N3 recall and false-positive rate
@@ -1215,11 +1255,12 @@ component difference was associated with preprocessing under a fixed architectur
 the practical priority from further architecture replacement to signal handling and target-domain
 evaluation, without establishing any individual preprocessing operation as causal.
 
-Most importantly, the aggregate transfer loss resolves into concrete adaptation targets. N3 is
-systematically under-called as N2, especially near stage transitions, and N2 is frequently over-called
-as REM. Per-record $z$-scoring does not repair the N3 deficit, so generic normalisation is not a
-sufficient deployment remedy. The evidence supports a targeted, labelled adaptation study on these
-decision boundaries; it does not yet support a physiological mechanism or clinical deployment claim.
+Most importantly, the aggregate transfer loss resolves into concrete adaptation targets. E0 and E3
+both systematically under-call N3 as N2, showing that E3's overall transfer advantage does not solve
+N3 detection; N2 is also frequently over-called as REM by E3. Per-record $z$-scoring does not repair
+the N3 deficit, so neither the evaluated architecture changes nor generic normalisation is sufficient
+deployment remedy. The evidence supports a targeted, labelled adaptation study on these decision
+boundaries; it does not yet support an architecture-specific, physiological or clinical claim.
 
 %------------------------------------------------------------------------------
 \subsection*{Reproducibility and data availability}
@@ -1228,7 +1269,12 @@ Source code, experimental protocols, data partitions, run manifests and aggregat
 retained in the project repository. Sleep-EDF Expanded is publicly available from PhysioNet. SHHS is
 accessed through the NSRR under its data use agreement; participant-level derived data are not
 redistributed. Checkpoints are verified by SHA-256 before loading, and the locked SHHS predictions used
-for the reported analyses were hash-verified against their run manifests.
+for the reported analyses were hash-verified against their run manifests. The E6 class-wise results are
+therefore reported as a descriptive reanalysis of these locked predictions. Protocol-level provenance
+has not yet been fully reconciled because the protocol file in the current source checkout does not
+match the protocol hash recorded in the run manifest; consequently, we do not describe this analysis as
+a rerun from the current protocol. The corresponding protocol version, or a hash-verified reconciliation
+record, is required before release of the complete reproducibility package.
 
 \subsection*{Ethics}
 

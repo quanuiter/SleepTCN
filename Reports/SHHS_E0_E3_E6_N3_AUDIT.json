@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "analysis_scope": "descriptive cross-model N3 audit on the locked SHHS1 zero-shot test sample",
+  "class_order": ["W", "N1", "N2", "N3", "REM"],
+  "valid_epochs": 169012,
+  "n3_reference_epochs": 22806,
+  "source": {
+    "artifact": "SHHS1 zero_shot_v1 test run_manifest.json",
+    "run_manifest_sha256": "f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf",
+    "protocol_sha256_recorded_by_manifest": "165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93"
+  },
+  "experiments": {
+    "E0": {
+      "description": "15-CNN plus BiLSTM control on raw input",
+      "pooled_macro_f1": 0.5761078125229547,
+      "pooled_accuracy": 0.6648226161455991,
+      "pooled_cohen_kappa": 0.5339418496393045,
+      "n3_precision": 0.900741413224391,
+      "n3_recall": 0.2610277997018329,
+      "n3_f1": 0.40475947645758964,
+      "n3_predicted_true_ratio": 0.289792159957906,
+      "n3_to_n2_count": 16480,
+      "n3_to_n2_fraction_of_true_n3": 0.7226168552135403,
+      "confusion_matrix": [
+        [22435, 7290, 1880, 126, 5252],
+        [288, 4090, 372, 9, 2243],
+        [1311, 8379, 55433, 433, 10731],
+        [171, 59, 16480, 5953, 143],
+        [138, 464, 792, 88, 24452]
+      ]
+    },
+    "E3": {
+      "description": "ResNet-1D plus TCN with the primary preprocessing condition",
+      "pooled_macro_f1": 0.609888602120497,
+      "pooled_accuracy": 0.7016010697465269,
+      "pooled_cohen_kappa": 0.5800586269995739,
+      "n3_precision": 0.944043610710277,
+      "n3_recall": 0.25817767254231344,
+      "n3_f1": 0.40546775470853563,
+      "n3_predicted_true_ratio": 0.273480662983425,
+      "n3_to_n2_count": 16674,
+      "n3_to_n2_fraction_of_true_n3": 0.7310356923616592,
+      "confusion_matrix": [
+        [29638, 4481, 1171, 21, 1672],
+        [874, 3807, 601, 3, 1717],
+        [2348, 5947, 56063, 324, 11605],
+        [78, 39, 16674, 5888, 127],
+        [655, 784, 1311, 1, 23183]
+      ]
+    },
+    "E6": {
+      "description": "ResNet-1D plus TCN with record-wise z-scoring",
+      "pooled_macro_f1": 0.5732381968851918,
+      "pooled_accuracy": 0.6742006484746645,
+      "pooled_cohen_kappa": 0.5408191414417611,
+      "n3_precision": 0.905186064924782,
+      "n3_recall": 0.20051740769972815,
+      "n3_f1": 0.32830784693804294,
+      "n3_predicted_true_ratio": 0.221520652459879,
+      "n3_to_n2_count": 17764,
+      "n3_to_n2_fraction_of_true_n3": 0.7789178286415855,
+      "confusion_matrix": [
+        [30353, 3992, 1133, 15, 1490],
+        [1088, 3628, 537, 0, 1749],
+        [2586, 7033, 54628, 462, 11578],
+        [236, 54, 17764, 4573, 179],
+        [1095, 1679, 2392, 2, 20766]
+      ]
+    }
+  },
+  "interpretation": {
+    "supported": "N3 under-detection as N2 recurs in E0, E3 and E6; E3 improves overall pooled performance over E0 but does not improve N3 recall or N3 F1 materially.",
+    "not_supported": "The N3-to-N2 failure is caused specifically by ResNet-1D, TCN, preprocessing, or a physiological mechanism."
+  }
+}

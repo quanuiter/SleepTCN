@@ -19,6 +19,7 @@ PDF bàn giao được lưu tại `Reports/output/pdf/SleepTCN_Scientific_Articl
 - Phân tích E1/E2 trên SHHS1 là bằng chứng thứ cấp vì cohort đã được mở cho E0/E3/E6.
 - Seed 42 là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức trên cùng split. Hai seed được báo cáo riêng và không gộp p-value.
 - Không tuyên bố tương đương, không thua kém, P/N vô dụng, ResNet luôn tốt hơn, hoặc mô hình tiết kiệm tham số.
+- Không diễn giải lợi thế Macro-F1 của E3 như cải thiện N3: E0/E3 có recall N3 0,2610/0,2582 và tỷ lệ N3→N2 72,3%/73,1%; phép phản thực 74,5% chỉ áp dụng cho dự đoán E3.
 
 ## Kiểm tra trước khi nộp
 

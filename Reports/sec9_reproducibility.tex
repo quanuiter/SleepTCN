@@ -31,7 +31,7 @@ Lần lặp seed 123 dùng cùng dữ liệu, phép chia và họ cấu hình. C
 
 Phân tích E6 theo lớp được tính trực tiếp từ 180 artifact dự đoán zero-shot đã khóa trên ổ ngoài. Chiến dịch được đánh dấu hoàn tất, test gate đạt, toàn bộ 180 mã băm artifact E6 khớp run manifest, và ma trận nhầm lẫn tính lại theo từng bản ghi khớp giá trị trong manifest. Vì vậy, các chỉ số E6 mới trong báo cáo là phép tái phân tích mô tả của dự đoán đã tồn tại, không phải một lượt suy luận mới.
 
-Một điểm provenance phải được giải quyết trước khi phát hành gói tái lập: run manifest trên ổ ngoài ghi protocol SHA-256 là \seqsplit{165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93}, trong khi tệp protocol đang checkout có SHA-256 \seqsplit{9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9}. Sai khác này không làm thay đổi dự đoán đã khóa hoặc phép tính lại, nhưng ngăn việc tuyên bố rằng báo cáo vừa được tái sinh từ protocol hiện tại. Trước khi nộp, cần khôi phục đúng phiên bản protocol tương ứng với run manifest hoặc lập biên bản đối chiếu thay đổi và khóa lại gói provenance.
+Các dự đoán E6 và chỉ số tính lại đã được xác minh ở cấp artifact, nhưng provenance ở cấp protocol chưa được đối chiếu hoàn tất: mã SHA-256 của protocol ghi trong run manifest (\seqsplit{165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93}) khác mã của tệp protocol trong phiên bản mã nguồn hiện tại (\seqsplit{9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9}). Vì vậy, phân tích E6 được diễn giải là phép tái phân tích mô tả từ các dự đoán đã khóa, không phải một lượt tái sinh từ protocol hiện tại. Trước khi phát hành gói tái lập đầy đủ, cần khôi phục đúng phiên bản protocol tương ứng với run manifest hoặc công bố một biên bản đối chiếu thay đổi có mã băm.
 
 \subsection{Tình trạng dữ liệu dẫn xuất}
 
@@ -53,7 +53,7 @@ Thay kiến trúc riêng lẻ chưa cho ưu thế dự báo ổn định & ResNe
 ResNet-1D--TCN nhanh hơn và gọn hơn về vận hành & Mô hình nhẹ hơn về tham số hoặc bộ nhớ \\
 E3 cao hơn E0/E6 trên mẫu SHHS1 đã khóa & E3 đã giải quyết dịch chuyển miền hoặc vượt SOTA \\
 E3--E2/E4 gợi ý ưu tiên trục tiền xử lý & Một thao tác tiền xử lý riêng là nguyên nhân \\
-N3$\rightarrow$N2 có đòn bẩy phản thực lớn nhất & Sửa kênh này chắc chắn đạt \mf\ 0,7444 \\
+N3$\rightarrow$N2 tái diễn ở E0/E3 và có đòn bẩy phản thực lớn nhất trên E3 & E3 gây ra lỗi này hoặc sửa kênh này chắc chắn đạt \mf\ 0,7444 \\
 E6 không sửa được lỗi N3 trong pipeline này & Biên độ tuyệt đối không liên quan đến N3 \\
 Gate 8 chưa cho thấy giá trị biên của P/N & Ngữ cảnh thời gian hoàn toàn vô dụng \\
 Silhouette không phù hợp để chọn encoder ở đây & Embedding CNN tốt hơn ResNet cho mọi nhiệm vụ \\
