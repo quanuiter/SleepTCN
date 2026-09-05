@@ -26,7 +26,7 @@ Lọc dải và z-score & 0,5--30 Hz & Có & Theo bản ghi \\
 \end{tabularx}
 \end{table}
 
-Lọc dải được thực hiện trên tín hiệu liên tục trước khi chia epoch và không tạo lệch pha. Đây là lựa chọn phù hợp cho đánh giá ngoại tuyến. Chế độ chia hằng số bảo toàn quan hệ biên độ tương đối sau khi giới hạn biên độ, trong khi z-score chuẩn hóa từng bản ghi theo trung bình và độ lệch chuẩn của chính bản ghi đó.
+Lọc dải được thực hiện trên tín hiệu liên tục trước khi chia epoch và không tạo lệch pha. Đây là lựa chọn phù hợp cho đánh giá ngoại tuyến. Chế độ chia hằng số bảo toàn quan hệ biên độ tương đối sau khi giới hạn biên độ. Với E6, trung bình và độ lệch chuẩn được tính từ toàn bộ tín hiệu đã lọc và cắt của chính bản ghi đích, không dùng nhãn; cách làm này có tính transductive ở cấp bản ghi và không phải suy luận zero-shot thuần inductive.
 
 \subsection{Kiểm định tính nhất quán}
 

@@ -1,0 +1,583 @@
+Supplementary Material
+Controlled Component Comparisons and Cross-Cohort Failure Analysis for Single-Channel EEG Sleep
+Staging
+Ngo Nhat Quan and Pham Thai Son
+This supplement contains implementation details and descriptive tables moved from the main manuscript. The evidence
+labels are unchanged: seed 42 is primary, seed 123 is a post-protocol sensitivity repeat, SHHS1 E1/E2 analyses are secondary
+on an opened cohort, and SHHS1 E3–E2/E4 analyses are post-hoc. E6 estimates mean and standard deviation from each
+complete unlabelled target recording; it is label-free but transductive at recording level, not purely inductive zero-shot inference.
+
+Supplementary Methods S1: model and training details
+The control encoder contains 15 CNN branches: three context groups (current, previous and next; C/P/N) crossed with five
+stage-specific detectors. Each branch uses two convolutional blocks and a small head; their outputs form a 75-dimensional
+feature vector. The ResNet-1D encoder uses a convolutional stem, three residual blocks and global average pooling to produce
+a 128-dimensional representation from the current epoch only. Thus, E1–E0 isolates the sequence-model substitution, whereas
+E2–E1 replaces the encoder, removes explicit P/N context and changes feature dimension.
+The TCN projects inputs to 128 dimensions and uses six residual blocks with dilations 1, 2, 4, 8, 16 and 32, symmetric
+padding and dropout 0.2, giving a 253-epoch receptive field. The BiLSTM has 128 hidden units per direction. Encoders are
+fitted first, selected on validation data, hash-verified and used to cache features without gradients; sequence models are then
+fitted on these frozen caches. CNN and BiLSTM optimisation uses Adam; ResNet-1D uses AdamW; TCN uses Adam. Exact
+learning rates are 10−3 , 10−2 , 10−3 and 5 × 10−4 , respectively. Batch sizes are 64 epochs for encoders, four recordings for
+BiLSTM and eight recordings for TCN. No label smoothing or data augmentation is used.
+
+Supplementary results
+Table 1: S1. Per-class Sleep-EDF metrics for E3 and E6 (seed 42).
+Stage
+
+E3 Prec.
+
+E3 Rec.
+
+E3 F1
+
+E6 Prec.
+
+E6 Rec.
+
+E6 F1
+
+ΔF1
+
+W
+N1
+N2
+N3
+REM
+
+.9338
+.5149
+.8583
+.8072
+.8274
+
+.9271
+.5410
+.8447
+.8097
+.8413
+
+.9304
+.5276
+.8514
+.8085
+.8343
+
+.9391
+.5032
+.8401
+.7160
+.8227
+
+.9169
+.5219
+.8368
+.7779
+.8197
+
+.9279
+.5124
+.8385
+.7457
+.8212
+
++.0026
++.0152
++.0130
++.0628
++.0131
+
+Table 2: S2. Pooled E3 confusion matrix on Sleep-EDF (rows: reference; columns: prediction).
+
+W
+N1
+N2
+N3
+REM
+
+W
+
+N1
+
+N2
+
+N3
+
+REM
+
+61,133
+3,283
+539
+30
+483
+
+3,888
+11,643
+5,496
+45
+1,542
+
+416
+4,867
+58,394
+2,377
+1,984
+
+56
+105
+2,271
+10,558
+90
+
+448
+1,624
+2,432
+29
+21,736
+
+1
+
+Table 3: S3. Sleep-EDF macro-F1 under two fixed seeds.
+Configuration
+
+Seed 42
+
+Seed 123
+
+Difference
+
+.7754
+.7802
+.7835
+.7904
+.7891
+.7691
+
+.7755
+.7776
+.7828
+.7883
+.7887
+.7780
+
++.0000
+-.0026
+-.0007
+-.0022
+-.0004
++.0089
+
+E0
+E1
+E2
+E3
+E4
+E6
+
+Table 4: S4. Seed sensitivity of pre-specified Sleep-EDF contrasts; Holm correction is within seed.
+
+Contrast
+
+Seed 42: Δ [95% CI], 𝑝 Holm
+
+Seed 123: Δ [95% CI], 𝑝 Holm
+
+E1–E0
+E2–E1
+E3–E2
+E3–E6
+
+.004811 [−.000915, .010193], .1022
+.003251 [−.002370, .008808], .1036
+.006962 [.000305, .014520], .8989
+.021319 [.012179, .030698], .0012
+
+.002188 [−.002870, .007043], .9130
+.005143 [−.000571, .011292], .2400
+.005478 [−.002611, .015796], .9130
+.010249 [.002435, .017989], .1313
+
+Table 5: S5. Seed-123 wall-clock training and validation time (10 folds, sequential, same GPU).
+Configuration
+E0: 15-CNN + BiLSTM
+E1: 15-CNN + TCN
+E2: ResNet-1D + TCN
+E3: fixed scale
+E4: band-pass
+E6: target-record 𝑧-score
+
+Total
+
+Mean per fold
+
+33 h 35 min 36 s
+14 min 17 s
+2 h 44 min 57 s
+3 h 16 min 40 s
+2 h 55 min 56 s
+2 h 24 min 44 s
+
+3 h 21 min 34 s
+1 min 26 s
+16 min 30 s
+19 min 40 s
+17 min 36 s
+14 min 28 s
+
+Table 6: S6. Seed-123 sensitivity on the same 180 SHHS1 participants.
+
+ID
+
+Subject-mean macro-F1
+
+Pooled macro-F1
+
+Accuracy
+
+𝜅
+
+E0
+E2
+E3
+E4
+E6
+
+.5303
+.5409
+.5634
+.5732
+.5503
+
+.5785
+.5858
+.6031
+.6147
+.5865
+
+.6738
+.6874
+.7003
+.7064
+.6873
+
+.5420
+.5597
+.5772
+.5869
+.5552
+
+2
+
+Table 7: S7. Per-class transfer of E3; Pred/True is a marginal emission ratio, not calibration.
+
+Stage
+W
+N1
+N2
+N3
+REM
+
+Sleep-EDF
+F1 Pred/True
+.9304
+.5276
+.8514
+.8085
+.8343
+
+.993
+1.051
+.984
+1.003
+1.017
+
+Prec.
+
+SHHS1
+Rec.
+F1
+
+.8823
+.2528
+.7394
+.9440
+.6052
+
+.8014
+.5437
+.7349
+.2582
+.8939
+
+Pred/True
+
+ΔF1
+
+.908
+2.151
+.994
+.273
+1.477
+
+-.0905
+-.1824
+-.1143
+-.4030
+-.1125
+
+.8399
+.3451
+.7372
+.4055
+.7218
+
+Table 8: S8. Pooled E3 confusion matrix on SHHS1 (rows: reference; columns: prediction).
+
+W
+N1
+N2
+N3
+REM
+
+W
+
+N1
+
+N2
+
+N3
+
+REM
+
+29,638
+874
+2,348
+78
+655
+
+4,481
+3,807
+5,947
+39
+784
+
+1,171
+601
+56,063
+16,674
+1,311
+
+21
+3
+324
+5,888
+1
+
+1,672
+1,717
+11,605
+127
+23,183
+
+Table 9: S9. Per-class SHHS1 metrics for E3 and E2.
+
+Stage
+
+E3 Prec.
+
+E3 Rec.
+
+E3 F1
+
+E2 Prec.
+
+E2 Rec.
+
+E2 F1
+
+ΔF1
+
+W
+N1
+N2
+N3
+REM
+
+.8823
+.2528
+.7394
+.9440
+.6052
+
+.8014
+.5437
+.7349
+.2582
+.8939
+
+.8399
+.3451
+.7372
+.4055
+.7218
+
+.8780
+.2367
+.7362
+.9659
+.4886
+
+.7275
+.3528
+.6937
+.2496
+.9450
+
+.7957
+.2833
+.7143
+.3967
+.6442
+
++.0442
++.0618
++.0228
++.0087
++.0776
+
+Table 10: S10. Oracle prioritisation on E3 predictions. Values are potential leverage, not achievable performance.
+Condition
+Observed E3 on SHHS1
+Correct N3→N2 only
+Correct N2→REM only
+E3 on Sleep-EDF
+
+macro-F1
+
+Numerical gap recovered
+
+.6099
+.7444
+.6596
+.7904
+
+—
+.1345 (74.5%)
+.0497 (27.5%)
+—
+
+Table 11: S11. Post-hoc reference-label boundary and stable-interior diagnostic (seed 42).
+Cohort
+
+ID
+
+Boundary macro-F1
+
+Stable macro-F1
+
+Boundary N3 recall
+
+Stable N3 recall
+
+Sleep-EDF
+Sleep-EDF
+SHHS1
+SHHS1
+
+E0
+E3
+E0
+E3
+
+.6179
+.6321
+.4323
+.4689
+
+.8175
+.8346
+.5959
+.6220
+
+.6121
+.6326
+.0633
+.0733
+
+.9216
+.9316
+.4008
+.3900
+
+E6 N3 recall is 0.2005 overall and 0.0721 in the same SHHS1 boundary neighbourhood, compared with 0.2582 and 0.0733 for
+E3. These regions use reference labels on both sides and are offline diagnostics, not physiological transitions or deployable
+detectors.
+3
+
+Supplementary analyses: representation and context
+The mean silhouette coefficient is 0.2126 (SD 0.0356) for E1 and 0.1048 (SD 0.0229) for E2. This comparison is descriptive:
+E1 consists of 75 class-posterior features, whereas E2 is an unconstrained 128-dimensional representation, so silhouette is not
+a like-for-like measure of downstream utility.
+Table 12: S12. Context-group ablation within E1.
+Condition
+
+Overall macro-F1
+
+Δ vs C
+
+Boundary macro-F1
+
+Δ vs C
+
+N1 F1
+
+.777477
+.777733
+.781585
+.780230
+
+—
++.000257
++.004108
++.002753
+
+.619102
+.617686
+.618895
+.620055
+
+—
+-.001416
+-.000207
++.000953
+
+.5011
+.5022
+.5055
+.5115
+
+C
+CP
+CN
+CPN
+
+For the pre-specified CPN–C boundary comparison, Δmacro-F1 = 0.000953, 95% CI [−0.004588, 0.006568] and Holm
+𝑝 = 1.000 (36/78 subjects improved). Secondary CPN–CP and CPN–CN intervals also include zero with Holm 𝑝 = 1.000.
+The result does not show that temporal context or P/N information is useless; it only finds no detectable marginal benefit for
+this encoding in E1.
+
+(a) Silhouette by fold.
+
+(b) Context-ablation effects.
+
+Figure 1: S1. Supporting representation and context analyses.
+
+Provenance limitation
+Prediction artifacts and recomputed metrics are hash-verified. The SHHS run-manifest protocol hash (‘165d7cdf...fe93‘)
+matches the retained historical snapshot configs/shhs_zero_shot_v1.json; the currently checked-out configs/shhs_
+v1_protocol.json (‘9541e233...fe9‘) is an expanded post-run audit record, not a replacement. The reconciliation is recorded
+in Reports/SHHS_PROTOCOL_PROVENANCE.md. This resolves the snapshot-level provenance discrepancy, while raw SHHS
+data and prediction artifacts remain outside the repository and E6 remains a descriptive reanalysis of locked predictions.
+
+4
+
+

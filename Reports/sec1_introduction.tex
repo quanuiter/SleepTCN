@@ -11,7 +11,7 @@ Nghiên cứu tập trung vào bốn câu hỏi gắn với quyết định phá
 
 \begin{enumerate}
   \item Các thay thế BiLSTM$\rightarrow$TCN và CNN$\rightarrow$ResNet-1D có tạo lợi ích dự báo đủ ổn định để biện minh cho thay đổi kiến trúc, hay giá trị chính chỉ nằm ở vận hành?
-  \item Trong cùng họ ResNet-1D--TCN, pipeline xử lý tín hiệu nào giữ thứ hạng tốt hơn khi đi từ Sleep-EDF sang SHHS1 zero-shot?
+  \item Trong cùng họ ResNet-1D--TCN, pipeline xử lý tín hiệu nào giữ thứ hạng tốt hơn khi chuyển từ Sleep-EDF sang SHHS1 mà không cập nhật trọng số?
   \item Khoảng hụt ngoài miền tập trung ở lớp và kênh nhầm lẫn nào; một biện pháp rẻ là z-score theo bản ghi có giải quyết được lỗi chi phối hay không?
   \item Quy trình kiểm soát có đủ để phân biệt kết quả dự báo chính với bằng chứng hỗ trợ về tốc độ, hình học biểu diễn và ngữ cảnh cục bộ hay không?
 \end{enumerate}
@@ -24,13 +24,13 @@ Trong phạm vi một nghiên cứu thực nghiệm, báo cáo đóng góp:
 
 \begin{itemize}
   \item một hồ sơ thực nghiệm bắt cặp theo đối tượng, tách rõ kiểm soát tính hợp lệ, kết quả xác nhận, phân tích hậu nghiệm và phần mở rộng sau giao thức;
-  \item bằng chứng rằng các thay thế kiến trúc riêng lẻ chưa tạo ưu thế dự báo ổn định, trong khi ResNet-1D--TCN đem lại đánh đổi vận hành đo được;
-  \item một đánh giá zero-shot trên mẫu SHHS1 đã khóa, cho thấy toàn bộ pipeline E3 giữ lợi thế so với hai đối chứng đã định trước nhưng vẫn chịu khoảng hụt chuyển miền lớn;
+  \item bằng chứng rằng phép thay mô hình chuỗi E1--E0 và phép thay gói đặc trưng/ngữ cảnh E2--E1 chưa tạo ưu thế dự báo ổn định, trong khi ResNet-1D--TCN đem lại đánh đổi vận hành đo được;
+  \item một đánh giá chuyển miền không cập nhật trọng số trên mẫu SHHS1 đã khóa, cho thấy toàn bộ pipeline E3 giữ lợi thế so với hai đối chứng đã định trước nhưng vẫn chịu khoảng hụt chuyển miền lớn;
   \item định vị định lượng lỗi N3$\rightarrow$N2 tái diễn ở cả E0 và E3, cùng lỗi N2$\rightarrow$REM, để chuyển kết quả thành ưu tiên thích nghi; đối chứng E6 cho thấy z-score theo bản ghi không phải biện pháp độc lập đủ để sửa lỗi N3;
   \item các phân tích hỗ trợ về ngữ cảnh và không gian đặc trưng, được giữ đúng vai trò thay vì nâng thành cơ chế hoặc đóng góp chính.
 \end{itemize}
 
-Kết luận trong miền áp dụng cho Sleep-EDF Expanded và hai seed cố định đã đánh giá. Kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức zero-shot tương ứng. Báo cáo không đề xuất thuật toán thích nghi mới, không tuyên bố vượt SOTA, không xác lập cơ chế sinh lý và không suy rộng sang giá trị lâm sàng. Giá trị của nó nằm ở việc thu hẹp quyết định tiếp theo bằng bằng chứng bắt cặp và sai số định vị được.
+Kết luận trong miền áp dụng cho Sleep-EDF Expanded và hai seed cố định đã đánh giá. Kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức không cập nhật trọng số tương ứng; E0/E1/E2/E3 là inductive, còn E6 dùng thống kê toàn bản ghi đích nên có tính transductive. Báo cáo không đề xuất thuật toán thích nghi mới, không tuyên bố vượt SOTA, không xác lập cơ chế sinh lý và không suy rộng sang giá trị lâm sàng. Giá trị của nó nằm ở việc thu hẹp quyết định tiếp theo bằng bằng chứng bắt cặp và sai số định vị được.
 
 \subsection{Cấu trúc báo cáo}
 

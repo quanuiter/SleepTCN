@@ -1,0 +1,6 @@
+Highlights
+
+- A locked protocol separates sequence-model and preprocessing effects.
+- E3 improved cross-cohort macro-F1 without a stable architecture gain.
+- E6 is label-free but transductive because it normalises each target record.
+- N3-to-N2 errors recur across pipelines and motivate labelled adaptation.

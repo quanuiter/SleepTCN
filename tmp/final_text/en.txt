@@ -1,0 +1,909 @@
+Architecture and Preprocessing Choices under Dataset Shift
+in Single-Channel EEG Sleep Staging:
+A Controlled Evaluation on Sleep-EDF and SHHS1
+Ngo Nhat Quan1,∗ and Pham Thai Son1
+1 Faculty of Computer Science, University of Information Technology,
+
+Vietnam National University Ho Chi Minh City, Ho Chi Minh City, Viet Nam
+
+∗ First and corresponding author: 23521258@gm.uit.edu.vn
+
+Manuscript — August 2026
+
+Abstract
+Background. Cross-cohort losses are difficult to attribute when architecture and preprocessing change together.
+We tested which pipeline choices remained useful before cross-cohort adaptation.
+Methods. Six configurations were compared on Sleep-EDF Expanded (78 subjects) under shared 10-fold
+partitions and selection rules. E1 changed only the sequence model; E2 replaced E1’s 75-dimensional C/P/N
+feature-context package with a 128-dimensional current-epoch ResNet-1D encoder. Paired bootstrap and
+Wilcoxon–Holm quantified uncertainty. Transfer used 180 locked SHHS1 participants without weight updates.
+E6 used statistics from each complete unlabelled target recording and is therefore label-free but transductive.
+Results. E3 attained the highest Sleep-EDF macro-F1 (0.7904) and exceeded E6 by 0.0213 (CI95%
+[0.0122, 0.0307]; Holm 𝑝 = 0.0012); a second seed preserved the direction but not Holm significance.
+Other contrasts were small and non-significant. E3 provided a 3.76× forward-pass speed-up over the CNN–
+BiLSTM control, with 4.37× as many parameters and 28.4% more peak memory. On SHHS1, E3 exceeded the
+control by 0.0412 subject-mean macro-F1 (CI95% [0.0314, 0.0512]) and E6 by 0.0274. E0 and E3 nevertheless
+misclassified 72.3% and 73.1% of N3 epochs as N2 and had similar N3 recall (0.2610 and 0.2582); E6 reduced
+recall to 0.2005.
+Conclusions. The substitutions offered operational but no stable predictive gains. In this post-hoc comparison,
+preprocessing was the stronger development axis. N2–N3 and N2–REM should be prioritised for labelled
+adaptation; target-record normalisation alone was insufficient.
+
+Keywords: sleep staging; single-channel EEG; temporal convolutional network; domain shift; target-domain
+adaptation; paired inference.
+
+1. Introduction
+Sleep staging assigns one of five labels—W, N1, N2, N3 and REM—to every 30 s epoch of a polysomnographic
+recording. Manual scoring is slow, requires trained expertise, and retains irreducible disagreement between
+scorers; in the inter-scorer reliability programme of the American Academy of Sleep Medicine, N1 shows the
+lowest agreement of all stages [1]. An automated system therefore has to be judged not by overall accuracy
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+alone, which is dominated by the most frequent stages, but by class-balanced metrics, by stability across
+individuals, and by its behaviour when the recording device, montage or population changes.
+Progress in this field is difficult to read from published tables. Studies differ simultaneously in dataset
+version, subject partitioning, wake-trimming policy, filtering, normalisation, sequence length and modelselection rule, so a reported improvement cannot be attributed to the architecture that the paper nominally
+proposes. This creates a concrete development problem: before collecting target-domain labels, a practitioner
+cannot tell whether a new encoder, a new sequence model or a change in signal handling is the more defensible
+use of effort. A comparison in which one component changes at a time is needed to separate these decisions.
+We take ZleepAnlystNet [2], a two-stage single-channel model that couples a bank of class-specific
+convolutional encoders to a BiLSTM, as an internal control. E1 isolates the replacement of the BiLSTM
+by a temporal convolutional network (TCN) [3]. E2 is not an isolated encoder contrast: it replaces E1’s
+75-dimensional current/previous/next (C/P/N) feature-context package with a 128-dimensional current-epoch
+one-dimensional residual encoder [4]. We additionally treat signal processing as an experimental factor
+because filtering and record-wise normalisation can change the information available to a downstream
+classifier.
+The study is organised around three deployment-oriented questions. (i) Under a shared subject-wise
+protocol, do the isolated TCN substitution and bundled E2 feature/context replacement provide benefits
+large and stable enough to justify changing the pipeline? (ii) Which evaluated pipeline and preprocessing
+choices retain their benefit under label-free cross-cohort transfer to an independent cohort with a different
+EEG derivation and age distribution? (iii) When transfer performance falls, which class transitions account
+for the loss and do they point to a generic preprocessing remedy or to targeted adaptation?
+Our contributions are the following.
+(1) A leakage-controlled 10-fold subject-wise protocol with an isolated sequence-model contrast, a clearly
+labelled bundled feature/context replacement, and preprocessing contrasts under shared partitions and
+model-selection rules.
+(2) A locked cross-cohort evaluation on 180 SHHS Visit-1 participants, showing that the ranking and
+magnitude of design choices can differ between internal validation and cross-cohort use.
+(3) A class- and confusion-channel analysis showing that under-detection of N3 as N2 recurs in both the
+15-CNN–BiLSTM control and ResNet-1D–TCN, while over-detection of REM from N2 is a second E3
+priority. The accompanying E6 sensitivity analysis shows that per-record normalisation alone does not
+resolve the cross-model N3 failure.
+(4) A quantified operational trade-off: the implemented ResNet-1D–TCN pipeline reduces measured forward
+latency and training-and-validation wall-clock time relative to the 15-branch CNN–BiLSTM control,
+while increasing parameter count and peak memory and without establishing predictive superiority.
+Throughout, we distinguish pre-specified comparisons, secondary evidence and post-hoc contrasts, and
+we confine claims to the evidence class that supports them.
+
+2. Related work
+DeepSleepNet combined a dual-branch CNN with a BiLSTM to capture epoch morphology and temporal
+dependence [5]. AttnSleep introduced attention over multi-resolution features [6], and SleepTransformer
+applied self-attention with explicit uncertainty quantification [7]. Together these establish that sequential
+context matters substantially. They also illustrate the comparability problem: differences in dataset version,
+subject split and preprocessing between these works are large enough that cross-table comparison cannot
+substitute for an ablation carried out inside one protocol, a point emphasised in recent reviews of the field [8].
+Single-channel systems also span materially different input representations. SleepInceptionNet systematically compared raw, spectral and time–frequency inputs and selected a continuous-wavelet, central-channel
+Inception model that scores one epoch at a time [9]. That study reinforces two points relevant here: a single
+EEG channel can support five-stage scoring, and preprocessing choice is part of the model definition rather
+than a neutral implementation detail.
+Cross-dataset sleep staging is already an active methodological problem. For example, He et al. [10]
+
+2
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+trained a domain-adaptation network across Sleep-EDF, SHHS1 and the PhysioNet Challenge data. ADAST
+instead uses domain-specific attention, adversarial alignment and iterative pseudo-label self-training on
+unlabelled target data [11]. These approaches adapt model representations or decision functions using the
+target domain; our label-free E6 condition only estimates recording-level normalisation statistics and does
+not implement domain adaptation. Van Der Donckt et al. [12] further showed that increasingly complex deep
+architectures need not outperform a carefully designed conventional pipeline under a matched protocol. Our
+study addresses the decision immediately before a labelled adaptation study: which existing pipeline choices
+remain useful, and which class boundaries should receive limited target-domain labels?
+Sleep-EDF Expanded is the standard public benchmark for single-channel EEG [13, 14]. The Sleep
+Heart Health Study (SHHS) is a large multi-centre cohort assembled to study sleep-disordered breathing
+and cardiovascular risk [15], distributed through the National Sleep Research Resource (NSRR) [16]. The
+two differ in age, comorbidity, recording hardware, montage and label distribution. This makes SHHS a
+considerably more realistic transfer test than a held-out split of the same corpus, and it is the reason we treat
+the transfer result—not the in-domain ranking—as the principal evidence about deployability.
+Two threads of the literature bear directly on our findings. First, the sleep slow oscillation has a pronounced
+anterior amplitude maximum and propagates as a travelling wave [17], so the microvolt amplitude of
+slow-wave activity is derivation-dependent; and slow-wave amplitude declines markedly with age [18]. Both
+scoring manuals [19, 20] define deep sleep partly through an absolute amplitude criterion, which means an
+amplitude criterion learned on one derivation and one age band need not transfer. Second, classifier outputs
+trained under one label prior are miscalibrated under another, and the correction is well characterised [21, 22].
+These observations motivate the class-wise transfer analysis in Section 4.5; because cohort and derivation
+change together, they are treated as candidate explanations rather than mechanisms identified by this design.
+
+3. Materials and methods
+3.1. Data and labels
+The Sleep Cassette subset of Sleep-EDF Expanded comprises 153 recordings from 78 subjects; we use the
+Fpz–Cz derivation at 100 Hz with 30 s epochs (3,000 samples per epoch). Annotations are mapped to W, N1,
+N2, N3 and REM; Movement and Unknown epochs retain their temporal position but are excluded from the
+loss and from all metrics. After windowing, 195,767 epochs remain, of which 195,469 are scored and 298
+are Movement/Unknown.
+An evaluation window is applied identically to both cohorts. It is anchored on the first and last true sleep
+epoch (any of N1, N2, N3, REM) and extended by 30 min of wake on each side, i.e. 60 epochs per side. This
+policy is stated explicitly because it strongly affects the wake fraction and hence every aggregate metric, and
+because it is one of the principal reasons published numbers are not directly comparable. It is a benchmark
+window, not a deployable inference rule, since its anchors use ground-truth labels.
+The SHHS Visit-1 sample was locked before any prediction was inspected and comprises 180 test
+participants, with a further 5 adaptation and 15 validation participants that were never used to update weights.
+The EEG channel is C4–A1 at 125 Hz, resampled to 100 Hz with a polyphase anti-aliasing filter (up 4, down 5,
+Kaiser window 𝛽 = 5.0) applied to the continuous signal before epoching. SHHS labels are mapped 0 →W,
+1 →N1, 2 →N2, {3, 4} →N3, 5 →REM, {6, 9} →excluded. Table 1 reports both label distributions.
+The prior shift between cohorts is substantial: total variation distance 0.187, 𝐷 KL (EDF ∥ SHHS) = 0.101
+nats. SHHS1 contains proportionally 2.02× as much N3 and 0.38× as much N1. We report the per-class
+ratios in Table 1 because Section 4.5 uses their direction as evidence.
+3.2. Preprocessing conditions
+All conditions operate on the continuous calibrated signal in microvolts before epoching. Four active signal
+conditions enter the performance analysis, and one audit-only condition (E5) records a planned clipping
+ablation:
+• Raw (E0–E2): no filtering, no clipping, no rescaling; native 𝜇V retained.
+• Band-pass only (E4): zero-phase Butterworth band-pass, order 4, 0.5–30 Hz, implemented as second-
+
+3
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+Table 1. Scored-label distribution in the two evaluation samples.
+Stage
+
+Sleep-EDF
+Epochs
+Share
+
+Epochs
+
+SHHS1 test
+Share Ratio to EDF
+
+W
+N1
+N2
+N3
+REM
+
+65,941
+21,522
+69,132
+13,039
+25,835
+
+33.73%
+11.01%
+35.37%
+6.67%
+13.22%
+
+36,983
+7,002
+76,287
+22,806
+25,934
+
+21.88%
+4.14%
+45.14%
+13.49%
+15.34%
+
+Total scored
+
+195,469
+
+100%
+
+169,012
+
+100%
+
+0.65
+0.38
+1.28
+2.02
+1.16
+
+Table 2. Experimental configuration codes. The identifiers denote signal–model combinations, not a performance
+ranking or a sequence of model versions.
+ID
+
+Signal condition
+
+Epoch encoder
+
+Sequence model and role
+
+E0
+E1
+E2
+
+Raw
+Raw
+Raw
+
+15-branch CNN
+15-branch CNN
+ResNet-1D
+
+E3
+E4
+E5
+
+Band-pass + clip + fixed scale
+Band-pass only
+Band-pass + clip
+
+ResNet-1D
+ResNet-1D
+ResNet-1D
+
+E6
+
+Band-pass + clip + 𝑧-score
+
+ResNet-1D
+
+BiLSTM; internal control
+TCN; isolates the sequence model
+TCN; replaces E1 feature/context
+package with current-epoch encoder
+TCN; fixed-scale configuration
+TCN; effect of filtering alone
+TCN; audit only, identical input to
+E4
+TCN; alternative rescaling
+
+order sections with forward–backward filtering.
+• Band-pass plus clipping (E5; audit only): the E4 signal followed by a hard clip at ±800 𝜇V. Across all
+153 Sleep-EDF recordings, E5 and E4 were bitwise identical and the measured clipped-sample fraction
+was zero. Fold 0 was retained as an audit artifact; the remaining folds and all performance tests were
+cancelled before scores were inspected because E5 did not define an independent input condition.
+• Fixed-scale amplitude handling (E3): the same band-pass, followed by a hard clip at ±800 𝜇V and
+division by a constant factor of 100. The clip threshold is an absolute constant identical for every
+recording, so no record-level or cohort-level statistic is estimated and cross-subject leakage is not
+introduced; relative amplitude between recordings is preserved.
+• Per-record 𝑧-score (E6): the same band-pass and clip, followed by subtraction of the mean and division
+by the standard deviation computed over the whole filtered, clipped recording. This uses no target
+labels but does use all samples of the target recording, removes absolute amplitude differences between
+recordings and is transductive at the recording level rather than purely inductive.
+No notch filter is applied: 50 Hz lies outside the 0.5–30 Hz pass-band and at the Nyquist frequency of
+the 100 Hz signal. The contrast E3 – E6 therefore evaluates a practical preprocessing choice: preserving
+calibrated cross-recording amplitude relationships or applying record-wise normalisation. Because clipping
+never activated in E5, E3 and E4 differ in these data by the fixed division by 100; this identity is used only to
+interpret the observed contrast and does not establish equivalence or a hardware-independent scaling rule.
+3.3. Model configurations
+Six active configurations (E0–E4 and E6) enter performance analysis; E5 documents the cancelled clippingonly contrast. The control encoder produces 75 features from 15 CNN branches spanning current, previous
+and next epochs (C/P/N). ResNet-1D produces 128 features from the current epoch only. The non-causal
+six-block TCN has a 253-epoch receptive field; the BiLSTM control has 128 hidden units per direction. Both
+sequence models process the full recording with masked padding. Layer dimensions and all hyperparameters
+4
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+are reported in Supplementary Methods S1.
+3.4. Two-stage training and subject-wise cross-validation
+The 78 subjects are partitioned into 10 subject-disjoint folds. In each evaluation round one fold is the test
+fold, the next fold (modulo 10) is the validation fold and the remainder are training folds. Both nights of a
+subject always share the same role. The same partition is used for every configuration, and the test fold never
+participates in model selection; the training API accepts only training and validation loaders, so test data
+cannot enter fitting.
+Training has two stages. The epoch encoder is fitted with class weights calculated from training subjects,
+selected on validation data, hash-verified and used to cache features without gradients. The sequence model
+is then fitted on the frozen cache using masked cross-entropy and selected by validation macro-F1. E1
+reuses E0 encoder checkpoints, so E1 – E0 isolates the sequence-model substitution. In contrast, E2 – E1
+changes the encoder, removes explicit P/N inputs and changes the feature dimension from 75 to 128; it is a
+bundled feature/context replacement. Optimisers, learning rates, batch sizes and early-stopping settings are
+in Supplementary Methods S1.
+3.5. Test locking, statistical analysis and effect sizes
+All six configurations completed validation-based selection before the test set was opened, once. In SleepEDF, pooled macro-F1 is the descriptive headline metric, but the unit of statistical inference is the subject.
+Paired subject-cluster bootstrap with 10,000 resamples estimates confidence intervals for the difference in
+pooled macro-F1, while a two-sided Wilcoxon signed-rank test [23] assesses the subject-level distribution of
+per-subject differences [24]. Holm correction [25] is applied over the four pre-specified comparisons E1 – E0,
+E2 – E1, E3 – E2 and E3 – E6. These two procedures target different estimands—a pooled, epoch-weighted
+quantity and a subject-averaged rank quantity—and may therefore disagree; where they do, we say so
+explicitly rather than reporting only the favourable one. E3 – E0 is labelled post-hoc throughout.
+We also report win/tie/loss counts, sign dominance (𝑊 − 𝐿)/(𝑊 + 𝐿) and an unadjusted exact sign test as
+descriptive robustness checks; they are not part of the pre-specified inferential family.
+After the primary results had been observed, the whole campaign was repeated with a second fixed
+training seed on the same partition. The two seeds are analysed separately; 𝑝-values are never pooled, and
+two fixed seeds are not treated as a sample from the distribution over initialisations. This repeat is reported
+as a post-protocol sensitivity analysis.
+For SHHS, each configuration uses all ten Sleep-EDF outer-fold checkpoints. Softmax probabilities are
+averaged in float64 across folds before the final argmax for each epoch. The pre-locked primary criterion is
+subject-mean macro-F1, with E3 – E0 and E3 – E6 as the two locked comparisons under the same bootstrap
+and Wilcoxon–Holm treatment. The E1/E2 component analysis is secondary evidence on an already-opened
+sample, and E3 – E2 is explicitly post-hoc.
+3.6. Operational evaluation
+Inference timing was measured on identical hardware (Tesla V100) for all configurations and excludes
+I/O, preprocessing and training. Each measurement used a batch of one synthetic 100-epoch sequence, 20
+warm-up passes and three rounds of 100 timed forward passes. Configuration order was shuffled in each
+round; we report the median over all 300 passes. This benchmark measures the implemented full forward
+pipeline for one fixed tensor shape, not overnight wall-clock inference or algorithmic complexity.
+
+4. Results
+4.1. Out-of-fold performance on Sleep-EDF
+E3 is descriptively highest on all four metrics (Table 3). A pooled ranking is not by itself statistical evidence,
+and Table 4 shows how little of this ordering survives inference.
+Only E3 – E6 is consistent across all three lenses: a fully positive bootstrap interval, Holm significance,
+and a sign test that agrees. The remaining pre-specified contrasts have intervals containing zero and do not
+
+5
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+Table 3. Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds).
+Configuration
+
+macro-F1
+
+Accuracy
+
+𝜅
+
+F1 (N1)
+
+0.7754
+0.7802
+0.7835
+0.7904
+0.7891
+0.7691
+
+0.8262
+0.8315
+0.8341
+0.8363
+0.8360
+0.8230
+
+0.7614
+0.7683
+0.7716
+0.7754
+0.7746
+0.7573
+
+0.5009
+0.5115
+0.5180
+0.5276
+0.5270
+0.5124
+
+E0
+E1
+E2
+E3
+E4
+E6
+
+Table 4. Pre-specified paired comparisons on Sleep-EDF macro-F1 (𝑛 = 78 subjects). Holm correction is over the four
+pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3 – E0 is post-hoc and is
+excluded from the Holm family.
+
+𝚫macro-F1
+
+CI95%
+
+𝒑 Holm
+
+W/T/L
+
+𝚫sign
+
+𝒑 sign
+
+E1 – E0
+E2 – E1
+E3 – E2
+E3 – E6
+
+0.004811
+0.003251
+0.006962
+0.021319
+
+[−0.000915, 0.010193]
+[−0.002370, 0.008808]
+[0.000305, 0.014520]
+[0.012179, 0.030698]
+
+0.1022
+0.1036
+0.8989
+0.0012
+
+51/0/27
+44/0/34
+37/0/41
+49/0/29
+
++0.308
++0.128
+−0.051
++0.256
+
+0.0088
+0.3082
+0.7343
+0.0308
+
+E3 – E0 (post-hoc)
+
+0.015024
+
+[0.005746, 0.025871]
+
+—
+
+49/0/29
+
++0.256
+
+0.0308
+
+Comparison
+
+reach significance.
+E3 – E2 deserves particular attention because it is the clearest case of estimand disagreement in the study.
+Its pooled bootstrap interval marginally excludes zero ([0.000305, 0.014520]), yet only 37 of 78 subjects
+improve, Δsign = −0.051, and both the Wilcoxon and sign tests are far from significance (𝑝 sign = 0.734).
+Pooled macro-F1 is epoch-weighted and is therefore dominated by subjects contributing more scored epochs;
+the subject-level statistics weight every subject equally. When these disagree, the honest reading is that the
+effect is carried by a subset of high-epoch-count subjects and is not a general property of the population. We
+do not claim E3 improves on E2 in-domain.
+For the post-hoc E3 – E0 contrast, the added macro-F1 of the complete pipeline is 0.0150 with a fully
+positive interval; because it changes architecture and preprocessing simultaneously, it supports the pipeline
+as a whole and cannot attribute credit to any component.
+4.2. Per-class and seed-sensitivity checks
+Detailed per-class metrics, the Sleep-EDF confusion matrix and both seed-sensitivity tables are provided in
+Supplementary Tables S1–S4. In domain, N1 is E3’s hardest class and the largest E3–E6 F1 difference is on
+N3 (+0.0628). All four pre-specified differences remain positive under seed 123, but only E3 – E6 has a
+fully positive bootstrap interval in both runs; its Holm-adjusted result is significant for seed 42 only and
+its magnitude falls from 0.0213 to 0.0102. Thus, the direction is stable across these two fixed seeds, but
+the inferential strength is not; two seeds are not an independent replication or an estimate of initialisation
+variance.
+4.3. Complexity, latency and training cost
+As Table 5 shows, the ResNet-1D–TCN family provides a 3.76× measured speed-up than the CNN–BiLSTM
+control while carrying 4.37× the parameters and 28.4% more peak allocated memory. The implementation
+is therefore faster but not smaller. E1 differs from E0 only in the sequence model and improves latency by
+just 1.07×; the larger E2–E0 difference is consequently associated primarily with replacing 15 independently
+executed CNN branches by one ResNet-1D encoder, together with the full-pipeline implementation. The
+benchmark does not isolate kernel-launch overhead or predict latency for other sequence lengths and hardware.
+6
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+Table 5. Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput
+is in epochs s−1 and peak allocated memory in MiB; I/O and preprocessing are excluded.
+ID
+
+Parameters
+
+Median (ms)
+
+Throughput
+
+Peak mem.
+
+Speed-up
+
+E0
+E1
+E2
+E3
+E6
+
+248,630
+640,950
+1,085,578
+1,085,578
+1,085,578
+
+13.4315
+12.5111
+3.5750
+3.5687
+3.5756
+
+7,445
+7,993
+27,972
+28,021
+27,967
+
+58.81
+60.31
+75.54
+75.54
+75.54
+
+1.00×
+1.07×
+3.76×
+3.76×
+3.76×
+
+In the sequential seed-123 campaign, complete training and validation for E2 and E3 was observed to
+be 12.2× and 10.2× faster than E0. E1 reused E0 encoder checkpoints and is not an end-to-end runtime
+comparison. Full timings are in Supplementary Table S5; they are workflow measurements under one
+scheduling and early-stopping regime, not hardware-independent complexity claims.
+4.4. Cross-cohort evaluation on SHHS1
+The seed-123 campaign preserves the direction and Holm significance of both locked SHHS contrasts,
+whereas the in-domain E3 – E6 comparison no longer reaches the Holm threshold. This sensitivity result
+uses the same SHHS sample and is not an independent cohort replication (Supplementary Table S6).
+Both locked comparisons (Table 7) are unambiguous, and the sign-based effect sizes are large (Δsign =
++0.533 and +0.389; exact sign tests 𝑝 = 3.8 × 10−13 and 1.9 × 10−7 ). Supporting metrics move together:
+relative to E0, E3 gains 0.0338 pooled macro-F1, 0.0368 accuracy and 0.0461 𝜅. Within ±1 epoch of a
+transition, E3 gains 0.0366 over E0 and 0.0182 over E6.
+The component analysis is more equivocal. E1 – E0 remains positive but small, supporting the TCN
+substitution. E2 – E1 is negative out of domain (−0.0128, interval entirely below zero), so the bundled
+replacement of E1’s 75-dimensional C/P/N package by the current-epoch 128-dimensional ResNet-1D
+representation does not generalise better on unprocessed SHHS signals. This contrast cannot attribute the
+reversal to the encoder alone. The post-hoc E3 – E2 contrast is the largest observed configuration difference
+(+0.0475, Δsign = +0.633, 147/180 subjects improved). Because E3 and E2 share an architecture and
+differ only in preprocessing, this observed post-hoc comparison identifies preprocessing as the stronger
+development axis in this sample; it is not confirmatory evidence for a particular operation.
+A seed-123 extension evaluating E4 (band-pass only) provides a more specific secondary contrast. E4
+reached subject-mean macro-F1 0.5732, pooled macro-F1 0.6147, accuracy 0.7064, 𝜅 = 0.5869 and N1 F1
+0.3492, exceeding same-seed E2 by 0.0323 and E3 by 0.0098. The E5 audit established that the ±800 𝜇V
+clip never activated, so E4 and E3 differ in this dataset by the fixed division by 100. The extension therefore
+associates band-pass filtering with most of the E4–E2 gain and provides no evidence that the additional
+fixed scaling improves transfer. Because the SHHS sample was already open and training stochasticity is
+represented by only two fixed seeds, these comparisons are secondary; they are not equivalence, non-inferiority
+or universal scaling tests.
+
+7
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+Table 6. Cross-cohort performance on 180 locked SHHS1 participants (seed 42). No weights were updated on
+SHHS. E0 and E3 are inductive; E6 uses complete-record, unlabelled target statistics and is transductive. Intervals are
+subject-cluster bootstrap intervals for subject-mean macro-F1.
+ID
+
+Subject-mean macro-F1 (CI95% )
+
+E0
+E3
+E6
+
+0.5268 [0.5101, 0.5431]
+0.5680 [0.5503, 0.5850]
+0.5407 [0.5227, 0.5584]
+
+Pooled macro-F1
+
+Accuracy
+
+𝜅
+
+F1 (N1)
+
+Transition macro-F1
+
+0.5761
+0.6099
+0.5732
+
+0.6648
+0.7016
+0.6742
+
+0.5339
+0.5801
+0.5408
+
+0.2998
+0.3451
+0.3102
+
+0.4323
+0.4689
+0.4507
+
+Table 7. Locked paired comparisons on SHHS1 subject-mean macro-F1 (𝑛 = 180).
+
+Comparison
+
+Role
+
+E3 – E0
+E3 – E6
+
+locked primary
+locked primary
+
+𝚫
+
+CI95%
+
+𝒑 Holm
+
+W/T/L
+
+𝚫sign
+
+0.0412
+0.0274
+
+[0.0314, 0.0512]
+[0.0182, 0.0370]
+
+2.65 × 10−13
+1.87 × 10−8
+
+138/0/42
+125/0/55
+
++0.533
++0.389
+
+4.5. Which errors should target-domain adaptation prioritise?
+E3’s pooled macro-F1 falls from 0.7904 in domain to 0.6099 out of domain, a gap of 0.1805. An aggregate
+gap does not indicate whether adaptation requires broad retraining or a targeted correction. We therefore
+localise the loss by class and confusion channel. This is a prioritisation analysis: it identifies where
+an intervention could recover the most performance, but does not by itself identify the physiological or
+acquisition mechanism that generated the errors. Throughout this analysis, A→B denotes a reference-labelled
+A epoch predicted as B; it does not denote a physiological stage transition over time.
+N3 is the dominant class loss: E3 N3 F1 falls from 0.8085 on Sleep-EDF to 0.4055 on SHHS1, with
+precision 0.9440 but recall 0.2582. E0 shows nearly the same recall (0.2610) and N3→N2 rate (72.3% versus
+73.1% for E3), so E3’s aggregate transfer advantage does not resolve N3 and the failure cannot be assigned
+specifically to ResNet-1D or TCN. N2→REM is the second-largest E3 confusion channel.
+The E3 oracle diagnostic ranks N3→N2 and N2→REM as potential adaptation targets, corresponding
+to 74.5% and 27.5% of the numerical cross-cohort gap. These nonlinear values are neither additive nor
+achievable-performance estimates. Reference-label boundary neighbourhoods are harder on both cohorts,
+but low N3 recall in stable SHHS1 regions prevents a boundary-only explanation. These are post-hoc offline
+diagnostics, not physiological-transition or causal analyses.
+E6 provides a label-free but transductive sensitivity check. Its complete-target-record 𝑧-score lowers N3
+recall to 0.2005 and leaves boundary-neighbourhood recall essentially unchanged (0.0721 versus 0.0733 for
+E3). Thus, the tested normalisation is not a sufficient stand-alone remedy. Detailed class-wise, confusion,
+oracle and transition results are in Supplementary Tables S7–S11.
+
+5. Discussion
+5.1. Principal findings
+The first research question asked whether the sequence-model substitution and bundled E2 feature/context
+replacement justified changing the pipeline. They did not establish a stable predictive advantage: both
+in-domain configuration effects were small and non-significant after multiplicity correction, and the bundled
+E2 – E1 contrast reversed sign on SHHS1. The supported pipeline benefit is operational: the implemented
+ResNet-1D–TCN pipeline reduced measured forward latency and observed training-and-validation wall-clock
+time, while increasing parameter count and peak GPU memory. It did not establish superior predictive
+accuracy.
+The second question asked which choices retained benefit across cohorts. The fixed-scale E3 procedure
+outperformed its two locked references on SHHS1, and E3 ranked above E6 under both seeds. Under a
+fixed ResNet-1D–TCN architecture, the post-hoc E3–E2 contrast was larger than the E1–E0 sequence-model
+contrast and the bundled E2–E1 feature/context contrast; the seed-123 E4 extension and the E5 identity audit
+8
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+associate band-pass filtering with most of this difference and provide no evidence that fixed scaling adds a
+transfer benefit. These secondary contrasts identify preprocessing as the more promising development axis,
+but they do not establish a causal or universal contribution for any single operation.
+The third question asked where adaptation should focus. N3→N2 recurs at essentially the same rate
+in E0 and E3, while the E3 oracle analysis ranks it above N2→REM in potential leverage; the N3 deficit
+becomes extreme near reference-label changes but remains substantial in stable N3. The evidence therefore
+identifies a target-domain failure shared across the evaluated pipelines, not an E3-specific weakness or
+a boundary-only phenomenon. Record-wise 𝑧-scoring does not repair N3, so a labelled, class-specific
+target-domain adaptation experiment is better motivated than another generic architecture or normalisation
+change.
+5.2. From error localisation to an adaptation decision
+The high precision and low recall of N3, the concentration of N3 errors in N2, and the further recall loss near
+stage transitions are consistent with a conservative N3 decision boundary in SHHS1. E0’s near-identical N3
+recall and N3→N2 rate show that this failure persists across the two model families evaluated; they do not
+identify a shared causal mechanism. Montage and age are plausible contributors: the model was trained
+on Fpz–Cz in a younger cohort and evaluated on C4–A1 in an older cohort, while slow-wave amplitude
+varies with both derivation and age [17, 18]. However, montage, population, acquisition and scoring practice
+change together between the datasets. The present design cannot assign the failure to one of them, and the
+precision–recall pattern alone does not identify an amplitude threshold as the mechanism.
+The difference in class prevalence is also relevant. A prior-shift correction would move N3 and N1 in the
+required directions, but it was not fitted or validated here. It should therefore be evaluated as a low-cost
+baseline in the next target-domain experiment, alongside class-specific calibration and limited fine-tuning;
+the present error pattern does not justify dismissing it or treating it as a complete solution.
+E6 provides an important boundary on the interpretation. If removal of record-level absolute scale were a
+sufficient correction, E6 should improve N3 recall over E3. Instead, E6 lowers whole-sample N3 recall from
+0.2582 to 0.2005 and leaves transition-region recall essentially unchanged (0.0721 versus 0.0733). Thus, the
+data do not support absolute amplitude scale as a sufficient explanation, and record-wise 𝑧-scoring is not a
+useful stand-alone adaptation strategy for this failure.
+The actionable result is narrower but better supported. Before deployment on SHHS-like data, the next
+experiment should target the N2–N3 decision boundary using labelled target-domain examples and should
+report N3 recall specifically near transitions. A small calibration or fine-tuning study on the held-out
+SHHS adaptation participants would test whether the boundary can be moved without increasing false N3
+predictions. The N2–REM channel should be the second target. This prioritisation follows directly from
+the error counts; the choice between montage-aware features, class-specific calibration and target-domain
+fine-tuning remains an open experimental question.
+5.3. Architecture and preprocessing implications
+E1 – E0 isolates the TCN substitution; E2 – E1 jointly changes the encoder, explicit P/N context and
+feature dimension and cannot establish a ResNet-only effect. Neither in-domain contrast survives Holm
+correction, and the bundled E2 – E1 contrast reverses on SHHS1. The reliable advantage of the implemented
+ResNet-1D–TCN pipeline is therefore operational: a 3.76× benchmark speed-up and 10.2–12.2× observed
+training-and-validation speed-up, paid for with more parameters and memory. In the observed post-hoc
+E3 – E2 comparison, preprocessing is the stronger development axis. The E4 extension associates band-pass
+filtering with much of that difference, but the opened cohort and two fixed seeds preclude a causal or universal
+claim about any operation.
+5.4. Positioning relative to published results
+We do not claim state-of-the-art benchmark performance. The wake-trimming policy alone (Section 3.1)
+moves the wake fraction, and hence accuracy and macro-F1, by an amount comparable to every architectural
+effect measured here; subject-count, split scheme, and channel choice compound this. Published Sleep-EDF
+
+9
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+figures for the models discussed in Section 2 [5, 6, 7, 2] were obtained under protocols that differ in several
+of these dimensions simultaneously, so a numerical comparison would misrepresent the evidence in either
+direction. Our E0 control is a re-implementation of the ZleepAnlystNet design evaluated under our protocol,
+and it is the reference for the component questions posed here. The study should therefore be read as evidence
+about relative design choices and transfer failure under a shared protocol, not as a leaderboard claim.
+5.5. Limitations and a prioritised agenda
+Results should be read within the data and protocol evaluated. SHHS1 is one specific out-of-domain
+sample, not a population. The second seed corroborates direction but two fixed seeds cannot characterise
+initialisation variance; a proper treatment would require enough seeds to estimate a distribution, and we
+report no such claim. Several component and reference-transition analyses were run after the sample was
+opened and are supporting evidence only. Single-channel EEG limits separability for N1 and REM in
+principle, and the transition neighbourhood uses reference labels on both sides of a boundary, so it is an
+offline benchmarking device rather than a deployable rule. No probability-calibration or selective- prediction
+analysis was performed, which matters for clinical use where an abstain option would be valuable [22, 7].
+Two reporting gaps remain. Absolute-performance intervals are available for the SHHS configurations
+(Table 6) but not for the Sleep-EDF ones, where only difference intervals were retained. And although
+paired win/tie/loss counts and median subject-level differences were preserved for every comparison, the full
+per-subject macro-F1 distributions were not archived, so we cannot report the dispersion (IQR, range) of
+individual performance or identify which participants the models handle worst. For a metric whose clinical
+relevance is inherently per-patient this is a limitation. Per-class SHHS metrics have now been recovered
+for E6 from the locked prediction artifacts. Pooled class-wise results for E0 have also been recovered
+from the locked run manifest and support the cross-model N3 comparison; transition-neighbourhood and
+stable-interior metrics are available for E0 and E3 on both cohorts. Corresponding class-wise results for E1
+remain unavailable.
+Ordered by expected practical value, we would prioritise: (1) limited class-specific fine-tuning or decisionboundary adjustment on the held-out SHHS adaptation participants, evaluated on N3 recall and false-positive
+rate in both boundary and stable regions; (2) fitting and evaluating calibration/selective prediction on
+independent target validation data; and (3) estimating initialisation variance with a sufficient number of
+seeds. The first two address the deployment failure identified here; the third improves the strength of the
+methodological evidence.
+
+6. Conclusion
+A shared subject-wise protocol allowed six active configurations to be compared on the same Sleep-EDF
+folds; a seventh planned configuration, E5, was excluded before performance analysis because it was bitwise
+identical to E4. The isolated TCN substitution and bundled E2 feature/context replacement did not establish
+a stable predictive advantage after correction for multiple comparisons. ResNet-1D–TCN nevertheless offers
+an operational alternative that is 3.76× faster in the controlled forward benchmark and 10.2–12.2× faster in
+observed training-and-validation wall-clock time, at the cost of more parameters and memory.
+On SHHS1, the fixed-scale E3 procedure outperformed both locked references, while the largest observed
+component difference was associated with preprocessing under a fixed architecture. This result shifts the
+practical priority from further architecture replacement to signal handling and target-domain evaluation,
+without establishing any individual preprocessing operation as causal.
+Most importantly, the aggregate transfer loss resolves into concrete adaptation targets. E0 and E3 both
+systematically under-call N3 as N2, showing that E3’s overall transfer advantage does not solve N3 detection;
+N2 is also frequently over-called as REM by E3. Per-record 𝑧-scoring does not repair the N3 deficit, and the
+cross-cohort diagnostic shows that reference-label boundaries intensify errors without fully explaining the
+stable-region SHHS1 deficit. Thus, neither the evaluated architecture changes nor generic normalisation is a
+sufficient deployment remedy. The evidence supports a targeted, labelled adaptation study on these decision
+boundaries; it does not yet support an architecture-specific, physiological or clinical claim.
+
+10
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+Reproducibility and data availability
+Source code, experimental protocols, data partitions, run manifests and aggregate analysis outputs are
+retained in the project repository. Sleep-EDF Expanded is publicly available from PhysioNet. SHHS
+is accessed through the NSRR under its data use agreement; participant-level derived data are not redistributed. Checkpoints are verified by SHA-256 before loading, and the locked SHHS predictions
+used for the reported analyses were hash-verified against their run manifests. The E6 class-wise results are therefore reported as a descriptive reanalysis of these locked predictions. The historical
+locked-protocol snapshot configs/shhs_zero_shot_v1.json is retained in the repository and its SHA256 matches the protocol hash recorded in the SHHS run manifest (‘165d7cdf...fe93‘). The newer
+configs/shhs_v1_protocol.json has a different SHA-256 (‘9541e233...fe9‘) because it is an expanded
+post-run audit record; it must not be substituted for the historical snapshot when interpreting the locked
+predictions. Protocol provenance is therefore traceable, although the locked E6 results remain a descriptive
+reanalysis rather than a rerun.
+Ethics
+This study is a secondary analysis of de-identified data from research repositories with their own governance
+mechanisms; no new participants were recruited. Use of SHHS follows NSRR access conditions. All
+interpretations apply to the samples and protocols described and do not constitute clinical validation.
+Funding
+This analysis received no specific grant from public, commercial or not-for-profit funding agencies. The
+underlying Sleep Heart Health Study was supported by National Heart, Lung, and Blood Institute cooperative
+agreements U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360, U01HL53938,
+U01HL53940, U01HL53941 and U01HL63463.
+Acknowledgements
+This work uses Sleep-EDF Expanded distributed by PhysioNet and data from the Sleep Heart Health Study
+obtained through the National Sleep Research Resource.
+CRediT authorship contribution statement
+Ngo Nhat Quan: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data
+curation, Visualization, Writing – original draft, Writing – review and editing. Pham Thai Son: Supervision,
+Methodology, Validation, Writing – review and editing. Both authors approved the final manuscript.
+Declaration of competing interests
+The authors declare no competing interests.
+
+References
+[1] R. S. Rosenberg and S. Van Hout, “The american academy of sleep medicine inter-scorer reliability program:
+sleep stage scoring,” Journal of Clinical Sleep Medicine, vol. 9, no. 1, pp. 81–87, 2013.
+[2] N. Jirakittayakorn, Y. Wongsawat, and S. Mitrirattanakul, “Zleepanlystnet: a novel deep learning model for
+automatic sleep stage scoring based on single-channel raw eeg data using separating training,” Scientific Reports,
+vol. 14, p. 9859, 2024.
+[3] S. Bai, J. Z. Kolter, and V. Koltun, “An empirical evaluation of generic convolutional and recurrent networks for
+sequence modeling,” arXiv preprint arXiv:1803.01271, 2018.
+[4] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in Proceedings of the IEEE
+Conference on Computer Vision and Pattern Recognition, pp. 770–778, 2016.
+[5] A. Supratak, H. Dong, C. Wu, and Y. Guo, “Deepsleepnet: A model for automatic sleep stage scoring based on
+raw single-channel eeg,” IEEE Transactions on Neural Systems and Rehabilitation Engineering, vol. 25, no. 11,
+pp. 1998–2008, 2017.
+
+11
+
+Ngo et al.
+
+Pipeline choices under sleep-staging dataset shift
+
+[6] E. Eldele, Z. Chen, C. Liu, M. Wu, C.-K. Kwoh, X. Li, and C. Guan, “An attention-based deep learning approach
+for sleep stage classification with single-channel eeg,” IEEE Transactions on Neural Systems and Rehabilitation
+Engineering, vol. 29, pp. 809–818, 2021.
+[7] H. Phan, K. Mikkelsen, O. Y. Chén, P. Koch, A. Mertins, and M. De Vos, “Sleeptransformer: Automatic sleep
+staging with interpretability and uncertainty quantification,” IEEE Transactions on Biomedical Engineering,
+vol. 69, no. 8, pp. 2456–2467, 2022.
+[8] H. Phan and K. Mikkelsen, “Automatic sleep staging of EEG signals: recent development, challenges, and future
+directions,” Physiological Measurement, vol. 43, no. 4, p. 04TR01, 2022.
+[9] S. Haghayegh, K. Hu, K. Stone, S. Redline, and E. Schernhammer, “Automated sleep stages classification using
+convolutional neural network from raw and time-frequency electroencephalogram signals: Systematic evaluation
+study,” Journal of Medical Internet Research, vol. 25, p. e40211, 2023.
+[10] Z. He, M. Tang, P. Wang, L. Du, X. Chen, G. Cheng, and Z. Fang, “Cross-scenario automatic sleep stage
+classification using transfer learning and single-channel EEG,” Biomedical Signal Processing and Control, vol. 81,
+p. 104501, 2023.
+[11] E. Eldele, M. Ragab, Z. Chen, M. Wu, C.-K. Kwoh, X. Li, and C. Guan, “ADAST: Attentive cross-domain
+EEG-based sleep staging framework with iterative self-training,” IEEE Transactions on Emerging Topics in
+Computational Intelligence, vol. 7, no. 1, pp. 210–221, 2023.
+[12] J. Van Der Donckt, J. Van Der Donckt, E. Deprost, N. Vandenbussche, M. Rademaker, G. Vandewiele, and
+S. Van Hoecke, “Do not sleep on traditional machine learning: Simple and interpretable techniques are competitive
+to deep learning for sleep scoring,” Biomedical Signal Processing and Control, vol. 81, p. 104429, 2023.
+[13] B. Kemp, A. H. Zwinderman, B. Tuk, H. A. C. Kamphuisen, and J. J. L. Oberyé, “Analysis of a sleep-dependent
+neuronal feedback loop: the slow-wave microcontinuity of the eeg,” IEEE Transactions on Biomedical Engineering,
+vol. 47, no. 9, pp. 1185–1194, 2000.
+[14] PhysioNet, “Sleep-edf database expanded, version 1.0.0.” https://physionet.org/content/sleep-edfx/
+1.0.0/, 2013. Accessed 14 August 2026.
+[15] S. F. Quan, B. V. Howard, C. Iber, J. P. Kiley, F. J. Nieto, G. T. O’Connor, D. M. Rapoport, S. Redline, J. Robbins,
+J. M. Samet, and P. W. Wahl, “The sleep heart health study: design, rationale, and methods,” Sleep, vol. 20,
+no. 12, pp. 1077–1085, 1997.
+[16] G.-Q. Zhang, L. Cui, R. Mueller, S. Tao, M. Kim, M. Rueschman, S. Mariani, D. Mobley, and S. Redline, “The
+national sleep research resource: towards a sleep data commons,” Journal of the American Medical Informatics
+Association, vol. 25, no. 10, pp. 1351–1358, 2018.
+[17] M. Massimini, R. Huber, F. Ferrarelli, S. Hill, and G. Tononi, “The sleep slow oscillation as a traveling wave,”
+Journal of Neuroscience, vol. 24, no. 31, pp. 6862–6870, 2004.
+[18] M. M. Ohayon, M. A. Carskadon, C. Guilleminault, and M. V. Vitiello, “Meta-analysis of quantitative sleep
+parameters from childhood to old age in healthy individuals: developing normative sleep values across the human
+lifespan,” Sleep, vol. 27, no. 7, pp. 1255–1273, 2004.
+[19] A. Rechtschaffen and A. Kales, A Manual of Standardized Terminology, Techniques and Scoring System for Sleep
+Stages of Human Subjects. Bethesda, MD: U.S. National Institute of Neurological Diseases and Blindness, 1968.
+[20] R. B. Berry, R. Brooks, C. E. Gamaldo, S. M. Harding, R. M. Lloyd, S. F. Quan, M. T. Troester, and B. V.
+Vaughn, The AASM Manual for the Scoring of Sleep and Associated Events: Rules, Terminology and Technical
+Specifications, Version 2.4. Darien, IL: American Academy of Sleep Medicine, 2017.
+[21] M. Saerens, P. Latinne, and C. Decaestecker, “Adjusting the outputs of a classifier to new a priori probabilities: A
+simple procedure,” Neural Computation, vol. 14, no. 1, pp. 21–41, 2002.
+[22] C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger, “On calibration of modern neural networks,” in Proceedings of
+the 34th International Conference on Machine Learning (ICML), pp. 1321–1330, 2017.
+[23] F. Wilcoxon, “Individual comparisons by ranking methods,” Biometrics Bulletin, vol. 1, no. 6, pp. 80–83, 1945.
+[24] B. Efron and R. J. Tibshirani, An Introduction to the Bootstrap. Chapman and Hall/CRC, 1994.
+[25] S. Holm, “A simple sequentially rejective multiple test procedure,” Scandinavian Journal of Statistics, vol. 6,
+no. 2, pp. 65–70, 1979.
+
+12
+
+

@@ -29,9 +29,9 @@ Lần lặp seed 123 dùng cùng dữ liệu, phép chia và họ cấu hình. C
 
 \subsection{Tái phân tích E6 và tình trạng provenance SHHS1}
 
-Phân tích E6 theo lớp được tính trực tiếp từ 180 artifact dự đoán zero-shot đã khóa trên ổ ngoài. Chiến dịch được đánh dấu hoàn tất, test gate đạt, toàn bộ 180 mã băm artifact E6 khớp run manifest, và ma trận nhầm lẫn tính lại theo từng bản ghi khớp giá trị trong manifest. Vì vậy, các chỉ số E6 mới trong báo cáo là phép tái phân tích mô tả của dự đoán đã tồn tại, không phải một lượt suy luận mới.
+Phân tích E6 theo lớp được tính trực tiếp từ 180 artifact dự đoán chuyển miền không cập nhật trọng số đã khóa trên ổ ngoài. Chiến dịch được đánh dấu hoàn tất, test gate đạt, toàn bộ 180 mã băm artifact E6 khớp run manifest, và ma trận nhầm lẫn tính lại theo từng bản ghi khớp giá trị trong manifest. Vì vậy, các chỉ số E6 mới trong báo cáo là phép tái phân tích mô tả của dự đoán đã tồn tại, không phải một lượt suy luận mới.
 
-Các dự đoán E6 và chỉ số tính lại đã được xác minh ở cấp artifact, nhưng provenance ở cấp protocol chưa được đối chiếu hoàn tất: mã SHA-256 của protocol ghi trong run manifest (\seqsplit{165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93}) khác mã của tệp protocol trong phiên bản mã nguồn hiện tại (\seqsplit{9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9}). Vì vậy, phân tích E6 được diễn giải là phép tái phân tích mô tả từ các dự đoán đã khóa, không phải một lượt tái sinh từ protocol hiện tại. Trước khi phát hành gói tái lập đầy đủ, cần khôi phục đúng phiên bản protocol tương ứng với run manifest hoặc công bố một biên bản đối chiếu thay đổi có mã băm.
+Các dự đoán E6 và chỉ số tính lại đã được xác minh ở cấp artifact. Mã SHA-256 của protocol ghi trong run manifest (\seqsplit{165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93}) khớp chính xác với snapshot lịch sử \texttt{configs/shhs\_zero\_shot\_v1.json} được giữ trong kho. Tệp \texttt{configs/shhs\_v1\_protocol.json} hiện tại có mã (\seqsplit{9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9}) vì đây là hồ sơ mở rộng sau chạy, không phải snapshot đã dùng để tạo dự đoán; không được thay thế hash lịch sử bằng hash này. Do đó provenance protocol đã có thể truy nguyên, còn phân tích E6 vẫn được diễn giải là tái phân tích mô tả từ dự đoán đã khóa, không phải lượt tái sinh mới.
 
 \subsection{Tình trạng dữ liệu dẫn xuất}
 
@@ -61,3 +61,11 @@ Các điều kiện chưa được kiểm định tương đương & Giá trị 
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\subsection{Tài trợ và đóng góp tác giả}
+
+Phân tích này không nhận khoản tài trợ riêng nào từ cơ quan công, thương mại hoặc phi lợi nhuận. Nghiên
+cứu Sleep Heart Health Study nền được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and
+Blood Institute. Ngô Nhật Quân là tác giả chính và tác giả liên hệ, phụ trách ý tưởng, phương pháp,
+phần mềm, phân tích, quản lý dữ liệu, trực quan hóa và bản thảo. Phạm Thái Sơn phụ trách giám sát,
+đóng góp phương pháp và hiệu đính. Cả hai tác giả đã duyệt bản cuối.

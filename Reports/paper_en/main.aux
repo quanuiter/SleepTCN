@@ -6,6 +6,7 @@
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{rosenberg2013aasm}
 \babel@aux{english}{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \citation{jadhav2024zleepanlystnet}
 \citation{bai2018tcn}
 \citation{he2016resnet}
@@ -13,9 +14,10 @@
 \citation{eldele2021attnsleep}
 \citation{phan2022sleeptransformer}
 \citation{phan2022review}
+\citation{haghayegh2023sleepinceptionnet}
 \citation{he2023crossscenario}
+\citation{eldele2023adast}
 \citation{vdd2023traditional}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Related work}{2}{section.2}\protected@file@percent }
 \citation{kemp2000sleepEDF}
 \citation{physionetSleepEDF}
@@ -36,80 +38,47 @@
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Experimental configuration codes. The identifiers denote signal--model combinations, not a performance ranking or a sequence of model versions.}}{4}{table.caption.2}\protected@file@percent }
 \newlabel{tab:configs}{{2}{4}{Experimental configuration codes. The identifiers denote signal--model combinations, not a performance ranking or a sequence of model versions}{table.caption.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Model configurations}{4}{subsection.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{15-branch CNN encoder.}{4}{table.caption.2}\protected@file@percent }
 \citation{wilcoxon1945}
 \citation{efron1994bootstrap}
 \citation{holm1979}
-\@writefile{toc}{\contentsline {paragraph}{ResNet-1D encoder.}{5}{table.caption.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Sequence models.}{5}{table.caption.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Two-stage training and subject-wise cross-validation}{5}{subsection.3.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Test locking, statistical analysis and effect sizes}{5}{subsection.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Operational evaluation}{6}{subsection.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{6}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Out-of-fold performance on Sleep-EDF}{6}{subsection.4.1}\protected@file@percent }
-\citation{rosenberg2013aasm}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds).}}{7}{table.caption.3}\protected@file@percent }
-\newlabel{tab:sleepedf-performance}{{3}{7}{Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds)}{table.caption.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Pre-specified paired comparisons on Sleep-EDF \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family.}}{7}{table.caption.4}\protected@file@percent }
-\newlabel{tab:paired-sleepedf}{{4}{7}{Pre-specified paired comparisons on Sleep-EDF \mf \ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family}{table.caption.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Per-class error structure on Sleep-EDF}{7}{subsection.4.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Per-class metrics on Sleep-EDF: E3 versus E6 (pooled out-of-fold predictions, seed 42). Descriptive statistics on the same test predictions; not a new test family.}}{8}{table.caption.5}\protected@file@percent }
-\newlabel{tab:sleepedf-class-errors}{{5}{8}{Per-class metrics on Sleep-EDF: E3 versus E6 (pooled out-of-fold predictions, seed 42). Descriptive statistics on the same test predictions; not a new test family}{table.caption.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Pooled confusion matrix of E3 on Sleep-EDF (rows: reference; columns: prediction).}}{8}{table.caption.6}\protected@file@percent }
-\newlabel{tab:sleepedf-confusion}{{6}{8}{Pooled confusion matrix of E3 on Sleep-EDF (rows: reference; columns: prediction)}{table.caption.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Sensitivity to the training seed}{8}{subsection.4.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Out-of-fold test \ensuremath  {\mathrm  {macro\text  {-}F1}}\ for two fixed seeds. Seed 42 is the primary campaign; seed 123 is a post-protocol repeat on the same partition.}}{9}{table.caption.7}\protected@file@percent }
-\newlabel{tab:multiseed-performance}{{7}{9}{Out-of-fold test \mf \ for two fixed seeds. Seed 42 is the primary campaign; seed 123 is a post-protocol repeat on the same partition}{table.caption.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Seed sensitivity of the four pre-specified contrasts. Each $p$-value is Holm-corrected \emph  {within} its own seed; no test pools the two seeds.}}{9}{table.caption.8}\protected@file@percent }
-\newlabel{tab:multiseed-effects}{{8}{9}{Seed sensitivity of the four pre-specified contrasts. Each $p$-value is Holm-corrected \emph {within} its own seed; no test pools the two seeds}{table.caption.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Complexity, latency and training cost}{9}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded.}}{10}{table.caption.9}\protected@file@percent }
-\newlabel{tab:complexity}{{9}{10}{Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded}{table.caption.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Wall-clock training and validation cost of the seed-123 campaign (10 folds, sequential, same GPU). The test set was not opened during these runs.}}{10}{table.caption.10}\protected@file@percent }
-\newlabel{tab:training-runtime}{{10}{10}{Wall-clock training and validation cost of the seed-123 campaign (10 folds, sequential, same GPU). The test set was not opened during these runs}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Zero-shot evaluation on SHHS1}{10}{subsection.4.5}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Zero-shot performance on 180 locked SHHS1 participants (seed 42). No weights were updated on SHHS. Intervals are subject-cluster bootstrap intervals for the subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}. Transition \ensuremath  {\mathrm  {macro\text  {-}F1}}\ is restricted to the 44{,}744 epochs within $\pm 1$ of a stage change (26.5\% of the sample).}}{11}{table.caption.11}\protected@file@percent }
-\newlabel{tab:shhs-performance}{{11}{11}{Zero-shot performance on 180 locked SHHS1 participants (seed 42). No weights were updated on SHHS. Intervals are subject-cluster bootstrap intervals for the subject-mean \mf . Transition \mf \ is restricted to the 44{,}744 epochs within $\pm 1$ of a stage change (26.5\% of the sample)}{table.caption.11}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Seed-123 sensitivity campaign on the same 180 SHHS1 participants, extended to E4. The ordering and Holm significance of both locked contrasts are preserved.}}{11}{table.caption.12}\protected@file@percent }
-\newlabel{tab:shhs-seed123}{{12}{11}{Seed-123 sensitivity campaign on the same 180 SHHS1 participants, extended to E4. The ordering and Holm significance of both locked contrasts are preserved}{table.caption.12}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Locked paired comparisons on SHHS1 subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 180$). E3\,--\,E2 and the seed-123 E4 rows are post-hoc or secondary and are excluded from the locked family.}}{11}{table.caption.13}\protected@file@percent }
-\newlabel{tab:shhs-paired}{{13}{11}{Locked paired comparisons on SHHS1 subject-mean \mf \ ($n = 180$). E3\,--\,E2 and the seed-123 E4 rows are post-hoc or secondary and are excluded from the locked family}{table.caption.13}{}}
-\citation{saerens2002adjusting}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Which errors should target-domain adaptation prioritise?}{12}{subsection.4.6}\protected@file@percent }
-\newlabel{sec:gap}{{4.6}{12}{Which errors should target-domain adaptation prioritise?}{subsection.4.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{(i) The degradation is dominated by one class.}{12}{table.caption.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{(ii) The model applies a conservative N3 decision in SHHS1.}{12}{table.caption.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{(iii) The N3 deficit persists across model families.}{12}{table.caption.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{(iv) Label-prior shift is plausible but not sufficient as an explanation.}{12}{table.caption.15}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Per-class transfer of E3 from Sleep-EDF to SHHS1, with the predicted-to-true epoch ratio as a marginal class-emission diagnostic. A ratio of 1.0 means the model emits the class at its true rate; it does not assess probability calibration.}}{13}{table.caption.14}\protected@file@percent }
-\newlabel{tab:transfer-perclass}{{14}{13}{Per-class transfer of E3 from Sleep-EDF to SHHS1, with the predicted-to-true epoch ratio as a marginal class-emission diagnostic. A ratio of 1.0 means the model emits the class at its true rate; it does not assess probability calibration}{table.caption.14}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Cross-model N3 behaviour on the locked SHHS1 sample. N3$\rightarrow $N2 denotes a reference-labelled N3 epoch predicted as N2.}}{13}{table.caption.15}\protected@file@percent }
-\newlabel{tab:n3-crossmodel}{{15}{13}{Cross-model N3 behaviour on the locked SHHS1 sample. N3$\rightarrow $N2 denotes a reference-labelled N3 epoch predicted as N2}{table.caption.15}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Oracle prioritisation of E3 errors on SHHS1. Each row corrects one confusion channel and recomputes \ensuremath  {\mathrm  {macro\text  {-}F1}}. The values quantify potential leverage and are not achievable performance estimates.}}{14}{table.caption.16}\protected@file@percent }
-\newlabel{tab:gap-decomposition}{{16}{14}{Oracle prioritisation of E3 errors on SHHS1. Each row corrects one confusion channel and recomputes \mf . The values quantify potential leverage and are not achievable performance estimates}{table.caption.16}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Pooled confusion matrix of E3 on SHHS1 (rows: reference; columns: prediction). The two dominant off-diagonal cells are set in bold.}}{14}{table.caption.17}\protected@file@percent }
-\newlabel{tab:shhs-confusion}{{17}{14}{Pooled confusion matrix of E3 on SHHS1 (rows: reference; columns: prediction). The two dominant off-diagonal cells are set in bold}{table.caption.17}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces Per-class metrics on SHHS1: E3 versus E2 (169{,}012 scored epochs).}}{14}{table.caption.18}\protected@file@percent }
-\newlabel{tab:shhs-class-errors}{{18}{14}{Per-class metrics on SHHS1: E3 versus E2 (169{,}012 scored epochs)}{table.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Operational evaluation}{5}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{5}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Out-of-fold performance on Sleep-EDF}{5}{subsection.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds).}}{6}{table.caption.3}\protected@file@percent }
+\newlabel{tab:sleepedf-performance}{{3}{6}{Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds)}{table.caption.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Pre-specified paired comparisons on Sleep-EDF \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family.}}{6}{table.caption.4}\protected@file@percent }
+\newlabel{tab:paired-sleepedf}{{4}{6}{Pre-specified paired comparisons on Sleep-EDF \mf \ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Per-class and seed-sensitivity checks}{6}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Complexity, latency and training cost}{6}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded.}}{7}{table.caption.5}\protected@file@percent }
+\newlabel{tab:complexity}{{5}{7}{Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Cross-cohort evaluation on SHHS1}{7}{subsection.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Cross-cohort performance on 180 locked SHHS1 participants (seed 42). No weights were updated on SHHS. E0 and E3 are inductive; E6 uses complete-record, unlabelled target statistics and is transductive. Intervals are subject-cluster bootstrap intervals for subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}.}}{8}{table.caption.6}\protected@file@percent }
+\newlabel{tab:shhs-performance}{{6}{8}{Cross-cohort performance on 180 locked SHHS1 participants (seed 42). No weights were updated on SHHS. E0 and E3 are inductive; E6 uses complete-record, unlabelled target statistics and is transductive. Intervals are subject-cluster bootstrap intervals for subject-mean \mf }{table.caption.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Locked paired comparisons on SHHS1 subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 180$).}}{8}{table.caption.7}\protected@file@percent }
+\newlabel{tab:shhs-paired}{{7}{8}{Locked paired comparisons on SHHS1 subject-mean \mf \ ($n = 180$)}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Which errors should target-domain adaptation prioritise?}{8}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:gap}{{4.5}{8}{Which errors should target-domain adaptation prioritise?}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{8}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Principal findings}{8}{subsection.5.1}\protected@file@percent }
 \citation{massimini2004travelling}
 \citation{ohayon2004metaanalysis}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{15}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Principal findings}{15}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}From error localisation to an adaptation decision}{15}{subsection.5.2}\protected@file@percent }
 \citation{supratak2017deepsleepnet}
 \citation{eldele2021attnsleep}
 \citation{phan2022sleeptransformer}
 \citation{jadhav2024zleepanlystnet}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}From error localisation to an adaptation decision}{9}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Architecture and preprocessing implications}{9}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Positioning relative to published results}{9}{subsection.5.4}\protected@file@percent }
 \citation{guo2017calibration}
 \citation{phan2022sleeptransformer}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}The roles of the TCN and the ResNet-1D encoder}{16}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Preprocessing as the stronger development axis}{16}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Positioning relative to published results}{16}{subsection.5.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Limitations and a prioritised agenda}{16}{subsection.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Limitations and a prioritised agenda}{10}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{10}{section.6}\protected@file@percent }
 \bibstyle{ieeetr}
 \bibdata{references}
 \bibcite{rosenberg2013aasm}{1}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{17}{section.6}\protected@file@percent }
 \bibcite{jadhav2024zleepanlystnet}{2}
 \bibcite{bai2018tcn}{3}
 \bibcite{he2016resnet}{4}
@@ -117,19 +86,21 @@
 \bibcite{eldele2021attnsleep}{6}
 \bibcite{phan2022sleeptransformer}{7}
 \bibcite{phan2022review}{8}
-\bibcite{he2023crossscenario}{9}
-\bibcite{vdd2023traditional}{10}
-\bibcite{kemp2000sleepEDF}{11}
-\bibcite{physionetSleepEDF}{12}
-\bibcite{quan1997shhs}{13}
-\bibcite{zhang2018nsrr}{14}
-\bibcite{massimini2004travelling}{15}
-\bibcite{ohayon2004metaanalysis}{16}
-\bibcite{rechtschaffen1968}{17}
-\bibcite{berry2017aasm}{18}
-\bibcite{saerens2002adjusting}{19}
-\bibcite{guo2017calibration}{20}
-\bibcite{wilcoxon1945}{21}
-\bibcite{efron1994bootstrap}{22}
-\bibcite{holm1979}{23}
-\gdef \@abspage@last{19}
+\bibcite{haghayegh2023sleepinceptionnet}{9}
+\bibcite{he2023crossscenario}{10}
+\bibcite{eldele2023adast}{11}
+\bibcite{vdd2023traditional}{12}
+\bibcite{kemp2000sleepEDF}{13}
+\bibcite{physionetSleepEDF}{14}
+\bibcite{quan1997shhs}{15}
+\bibcite{zhang2018nsrr}{16}
+\bibcite{massimini2004travelling}{17}
+\bibcite{ohayon2004metaanalysis}{18}
+\bibcite{rechtschaffen1968}{19}
+\bibcite{berry2017aasm}{20}
+\bibcite{saerens2002adjusting}{21}
+\bibcite{guo2017calibration}{22}
+\bibcite{wilcoxon1945}{23}
+\bibcite{efron1994bootstrap}{24}
+\bibcite{holm1979}{25}
+\gdef \@abspage@last{12}

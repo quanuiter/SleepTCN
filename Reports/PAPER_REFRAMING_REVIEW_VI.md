@@ -12,14 +12,14 @@ Hai hướng đó không được số liệu hiện tại hỗ trợ. Bản th�
 
 Đây là một vấn đề thực tế vì nguồn lực phát triển có hạn. Một nhóm không thể đồng thời thay encoder,
 sequence model, preprocessing và thu thập nhiều nhãn target-domain mà vẫn biết thành phần nào tạo ra lợi
-ích. Zero-shot evaluation cho biết pipeline hiện tại hỏng ở đâu trước khi chọn chiến lược thích nghi.
+ích. Đánh giá chuyển miền không cập nhật trọng số cho biết pipeline hiện tại hỏng ở đâu trước khi chọn chiến lược thích nghi.
 
 ## Ba câu hỏi nghiên cứu cần giữ
 
 | Câu hỏi | Quyết định thực tế mà câu hỏi hỗ trợ | Bằng chứng hiện có | Câu trả lời được phép kết luận | Giá trị |
 |---|---|---|---|---|
 | RQ1. TCN và ResNet-1D có tạo ra incremental benefit đủ ổn định để đáng thay kiến trúc không? | Có nên tiếp tục đầu tư vào architecture search hay không? | E1−E0 và E2−E1 trên cùng 10 fold, cùng subject, cùng protocol; kiểm định theo subject; hai seed | Không thiết lập được lợi thế dự đoán ổn định. Lợi ích chắc hơn là vận hành: pipeline nhanh hơn, nhưng lớn hơn về parameter và memory. | Ngăn việc diễn giải các chênh lệch benchmark nhỏ như bằng chứng kiến trúc vượt trội. |
-| RQ2. Lựa chọn pipeline/preprocessing nào giữ được lợi ích khi zero-shot sang SHHS1? | Trước khi có target labels, nên giữ hoặc thay phần nào của pipeline? | Hai locked comparisons E3−E0 và E3−E6 trên 180 SHHS subject; các component contrasts phụ; seed-123 sensitivity | E3 tốt hơn hai locked references; các preprocessing contrasts quan sát được lớn hơn architecture contrasts. Band-pass là ứng viên giải thích phần lớn khác biệt, nhưng E3−E2 và E4 extension là secondary/post-hoc nên chưa chứng minh nhân quả cho một operation. | Chuyển ưu tiên từ tiếp tục đổi backbone sang signal handling và target-domain evaluation. |
+| RQ2. Lựa chọn pipeline/preprocessing nào giữ được lợi ích khi chuyển sang SHHS1 mà không cập nhật trọng số? | Trước khi có target labels, nên giữ hoặc thay phần nào của pipeline? | Hai locked comparisons E3−E0 và E3−E6 trên 180 SHHS subject; E0/E3 inductive, E6 transductive ở cấp bản ghi; các component contrasts phụ; seed-123 sensitivity | E3 tốt hơn hai locked references; các preprocessing contrasts quan sát được lớn hơn architecture contrasts. Band-pass là ứng viên giải thích phần lớn khác biệt, nhưng E3−E2 và E4 extension là secondary/post-hoc nên chưa chứng minh nhân quả cho một operation. | Chuyển ưu tiên từ tiếp tục đổi backbone sang signal handling và target-domain evaluation. |
 | RQ3. Lỗi nào phải xử lý trước khi triển khai và generic normalisation có đủ không? | Nếu chỉ có ít nhãn SHHS, nên dùng chúng ở đâu và đánh giá metric nào? | Class-wise F1, confusion channels, đối chiếu E0/E3, transition-region metrics và E6 sensitivity | N3→N2 là failure mode chung của E0/E3 và là ưu tiên thứ nhất; N2→REM trên E3 là ưu tiên thứ hai. Per-record z-score không cứu N3, do đó không phải stand-alone remedy. Thí nghiệm kế tiếp nên là class-specific calibration hoặc limited fine-tuning có nhãn. | Biến một aggregate domain gap thành mục tiêu thích nghi, đồng thời tránh quy sai lỗi N3 cho riêng kiến trúc E3. |
 
 ## Vai trò đúng của E6 và z-score
@@ -77,8 +77,8 @@ Các cách diễn đạt nên dùng:
   transfer error”.
 - Thay “E3 is superior” bằng “E3 was the strongest evaluated complete procedure under the locked SHHS
   comparisons”.
-- Thay “preprocessing causes better transfer” bằng “preprocessing was the stronger development axis in
-  this experiment; no individual operation was identified as causal”.
+- Thay “preprocessing causes better transfer” bằng “in the observed post-hoc comparison,
+  preprocessing was the stronger development axis; no individual operation was identified as causal”.
 - Thay “we identified an amplitude-threshold mechanism” bằng “the pattern is consistent with a
   conservative N3 boundary; montage and age are plausible but confounded contributors”.
 - Thay “correcting two channels restores performance” bằng “the counterfactual analysis ranks these two
@@ -99,7 +99,7 @@ Các cách diễn đạt nên dùng:
 ## Vị trí so với literature
 
 Cross-scenario sleep staging đã có các phương pháp domain adaptation dùng Sleep-EDF và SHHS1. Vì vậy,
-zero-shot transfer tự nó không còn là novelty đủ lớn. Bài phải phân biệt rõ rằng nó không đề xuất một
+đánh giá chuyển miền không cập nhật trọng số tự nó không còn là novelty đủ lớn. Bài phải phân biệt rõ rằng nó không đề xuất một
 adaptation algorithm; nó cung cấp bước chẩn đoán trước adaptation: lựa chọn pipeline nào giữ được lợi
 ích và target labels nên được dùng cho boundary nào. Bản thảo đã bổ sung hai đối chiếu literature:
 
@@ -110,8 +110,9 @@ adaptation algorithm; nó cung cấp bước chẩn đoán trước adaptation: 
 
 ## Việc còn chặn submission
 
-1. **Provenance:** protocol hash trong SHHS USB manifest khác file protocol hiện tại. Cần tìm lại đúng
-   protocol version hoặc viết một reconciliation record chứng minh khác biệt không ảnh hưởng predictions
+1. **Provenance:** hash trong SHHS USB manifest khớp snapshot lịch sử `configs/shhs_zero_shot_v1.json`;
+   `configs/shhs_v1_protocol.json` là hồ sơ mở rộng sau chạy. Đã ghi biên bản đối chiếu tại
+   `Reports/SHHS_PROTOCOL_PROVENANCE.md`; không thay hash snapshot bằng hash của hồ sơ mở rộng.
    và metrics. Không nên submit khi đường provenance này còn mơ hồ.
 2. **External baseline:** bản thảo đã nói rõ không claim SOTA, nhưng reviewer vẫn có thể yêu cầu một
    baseline hiện đại chạy cùng protocol. Nếu không chạy thêm, phải nhấn mạnh internal paired control và

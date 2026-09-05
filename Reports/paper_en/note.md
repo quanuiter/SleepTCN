@@ -1,61 +1,54 @@
-# Báo Cáo Cập Nhật & Đề Xuất Bản Thảo Nghiên Cứu (Sleep-EDF → SHHS1)
+# Ghi chú biên tập bản thảo ENG (Sleep-EDF → SHHS1)
 
----
+Tài liệu này là ghi chú nội bộ để giữ cách diễn giải đồng bộ với `main.tex` và `BUILD.md`; không được dùng làm nguồn phát biểu mạnh hơn bằng chứng trong bản thảo.
 
-## 1. Cải Tiến & Chuẩn Hóa Trang Đầu (Front Matter)
-* **Vấn đề bản cũ:** Sử dụng `\author{A \and B}` gây lỗi chia hai tác giả sang 2 cột lệch nhau và affiliation chỉ gắn dưới tác giả thứ hai.
-* **Cập nhật mới:**
-  * Sử dụng package `authblk` theo đúng chuẩn bài báo tạp chí: Tiêu đề in đậm một khối, danh sách tác giả chung dòng kèm chỉ số affiliation.
-  * Tách riêng khối affiliation và dòng thông tin tác giả liên hệ (Corresponding Author).
-  * Thêm đường kẻ phân cách trang trọng trước Abstract.
-  * Tái cấu trúc **Abstract** chuẩn cấu trúc: `Background` $\rightarrow$ `Methods` $\rightarrow$ `Results` $\rightarrow$ `Conclusions`.
-  * Thu nhỏ kích thước Heading về chuẩn typography của tạp chí chuyên ngành thông qua `titlesec`.
+## 1. Phạm vi của các đối chiếu
 
----
+- E1−E0 cô lập thay BiLSTM bằng TCN vì E1 dùng lại đúng encoder và feature cache của E0.
+- E2−E1 không cô lập encoder. E1 dùng gói đặc trưng/ngữ cảnh C/P/N 75 chiều; E2 thay gói này bằng embedding ResNet-1D 128 chiều chỉ từ epoch hiện tại. Vì vậy phải gọi đây là phép thay thế gói đặc trưng/ngữ cảnh.
+- E3−E2 giữ nguyên ResNet-1D--TCN và thay gói tiền xử lý. Đối chiếu này trên SHHS1 là hậu nghiệm trên cohort đã mở; nó hỗ trợ ưu tiên khảo sát tiền xử lý nhưng không chứng minh tác động nhân quả của một thao tác riêng.
+- Bốn đối chiếu Sleep-EDF được định trước (pre-specified), không gọi là pre-registered nếu không có đăng ký công khai trước nghiên cứu.
 
-## 2. Bốn Phát Hiện Bổ Sung Đột Phá
-*(Trích xuất hoàn toàn từ dữ liệu thực nghiệm sẵn có – Không cần tốn chi phí huấn luyện lại)*
+## 2. Phạm vi đúng của E6
 
-### 🔹 2.1. Phân Rã Khoảng Cách Miền (Domain Gap Decomposition)
-* Phân tích phản thực trên E3 cho thấy khoảng sụt giảm **Sleep-EDF $\rightarrow$ SHHS1** ($\Delta\text{Macro-F1} = 0.1805$) có hai kênh mang đòn bẩy số học lớn nhất:
-  * **Sửa riêng $N3 \rightarrow N2$:** Phục hồi **$74.5\%$** khoảng cách hiệu năng.
-  * **Sửa đồng thời $N3 \rightarrow N2$ & $N2 \rightarrow \text{REM}$:** Phục hồi **$102.4\%$**, đưa Macro-F1 về ngang mức trong miền ($0.7947$ so với $0.7904$).
-* **Diễn giải giới hạn:** Đây là phép phản thực trên dự đoán E3 để xếp hạng đòn bẩy, không chứng minh mô hình có thể đạt mức điểm đó hoặc rằng phần biểu diễn còn lại được bảo toàn. E0 cũng có lỗi N3→N2 gần tương đương (72,3% so với 73,1% ở E3), nên đây là failure mode chuyển miền chung chứ không phải lỗi riêng của E3.
+E6 dùng trung bình và độ lệch chuẩn tính từ toàn bộ tín hiệu đã lọc và cắt của từng bản ghi đích, không dùng nhãn. Đây là label-free target-record normalisation có tính transductive ở cấp bản ghi; không gọi E6 là zero-shot thuần inductive.
 
-### 🔹 2.2. Loại Trừ Giả Thuyết Dịch Chuyển Tiên Nghiệm (Prior Shift)
-* Phân tích tỷ lệ $\text{Dự đoán} / \text{Thực tế}$ theo từng lớp tín hiệu:
-  * **Lớp N3:** SHHS1 có N3 thực tế nhiều gấp **$2.02\times$**, nhưng mô hình chỉ phát hiện ở mức **$0.273\times$**.
-  * **Lớp N1:** SHHS1 có N1 ít đi (chỉ còn **$0.38\times$**), nhưng mô hình lại dự đoán dư thừa tới **$2.151\times$**.
-* **Nhận định then chốt:** Sai lệch dự đoán chạy **ngược chiều hoàn toàn** với dịch chuyển tiên nghiệm phân phối. Do đó, việc dùng kỹ thuật hiệu chỉnh Saerens sẽ làm suy giảm thêm hiệu năng N3. Nguyên nhân sụt giảm bắt buộc nằm ở tầng **đặc trưng tín hiệu vật lý**.
+E6 không cải thiện N3 trên SHHS1: recall/F1 N3 là 0,2005/0,3283, thấp hơn 0,2582/0,4055 của E3; recall N3 gần ranh giới nhãn là 0,0721 so với 0,0733. Kết quả này chỉ cho thấy z-score theo bản ghi không phải biện pháp độc lập đủ dùng trong pipeline đã đánh giá. Nó không bác bỏ mọi vai trò của biên độ và không xác lập cơ chế montage hay sinh lý.
 
-### 🔹 2.3. Cơ Chế Sụp Đổ Nhận Diện Pha N3 (N3 Collapse Mechanism)
-* **Bản chất vấn đề:** Ngưỡng biên độ sóng chậm (Slow-wave amplitude threshold).
-  * Mô hình **E3** giữ nguyên thang đo $\mu\text{V}$ tuyệt đối (clipping $\pm 800$, scale $/100$).
-  * Dataset **SHHS1** chuyển sang đạo trình **C4–A1** (sóng chậm có cực đại ở vùng trán $F$, biên độ ở đạo trình trung tâm $C$ vốn thấp hơn) trên đối tượng quần thể bệnh nhân cao tuổi hơn.
-* **Bằng chứng thực nghiệm:** Cả 4 dự đoán lý thuyết đều khớp với số liệu:
-  * **Dự đoán 4 (Mạnh nhất):** Recall của N3 sụt giảm nghiêm trọng từ **$0.258$ xuống $0.0733$** tại vùng chuyển pha (transition zones) — nơi biên độ sóng chậm nằm sát ngưỡng phân định nhất.
-  * **Nghịch lý kiến trúc:** Lựa chọn chuẩn hóa tín hiệu giúp E3 dẫn đầu trong miền lại chính là điểm yếu chí mạng khiến nó thất bại khi chuyển miền.
+## 3. Cách diễn giải khoảng hụt chuyển miền
 
-### 🔹 2.4. Giải Thích Kết Quả Null của Gate 8
-* Cấu trúc **TCN không nhân quả (Non-causal TCN)** sở hữu trường tiếp nhận (receptive field) lên tới **253 epoch** (tương đương $\pm 63$ phút), bao quát toàn bộ bản ghi qua đêm.
-* Việc bổ sung nhóm tiền/hậu $P/N$ chỉ cung cấp ngữ cảnh lân cận $\pm 1$ epoch — thông tin này đã nằm trọn trong trường tiếp nhận của chuỗi.
-* Do đó, kết quả null mang tính **tất yếu về mặt cấu trúc** chứ không phủ nhận vai trò của ngữ cảnh thời gian.
-* **Chỉ số tương tác đổi dấu:** $-0.00161$ (toàn bộ) và $+0.00258$ (vùng chuyển pha) khẳng định không tồn tại một đại lượng vô hướng đơn lẻ nào có thể tóm tắt đầy đủ đóng góp của ngữ cảnh $P/N$.
+Trên dự đoán E3, phép sửa phản thực riêng kênh N3→N2 tương ứng 74,5% khoảng hụt Macro-F1 giữa hai cohort; N2→REM đứng thứ hai. Đây là phép xếp hạng đòn bẩy số học, không phải hiệu năng có thể đạt được, không cộng tuyến tính giữa các kênh và không phải contrast kiến trúc E0−E3.
 
----
+E0 và E3 có recall N3 gần nhau (0,2610 và 0,2582) và đều gán hơn 72% epoch N3 thành N2. Vì vậy lỗi N3 là failure mode tái diễn qua hai pipeline đã đánh giá, không phải nhược điểm riêng của ResNet-1D--TCN.
 
-## 3. Các Thống Kê & Phân Tích Bổ Sung Đã Thêm Vào Bản Thảo
-- [x] **Effect Size $\Delta_{\text{sign}}$:** Kèm kiểm định dấu (*Sign Test*) cho toàn bộ bảng so sánh hiệu năng.
-- [x] **Replication Table (Seed 123 trên SHHS):** Cả hai so sánh khóa vẫn giữ vững mức ý nghĩa thống kê ngoài miền (dù trong miền bị mất).
-- [x] **Bảng phân rã sai số theo từng cặp chuyển pha (Transition Pairs).**
-- [x] **Chỉ số Per-class tại vùng chuyển pha trên tập SHHS.**
-- [x] **Độ lệch chuẩn (SD) của không gian biểu diễn Silhouette.**
+Khác biệt prior giữa hai cohort vẫn là một giả thuyết hợp lý. Hiệu chỉnh prior chưa được fitted hoặc validated, nên không được tuyên bố chắc chắn là có hại, đủ dùng hoặc không liên quan. Montage, tuổi, thiết bị và thực hành chấm cũng thay đổi đồng thời; thiết kế hiện tại không tách được cơ chế nhân quả.
 
----
+## 4. Ranh giới nhãn và Gate 8
 
-## 4. Các Điểm Cần Thảo Luận & Quyết Định
-| STT | Hạng mục | Chi tiết & Gợi ý xử lý | Trạng thái |
-| :---: | :--- | :--- | :---: |
-| **1** | **Build LaTeX $\rightarrow$ PDF** | Máy hiện tại thiếu môi trường `pdflatex`. File nguồn `.tex` đã được kiểm tra toàn diện (*cite key, ref/label, balance ngoặc/môi trường, asset paths*). Bạn chỉ cần kéo về máy Windows để build. | Cần build |
-| **2** | **Danh sách Tác giả & Affiliation** | `cover.tex` ghi GVHD Nguyễn Hồ Duy Trí, trong khi bản cũ chỉ để 2 SV. Hiện tại giữ 2 SV kèm comment nhắc. Email đang set theo format MSSV UIT. Cần đối soát lại email và gắn thêm ORCID cá nhân. | Cần chốt |
-| **3** | **Khuyến nghị Thực nghiệm (§5.7)** | **Thí nghiệm quan trọng nhất & chi phí rẻ nhất:** Đánh giá Per-class trên SHHS cho mô hình **E6** bằng cách chấm lại checkpoint đã có (*không cần train lại*).<br>• *Nếu N3 Recall của E6 > E3:* Khẳng định giả thuyết biên độ.<br>• *Nếu không:* Bác bỏ giả thuyết.<br>*(Đây là nơi khu trú tới **$74.5\%$** tổng sai số chuyển miền).* | Đề xuất làm ngay |
+Vùng lân cận thay đổi nhãn được tạo từ nhãn tham chiếu và chỉ dùng cho chẩn đoán ngoại tuyến. N3 khó hơn gần ranh giới trên cả hai cohort, nhưng recall ở vùng ổn định SHHS1 vẫn thấp; vì vậy ranh giới làm nặng lỗi nhưng không giải thích toàn bộ lỗi. Không gọi vùng này là chuyển pha sinh lý hoặc bộ phát hiện có thể triển khai.
+
+Gate 8 không tìm thấy lợi ích biên có ý nghĩa của mã hóa P/N trong pipeline E1. Kết quả không chứng minh P/N vô dụng, không phải một tất yếu kiến trúc và không cho phép gán một tỷ lệ thông tin cho từng nhóm ngữ cảnh.
+
+## 5. Trạng thái bản thảo và provenance
+
+- Abstract ENG phải giữ dưới 250 từ và keywords giữ ở 5--7 mục.
+- Các bảng chi tiết, context ablation và silhouette thuộc supplementary material; phần chính chỉ giữ kết quả cần cho lập luận.
+- SleepInceptionNet và ADAST được bổ sung để định vị nghiên cứu single-channel và domain adaptation.
+- Prediction artifacts và các chỉ số tái tính đã được xác minh bằng hash. Hash trong run manifest SHHS
+  (`165d7cdf...fe93`) khớp chính xác snapshot lịch sử `configs/shhs_zero_shot_v1.json` đã được giữ lại.
+  Hash `9541e233...fe9` thuộc `configs/shhs_v1_protocol.json`, là hồ sơ mở rộng sau chạy chứ không phải
+  snapshot dùng để khóa dự đoán. Biên bản đối chiếu nằm ở `Reports/SHHS_PROTOCOL_PROVENANCE.md`;
+  không được thay hash lịch sử bằng hash của hồ sơ mở rộng. Provenance protocol hiện truy nguyên được,
+  nhưng E6 vẫn là tái phân tích mô tả từ artifact khóa và raw SHHS/artifact không nằm trong kho.
+
+## 6. Cụm từ được phép dùng
+
+- “The isolated TCN substitution and bundled E2 feature/context replacement did not establish a stable predictive advantage.”
+- “In the observed post-hoc comparison, preprocessing was the stronger development axis.”
+- “E6 is label-free but transductive target-record normalisation.”
+- “The pattern is consistent with a conservative N3 decision boundary; causal contributors remain unresolved.”
+- “The counterfactual analysis ranks error channels by potential leverage; it is not an achievable-performance estimate.”
+
+Tránh các diễn giải mang tính đột phá hoặc nhận diện cơ chế nhân quả; không quy nguyên nhân tuyệt đối cho
+đặc trưng vật lý, không khẳng định ResNet vượt trội, không gọi E2 là phép cô lập encoder, và không gọi gói
+này là tái lập đầy đủ nếu chưa nêu rõ giới hạn dữ liệu/artifact ngoài kho.

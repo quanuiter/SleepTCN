@@ -2,8 +2,14 @@
 
 ## Scope
 
-This is a descriptive reanalysis of the locked SHHS1 zero-shot ensemble artifacts
+This is a descriptive reanalysis of the locked SHHS1 no-weight-update ensemble artifacts
 stored on the USB drive:
+
+E6 computes its mean and standard deviation from the complete filtered and clipped
+target recording without labels. It is therefore label-free target-record
+normalisation with a transductive dependency, not purely inductive zero-shot
+inference. “Zero-shot” names the locked no-weight-update campaign and does not
+remove this qualification.
 
 - `E:\research\Dataset\SHHS_v1\zero_shot_v1\test\run_manifest.json`
 - `E:\research\Dataset\SHHS_v1\zero_shot_v1\test\test_gate.json`
@@ -16,11 +22,13 @@ from the NPZ predictions matched the manifest values.
 ## Important provenance note
 
 The protocol hash in the USB run manifest is
-`165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93`, while the
-currently checked-out local protocol hashes to
-`9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9`.
-Therefore, this file should be treated as a direct descriptive reanalysis of
-the locked predictions, not as a newly regenerated protocol-approved report.
+`165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93`, which matches the retained
+historical snapshot `configs/shhs_zero_shot_v1.json`. The currently checked-out expanded audit record
+`configs/shhs_v1_protocol.json` hashes to
+`9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9` and is not a replacement for the
+historical snapshot. The reconciliation is documented in `Reports/SHHS_PROTOCOL_PROVENANCE.md`.
+This file remains a direct descriptive reanalysis of the locked predictions, not a newly regenerated
+report.
 
 ## Overall pooled results
 

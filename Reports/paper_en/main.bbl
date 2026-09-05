@@ -1,0 +1,141 @@
+\begin{thebibliography}{10}
+
+\bibitem{rosenberg2013aasm}
+R.~S. Rosenberg and S.~Van~Hout, ``The american academy of sleep medicine
+  inter-scorer reliability program: sleep stage scoring,'' {\em Journal of
+  Clinical Sleep Medicine}, vol.~9, no.~1, pp.~81--87, 2013.
+
+\bibitem{jadhav2024zleepanlystnet}
+N.~Jirakittayakorn, Y.~Wongsawat, and S.~Mitrirattanakul, ``Zleepanlystnet: a
+  novel deep learning model for automatic sleep stage scoring based on
+  single-channel raw eeg data using separating training,'' {\em Scientific
+  Reports}, vol.~14, p.~9859, 2024.
+
+\bibitem{bai2018tcn}
+S.~Bai, J.~Z. Kolter, and V.~Koltun, ``An empirical evaluation of generic
+  convolutional and recurrent networks for sequence modeling,'' {\em arXiv
+  preprint arXiv:1803.01271}, 2018.
+
+\bibitem{he2016resnet}
+K.~He, X.~Zhang, S.~Ren, and J.~Sun, ``Deep residual learning for image
+  recognition,'' in {\em Proceedings of the IEEE Conference on Computer Vision
+  and Pattern Recognition}, pp.~770--778, 2016.
+
+\bibitem{supratak2017deepsleepnet}
+A.~Supratak, H.~Dong, C.~Wu, and Y.~Guo, ``Deepsleepnet: A model for automatic
+  sleep stage scoring based on raw single-channel eeg,'' {\em IEEE Transactions
+  on Neural Systems and Rehabilitation Engineering}, vol.~25, no.~11,
+  pp.~1998--2008, 2017.
+
+\bibitem{eldele2021attnsleep}
+E.~Eldele, Z.~Chen, C.~Liu, M.~Wu, C.-K. Kwoh, X.~Li, and C.~Guan, ``An
+  attention-based deep learning approach for sleep stage classification with
+  single-channel eeg,'' {\em IEEE Transactions on Neural Systems and
+  Rehabilitation Engineering}, vol.~29, pp.~809--818, 2021.
+
+\bibitem{phan2022sleeptransformer}
+H.~Phan, K.~Mikkelsen, O.~Y. Ch{\'e}n, P.~Koch, A.~Mertins, and M.~De~Vos,
+  ``Sleeptransformer: Automatic sleep staging with interpretability and
+  uncertainty quantification,'' {\em IEEE Transactions on Biomedical
+  Engineering}, vol.~69, no.~8, pp.~2456--2467, 2022.
+
+\bibitem{phan2022review}
+H.~Phan and K.~Mikkelsen, ``Automatic sleep staging of {EEG} signals: recent
+  development, challenges, and future directions,'' {\em Physiological
+  Measurement}, vol.~43, no.~4, p.~04TR01, 2022.
+
+\bibitem{haghayegh2023sleepinceptionnet}
+S.~Haghayegh, K.~Hu, K.~Stone, S.~Redline, and E.~Schernhammer, ``Automated
+  sleep stages classification using convolutional neural network from raw and
+  time-frequency electroencephalogram signals: Systematic evaluation study,''
+  {\em Journal of Medical Internet Research}, vol.~25, p.~e40211, 2023.
+
+\bibitem{he2023crossscenario}
+Z.~He, M.~Tang, P.~Wang, L.~Du, X.~Chen, G.~Cheng, and Z.~Fang,
+  ``Cross-scenario automatic sleep stage classification using transfer learning
+  and single-channel {EEG},'' {\em Biomedical Signal Processing and Control},
+  vol.~81, p.~104501, 2023.
+
+\bibitem{eldele2023adast}
+E.~Eldele, M.~Ragab, Z.~Chen, M.~Wu, C.-K. Kwoh, X.~Li, and C.~Guan, ``{ADAST}:
+  Attentive cross-domain {EEG}-based sleep staging framework with iterative
+  self-training,'' {\em IEEE Transactions on Emerging Topics in Computational
+  Intelligence}, vol.~7, no.~1, pp.~210--221, 2023.
+
+\bibitem{vdd2023traditional}
+J.~Van Der~Donckt, J.~Van Der~Donckt, E.~Deprost, N.~Vandenbussche,
+  M.~Rademaker, G.~Vandewiele, and S.~Van~Hoecke, ``Do not sleep on traditional
+  machine learning: Simple and interpretable techniques are competitive to deep
+  learning for sleep scoring,'' {\em Biomedical Signal Processing and Control},
+  vol.~81, p.~104429, 2023.
+
+\bibitem{kemp2000sleepEDF}
+B.~Kemp, A.~H. Zwinderman, B.~Tuk, H.~A.~C. Kamphuisen, and J.~J.~L.
+  Obery{\'e}, ``Analysis of a sleep-dependent neuronal feedback loop: the
+  slow-wave microcontinuity of the eeg,'' {\em IEEE Transactions on Biomedical
+  Engineering}, vol.~47, no.~9, pp.~1185--1194, 2000.
+
+\bibitem{physionetSleepEDF}
+{PhysioNet}, ``Sleep-edf database expanded, version 1.0.0.''
+  \url{https://physionet.org/content/sleep-edfx/1.0.0/}, 2013.
+\newblock Accessed 14 August 2026.
+
+\bibitem{quan1997shhs}
+S.~F. Quan, B.~V. Howard, C.~Iber, J.~P. Kiley, F.~J. Nieto, G.~T. O'Connor,
+  D.~M. Rapoport, S.~Redline, J.~Robbins, J.~M. Samet, and P.~W. Wahl, ``The
+  sleep heart health study: design, rationale, and methods,'' {\em Sleep},
+  vol.~20, no.~12, pp.~1077--1085, 1997.
+
+\bibitem{zhang2018nsrr}
+G.-Q. Zhang, L.~Cui, R.~Mueller, S.~Tao, M.~Kim, M.~Rueschman, S.~Mariani,
+  D.~Mobley, and S.~Redline, ``The national sleep research resource: towards a
+  sleep data commons,'' {\em Journal of the American Medical Informatics
+  Association}, vol.~25, no.~10, pp.~1351--1358, 2018.
+
+\bibitem{massimini2004travelling}
+M.~Massimini, R.~Huber, F.~Ferrarelli, S.~Hill, and G.~Tononi, ``The sleep slow
+  oscillation as a traveling wave,'' {\em Journal of Neuroscience}, vol.~24,
+  no.~31, pp.~6862--6870, 2004.
+
+\bibitem{ohayon2004metaanalysis}
+M.~M. Ohayon, M.~A. Carskadon, C.~Guilleminault, and M.~V. Vitiello,
+  ``Meta-analysis of quantitative sleep parameters from childhood to old age in
+  healthy individuals: developing normative sleep values across the human
+  lifespan,'' {\em Sleep}, vol.~27, no.~7, pp.~1255--1273, 2004.
+
+\bibitem{rechtschaffen1968}
+A.~Rechtschaffen and A.~Kales, {\em A Manual of Standardized Terminology,
+  Techniques and Scoring System for Sleep Stages of Human Subjects}.
+\newblock Bethesda, MD: U.S. National Institute of Neurological Diseases and
+  Blindness, 1968.
+
+\bibitem{berry2017aasm}
+R.~B. Berry, R.~Brooks, C.~E. Gamaldo, S.~M. Harding, R.~M. Lloyd, S.~F. Quan,
+  M.~T. Troester, and B.~V. Vaughn, {\em The AASM Manual for the Scoring of
+  Sleep and Associated Events: Rules, Terminology and Technical Specifications,
+  Version 2.4}.
+\newblock Darien, IL: American Academy of Sleep Medicine, 2017.
+
+\bibitem{saerens2002adjusting}
+M.~Saerens, P.~Latinne, and C.~Decaestecker, ``Adjusting the outputs of a
+  classifier to new a priori probabilities: A simple procedure,'' {\em Neural
+  Computation}, vol.~14, no.~1, pp.~21--41, 2002.
+
+\bibitem{guo2017calibration}
+C.~Guo, G.~Pleiss, Y.~Sun, and K.~Q. Weinberger, ``On calibration of modern
+  neural networks,'' in {\em Proceedings of the 34th International Conference
+  on Machine Learning (ICML)}, pp.~1321--1330, 2017.
+
+\bibitem{wilcoxon1945}
+F.~Wilcoxon, ``Individual comparisons by ranking methods,'' {\em Biometrics
+  Bulletin}, vol.~1, no.~6, pp.~80--83, 1945.
+
+\bibitem{efron1994bootstrap}
+B.~Efron and R.~J. Tibshirani, {\em An Introduction to the Bootstrap}.
+\newblock Chapman and Hall/CRC, 1994.
+
+\bibitem{holm1979}
+S.~Holm, ``A simple sequentially rejective multiple test procedure,'' {\em
+  Scandinavian Journal of Statistics}, vol.~6, no.~2, pp.~65--70, 1979.
+
+\end{thebibliography}

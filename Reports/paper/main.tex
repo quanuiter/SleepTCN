@@ -52,7 +52,7 @@
 
 \title{\textbf{Đánh giá có kiểm soát ResNet-1D--TCN cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF và SHHS1}\\[0.55em]
 \large Controlled Evaluation of ResNet-1D--TCN for Single-Channel EEG Sleep Staging on Sleep-EDF and SHHS1}
-\author{Ngô Nhật Quân \and Phạm Thái Sơn\\
+\author{Ngô Nhật Quân\thanks{Tác giả chính và tác giả liên hệ: \texttt{23521258@gm.uit.edu.vn}} \and Phạm Thái Sơn\\
 \small Trường Đại học Công nghệ Thông tin, Đại học Quốc gia TP. Hồ Chí Minh}
 \date{Bản thảo nghiên cứu, tháng 8 năm 2026}
 
@@ -62,10 +62,10 @@
 
 \renewcommand{\abstractname}{Tóm tắt}
 \begin{abstract}
-Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF Expanded. Sáu cấu hình được so sánh trên cùng phép chia theo 78 đối tượng và cùng nguyên tắc lựa chọn mô hình. Cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt \mf\ ngoài fold 0,7904, cao nhất trong chiến dịch. So với z-score theo bản ghi, chênh lệch là 0,0213 (\ci\ $[0,0122;0,0307]$, $p_{Holm}=0,0012$). Lần lặp sau giao thức giữ hướng hiệu ứng dương. ResNet-1D--TCN nhanh hơn khoảng 3,76 lần khi suy luận, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trong lần lặp với seed 123, E2 hoàn tất 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; toàn bộ sáu cấu hình cần 45 giờ 12 phút 10 giây khi chạy tuần tự. Trên 180 đối tượng SHHS1 đã khóa, cấu hình này cao hơn hai mốc đối chứng theo \mf\ trung bình ở cấp đối tượng, nhưng E0 và E3 đều bỏ sót hơn 72\% epoch N3 thành N2 và có recall N3 gần như nhau (0,2610 và 0,2582). Kết quả ủng hộ lợi ích tổng thể và vận hành của quy trình E3, đồng thời định vị một failure mode N3 ngoài miền không được giải quyết bằng thay kiến trúc.
+Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân giai đoạn giấc ngủ từ EEG đơn kênh trên Sleep-EDF Expanded. Sáu cấu hình được so sánh trên cùng phép chia theo 78 đối tượng và cùng nguyên tắc lựa chọn mô hình. Cấu hình ResNet-1D--TCN với chế độ xử lý biên độ chính đạt \mf\ ngoài fold 0,7904, cao nhất trong chiến dịch. So với E6, trong đó z-score dùng trung bình và độ lệch chuẩn của toàn bộ bản ghi đích không nhãn, chênh lệch là 0,0213 (\ci\ $[0,0122;0,0307]$, $p_{Holm}=0,0012$). E6 vì vậy có tính transductive ở cấp bản ghi, không phải zero-shot thuần inductive. Lần lặp sau giao thức giữ hướng hiệu ứng dương. ResNet-1D--TCN đạt speed-up suy luận khoảng 3,76 lần, đổi lại số tham số cao hơn 4,37 lần và bộ nhớ GPU cực đại cao hơn 28,4\%. Trên 180 đối tượng SHHS1 đã khóa, E3 cao hơn hai mốc đối chứng theo \mf\ trung bình ở cấp đối tượng, nhưng E0 và E3 đều bỏ sót hơn 72\% epoch N3 thành N2 và có recall N3 gần như nhau (0,2610 và 0,2582). Kết quả ủng hộ lợi ích tổng thể và vận hành của quy trình E3, đồng thời định vị một failure mode N3 ngoài miền không được giải quyết bằng thay kiến trúc.
 \end{abstract}
 
-\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; ResNet-1D; TCN; Sleep-EDF Expanded; SHHS; zero-shot; kiểm định bắt cặp.
+\noindent\textbf{Từ khóa:} phân giai đoạn giấc ngủ; EEG đơn kênh; TCN; dịch chuyển miền; thích nghi miền; kiểm định bắt cặp.
 
 \begin{center}
 \rule{0.95\textwidth}{0.35pt}
@@ -74,9 +74,9 @@ Nghiên cứu đánh giá có kiểm soát các mô hình học sâu cho phân g
 \selectlanguage{english}
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-Automatic sleep staging from single-channel electroencephalography requires evaluation protocols that separate model effects from differences in subjects and preprocessing. We conducted a controlled comparison of six configurations on a subject-wise Sleep-EDF Expanded split. The ResNet-1D--TCN configuration with the principal amplitude-processing scheme achieved the highest out-of-fold macro-F1 (0.7904). It exceeded record-wise z-score normalization by 0.0213 (95\% CI $[0.0122,0.0307]$, Holm-adjusted $p=0.0012$). A post-protocol repeat preserved the positive direction of this effect. ResNet-1D--TCN was approximately 3.76 times faster in forward inference, at the cost of 4.37 times more parameters and 28.4\% higher peak GPU memory. In the seed-123 campaign, E2 completed the ten-fold training and validation campaign in 2 h 44 min 57 s, compared with 33 h 35 min 36 s for E0; the six configurations required 45 h 12 min 10 s when run sequentially. In a locked zero-shot evaluation of 180 SHHS1 participants, the same configuration exceeded both reference conditions overall, but E0 and E3 each misclassified more than 72\% of reference N3 epochs as N2 and had near-identical N3 recall (0.2610 and 0.2582). The results support E3's overall and operational trade-off while identifying a cross-architecture N3 transfer failure.
+Automatic sleep staging from single-channel electroencephalography requires protocols that separate model effects from subject and preprocessing differences. We compared six configurations on a subject-wise Sleep-EDF Expanded split. The fixed-scale ResNet-1D--TCN configuration E3 achieved the highest out-of-fold macro-F1 (0.7904) and exceeded E6 by 0.0213 (95\% CI $[0.0122,0.0307]$, Holm-adjusted $p=0.0012$). E6 estimates its mean and standard deviation from each complete unlabelled target recording and is therefore label-free but transductive. E3 provided a 3.76-fold inference speed-up, at the cost of 4.37 times more parameters and 28.4\% higher peak GPU memory. On 180 locked SHHS1 participants, E3 exceeded both references overall, but E0 and E3 each misclassified more than 72\% of N3 epochs as N2 and had similar N3 recall (0.2610 and 0.2582). The results support E3's overall and operational trade-off while identifying a cross-pipeline N3 transfer failure.
 \end{abstract}
-\noindent\textbf{Keywords:} sleep staging; single-channel EEG; ResNet-1D; temporal convolutional network; Sleep-EDF Expanded; SHHS; zero-shot evaluation.
+\noindent\textbf{Keywords:} sleep staging; single-channel EEG; temporal convolutional network; domain shift; target-domain adaptation; paired inference.
 \selectlanguage{vietnamese}
 
 \section{Giới thiệu}
@@ -85,13 +85,15 @@ Phân giai đoạn giấc ngủ gán một trong năm nhãn W, N1, N2, N3 và RE
 
 ZleepAnlystNet là mô hình EEG đơn kênh hai giai đoạn, kết hợp bộ trích đặc trưng CNN với BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu khảo sát TCN như một mô hình chuỗi có khả năng xử lý song song~\cite{bai2018tcn} và ResNet-1D như một bộ trích đặc trưng có kết nối dư~\cite{he2016resnet}. Các lựa chọn này có thể đem lại lợi ích vận hành hoặc biểu diễn, nhưng không mặc nhiên bảo đảm chất lượng dự đoán cao hơn. Chế độ xử lý biên độ cũng được xem xét vì có thể ảnh hưởng đáng kể khi chuyển giữa các thiết bị và quần thể.
 
-Nghiên cứu thiết kế một chiến dịch bắt cặp theo đối tượng để trả lời bốn câu hỏi: (1) TCN có cải thiện so với BiLSTM khi giữ nguyên bộ trích đặc trưng hay không; (2) ResNet-1D có tạo lợi ích khi dùng cùng mô hình chuỗi hay không; (3) chế độ xử lý biên độ ảnh hưởng thế nào; và (4) các kết quả có giữ được khi đánh giá zero-shot trên SHHS1 hay không.
+Nghiên cứu thiết kế một chiến dịch bắt cặp theo đối tượng để trả lời bốn câu hỏi: (1) TCN có cải thiện so với BiLSTM khi giữ nguyên bộ trích đặc trưng hay không; (2) việc thay gói đặc trưng/ngữ cảnh C/P/N 75 chiều của E1 bằng encoder ResNet-1D 128 chiều chỉ dùng epoch hiện tại có tạo lợi ích hay không; (3) chế độ xử lý biên độ ảnh hưởng thế nào; và (4) các kết quả có giữ được khi đánh giá chuyển miền sang SHHS1 hay không.
 
-Đóng góp chính gồm: một giao thức 10-fold thống nhất và chống rò rỉ; các ablation thành phần trên cùng đối tượng; đánh giá độ phức tạp, tốc độ và không gian đặc trưng; phân tích trực tiếp vai trò của ngữ cảnh liền trước và liền sau; và một chiến dịch zero-shot đã khóa trên SHHS1. Nghiên cứu phân biệt rõ so sánh định trước, phân tích thứ cấp và phân tích hậu nghiệm để giới hạn phát biểu trong phạm vi bằng chứng.
+Đóng góp chính gồm: một giao thức 10-fold thống nhất và chống rò rỉ; các ablation thành phần trên cùng đối tượng; đánh giá độ phức tạp, tốc độ và không gian đặc trưng; phân tích trực tiếp vai trò của ngữ cảnh liền trước và liền sau; và một chiến dịch chuyển miền không cập nhật trọng số đã khóa trên SHHS1. Nghiên cứu phân biệt rõ so sánh định trước, phân tích thứ cấp và phân tích hậu nghiệm để giới hạn phát biểu trong phạm vi bằng chứng.
 
 \section{Nghiên cứu liên quan}
 
 DeepSleepNet kết hợp CNN hai nhánh và BiLSTM để học hình thái epoch cùng quan hệ theo thời gian~\cite{supratak2017deepsleepnet}. AttnSleep sử dụng cơ chế chú ý và mô hình hóa thời gian~\cite{eldele2021attnsleep}; SleepTransformer khai thác self-attention và ước lượng bất định~\cite{phan2022sleeptransformer}. Các công trình này cho thấy ngữ cảnh chuỗi quan trọng, nhưng khác biệt về tập dữ liệu, phép chia và tiền xử lý khiến việc so sánh chéo bảng không thay thế được ablation trong cùng giao thức.
+
+SleepInceptionNet khảo sát có hệ thống tín hiệu thô, phổ và biểu diễn thời gian--tần số, sau đó chọn một mô hình Inception dùng biến đổi wavelet liên tục trên EEG trung tâm đơn kênh để chấm từng epoch~\cite{haghayegh2023sleepinceptionnet}. Công trình này cho thấy lựa chọn biểu diễn đầu vào là một phần của định nghĩa pipeline, không phải chi tiết triển khai trung tính. Ở hướng chuyển miền, ADAST dùng attention riêng theo miền, căn chỉnh đối kháng và self-training bằng pseudo-label từ dữ liệu đích không nhãn~\cite{eldele2023adast}. Khác với ADAST, E6 trong nghiên cứu hiện tại chỉ dùng thống kê chuẩn hóa của bản ghi đích và không cập nhật biểu diễn hoặc trọng số mô hình.
 
 Sleep-EDF Expanded là mốc phổ biến cho EEG đơn kênh~\cite{kemp2000sleepEDF,physionetSleepEDF}. SHHS là nghiên cứu đoàn hệ đa trung tâm quy mô lớn, được thu thập để nghiên cứu rối loạn hô hấp khi ngủ và nguy cơ tim mạch~\cite{quan1997shhs}; dữ liệu được phân phối qua National Sleep Research Resource (NSRR)~\cite{zhang2018nsrr}. Khác biệt giữa Sleep-EDF và SHHS về tuổi, bệnh lý, thiết bị, montage và phân bố nhãn tạo ra phép kiểm tra dịch chuyển miền thực tế hơn đánh giá trong cùng bộ dữ liệu.
 
@@ -128,7 +130,7 @@ Sleep-EDF còn 298 epoch Movement hoặc Unknown không tham gia chỉ số. S�
 
 \subsection{Tiền xử lý}
 
-Tín hiệu được hiệu chuẩn về đơn vị vật lý và căn chỉnh với nhãn theo thời gian. Cửa sổ được xác định nhất quán giữa các cấu hình. Các điều kiện chính gồm tín hiệu thô, lọc dải, lọc dải kết hợp chế độ xử lý biên độ chính và lọc dải kết hợp z-score theo bản ghi. Một biến thể xử lý được xác định trùng dữ liệu với điều kiện lọc dải nên không tạo thành một thí nghiệm độc lập.
+Tín hiệu được hiệu chuẩn về đơn vị vật lý và căn chỉnh với nhãn theo thời gian. Cửa sổ được xác định nhất quán giữa các cấu hình. Các điều kiện chính gồm tín hiệu thô, lọc dải, lọc dải kết hợp chế độ xử lý biên độ chính và lọc dải kết hợp z-score theo bản ghi. Với E6, trung bình và độ lệch chuẩn được tính trên toàn bộ bản ghi đích đã lọc và cắt biên mà không dùng nhãn; đây là chuẩn hóa bản ghi đích không nhãn có tính transductive, không phải suy luận zero-shot thuần inductive. Một biến thể xử lý được xác định trùng dữ liệu với điều kiện lọc dải nên không tạo thành một thí nghiệm độc lập.
 
 \subsection{Cấu hình mô hình}
 
@@ -143,7 +145,7 @@ Tín hiệu được hiệu chuẩn về đơn vị vật lý và căn chỉnh v
 \midrule
 E0 & Tín hiệu thô & CNN đối chứng & BiLSTM; đối chứng nội bộ \\
 E1 & Tín hiệu thô & CNN đối chứng & TCN; cô lập mô hình chuỗi \\
-E2 & Tín hiệu thô & ResNet-1D & TCN; cô lập bộ trích xuất \\
+E2 & Tín hiệu thô & ResNet-1D & TCN; thay gói đặc trưng/ngữ cảnh E1 bằng encoder epoch hiện tại \\
 E3 & Lọc và chuẩn hóa biên độ & ResNet-1D & TCN; toàn bộ quy trình đề xuất \\
 E4 & Chỉ lọc dải & ResNet-1D & TCN; tác động của lọc dải \\
 E6 & Lọc, cắt, z-score & ResNet-1D & TCN; đối chiếu cách đổi thang \\
@@ -151,7 +153,7 @@ E6 & Lọc, cắt, z-score & ResNet-1D & TCN; đối chiếu cách đổi thang 
 \end{tabularx}
 \end{table}
 
-E0 giữ cấu trúc CNN--BiLSTM của ZleepAnlystNet và được xem là đối chứng nội bộ đã hiệu chỉnh. E1 thay mô hình chuỗi bằng TCN; E2 thay bộ trích đặc trưng bằng ResNet-1D; E3, E4 và E6 giữ ResNet-1D--TCN nhưng thay đổi chế độ xử lý tín hiệu. Các cấu hình dùng cùng nguyên tắc lựa chọn và đánh giá.
+E0 giữ cấu trúc CNN--BiLSTM của ZleepAnlystNet và được xem là đối chứng nội bộ đã hiệu chỉnh. E1 chỉ thay mô hình chuỗi bằng TCN và dùng lại encoder E0. E2 thay toàn bộ gói đặc trưng/ngữ cảnh C/P/N 75 chiều của E1 bằng encoder ResNet-1D 128 chiều chỉ nhận epoch hiện tại; vì vậy E2--E1 không phải phép cô lập riêng encoder. E3, E4 và E6 giữ ResNet-1D--TCN nhưng thay đổi chế độ xử lý tín hiệu. Các cấu hình dùng cùng nguyên tắc lựa chọn và đánh giá.
 
 \subsection{Huấn luyện và chia fold}
 
@@ -384,11 +386,11 @@ Phân tích loại bỏ nhóm ngữ cảnh tại vùng chuyển pha không cho t
 \label{fig:supporting}
 \end{figure}
 
-\subsection{Đánh giá zero-shot trên SHHS1}
+\subsection{Đánh giá chuyển miền không cập nhật trọng số trên SHHS1}
 
 \begin{table}[t]
 \centering
-\caption{Hiệu năng zero-shot trên 180 đối tượng SHHS1.}
+\caption{Hiệu năng chuyển miền trên 180 đối tượng SHHS1, không cập nhật trọng số.}
 \label{tab:shhs-performance}
 \small
 \begin{tabular}{lrrrrr}
@@ -407,7 +409,7 @@ E3 cao hơn E0 0,0412 \mf\ trung bình theo đối tượng (\ci\ $[0,0314;0,051
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.88\textwidth]{../figures/shhs_zero_shot_effects.png}
-\caption{Hiệu ứng zero-shot bắt cặp theo đối tượng trên SHHS1.}
+\caption{Hiệu ứng chuyển miền bắt cặp theo đối tượng trên SHHS1.}
 \label{fig:shhs-effects}
 \end{figure}
 
@@ -438,6 +440,8 @@ REM & 0,605237 & 0,893923 & 0,721785 & 0,488616 & 0,944976 & 0,644158 & +0,07762
 
 Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N3$\rightarrow$N2 (16.674), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). Đối chiếu cùng mẫu cho thấy E0 cũng gán 16.480/22.806 epoch N3 thành N2, tương ứng 72,3\%, và có recall N3 0,2610 so với 0,2582 của E3. Vì vậy, lỗi N3$\rightarrow$N2 là failure mode chuyển miền chung của hai họ kiến trúc; E3 cải thiện hiệu năng tổng thể nhưng không cải thiện nhận diện N3. Đây là các chẩn đoán mô tả trên mẫu SHHS1 đã khóa; chúng không được dùng để suy ra cơ chế nhân quả của kiến trúc hoặc tiền xử lý.
 
+Trong kiểm tra hậu nghiệm dùng cùng định nghĩa vùng lân cận thay đổi nhãn, \mf\ của E0/E3 tại vùng lân cận so với vùng ổn định là 0,6179/0,6321 so với 0,8175/0,8346 trên Sleep-EDF, và 0,4323/0,4689 so với 0,5959/0,6220 trên SHHS1. Recall N3 tương ứng là 0,6121/0,6326 so với 0,9216/0,9316 trên Sleep-EDF, nhưng chỉ 0,0633/0,0733 so với 0,4008/0,3900 trên SHHS1. Kết quả tái diễn khi chỉ giữ các thay đổi nhãn có ít nhất ba epoch liên tiếp ở mỗi phía. Vì vùng ổn định SHHS1 vẫn suy giảm mạnh, thay đổi nhãn làm bài toán khó hơn nhưng không giải thích toàn bộ lỗi N3; đây là chẩn đoán hậu nghiệm từ nhãn tham chiếu, không phải kết luận về chuyển pha sinh lý hoặc bộ phát hiện trực tuyến.
+
 \begin{table}[t]
 \centering
 \caption{Ma trận nhầm lẫn gộp của E3 trên SHHS1.}
@@ -458,7 +462,7 @@ REM & 655 & 784 & 1.311 & 1 & 23.183 \\
 
 \subsection{Phân tích thành phần ngoài miền}
 
-E1--E0 trên SHHS đạt $+0,00651$ \mf\ theo đối tượng, \ci\ $[0,00192;0,01087]$, $p_{Holm}=0,00325$ và thắng/hòa/thua 108/0/72. Đây là bằng chứng thứ cấp ủng hộ TCN thay BiLSTM trong bộ trích đặc trưng đối chứng, nhưng hiệu ứng nhỏ. E2--E1 đạt $-0,01280$, \ci\ $[-0,02209;-0,00350]$, $p_{Holm}=0,01005$ và 80/0/100; giả thuyết ResNet-1D cao hơn bộ trích đặc trưng đối chứng dưới cùng TCN không được ủng hộ trên tín hiệu SHHS chưa qua xử lý dải.
+E1--E0 trên SHHS đạt $+0,00651$ \mf\ theo đối tượng, \ci\ $[0,00192;0,01087]$, $p_{Holm}=0,00325$ và thắng/hòa/thua 108/0/72. Đây là bằng chứng thứ cấp ủng hộ TCN thay BiLSTM trong bộ trích đặc trưng đối chứng, nhưng hiệu ứng nhỏ. E2--E1 đạt $-0,01280$, \ci\ $[-0,02209;-0,00350]$, $p_{Holm}=0,01005$ và 80/0/100; gói ResNet-1D 128 chiều chỉ dùng epoch hiện tại không vượt gói CNN C/P/N 75 chiều của E1 trên tín hiệu SHHS chưa qua xử lý dải. Đối chiếu này không xác định hiệu ứng riêng của encoder.
 
 Đối chiếu hậu nghiệm E3--E2, cùng họ ResNet-1D--TCN nhưng khác chế độ tiền xử lý, cho $+0,04750$ \mf\ theo đối tượng, \ci\ $[0,03724;0,05792]$, Wilcoxon $p=2,35\times10^{-17}$ và thắng/hòa/thua 147/0/33. F1 N1 tăng 0,06183 và \mf\ vùng chuyển pha tăng 0,04700. Kết quả hỗ trợ mạnh toàn bộ chế độ tiền xử lý E3 trong mẫu đã mở, nhưng chưa tách được tác động riêng của từng thao tác.
 
@@ -474,7 +478,7 @@ Toàn bộ quy trình E3 có hiệu năng cao hơn đối chứng E0 trong cả 
 
 \subsection{Vai trò của TCN và ResNet-1D}
 
-Trong miền Sleep-EDF, E1--E0 và E2--E1 cho mức cải thiện mô tả dương nhưng chưa đạt ngưỡng sau Holm. Trên SHHS, E1--E0 cho hiệu ứng dương nhỏ, còn E2--E1 cho hiệu ứng âm. Mẫu hình này cho thấy lợi ích của kiến trúc phụ thuộc miền và không ủng hộ tuyên bố ResNet-1D luôn tốt hơn bộ trích đặc trưng đối chứng. Giá trị thực dụng rõ nhất của ResNet-1D--TCN là kết hợp được hiệu năng cạnh tranh với cấu trúc vận hành gọn và tốc độ xử lý cao hơn, đổi lại nhiều tham số và bộ nhớ hơn.
+Trong miền Sleep-EDF, E1--E0 và E2--E1 cho mức cải thiện mô tả dương nhưng chưa đạt ngưỡng sau Holm. Trên SHHS, E1--E0 cho hiệu ứng dương nhỏ, còn E2--E1 cho hiệu ứng âm. Chỉ E1--E0 là contrast kiến trúc thuần; E2--E1 thay cả encoder, P/N và số chiều đặc trưng. Mẫu hình này không ủng hộ tuyên bố ResNet-1D luôn tốt hơn bộ trích đặc trưng đối chứng. Giá trị thực dụng rõ nhất của ResNet-1D--TCN là kết hợp được hiệu năng cạnh tranh với cấu trúc vận hành gọn và tốc độ xử lý cao hơn, đổi lại nhiều tham số và bộ nhớ hơn.
 
 Silhouette thấp hơn không đồng nghĩa biểu diễn ResNet không hữu ích: chỉ số này ưu tiên các cụm gọn theo khoảng cách Euclid ở từng epoch, trong khi TCN có thể khai thác thông tin phân bố hoặc tính liên tục theo thời gian. Tương tự, phân tích loại bỏ C/P/N không phát hiện hiệu ứng tăng thêm có ý nghĩa nhưng không thiết lập tương đương. Việc rút lại diễn giải ``P/N chỉ chứa 12\% thông tin'' tránh gán ý nghĩa thông tin học cho một điểm tổng hợp không có đơn vị thống nhất.
 
@@ -484,11 +488,11 @@ E3--E2 trên SHHS lớn hơn rõ rệt so với trên Sleep-EDF. Phân tích E4 
 
 \subsection{Hạn chế}
 
-Các kết quả nên được diễn giải trong phạm vi dữ liệu và giao thức đã đánh giá. SHHS1 đại diện cho một mẫu ngoài miền cụ thể, không phải toàn bộ quần thể. Lần lặp thứ hai củng cố hướng hiệu ứng nhưng chưa mô tả đầy đủ biến thiên do khởi tạo. Một số phân tích thành phần được thực hiện sau khi mở mẫu và vì vậy có vai trò bổ trợ. EEG đơn kênh vẫn hạn chế khả năng phân biệt một số giai đoạn, đặc biệt N1 và REM; các bước xử lý dùng nhãn thật chỉ phù hợp với đánh giá ngoại tuyến. Những giới hạn này không làm thay đổi kết quả chính, nhưng cần được tính đến khi mở rộng sang dữ liệu lâm sàng hoặc thiết bị khác.
+Các kết quả nên được diễn giải trong phạm vi dữ liệu và giao thức đã đánh giá. SHHS1 đại diện cho một mẫu ngoài miền cụ thể, không phải toàn bộ quần thể. Lần lặp thứ hai củng cố hướng hiệu ứng nhưng chưa mô tả đầy đủ biến thiên do khởi tạo. Một số phân tích thành phần và phân tích vùng thay đổi nhãn được thực hiện sau khi mở mẫu nên chỉ có vai trò bổ trợ. EEG đơn kênh vẫn hạn chế khả năng phân biệt một số giai đoạn, đặc biệt N1 và REM; vùng lân cận được tạo từ nhãn tham chiếu ở hai phía nên chỉ phù hợp với đánh giá ngoại tuyến. Những giới hạn này không làm thay đổi kết quả chính, nhưng cần được tính đến khi mở rộng sang dữ liệu lâm sàng hoặc thiết bị khác.
 
 \section{Kết luận}
 
-Thiết kế thống nhất theo đối tượng và tập kiểm tra cho phép đánh giá công bằng sáu cấu hình trên Sleep-EDF. Ở chiến dịch chính, E3 đạt \mf\ mô tả 0,7904 và tốt hơn E6 với CI hoàn toàn dương cùng ý nghĩa sau Holm. Lần lặp sau giao thức giữ hiệu ứng E3--E6 theo hướng dương, củng cố bằng chứng về lợi ích của chế độ chuẩn hóa được lựa chọn. TCN và ResNet-1D riêng lẻ cho cải thiện mô tả hoặc hiệu ứng phụ thuộc miền, nhưng chưa tách được ưu thế ổn định sau hiệu chỉnh nhiều kiểm định. ResNet-1D--TCN đơn giản hóa vận hành và tăng tốc xử lý, với đánh đổi là nhiều tham số và bộ nhớ hơn. Trong chiến dịch seed 123, E2 hoàn tất huấn luyện và xác thực 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; đây là lợi ích về thời gian thực đo trong giao thức cụ thể, không phải tuyên bố tốc độ độc lập phần cứng.
+Thiết kế thống nhất theo đối tượng và tập kiểm tra cho phép đánh giá công bằng sáu cấu hình trên Sleep-EDF. Ở chiến dịch chính, E3 đạt \mf\ mô tả 0,7904 và tốt hơn E6 với CI hoàn toàn dương cùng ý nghĩa sau Holm. Lần lặp sau giao thức giữ hiệu ứng E3--E6 theo hướng dương, củng cố bằng chứng về lợi ích của chế độ xử lý được lựa chọn. Phép thay TCN riêng và phép thay gói đặc trưng/ngữ cảnh E2 chưa tạo ưu thế ổn định sau hiệu chỉnh nhiều kiểm định. ResNet-1D--TCN đơn giản hóa vận hành và tăng tốc xử lý, với đánh đổi là nhiều tham số và bộ nhớ hơn. Trong chiến dịch seed 123, E2 hoàn tất huấn luyện và xác thực 10 fold trong 2 giờ 44 phút 57 giây, so với 33 giờ 35 phút 36 giây của E0; đây là lợi ích về thời gian thực đo trong giao thức cụ thể, không phải tuyên bố tốc độ độc lập phần cứng.
 
 Trên SHHS1, E3 tốt hơn E0 và E6 theo tiêu chí bắt cặp đã khóa. Tuy nhiên, E0 và E3 có recall N3 gần như nhau và đều gán hơn 72\% N3 thành N2; do đó, lợi thế tổng thể của E3 không được diễn giải là đã giải quyết lớp N3. Phân tích mở rộng với seed 123 cho thấy E4, chỉ sử dụng lọc dải, đạt kết quả cao hơn E2 và E3 cùng seed trong giao thức tương ứng. Đây là bằng chứng rằng tiền xử lý ảnh hưởng đáng kể đến chuyển miền, không phải bằng chứng về ưu thế phổ quát hay quan hệ nhân quả của một thao tác. Phân tích thành phần cho thấy lợi ích của kiến trúc phụ thuộc vào miền và chế độ xử lý tín hiệu. Vì vậy, đóng góp chính của nghiên cứu là một quy trình có bằng chứng ngoài miền, phép đánh đổi vận hành được định lượng, định vị failure mode N2--N3 chung qua kiến trúc và giao thức thực nghiệm có khả năng truy nguyên.
 
@@ -500,9 +504,22 @@ Mã nguồn, giao thức thực nghiệm, phép chia dữ liệu, kết quả tr
 
 Nghiên cứu chỉ phân tích lại dữ liệu đã được khử định danh từ các kho nghiên cứu có cơ chế quản trị riêng và không tuyển người tham gia mới. Việc sử dụng SHHS tuân theo điều kiện truy cập của NSRR. Mọi diễn giải trong bài chỉ áp dụng cho các mẫu và giao thức đã nêu, không được xem là xác nhận lâm sàng.
 
+\subsection*{Tài trợ}
+
+Phân tích này không nhận khoản tài trợ riêng nào từ cơ quan công, thương mại hoặc phi lợi nhuận.
+Nghiên cứu Sleep Heart Health Study nền được hỗ trợ bởi các thỏa thuận hợp tác của National Heart,
+Lung, and Blood Institute: U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360, U01HL53938,
+U01HL53940, U01HL53941 và U01HL63463.
+
 \subsection*{Lời cảm ơn}
 
-Nghiên cứu sử dụng Sleep-EDF Expanded do PhysioNet phân phối và dữ liệu từ Sleep Heart Health Study qua National Sleep Research Resource. SHHS được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and Blood Institute: U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360, U01HL53938, U01HL53940, U01HL53941 và U01HL63463.
+Nghiên cứu sử dụng Sleep-EDF Expanded do PhysioNet phân phối và dữ liệu từ Sleep Heart Health Study qua National Sleep Research Resource.
+
+\subsection*{Đóng góp của tác giả (CRediT)}
+
+Ngô Nhật Quân: Ý tưởng, phương pháp, phần mềm, kiểm định, phân tích hình thức, điều tra, quản lý dữ liệu,
+trực quan hóa, viết bản thảo đầu tiên và hiệu đính. Phạm Thái Sơn: giám sát, phương pháp, kiểm định
+và hiệu đính. Cả hai tác giả đã duyệt bản thảo cuối.
 
 \subsection*{Tuyên bố xung đột lợi ích}
 

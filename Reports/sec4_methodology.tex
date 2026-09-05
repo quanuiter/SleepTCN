@@ -15,7 +15,7 @@ Bảy mã E0--E6 được định nghĩa trong giao thức; sáu cấu hình ho�
 \midrule
 E0 & CNN của mốc tham chiếu & BiLSTM & Đối chứng nội bộ \\
 E1 & Giữ mốc tham chiếu & TCN & Đánh giá thay đổi mô hình chuỗi \\
-E2 & ResNet-1D & TCN & Đánh giá thay đổi bộ trích đặc trưng \\
+E2 & ResNet-1D dùng epoch hiện tại & TCN & Thay gói đặc trưng/ngữ cảnh E1 \\
 E3 & ResNet-1D và xử lý biên độ chính & TCN & Cấu hình đề xuất \\
 E4 & ResNet-1D và lọc dải & TCN & Đối chiếu tiền xử lý \\
 E5 & ResNet-1D, lọc dải và cắt $\pm800~\mu\mathrm{V}$ & TCN & Loại trước phân tích hiệu năng \\
@@ -25,6 +25,8 @@ E6 & ResNet-1D và z-score theo bản ghi & TCN & Đối chiếu đổi thang \\
 \end{table}
 
 E0 là đối chứng nội bộ đã hiệu chỉnh theo giao thức v2, không phải bản sao định lượng của bài báo gốc. Vì vậy, các đối chiếu trong nghiên cứu được hiểu là so sánh giữa các cấu hình trong cùng thí nghiệm.
+
+E1 dùng lại đúng encoder E0 và chỉ thay BiLSTM bằng TCN, nên E1--E0 cô lập thay đổi mô hình chuỗi. E1 cung cấp vector 75 chiều từ các nhánh C/P/N, còn E2 dùng embedding ResNet-1D 128 chiều chỉ từ epoch hiện tại. Vì vậy E2--E1 đồng thời thay encoder, bỏ ngữ cảnh P/N tường minh và đổi số chiều đặc trưng; đây là đối chiếu gói đặc trưng/ngữ cảnh, không phải phép cô lập riêng encoder.
 
 E5 ban đầu được dùng để tách tác động của phép cắt biên $\pm800~\mu\mathrm{V}$ khỏi lọc dải E4. Kiểm toán toàn bộ 153 bản ghi cho thấy E4 và E5 giống nhau từng bit và tỷ lệ mẫu bị cắt bằng 0; do đó E5 không tạo điều kiện dữ liệu độc lập. Fold 00 được giữ làm bằng chứng kiểm toán, còn E5 bị loại trước các bảng hiệu năng và kiểm định thống kê để tránh một đối chiếu giả tạo giữa hai đầu vào đồng nhất.
 
@@ -40,7 +42,7 @@ Không phải mọi Gate đều được xem là một đóng góp khoa học đ
 \toprule
 \textbf{Quyết định} & \textbf{Bằng chứng chính} & \textbf{Đầu ra được phép kết luận} \\
 \midrule
-Có nên thay kiến trúc? & Gate 5, Gate 6; E1--E0 và E2--E1 & Lợi ích dự báo riêng và đánh đổi tốc độ--tài nguyên \\
+Có nên thay kiến trúc/gói đặc trưng? & Gate 5, Gate 6; E1--E0 và E2--E1 & Hiệu ứng TCN riêng; hiệu ứng gói E2; đánh đổi tốc độ--tài nguyên \\
 Pipeline nào đáng mang sang miền mới? & E3--E6 trong miền; E3--E0/E6 trên SHHS1; E3--E2 và E4 mở rộng & Thứ hạng toàn pipeline; không quy nhân quả cho một thao tác \\
 Thích nghi miền nên nhắm vào đâu? & F1 theo lớp, tỷ lệ dự đoán/nhãn thật, ma trận nhầm lẫn, vùng chuyển pha & Ưu tiên ranh giới lớp; không suy ra cơ chế sinh lý \\
 Các phân tích phụ có thay đổi quyết định không? & Silhouette và Gate 8 & Giới hạn của proxy hình học và ngữ cảnh mã hóa trùng lặp \\
@@ -72,7 +74,7 @@ Các cổng được tổ chức theo chuỗi bằng chứng:
 
 \subsection{Phân tích thống kê}
 
-Macro-F1 gộp trên dự đoán test ngoài fold là chỉ số mô tả chính. Khoảng tin cậy 95\% của chênh lệch Macro-F1 gộp được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng; kiểm định Wilcoxon hai phía được thực hiện trên chênh lệch Macro-F1 của từng đối tượng. Hai phép phân tích trả lời các câu hỏi khác nhau: bootstrap định lượng bất định của chênh lệch gộp, còn Wilcoxon đánh giá thứ hạng của các chênh lệch ở cấp đối tượng. Hiệu chỉnh Holm chỉ áp dụng cho bốn đối chiếu đã đăng ký trước: thay đổi mô hình chuỗi, thay đổi bộ trích đặc trưng, thay đổi chế độ xử lý chính và đối chiếu với z-score~\cite{efron1994bootstrap,wilcoxon1945,holm1979}.
+Macro-F1 gộp trên dự đoán test ngoài fold là chỉ số mô tả chính. Khoảng tin cậy 95\% của chênh lệch Macro-F1 gộp được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng; kiểm định Wilcoxon hai phía được thực hiện trên chênh lệch Macro-F1 của từng đối tượng. Hai phép phân tích trả lời các câu hỏi khác nhau: bootstrap định lượng bất định của chênh lệch gộp, còn Wilcoxon đánh giá thứ hạng của các chênh lệch ở cấp đối tượng. Hiệu chỉnh Holm chỉ áp dụng cho bốn đối chiếu đã định trước: E1--E0 (mô hình chuỗi), E2--E1 (gói đặc trưng/ngữ cảnh), E3--E2 (chế độ xử lý chính) và E3--E6 (đối chiếu với z-score)~\cite{efron1994bootstrap,wilcoxon1945,holm1979}.
 
 Đối chiếu toàn bộ cấu hình với mốc ban đầu được thực hiện sau khi đã quan sát kết quả nên được ghi rõ là hậu nghiệm. Các phân tích bổ sung không được nhập ngược vào nhóm giả thuyết chính.
 
@@ -90,9 +92,11 @@ Gate 8 giữ nguyên mô hình chuỗi và chỉ thay đổi sự hiện diện 
 
 Tiêu chí chính là Macro-F1 tại vùng chuyển pha. Ba so sánh ablation dùng cùng bootstrap cụm, Wilcoxon theo đối tượng và hiệu chỉnh Holm. Gate 8 đo hiệu ứng dự báo có điều kiện trong một quy trình cụ thể; không đo tỷ lệ thông tin, không xác định quan hệ nhân quả và không thiết lập tương đương.
 
-\subsection{Đánh giá zero-shot trên SHHS1}
+\subsection{Đánh giá chuyển miền không cập nhật trọng số trên SHHS1}
 
 Chiến dịch SHHS được tiến hành độc lập sau khi các mô hình Sleep-EDF đã được khóa. Trọng số không được cập nhật bằng dữ liệu SHHS. Mỗi cấu hình sử dụng các mô hình tương ứng với các fold đã huấn luyện, sau đó tổ hợp dự đoán ở cấp đối tượng. Các kiểm tra kỹ thuật xác nhận khả năng sử dụng mô hình, căn chỉnh epoch và tính đầy đủ của dự đoán trước khi tính chỉ số.
+
+Riêng E6 tính trung bình và độ lệch chuẩn trên toàn bộ tín hiệu của từng bản ghi SHHS đích sau lọc và cắt biên, không dùng nhãn. Do đó E6 là chuẩn hóa bản ghi đích không nhãn có tính transductive; E0/E1/E2/E3 không dùng thống kê của bản ghi đích và mới là các phép suy luận thuần inductive. Thuật ngữ ``zero-shot'' trong tên chiến dịch chỉ khẳng định không cập nhật trọng số hoặc dùng nhãn SHHS, không được dùng để che khuất khác biệt này.
 
 Kết quả SHHS không được nhập ngược vào Gate 1--8. Đây là đánh giá ngoài miền trên mẫu đã khóa, nhằm kiểm tra độ bền của hướng hiệu ứng chứ không phải kiểm định lâm sàng hoặc đánh giá trên toàn bộ cohort SHHS.
 

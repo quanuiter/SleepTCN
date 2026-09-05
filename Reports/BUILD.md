@@ -1,4 +1,4 @@
-# Biên dịch và kiểm định báo cáo Gate 1--8 cùng SHHS1 zero-shot
+# Biên dịch và kiểm định báo cáo Gate 1--8 cùng đánh giá chuyển miền SHHS1
 
 Tệp chính: `main.tex`.
 
@@ -52,7 +52,8 @@ tồn tại và SHA-256 khớp.
 - `E:/research/Dataset/SHHS_v1/zero_shot_e4_seed123_v1/analysis/diagnostics.json`
 - `SHHS_SEED123_E4_EXTENSION.md`
 - `SHHS_E6_PER_CLASS_REANALYSIS.md` (tái phân tích mô tả trực tiếp 180 artifact E6 đã khóa)
-- `SHHS_E0_E3_E6_N3_AUDIT.json` (đối chiếu N3 gộp từ run manifest SHHS test đã khóa; SHA-256 `d16f1ba3f13680df12bf4aac0d5a1b5a9507616a0d40bafd05225d621e15b058`)
+- `SHHS_E0_E3_E6_N3_AUDIT.json` (đối chiếu N3 gộp từ run manifest SHHS test đã khóa; SHA-256 `6b12447f27cf71f8a7b7c100919ab5438dc69fc3efd9f4d7a1439c3f29b6496b`)
+- `../runs/v2/analysis/transition_regions_edf_seed42_t2.json` và `../runs/v2/analysis/transition_regions_shhs_t2.json` (phân tích hậu nghiệm vùng lân cận thay đổi nhãn và vùng ổn định trên hai cohort)
 
 Các bảng phải lấy số liệu từ những artifact đã khóa; không sử dụng lại kết quả lịch sử từ notebook cũ.
 Mọi thay đổi ở phần Tóm tắt, Kết luận hoặc slide phải được đối chiếu với
@@ -76,5 +77,8 @@ các artifact khóa không đổi.
 8. Bộ kiểm thử lõi và validator publication dùng `pytest`; gói cuối có thể kiểm tra riêng bằng
    `python -m unittest tests.test_gate8_validator -v`.
 9. Seed 42 luôn được ghi là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức. Báo cáo riêng từng seed và không gộp p-value.
-10. Trước khi phát hành gói tái lập SHHS, đối chiếu sai khác giữa protocol hash trong run manifest `165d7cdf...fe93` và protocol hiện tại `9541e233...fe9`; không mô tả phép tái phân tích E6 như một lượt chạy lại từ protocol hiện tại.
+10. Protocol hash trong run manifest `165d7cdf...fe93` khớp snapshot lịch sử `../configs/shhs_zero_shot_v1.json`. Hash `9541e233...fe9` thuộc hồ sơ mở rộng sau chạy `../configs/shhs_v1_protocol.json`; xem `SHHS_PROTOCOL_PROVENANCE.md` và không thay hash lịch sử bằng hash hồ sơ mở rộng. Phân tích E6 vẫn là tái phân tích mô tả từ dự đoán đã khóa, không phải lượt tái sinh mới.
 11. Mọi tuyên bố về N3 phải tách hiệu năng tổng thể khỏi hiệu năng theo lớp: E0/E3 có recall N3 0,2610/0,2582 và tỷ lệ N3→N2 72,3%/73,1%; phép phản thực 74,5% chỉ được tính trên E3 và không phải đối chiếu nhân quả kiến trúc.
+12. Phân tích vùng thay đổi nhãn luôn được ghi là hậu nghiệm trên test đã mở. Vùng được tạo từ nhãn tham chiếu và chỉ dùng để đánh giá ngoại tuyến; không gọi đây là bộ phát hiện chuyển pha sinh lý hoặc quy tắc triển khai.
+13. Chỉ E1--E0 cô lập thay đổi mô hình chuỗi. E2--E1 thay gói C/P/N 75 chiều bằng ResNet-1D 128 chiều chỉ dùng epoch hiện tại; không gọi đây là phép cô lập encoder hoặc contrast kiến trúc thuần túy.
+14. E6 dùng trung bình và độ lệch chuẩn của toàn bộ bản ghi đích không nhãn. Luôn ghi đây là chuẩn hóa target-record không nhãn có tính transductive, không phải zero-shot thuần inductive.

@@ -2,10 +2,15 @@
 
 ## Phạm vi
 
-Đây là phân tích suy luận zero-shot trên 180 subject test SHHS Visit 1. Các
+Đây là phân tích chuyển miền không cập nhật trọng số trên 180 subject test SHHS Visit 1. Các
 checkpoint được huấn luyện trên Sleep-EDF; không có cập nhật trọng số, thích
 nghi miền hay huấn luyện lại trên SHHS. Năm cấu hình dùng cùng cohort, cùng
 thứ tự subject và cùng seed checkpoint 123:
+
+Riêng E6 dùng trung bình và độ lệch chuẩn của toàn bộ bản ghi SHHS đích không
+nhãn, nên là chuẩn hóa target-record có tính transductive chứ không phải suy luận
+zero-shot thuần inductive. Thuật ngữ zero-shot ở đây chỉ mô tả việc không cập
+nhật trọng số hoặc dùng nhãn SHHS.
 
 | Mã | Đầu vào | Bộ trích xuất / mô hình chuỗi |
 |---|---|---|

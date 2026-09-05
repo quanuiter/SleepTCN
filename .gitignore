@@ -28,6 +28,8 @@ runs/v2/analysis/*
 !runs/v2/analysis/gate6_latency_fold00_seed42.json
 !runs/v2/analysis/gate6_parameters_fold00_seed42.json
 !runs/v2/analysis/gate6_validation_report.json
+!runs/v2/analysis/transition_regions_edf_seed42_t2.json
+!runs/v2/analysis/transition_regions_shhs_t2.json
 !runs/v2/analysis/gate6_feature_space/
 !runs/v2/analysis/gate6_feature_space/**
 !runs/v2/gate8/

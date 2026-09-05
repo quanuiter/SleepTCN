@@ -20,6 +20,9 @@ PDF bàn giao được lưu tại `Reports/output/pdf/SleepTCN_Scientific_Articl
 - Seed 42 là chiến dịch chính; seed 123 là lần lặp đầy đủ dùng để đánh giá độ nhạy sau giao thức trên cùng split. Hai seed được báo cáo riêng và không gộp p-value.
 - Không tuyên bố tương đương, không thua kém, P/N vô dụng, ResNet luôn tốt hơn, hoặc mô hình tiết kiệm tham số.
 - Không diễn giải lợi thế Macro-F1 của E3 như cải thiện N3: E0/E3 có recall N3 0,2610/0,2582 và tỷ lệ N3→N2 72,3%/73,1%; phép phản thực 74,5% chỉ áp dụng cho dự đoán E3.
+- Phân tích vùng thay đổi nhãn là hậu nghiệm trên test đã mở, dùng nhãn tham chiếu và chỉ có vai trò chẩn đoán ngoại tuyến; không diễn giải như bằng chứng về chuyển pha sinh lý.
+- Chỉ E1--E0 cô lập thay đổi mô hình chuỗi. E2--E1 thay cả encoder, ngữ cảnh C/P/N và số chiều đặc trưng; không gọi đây là phép cô lập encoder.
+- E6 dùng thống kê của toàn bộ bản ghi đích không nhãn, nên là chuẩn hóa transductive ở cấp bản ghi chứ không phải zero-shot thuần inductive.
 
 ## Kiểm tra trước khi nộp
 

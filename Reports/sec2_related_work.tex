@@ -5,15 +5,17 @@
 
 Các phương pháp học sâu cho phân giai đoạn giấc ngủ thường kết hợp bộ trích đặc trưng từ tín hiệu với một mô hình mô tả quan hệ theo thời gian. DeepSleepNet sử dụng CNN và BiLSTM để đồng thời học hình thái của epoch và ngữ cảnh chuỗi~\cite{supratak2017deepsleepnet}. Các hướng tiếp cận sau đó khai thác cơ chế chú ý hoặc self-attention để tăng khả năng biểu diễn quan hệ dài hạn~\cite{eldele2021attnsleep,phan2022sleeptransformer}.
 
+SleepInceptionNet khảo sát có hệ thống tín hiệu thô, phổ và biểu diễn thời gian--tần số, sau đó chọn mô hình Inception dùng biến đổi wavelet liên tục trên EEG trung tâm đơn kênh để chấm từng epoch~\cite{haghayegh2023sleepinceptionnet}. Kết quả đó củng cố vai trò của EEG đơn kênh, đồng thời cho thấy biểu diễn và tiền xử lý đầu vào là một phần của định nghĩa pipeline chứ không phải chi tiết trung tính.
+
 Các chỉ số giữa những công trình khác nhau không thể xếp hạng trực tiếp nếu khác bộ dữ liệu, kênh EEG, quy tắc tạo cửa sổ hoặc cách chia đối tượng. Vì vậy, báo cáo chỉ thực hiện so sánh nội bộ giữa các cấu hình trong cùng một giao thức, thay vì suy ra thứ hạng giữa các bài báo.
 
-Các nghiên cứu chuyển kịch bản đã cho thấy transfer learning có thể cải thiện phân giai đoạn giấc ngủ EEG khi miền nguồn và đích khác nhau~\cite{he2023crossscenario}. Đồng thời, các phương pháp máy học truyền thống vẫn có thể cạnh tranh nếu đặc trưng và giao thức đánh giá được xây dựng cẩn thận~\cite{vdd2023traditional}. Hai hướng này củng cố một điểm phương pháp luận: kiến trúc sâu hơn không tự động là đóng góp; trước khi chọn thuật toán thích nghi, cần xác định rõ lỗi chuyển miền nào đang chi phối và một thay đổi pipeline đơn giản có đủ hay không.
+Các nghiên cứu chuyển kịch bản đã cho thấy transfer learning có thể cải thiện phân giai đoạn giấc ngủ EEG khi miền nguồn và đích khác nhau~\cite{he2023crossscenario}. ADAST dùng attention riêng theo miền, căn chỉnh đối kháng và self-training bằng pseudo-label từ dữ liệu đích không nhãn~\cite{eldele2023adast}; đây là thích nghi miền thực sự vì biểu diễn và quyết định mô hình được cập nhật bằng miền đích. E6 trong báo cáo hiện tại chỉ ước lượng thống kê chuẩn hóa ở cấp bản ghi và không cập nhật trọng số. Đồng thời, các phương pháp máy học truyền thống vẫn có thể cạnh tranh nếu đặc trưng và giao thức đánh giá được xây dựng cẩn thận~\cite{vdd2023traditional}. Các hướng này củng cố một điểm phương pháp luận: kiến trúc sâu hơn không tự động là đóng góp; trước khi chọn thuật toán thích nghi, cần xác định rõ lỗi chuyển miền nào đang chi phối và một thay đổi pipeline đơn giản có đủ hay không.
 
 \subsection{Mốc tham chiếu và hướng thay thế}
 
 ZleepAnlystNet là mốc tham chiếu quan trọng của nghiên cứu, với quy trình gồm bộ trích đặc trưng CNN và mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Ý tưởng thay thế được khảo sát theo hai hướng. Thứ nhất, mạng tích chập theo thời gian có khả năng xử lý chuỗi song song và mô hình hóa quan hệ theo trường tiếp nhận mở rộng~\cite{bai2018tcn}. Thứ hai, ResNet-1D sử dụng kết nối dư để xây dựng biểu diễn tín hiệu sâu hơn~\cite{he2016resnet}.
 
-Hai hướng thay thế không mặc nhiên bảo đảm hiệu năng cao hơn. TCN có thể đem lại lợi ích vận hành nhưng vẫn cần được kiểm tra trên cùng đối tượng; embedding ResNet có thể hữu ích cho mô hình chuỗi mà không nhất thiết tạo ra các cụm hình học tách biệt. Do đó, nghiên cứu đánh giá riêng thay đổi mô hình chuỗi, thay đổi bộ trích đặc trưng và thay đổi tiền xử lý.
+Hai hướng thay thế không mặc nhiên bảo đảm hiệu năng cao hơn. TCN có thể đem lại lợi ích vận hành nhưng vẫn cần được kiểm tra trên cùng đối tượng; embedding ResNet có thể hữu ích cho mô hình chuỗi mà không nhất thiết tạo ra các cụm hình học tách biệt. E1--E0 cô lập thay đổi mô hình chuỗi. E2--E1 thì thay đồng thời encoder, gói ngữ cảnh C/P/N và số chiều đặc trưng, nên chỉ được diễn giải là thay thế gói đặc trưng/ngữ cảnh chứ không phải hiệu ứng riêng của encoder.
 
 \subsection{Khoảng trống được kiểm tra}
 

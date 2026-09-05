@@ -7,7 +7,12 @@
   "source": {
     "artifact": "SHHS1 zero_shot_v1 test run_manifest.json",
     "run_manifest_sha256": "f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf",
-    "protocol_sha256_recorded_by_manifest": "165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93"
+    "protocol_sha256_recorded_by_manifest": "165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93",
+    "protocol_snapshot_path": "configs/shhs_zero_shot_v1.json",
+    "protocol_snapshot_sha256": "165d7cdf614ff071da7bd5ca94eb4e52dd8bee1ce5eafb712c2c8a0d0550fe93",
+    "expanded_audit_protocol_path": "configs/shhs_v1_protocol.json",
+    "expanded_audit_protocol_sha256": "9541e2334cdae98b5d36b95a2656993cdaaffb35a3160dad70af11d14b653fe9",
+    "provenance_reconciliation": "Reports/SHHS_PROTOCOL_PROVENANCE.md"
   },
   "experiments": {
     "E0": {
@@ -39,7 +44,7 @@
       "n3_f1": 0.40546775470853563,
       "n3_predicted_true_ratio": 0.273480662983425,
       "n3_to_n2_count": 16674,
-      "n3_to_n2_fraction_of_true_n3": 0.7310356923616592,
+      "n3_to_n2_fraction_of_true_n3": 0.7311233885819521,
       "confusion_matrix": [
         [29638, 4481, 1171, 21, 1672],
         [874, 3807, 601, 3, 1717],
