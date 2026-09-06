@@ -5,7 +5,8 @@ standalone supplement, bibliography, two English figure PDFs and editable highli
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
 The manuscript records the author confirmations for CRediT, ethics/access, funding, competing interests
-and AI disclosure. Before submitting, verify the exact repository revision/tag and journal-specific upload
+and AI disclosure. The manuscript identifies experimental commit `f7c22e7`; before submitting, push the
+final editorial revision and verify journal-specific upload
 requirements against the current BSPC Guide for Authors.
 
 ## Build order

@@ -140,7 +140,7 @@ E6--REM & 527 & 1.752 & 2.191 & 187 & 21.178 \\
 \end{tabular}}
 \end{table}
 
-Trong toàn bộ phân tích ma trận nhầm lẫn, ký hiệu A$\rightarrow$B nghĩa là epoch mang nhãn tham chiếu A nhưng được mô hình dự đoán thành B; ký hiệu này không biểu thị một chuyển pha sinh lý theo thời gian. Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này cho thấy sai số tập trung ở các giai đoạn có đặc trưng biên gần nhau; nó mô tả vị trí sai số trong mẫu hiện tại, không xác định nguyên nhân sinh lý hay quan hệ nhân quả của tiền xử lý.
+Trong toàn bộ phân tích ma trận nhầm lẫn, ký hiệu A$\rightarrow$B nghĩa là epoch mang nhãn tham chiếu A nhưng được mô hình dự đoán thành B; ký hiệu này không biểu thị một chuyển pha sinh lý theo thời gian. Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này định vị các kênh sai số nổi bật trong mẫu Sleep-EDF.
 
 E3 có giá trị mô tả cao nhất trong chiến dịch chính. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước, trong đó E3--E6 là đối chiếu có bằng chứng mạnh nhất.
 
@@ -209,7 +209,7 @@ E3--E6 & 0,021319 $[0,012179;0,030698]$ & 0,0012 & 0,010249 $[0,002435;0,017989]
 \end{tabular}}
 \end{table}
 
-Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối chiếu duy nhất có CI bootstrap hoàn toàn dương trong cả hai lần chạy; seed 42 đạt ý nghĩa Wilcoxon sau Holm, còn seed 123 không đạt. Hướng hiệu ứng được lặp lại, nhưng độ lớn giảm từ 0,0213 xuống 0,0102. E4 nhỉnh hơn E3 về Macro-F1 gộp ở seed 123. Kết quả E1--E0 và E2--E1 vẫn chưa đủ bằng chứng ở seed 123. Hai seed cố định chỉ cung cấp bằng chứng về độ nhạy, không phải một chiến dịch khẳng định độc lập bổ sung hoặc ước lượng phân phối biến thiên do khởi tạo.
+Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối chiếu duy nhất có CI bootstrap hoàn toàn dương trong cả hai lần chạy; seed 42 đạt ý nghĩa Wilcoxon sau Holm, còn seed 123 không đạt. Hướng hiệu ứng được lặp lại, nhưng độ lớn giảm từ 0,0213 xuống 0,0102. E4 nhỉnh hơn E3 về Macro-F1 gộp ở seed 123. Kết quả E1--E0 và E2--E1 vẫn chưa đủ bằng chứng ở seed 123.
 
 \begin{table}[H]
 \centering
@@ -224,7 +224,7 @@ E3--E0 & 0,015024 & $[0,005746;\ 0,025871]$ & 0,012321 & 49/0/29 \\
 \end{tabular}
 \end{table}
 
-Đây là phân tích \emph{hậu nghiệm}, không thuộc bốn đối chiếu xác nhận ở Bảng~\ref{tab:primary_stats}. Kết quả hỗ trợ rằng toàn bộ quy trình E3 cao hơn E0 trong chiến dịch hiện tại; do nhiều thành phần thay đổi đồng thời, đối chiếu này không xác định nguyên nhân riêng lẻ và không phải kiểm định tương đương hoặc không thua kém.
+Đối chiếu E3--E0 là phân tích \emph{hậu nghiệm}, không thuộc bốn đối chiếu xác nhận ở Bảng~\ref{tab:primary_stats}. Toàn bộ pipeline E3 cao hơn E0 trong chiến dịch hiện tại; chênh lệch này đại diện cho cấu hình mô hình, tiền xử lý và lịch huấn luyện kết hợp.
 
 Chênh lệch F1 E3--E6 theo lớp lần lượt là W $+0,00255$, N1 $+0,01520$, N2 $+0,01295$, N3 $+0,06278$ và REM $+0,01311$. E4--E2, phân tích thứ cấp riêng lọc dải, có $\Delta=0,005586$, CI $[-0,001699;0,013618]$, $p=0,902877$ và thắng/thua 38/40; chưa có bằng chứng về cải thiện đồng đều.
 
@@ -289,7 +289,7 @@ E6 --- ResNet-1D + TCN, z-score & 2 giờ 24 phút 44 giây & 14 phút 28 giây 
 \textbf{Kết luận vận hành.} Trong cùng chiến dịch 10 fold, E3 rút thời gian tạo trọn bộ mô hình từ hơn 33,5 giờ của E0 xuống còn khoảng 3,3 giờ (nhanh hơn 10,2 lần); E2 cần khoảng 2,75 giờ (nhanh hơn 12,2 lần). Điều này biến một vòng cross-validation kéo dài hơn một ngày thành một vòng có thể hoàn tất trong một buổi làm việc trên phần cứng đã đo. Đây là lợi ích trực tiếp cho tốc độ thử nghiệm, kiểm tra lỗi và lặp lại pipeline, tách biệt với lợi thế suy luận 3,76 lần.
 }}
 
-Thời gian wall-clock còn phụ thuộc vào cấu hình optimizer, batch size, số epoch thực tế, quy tắc dừng sớm, điều phối lượt chạy, implementation và phần cứng; do đó các tỷ lệ trên là kết quả vận hành của chiến dịch hiện tại, không phải hiệu ứng kiến trúc riêng lẻ hay hằng số tốc độ phổ quát.
+Các tỷ lệ wall-clock trên mô tả toàn bộ quy trình huấn luyện và xác thực với optimizer, batch size, số epoch thực tế và quy tắc dừng sớm tương ứng của từng cấu hình.
 
 \subsection{Không gian đặc trưng (phân tích hỗ trợ Gate 6)}
 
@@ -454,7 +454,7 @@ E2--REM & 439 & 262 & 726 & 0 & 24.507 \\
 \end{tabular}}
 \end{table}
 
-Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch; nhãn tham chiếu N3, dự đoán N2), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi. Đây là mô tả trên mẫu đã khóa, không phải bằng chứng về cơ chế nhân quả hay một thống kê về chuyển pha giấc ngủ.
+Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch; nhãn tham chiếu N3, dự đoán N2), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi.
 
 Đối chiếu với mốc 15-CNN--BiLSTM E0 cho thấy lỗi N3 không phát sinh riêng ở E3. Trên cùng 22.806 epoch N3, E0 gán 16.480 epoch thành N2 (72,3\%) và đạt recall N3 0,2610; E3 gán 16.674 epoch thành N2 (73,1\%) và đạt recall 0,2582. F1 N3 của hai mô hình gần như bằng nhau (0,4048 và 0,4055), mặc dù \mf\ gộp của E3 cao hơn E0. Bảng~\ref{tab:shhs_n3_crossmodel} vì vậy tách hai kết luận: E3 cải thiện hiệu năng tổng thể, nhưng thay đổi kiến trúc và pipeline không giải quyết được nhận diện N3 ngoài miền.
 
@@ -510,7 +510,7 @@ E6 & 0,4507 & 0,7591 & 0,0721 & 0,1316 \\
 \end{tabular}
 \end{table}
 
-Tại vùng lân cận thay đổi nhãn, recall N3 của E6 là 0,0721 so với 0,0733 của E3; đây là các giá trị mô tả gần nhau, không phải kết luận tương đương. Cùng với recall toàn mẫu thấp hơn, kết quả cho thấy pipeline z-score đã thử không khắc phục thiếu N3. Đối chiếu không cô lập tác động của biên độ, không loại trừ các yếu tố liên quan biên độ/montage hoặc các phương pháp thích nghi không nhãn khác.
+Tại vùng lân cận thay đổi nhãn, recall N3 của E6 là 0,0721 so với 0,0733 của E3. Cùng với recall toàn mẫu thấp hơn, kết quả cho thấy pipeline z-score đã thử không khắc phục thiếu N3. Vì E3 và E6 được huấn luyện riêng, đối chiếu này không cô lập tác động của biên độ.
 
 \subsubsection{Kiểm tra hậu nghiệm vùng lân cận thay đổi nhãn}
 
@@ -537,7 +537,7 @@ Cả hai mô hình có điểm thấp hơn ở vùng lân cận trên cả hai c
 
 \subsubsection{Đòn bẩy phản thực cho quyết định thích nghi}
 
-\mf\ gộp của E3 là 0,7904 trên Sleep-EDF và 0,6099 trên SHHS1, chênh lệch 0,1805. Đây là khác biệt giữa EDF ngoài fold và SHHS ensemble mười mô hình, đồng thời khác phân bố lớp và thành phần cohort, không phải ước lượng riêng tác động dịch chuyển miền. F1 N3 giảm 0,4030, tương ứng khoảng 45\% chênh lệch Macro-F1 xét theo năm lớp. Trên SHHS1, số dự đoán N3 chỉ bằng 0,273 lần số nhãn N3 thật; 16.674/22.806 epoch N3 (73,1\%) bị gán thành N2. Precision cao--recall thấp mô tả việc phát N3 bảo thủ trên mẫu này, không phải bằng chứng calibration xác suất. Việc E0 biểu hiện gần cùng mức thiếu N3 cho thấy lỗi tái diễn qua hai họ mô hình được đánh giá, nhưng chưa xác định nguyên nhân là montage, tuổi, quy tắc chấm hay hình thái tín hiệu.
+\mf\ gộp của E3 là 0,7904 trên Sleep-EDF và 0,6099 trên SHHS1, chênh lệch 0,1805. Vì EDF dùng dự đoán ngoài fold còn SHHS dùng ensemble mười mô hình, chênh lệch này được diễn giải theo hướng mô tả. F1 N3 giảm 0,4030, tương ứng khoảng 45\% chênh lệch Macro-F1 xét theo năm lớp. Trên SHHS1, số dự đoán N3 chỉ bằng 0,273 lần số nhãn N3 thật; 16.674/22.806 epoch N3 (73,1\%) bị gán thành N2. Việc E0 biểu hiện gần cùng mức thiếu N3 cho thấy lỗi tái diễn qua hai họ mô hình được đánh giá.
 
 \begin{table}[H]
 \centering

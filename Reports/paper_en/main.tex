@@ -494,9 +494,9 @@ gain need not be accompanied by improvement for most subjects. Their disagreemen
 identify which subjects drive the pooled change. The evidence supports a small pooled improvement for
 this contrast, but not a consistent subject-level advantage.
 
-For the post-hoc E3\,--\,E0 contrast, the added \mf\ of the complete pipeline is $0.0150$ with a fully
-positive interval; because it changes architecture and preprocessing simultaneously, it supports the
-pipeline as a whole and cannot attribute credit to any component.
+For the post-hoc E3\,--\,E0 contrast, the complete E3 pipeline adds $0.0150$ \mf\ over E0, with a
+fully positive interval. This comparison represents the combined architecture, preprocessing and
+training configuration rather than any single component.
 
 \subsection{Per-class and seed-sensitivity checks}
 
@@ -505,9 +505,8 @@ in Supplementary Tables~\ref{SM-tab:sup_edf_perclass}--\ref{SM-tab:sup_edf_seed_
 In domain, N1 is E3's hardest class and the largest E3--E6 F1
 difference is on N3 ($+0.0628$). All four pre-specified differences remain positive under seed 123, but
 only E3\,--\,E6 has a fully positive bootstrap interval in both runs; its Holm-adjusted result is
-significant for seed 42 only and its magnitude falls from 0.0213 to 0.0102. Thus, the direction is stable
-across these two fixed seeds, but the inferential strength is not; two seeds are not an independent
-replication or an estimate of initialisation variance.
+significant for seed 42 only and its magnitude falls from 0.0213 to 0.0102. The direction is therefore
+stable across the two fixed seeds, whereas the inferential strength is not.
 
 \FloatBarrier
 \subsection{Complexity, latency and training cost}
@@ -537,20 +536,18 @@ over the CNN--BiLSTM control while carrying $4.37\times$ the parameters and 28.4
 memory. The implementation is therefore faster but not smaller. In the forward benchmark, E1 reuses
 the same encoder as E0 and changes the sequence model, giving a $1.07\times$ speed-up; the larger E2--E0 difference is associated
 primarily with replacing 15 independently executed CNN branches by one ResNet-1D encoder, together with
-the full-pipeline implementation. The benchmark does not isolate kernel-launch overhead or predict
-latency for other sequence lengths and hardware.
+the full-pipeline implementation.
 
 In the sequential seed-123 campaign, complete training and validation for E2 and E3 was observed to be
-12.2$\times$ and 10.2$\times$ faster than E0. E1 reused E0 encoder checkpoints and is not an end-to-end
-runtime comparison. Full timings are in Supplementary Table~\ref{SM-tab:sup_seed123_runtime}; they are workflow measurements under
-the specified, different training and early-stopping recipes, not architecture-only or hardware-independent
-complexity claims.
+12.2$\times$ and 10.2$\times$ faster than E0. E1 reused E0 encoder checkpoints and therefore has no
+end-to-end runtime comparison. Full timings for the specified training and early-stopping recipes are
+reported in Supplementary Table~\ref{SM-tab:sup_seed123_runtime}.
 
 \FloatBarrier
 
 Additional descriptive representation and context-group analyses are reported in
 Supplementary Fig.~\ref{SM-fig:sup_representation_context} and Table~\ref{SM-tab:sup_context};
-they are supporting analyses rather than confirmatory tests of the primary contrasts.
+they provide complementary evidence on feature geometry and temporal context.
 
 \subsection{Cross-cohort evaluation on SHHS1}
 
@@ -602,12 +599,13 @@ The secondary configuration analysis gives a different picture. E1\,--\,E0 remai
 ($+0.0065$ subject-mean \mf). E2\,--\,E1 is \emph{negative} out of domain
 ($-0.0128$, interval entirely below zero),
 so the bundled replacement of E1's 75-dimensional C/P/N package by the current-epoch 128-dimensional
-ResNet-1D representation does not generalise better on unprocessed SHHS signals. This contrast cannot
-attribute the reversal to the encoder alone. The post-hoc E3\,--\,E2 contrast is the largest observed
+ResNet-1D representation does not generalise better on unprocessed SHHS signals. Because the entire
+feature/context package changes, the reversal cannot be attributed to the encoder alone. The
+post-hoc E3\,--\,E2 contrast is the largest observed
 configuration difference ($+0.0475$, \ci\ $[0.0372,0.0579]$, $\dsign = +0.633$, 147/180 subjects
 improved). E3 and E2 use the same model and specified training recipe with different preprocessing.
 This observed contrast is larger than either the sequence-model/recipe or encoder/context contrast
-on this sample; it does not separate the effects of the individual preprocessing operations.
+on this sample.
 
 A seed-123 extension evaluating E4 (band-pass only) provides a more specific secondary contrast. E4
 reached subject-mean \mf\ $0.5732$, pooled \mf\ $0.6147$, accuracy $0.7064$, $\kappa = 0.5869$ and N1
@@ -615,18 +613,16 @@ F1 $0.3492$, exceeding same-seed E2 by $0.0323$ and E3 by $0.0098$. The SHHS-spe
 audit recorded zero clipped samples across the 200 processed adaptation, validation and test recordings.
 E4 and E3 therefore differ on these inputs by the fixed division by 100.
 The extension therefore associates band-pass filtering with most of the E4--E2 gain and provides no
-evidence that the additional fixed scaling improves transfer. Because the SHHS sample was already open
-and training stochasticity is represented by only two fixed seeds, these comparisons are secondary;
-they are not equivalence, non-inferiority or universal scaling tests.
+evidence that the additional fixed scaling improves transfer. These comparisons remain secondary
+because they were conducted after the SHHS sample had been opened.
 
 \FloatBarrier
 \subsection{Cross-model errors and their temporal distribution}
 \label{sec:gap}
 
 E3's pooled \mf\ is $0.7904$ on Sleep-EDF and $0.6099$ on SHHS1, a difference of $0.1805$.
-This comparison combines cohort change with an evaluation difference: Sleep-EDF uses out-of-fold
-predictions, whereas SHHS uses ten-model ensembles. It is a descriptive cross-cohort score difference,
-not an isolated estimate of domain-shift causation. We examine it by class and confusion channel to
+Because Sleep-EDF uses out-of-fold predictions whereas SHHS uses ten-model ensembles, the $0.1805$
+difference is interpreted descriptively. We examine it by class and confusion channel to
 determine which errors remain despite E3's aggregate transfer advantage. Throughout this analysis,
 A$\rightarrow$B denotes a reference-labelled A epoch predicted as B; it does not denote a physiological
 stage transition over time.
@@ -677,8 +673,8 @@ Tables~\ref{SM-tab:sup_perclass_transfer}--\ref{SM-tab:sup_boundary}.
 
 \subsection{What the pipeline comparisons establish}
 
-The main result is a combination of operational and cross-cohort gains, not an isolated backbone
-effect. ResNet-1D--TCN processes the benchmark input $3.76\times$ faster than the CNN--BiLSTM control,
+The main result combines operational and cross-cohort gains at the pipeline level. ResNet-1D--TCN
+processes the benchmark input $3.76\times$ faster than the CNN--BiLSTM control,
 while using more parameters and memory. Its observed training-and-validation time is also shorter,
 although the recipes and stopping rules differ. On the locked SHHS1 sample, E3 improves subject-mean
 \mf\ over E0 by 0.0412, with a positive interval and gains in 138 of 180 participants. These results
@@ -692,8 +688,8 @@ subject-level Holm threshold on Sleep-EDF, and E2--E1 reverses direction on SHHS
 the observed post-hoc E3--E2 preprocessing difference is larger on SHHS1. The seed-123 extension
 further shows that E4, which retains band-pass filtering without fixed scaling, outperforms both E2
 and E3 on that sample. Signal handling is therefore a material part of the evaluated model's transfer
-behaviour, rather than a negligible implementation detail. The extension does not establish one
-universally preferred filter or scaling rule.
+behaviour, rather than a negligible implementation detail. These configuration-level comparisons do
+not isolate the contribution of each preprocessing operation.
 
 \subsection{Aggregate improvement leaves a shared N3 deficit}
 
@@ -789,7 +785,10 @@ The primary campaign's 540 ensemble prediction files were checked against their 
 and their confusion counts reproduce the reported pooled results. This verifies those retained artifacts;
 it is not a regeneration of predictions or an end-to-end rerun. The expanded post-run protocol record
 is preserved separately. Further provenance details are given in the supplement and the repository
-artifact index. The submitted source revision is tagged \texttt{bspc-submission-v1}.
+artifact index.
+
+The experimental revision is fixed at Git commit
+\href{https://github.com/quanuiter/SleepTCN/commit/f7c22e76022b8e24ac8d1343a39a990d42a1b3e2}{\texttt{f7c22e7}}.
 
 \subsection*{Ethics}
 

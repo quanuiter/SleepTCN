@@ -3,8 +3,9 @@
 For the 06 September 2026 delivery, see `../BSPC_FINAL_READINESS_REPORT.md` and
 `../BSPC_AUTHOR_CONFIRMATIONS_VI.md`. The independently build-checked source ZIP is
 `../output/source/SleepTCN_BSPC_Manuscript_Source.zip`; its build instructions are in
-`SUBMISSION_BUILD.md`. The author confirmations have been incorporated; before submission, identify the
-exact pushed/tagged repository revision represented by the manuscript.
+`SUBMISSION_BUILD.md`. The author confirmations have been incorporated. The experimental source and
+provenance records cited in the manuscript are fixed at commit `f7c22e7`; push the final editorial
+revision before submission.
 
 From `Reports/paper_en`, build the supplement first so that the manuscript can import its table
 labels through `xr-hyper`:
