@@ -69,7 +69,7 @@ Sau khi hoàn tất validation, tập test được mở theo đúng quy tắc �
 
 \subsection{Hiệu năng ngoài fold và thống kê bắt cặp (Gate 5)}
 
-Gate 5 trả lời câu hỏi liệu từng thay đổi kiến trúc hoặc pipeline có tạo mức tăng đủ ổn định trên cùng đối tượng hay không. Thứ hạng mô tả được báo cáo đầy đủ, nhưng quyết định chỉ dựa trên chênh lệch, độ bất định và vai trò đã đăng ký của từng đối chiếu.
+Gate 5 đánh giá liệu các cấu hình pipeline tạo mức tăng ổn định trên cùng đối tượng hay không. Thứ hạng mô tả được báo cáo đầy đủ; suy luận dựa trên chênh lệch, độ bất định và vai trò đã nêu trong giao thức của từng đối chiếu. Việc có cấu hình/giao thức nội bộ không được gọi là đăng ký trước công khai.
 
 \begin{table}[H]
 \centering
@@ -185,8 +185,8 @@ Lần lặp seed 123 hoàn tất trên cùng phép chia và cùng cấu hình. B
 E0 & 0,775419 & 0,775457 \\
 E1 & 0,780230 & 0,777645 \\
 E2 & 0,783481 & 0,782787 \\
-E3 & \textbf{0,790443} & \textbf{0,788265} \\
-E4 & 0,789067 & 0,788673 \\
+E3 & \textbf{0,790443} & 0,788265 \\
+E4 & 0,789067 & \textbf{0,788673} \\
 E6 & 0,769124 & 0,778016 \\
 \bottomrule
 \end{tabularx}
@@ -209,7 +209,7 @@ E3--E6 & 0,021319 $[0,012179;0,030698]$ & 0,0012 & 0,010249 $[0,002435;0,017989]
 \end{tabular}}
 \end{table}
 
-Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối chiếu duy nhất có CI bootstrap hoàn toàn dương trong cả hai lần chạy; seed 42 đạt ý nghĩa Wilcoxon sau Holm, còn seed 123 giữ CI dương nhưng p Holm cao hơn. Vì vậy kết quả củng cố độ ổn định về hướng và độ lớn của hiệu ứng E3--E6, trong khi độ mạnh suy luận phụ thuộc vào seed. Kết quả E1--E0 và E2--E1 vẫn chưa đủ bằng chứng ở seed 123. Phân tích này diễn ra sau khi xem seed 42 và chỉ gồm hai seed cố định, nên được dùng như đánh giá độ nhạy chứ không phải ước lượng phân phối biến thiên do khởi tạo.
+Cả bốn chênh lệch giữ hướng dương ở hai seed. E3--E6 là đối chiếu duy nhất có CI bootstrap hoàn toàn dương trong cả hai lần chạy; seed 42 đạt ý nghĩa Wilcoxon sau Holm, còn seed 123 không đạt. Hướng hiệu ứng được lặp lại, nhưng độ lớn giảm từ 0,0213 xuống 0,0102. E4 nhỉnh hơn E3 về Macro-F1 gộp ở seed 123. Kết quả E1--E0 và E2--E1 vẫn chưa đủ bằng chứng ở seed 123. Hai seed cố định chỉ cung cấp bằng chứng về độ nhạy, không phải một chiến dịch khẳng định độc lập bổ sung hoặc ước lượng phân phối biến thiên do khởi tạo.
 
 \begin{table}[H]
 \centering
@@ -289,7 +289,7 @@ E6 --- ResNet-1D + TCN, z-score & 2 giờ 24 phút 44 giây & 14 phút 28 giây 
 \textbf{Kết luận vận hành.} Trong cùng chiến dịch 10 fold, E3 rút thời gian tạo trọn bộ mô hình từ hơn 33,5 giờ của E0 xuống còn khoảng 3,3 giờ (nhanh hơn 10,2 lần); E2 cần khoảng 2,75 giờ (nhanh hơn 12,2 lần). Điều này biến một vòng cross-validation kéo dài hơn một ngày thành một vòng có thể hoàn tất trong một buổi làm việc trên phần cứng đã đo. Đây là lợi ích trực tiếp cho tốc độ thử nghiệm, kiểm tra lỗi và lặp lại pipeline, tách biệt với lợi thế suy luận 3,76 lần.
 }}
 
-Thời gian wall-clock còn phụ thuộc vào số epoch thực tế, dừng sớm, điều phối lượt chạy, implementation và phần cứng; do đó các tỷ lệ trên là kết quả vận hành của chiến dịch hiện tại, không phải hằng số tốc độ phổ quát.
+Thời gian wall-clock còn phụ thuộc vào cấu hình optimizer, batch size, số epoch thực tế, quy tắc dừng sớm, điều phối lượt chạy, implementation và phần cứng; do đó các tỷ lệ trên là kết quả vận hành của chiến dịch hiện tại, không phải hiệu ứng kiến trúc riêng lẻ hay hằng số tốc độ phổ quát.
 
 \subsection{Không gian đặc trưng (phân tích hỗ trợ Gate 6)}
 
@@ -399,7 +399,7 @@ E3--E6 & \textbf{0,0274} & $\mathbf{[0,0182;0,0370]}$ & 0,0292 & 125/0/55 & $1,8
 \label{fig:shhs_effects}
 \end{figure}
 
-Cả hai khoảng tin cậy chính đều hoàn toàn dương và Wilcoxon vẫn có ý nghĩa sau Holm. Vì vậy E3 có Macro-F1 trung bình theo đối tượng cao hơn E0 và E6 trong mẫu SHHS1 và giao thức chuyển miền đã khóa. E0/E3 là suy luận inductive; E6 là chuẩn hóa không nhãn có tính transductive ở cấp bản ghi. Các chỉ số hỗ trợ cũng cùng chiều.
+Cả hai khoảng tin cậy chính đều hoàn toàn dương và Wilcoxon vẫn có ý nghĩa sau Holm. E3 có Macro-F1 trung bình theo đối tượng cao hơn E0 và E6 trong mẫu SHHS1 và giao thức chuyển miền đã khóa. E6 có thêm phụ thuộc transductive do ước lượng thống kê chuẩn hóa trên toàn bản ghi đích không nhãn; E0/E3 không dùng thống kê chuẩn hóa đích. Các chỉ số hỗ trợ cũng cùng chiều, trong bối cảnh đánh giá ngoại tuyến đã mô tả.
 
 N1 vẫn là lớp khó nhất. E3 có F1 N1 cao hơn E0/E6, nhưng recall N1 của E0 là 0,5841, cao hơn E3 0,5437; precision N1 của E3 là 0,2528, cao hơn E0 0,2017. Vì vậy lợi ích F1 của E3 phản ánh cân bằng precision--recall tốt hơn, không phải tăng đồng thời mọi chỉ số N1.
 
@@ -468,14 +468,14 @@ Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 
 \midrule
 E0 (15-CNN--BiLSTM) & 0,9007 & 0,2610 & 0,4048 & 16.480 & 72,3\% \\
 E3 (ResNet-1D--TCN) & 0,9440 & 0,2582 & 0,4055 & 16.674 & 73,1\% \\
-E6 (E3 + z-score bản ghi) & 0,9052 & 0,2005 & 0,3283 & 17.764 & 77,9\% \\
+E6 (pipeline z-score bản ghi) & 0,9052 & 0,2005 & 0,3283 & 17.764 & 77,9\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsubsection{Đối chứng z-score E6 và lỗi N3}
 
-E6 kiểm tra một biện pháp rẻ và tổng quát: chuẩn hóa từng bản ghi trước suy luận. Bảng~\ref{tab:shhs_e6_perclass} cho thấy biện pháp này không giải quyết lớp bị suy giảm mạnh nhất.
+E6 kiểm tra pipeline dùng z-score theo bản ghi ở cả nguồn khi huấn luyện và đích khi suy luận. Đây không phải phép thêm chuẩn hóa lên cùng trọng số E3 đã đóng băng. Bảng~\ref{tab:shhs_e6_perclass} cho thấy pipeline này không khắc phục thiếu N3 trên mẫu đã đánh giá.
 
 \begin{table}[H]
 \centering
@@ -510,11 +510,11 @@ E6 & 0,4507 & 0,7591 & 0,0721 & 0,1316 \\
 \end{tabular}
 \end{table}
 
-Tại vùng chuyển pha, recall N3 của E6 là 0,0721, gần như không đổi so với 0,0733 của E3. Như vậy, z-score theo bản ghi không phải biện pháp thích nghi độc lập đủ để sửa lỗi N3 trong pipeline này. Kết quả chỉ loại một phương án tổng quát có chi phí thấp; nó không chứng minh mức biên độ tuyệt đối là hoặc không là nguyên nhân của dịch chuyển miền.
+Tại vùng lân cận thay đổi nhãn, recall N3 của E6 là 0,0721 so với 0,0733 của E3; đây là các giá trị mô tả gần nhau, không phải kết luận tương đương. Cùng với recall toàn mẫu thấp hơn, kết quả cho thấy pipeline z-score đã thử không khắc phục thiếu N3. Đối chiếu không cô lập tác động của biên độ, không loại trừ các yếu tố liên quan biên độ/montage hoặc các phương pháp thích nghi không nhãn khác.
 
 \subsubsection{Kiểm tra hậu nghiệm vùng lân cận thay đổi nhãn}
 
-Để kiểm tra liệu suy giảm gần ranh giới có tái diễn qua mô hình và cohort hay không, phân tích hậu nghiệm dùng cùng định nghĩa trên dự đoán test seed 42 đã khóa của E0 và E3. Vùng lân cận là hợp của ba vị trí quanh mỗi thay đổi nhãn tham chiếu: epoch ngay trước, epoch đầu tiên của nhãn mới và epoch kế tiếp. Vùng ổn định cách mọi thay đổi nhãn ít nhất ba vị trí liên tiếp. Các vùng được tạo từ nhãn tham chiếu, không từ dự đoán; do đó đây là chẩn đoán đánh giá ngoại tuyến chứ không phải bộ phát hiện chuyển pha có thể triển khai.
+Phân tích hậu nghiệm dùng dự đoán test seed 42 đã khóa của E0 và E3. Với $j$ là epoch đầu của nhãn mới, vùng lân cận là hợp $\{j-1,j,j+1\}$. Vùng ổn định cách cả hai epoch $j-1$ và $j$ của mọi thay đổi nhãn ít nhất ba epoch, theo định nghĩa trong phương pháp. Hai vùng không bù nhau: Sleep-EDF có 43.237/130.693 epoch lân cận/ổn định và 21.539 epoch ngoài cả hai; SHHS1 tương ứng 44.744/103.195 và 21.073. Nhãn không hợp lệ ngắt chuỗi. Các vùng lấy từ nhãn tham chiếu, không từ dự đoán, nên đây là chẩn đoán ngoại tuyến chứ không phải bộ phát hiện chuyển pha có thể triển khai.
 
 \begin{table}[H]
 \centering
@@ -533,11 +533,11 @@ SHHS1 & E3 & 0,4689 & 0,6220 & 0,0733 & 0,3900 \\
 \end{tabular}}
 \end{table}
 
-Cả hai mô hình đều suy giảm rõ ở vùng lân cận trên cả hai cohort, trong khi E3 vẫn cao hơn E0 về \mf\ tại vùng này. Kiểm tra độ nhạy chỉ giữ các thay đổi nhãn có ít nhất ba epoch liên tiếp ở mỗi phía cho cùng hướng: \mf\ E0/E3 là 0,6253/0,6377 trên Sleep-EDF và 0,4591/0,4864 trên SHHS1. Tuy nhiên, recall N3 của E0/E3 ngay trong vùng ổn định SHHS1 vẫn chỉ là 0,4008/0,3900, thấp xa Sleep-EDF. Vì vậy, vùng thay đổi nhãn làm bài toán khó hơn nhưng không giải thích toàn bộ lỗi N3 ngoài miền; kết quả cũng không xác định nguyên nhân là sinh lý, thực hành chấm hay thiết bị.
+Cả hai mô hình có điểm thấp hơn ở vùng lân cận trên cả hai cohort, trong khi E3 vẫn cao hơn E0 về \mf\ tại vùng này. Kiểm tra chỉ giữ các thay đổi nhãn có ít nhất ba epoch liên tiếp cùng nhãn ở mỗi phía cho cùng hướng: \mf\ E0/E3 là 0,6253/0,6377 trên Sleep-EDF và 0,4591/0,4864 trên SHHS1. Tuy nhiên, recall N3 của E0/E3 ngay trong vùng ổn định SHHS1 vẫn chỉ là 0,4008/0,3900. Lỗi vì vậy không giới hạn ở vùng ranh giới. Thành phần lớp giữa các vùng khác nhau; so sánh này không xác định tác động nhân quả của chuyển pha sinh lý, thực hành chấm hay thiết bị.
 
 \subsubsection{Đòn bẩy phản thực cho quyết định thích nghi}
 
-\mf\ gộp của E3 giảm từ 0,7904 trên Sleep-EDF xuống 0,6099 trên SHHS1, tạo khoảng hụt 0,1805. N3 giảm F1 0,4030 và tự nó chiếm khoảng 45\% tổng mức giảm Macro-F1 theo năm lớp. Trên SHHS1, E3 chỉ phát N3 bằng 0,273 lần tần suất thật; 16.674/22.806 epoch N3 (73,1\%) bị gán thành N2. Mẫu precision rất cao nhưng recall thấp phù hợp với một ranh giới quyết định N3 quá bảo thủ trên mẫu này. Việc E0 biểu hiện gần như cùng mức thiếu N3 cho thấy đây là failure mode bền vững qua hai kiến trúc được đánh giá, nhưng không xác định nguyên nhân là montage, tuổi, quy tắc chấm hay hình thái tín hiệu.
+\mf\ gộp của E3 là 0,7904 trên Sleep-EDF và 0,6099 trên SHHS1, chênh lệch 0,1805. Đây là khác biệt giữa EDF ngoài fold và SHHS ensemble mười mô hình, đồng thời khác phân bố lớp và thành phần cohort, không phải ước lượng riêng tác động dịch chuyển miền. F1 N3 giảm 0,4030, tương ứng khoảng 45\% chênh lệch Macro-F1 xét theo năm lớp. Trên SHHS1, số dự đoán N3 chỉ bằng 0,273 lần số nhãn N3 thật; 16.674/22.806 epoch N3 (73,1\%) bị gán thành N2. Precision cao--recall thấp mô tả việc phát N3 bảo thủ trên mẫu này, không phải bằng chứng calibration xác suất. Việc E0 biểu hiện gần cùng mức thiếu N3 cho thấy lỗi tái diễn qua hai họ mô hình được đánh giá, nhưng chưa xác định nguyên nhân là montage, tuổi, quy tắc chấm hay hình thái tín hiệu.
 
 \begin{table}[H]
 \centering
@@ -550,18 +550,18 @@ Cả hai mô hình đều suy giảm rõ ở vùng lân cận trên cả hai coh
 E3 trên SHHS1 quan sát được & 0,6099 & -- \\
 Sửa riêng N3$\rightarrow$N2 & 0,7444 & 0,1345 (74,5\%) \\
 Sửa riêng N2$\rightarrow$REM & 0,6596 & 0,0497 (27,5\%) \\
-Sửa đồng thời hai kênh & 0,7947 & 0,1848 (102,4\%) \\
+Sửa đồng thời hai kênh & 0,7947 & 0,1848 (102,3\%) \\
 \midrule
 E3 trên Sleep-EDF tham chiếu & 0,7904 & -- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Đây không phải hiệu năng mà một thuật toán thực tế chắc chắn đạt được. Phép tính được thực hiện trên dự đoán E3 và chỉ cho thấy N3$\rightarrow$N2 có đòn bẩy lớn nhất, tiếp theo là N2$\rightarrow$REM; nó không quy lỗi này cho E3. Tổng phần trăm có thể vượt 100\% vì Macro-F1 phi tuyến và hai cohort có phân bố lớp khác nhau. Việc N3$\rightarrow$N2 cũng chiếm 72,3\% số epoch N3 ở E0 củng cố lựa chọn mục tiêu thích nghi, nhưng không biến phân tích E3 thành một đối chiếu nhân quả giữa kiến trúc. Do đó, thí nghiệm tiếp theo hợp lý hơn một vòng thay kiến trúc hoặc chuẩn hóa chung là hiệu chỉnh/fine-tune có nhãn theo lớp, báo cáo riêng recall và false-positive N3 tại ranh giới N2--N3.
+Đây không phải hiệu năng một thuật toán thực tế được bảo đảm đạt. Trong các kênh đã xét trên E3, N3$\rightarrow$N2 có mức tăng oracle lớn nhất, tiếp theo là N2$\rightarrow$REM. Tỷ phần trong bảng dùng chênh lệch điểm mô tả giữa hai điều kiện đánh giá làm mẫu số; sửa đồng thời có thể vượt điểm EDF ban đầu. Do Macro-F1 phi tuyến, không cộng các tỷ phần oracle riêng để dự đoán hiệu ứng đồng thời. Việc N3$\rightarrow$N2 cũng chiếm 72,3\% N3 ở E0 củng cố tính đáng chú ý của kênh lỗi, không biến oracle thành đối chiếu nhân quả hoặc bằng chứng rằng thích nghi có nhãn tối ưu hơn mọi hướng khác. Nếu kiểm chứng một biện pháp khắc phục, cần đánh giá đồng thời recall và false-positive N3 trên test không dùng để chọn biện pháp.
 
 \subsection{Phân tích bổ sung thành phần E1/E2 trên SHHS1}
 
-Sau chiến dịch chuyển miền chính, một giao thức riêng được khóa trước khi suy luận E1/E2. Các mô hình không được cập nhật trọng số bằng SHHS và được đánh giá trên cùng 180 đối tượng. E1--E0 cô lập thay BiLSTM bằng TCN; E2--E1 thay gói C/P/N 75 chiều của E1 bằng embedding ResNet-1D 128 chiều chỉ từ epoch hiện tại, nên không được diễn giải là hiệu ứng riêng của encoder.
+Sau chiến dịch chuyển miền chính, một giao thức riêng được khóa trước suy luận E1/E2. Các mô hình không được cập nhật trọng số bằng SHHS và được đánh giá trên cùng 180 người. E1--E0 giữ encoder/cache nhưng thay cấu hình BiLSTM bằng TCN cùng lịch huấn luyện khác; E2--E1 thay gói C/P/N 75 chiều bằng embedding ResNet-1D 128 chiều chỉ từ epoch hiện tại cùng cách huấn luyện/chọn encoder. Các đối chiếu này không xác định tác động kiến trúc riêng lẻ.
 
 \begin{table}[H]
 \centering

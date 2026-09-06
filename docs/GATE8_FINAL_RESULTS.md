@@ -58,7 +58,7 @@ dùng bán kính ±2.
 Full CPN hơn C về mô tả `0,002753` Macro-F1 toàn bộ và `0,010398` F1 N1. Tuy nhiên CN có
 Macro-F1 toàn bộ cao hơn Full CPN `0,001355`, cho thấy thêm nhóm thông tin không tạo cải thiện đơn điệu.
 
-## So sánh đã đăng ký trước trong Gate 8
+## So sánh được định trước trong protocol nội bộ Gate 8
 
 Tiêu chí là Macro-F1 vùng chuyển pha ±1. Khoảng tin cậy dùng bootstrap cụm bắt cặp theo đối tượng
 10.000 lần; Wilcoxon signed-rank hai phía theo đối tượng; Holm hiệu chỉnh đúng ba so sánh.

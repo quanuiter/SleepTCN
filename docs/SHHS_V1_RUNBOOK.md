@@ -3,6 +3,11 @@
 > **FROZEN PROTOCOL:** Runbook này là quy trình tái lập chiến dịch SHHS đã đóng.
 > Không dùng tài liệu này để mở thêm cohort hoặc adaptation; nghiên cứu mới phải có protocol riêng.
 
+> Diễn giải hiện hành: “zero-shot” ở đây chỉ chiến dịch không cập nhật trọng số từ SHHS. E6 tính
+> mean/std trên toàn bộ recording đích không nhãn, nên có phụ thuộc transductive ở cấp bản ghi;
+> cửa sổ benchmark dùng nhãn tham chiếu không phải quy tắc triển khai online. Đối chiếu hash snapshot,
+> phạm vi kiểm tra prediction và các bước chưa replay nằm tại `../Reports/SHHS_PROTOCOL_PROVENANCE.md`.
+
 ## Trạng thái hiện tại
 
 - Chiến dịch Sleep-EDF v2 vẫn khóa tại Gate 8.

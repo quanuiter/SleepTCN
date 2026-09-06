@@ -24,9 +24,9 @@
 \citation{quan1997shhs}
 \citation{zhang2018nsrr}
 \citation{massimini2004travelling}
-\citation{ohayon2004metaanalysis}
 \citation{rechtschaffen1968}
 \citation{berry2017aasm}
+\citation{davidson2025n3}
 \citation{saerens2002adjusting}
 \citation{guo2017calibration}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Materials and methods}{3}{section.3}\protected@file@percent }
@@ -37,45 +37,41 @@
 \newlabel{tab:class-distribution}{{1}{4}{Scored-label distribution in the two evaluation samples}{table.caption.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Experimental configuration codes. The identifiers denote signal--model combinations, not a performance ranking or a sequence of model versions.}}{4}{table.caption.2}\protected@file@percent }
 \newlabel{tab:configs}{{2}{4}{Experimental configuration codes. The identifiers denote signal--model combinations, not a performance ranking or a sequence of model versions}{table.caption.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Model configurations}{4}{subsection.3.3}\protected@file@percent }
 \citation{wilcoxon1945}
 \citation{efron1994bootstrap}
 \citation{holm1979}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Model configurations}{5}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Two-stage training and subject-wise cross-validation}{5}{subsection.3.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Test locking, statistical analysis and effect sizes}{5}{subsection.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Operational evaluation}{5}{subsection.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{5}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Out-of-fold performance on Sleep-EDF}{5}{subsection.4.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds).}}{6}{table.caption.3}\protected@file@percent }
-\newlabel{tab:sleepedf-performance}{{3}{6}{Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds)}{table.caption.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Pre-specified paired comparisons on Sleep-EDF \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family.}}{6}{table.caption.4}\protected@file@percent }
-\newlabel{tab:paired-sleepedf}{{4}{6}{Pre-specified paired comparisons on Sleep-EDF \mf \ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Operational evaluation}{6}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{6}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Out-of-fold performance on Sleep-EDF}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Per-class and seed-sensitivity checks}{6}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Complexity, latency and training cost}{6}{subsection.4.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded.}}{7}{table.caption.5}\protected@file@percent }
-\newlabel{tab:complexity}{{5}{7}{Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded}{table.caption.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Cross-cohort evaluation on SHHS1}{7}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Cross-cohort performance on 180 locked SHHS1 participants (seed 42). No weights were updated on SHHS. E0 and E3 are inductive; E6 uses complete-record, unlabelled target statistics and is transductive. Intervals are subject-cluster bootstrap intervals for subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}.}}{8}{table.caption.6}\protected@file@percent }
-\newlabel{tab:shhs-performance}{{6}{8}{Cross-cohort performance on 180 locked SHHS1 participants (seed 42). No weights were updated on SHHS. E0 and E3 are inductive; E6 uses complete-record, unlabelled target statistics and is transductive. Intervals are subject-cluster bootstrap intervals for subject-mean \mf }{table.caption.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Locked paired comparisons on SHHS1 subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 180$).}}{8}{table.caption.7}\protected@file@percent }
-\newlabel{tab:shhs-paired}{{7}{8}{Locked paired comparisons on SHHS1 subject-mean \mf \ ($n = 180$)}{table.caption.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Which errors should target-domain adaptation prioritise?}{8}{subsection.4.5}\protected@file@percent }
-\newlabel{sec:gap}{{4.5}{8}{Which errors should target-domain adaptation prioritise?}{subsection.4.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{8}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Principal findings}{8}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds).}}{7}{table.caption.3}\protected@file@percent }
+\newlabel{tab:sleepedf-performance}{{3}{7}{Out-of-fold test performance on Sleep-EDF (seed 42, pooled over all folds)}{table.caption.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Pre-specified paired comparisons on Sleep-EDF \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family.}}{7}{table.caption.4}\protected@file@percent }
+\newlabel{tab:paired-sleepedf}{{4}{7}{Pre-specified paired comparisons on Sleep-EDF \mf \ ($n = 78$ subjects). Holm correction is over the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks. E3\,--\,E0 is post-hoc and is excluded from the Holm family}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Complexity, latency and training cost}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded.}}{8}{table.caption.5}\protected@file@percent }
+\newlabel{tab:complexity}{{5}{8}{Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Cross-cohort evaluation on SHHS1}{8}{subsection.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Cross-cohort performance on 180 locked SHHS1 participants (seed 42). All model weights were trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics. Intervals are subject-cluster bootstrap intervals for subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}.}}{9}{table.caption.6}\protected@file@percent }
+\newlabel{tab:shhs-performance}{{6}{9}{Cross-cohort performance on 180 locked SHHS1 participants (seed 42). All model weights were trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics. Intervals are subject-cluster bootstrap intervals for subject-mean \mf }{table.caption.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Locked paired comparisons on SHHS1 subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 180$).}}{9}{table.caption.7}\protected@file@percent }
+\newlabel{tab:shhs-paired}{{7}{9}{Locked paired comparisons on SHHS1 subject-mean \mf \ ($n = 180$)}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Cross-model errors and their temporal distribution}{9}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:gap}{{4.5}{9}{Cross-model errors and their temporal distribution}{subsection.4.5}{}}
 \citation{massimini2004travelling}
-\citation{ohayon2004metaanalysis}
-\citation{supratak2017deepsleepnet}
-\citation{eldele2021attnsleep}
-\citation{phan2022sleeptransformer}
-\citation{jadhav2024zleepanlystnet}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}From error localisation to an adaptation decision}{9}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Architecture and preprocessing implications}{9}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Positioning relative to published results}{9}{subsection.5.4}\protected@file@percent }
-\citation{guo2017calibration}
-\citation{phan2022sleeptransformer}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Limitations and a prioritised agenda}{10}{subsection.5.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{10}{section.6}\protected@file@percent }
+\citation{davidson2025n3}
+\citation{haghayegh2023sleepinceptionnet}
+\citation{vdd2023traditional}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces N3 under-detection across the primary SHHS1 configurations (seed 42). All models share 22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2.}}{10}{table.caption.8}\protected@file@percent }
+\newlabel{tab:cross-model-n3}{{8}{10}{N3 under-detection across the primary SHHS1 configurations (seed 42). All models share 22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{10}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}What the pipeline comparisons establish}{10}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Aggregate improvement leaves a shared N3 deficit}{10}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Positioning and limits of generalisation}{10}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{11}{section.6}\protected@file@percent }
 \bibstyle{ieeetr}
 \bibdata{references}
 \bibcite{rosenberg2013aasm}{1}
@@ -95,12 +91,12 @@
 \bibcite{quan1997shhs}{15}
 \bibcite{zhang2018nsrr}{16}
 \bibcite{massimini2004travelling}{17}
-\bibcite{ohayon2004metaanalysis}{18}
-\bibcite{rechtschaffen1968}{19}
-\bibcite{berry2017aasm}{20}
+\bibcite{rechtschaffen1968}{18}
+\bibcite{berry2017aasm}{19}
+\bibcite{davidson2025n3}{20}
 \bibcite{saerens2002adjusting}{21}
 \bibcite{guo2017calibration}{22}
 \bibcite{wilcoxon1945}{23}
 \bibcite{efron1994bootstrap}{24}
 \bibcite{holm1979}{25}
-\gdef \@abspage@last{12}
+\gdef \@abspage@last{13}

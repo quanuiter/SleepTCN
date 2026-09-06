@@ -48,5 +48,5 @@ package để có thể gọi trực tiếp từ test hoặc từ một quy trì
 là ranh giới gắn với checkpoint, thiết bị và dữ liệu. Việc tiếp tục tách các module này chỉ nên thực hiện
 sau khi có characterization test chứng minh output fixture giữ nguyên.
 
-Mọi mở rộng seed, adaptation, fine-tuning hoặc cohort mới phải được đăng ký trong protocol riêng và
+Mọi mở rộng seed, adaptation, fine-tuning hoặc cohort mới phải được định trước trong protocol riêng và
 không được sửa ngược các artifact đã khóa.

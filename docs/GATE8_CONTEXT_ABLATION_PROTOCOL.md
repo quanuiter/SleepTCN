@@ -57,7 +57,8 @@ Unknown/Movement hoặc một khoảng trống chỉ số làm đứt chuỗi, k
 Vùng chuyển pha chính gồm các epoch cách anchor không quá ±1 epoch trong cùng đoạn liên tục. Phân
 tích độ nhạy dùng ±2 epoch.
 
-Các cặp chuyển pha hỗ trợ được đăng ký trước: W↔N1, N1↔N2, N1↔REM và N2↔N3.
+Các cặp chuyển pha hỗ trợ được định trước trong protocol nội bộ: W↔N1, N1↔N2, N1↔REM và N2↔N3.
+Không khẳng định đã đăng ký công khai chỉ dựa trên metadata của protocol.
 
 ## 5. Tiêu chí và thống kê
 

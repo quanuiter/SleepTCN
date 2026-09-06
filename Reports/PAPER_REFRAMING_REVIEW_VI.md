@@ -1,42 +1,49 @@
 # Đánh giá và định hướng lại bản thảo SleepTCN
 
+Ghi chú biên tập hiện hành, cập nhật 05-09-2026. Tài liệu này đã được sửa để không biến một bài đánh giá
+pipeline thành yêu cầu phải đề xuất thuật toán adaptation mới. Kế hoạch chi tiết nằm tại
+`BSPC_PRE_SUBMISSION_AUDIT_AND_EXECUTION_PLAN_VI.md`; trạng thái thực thi phải đọc ở revision log,
+không suy từ một đề xuất trong ghi chú này rằng thí nghiệm đã được chạy.
+
 ## Kết luận biên tập
 
 Project không nên được trình bày như một phương pháp ResNet-1D--TCN mới hoặc một mô hình vượt SOTA.
-Hai hướng đó không được số liệu hiện tại hỗ trợ. Bản thảo có cơ sở công bố hơn khi trả lời một quyết
-định thực tế trước khi triển khai mô hình sang cohort khác:
+Hai hướng đó không được số liệu hiện tại hỗ trợ. Giá trị của bản thảo nằm ở một câu hỏi thực nghiệm
+cụ thể về xử lý tín hiệu và độ bền của kết quả khi chuyển cohort:
 
 > Khi một pipeline sleep staging được phát triển trên Sleep-EDF nhưng phải dùng trên cohort có montage,
-> thiết bị và phân bố tuổi khác, nên ưu tiên thay kiến trúc, thay preprocessing, hay dành dữ liệu có nhãn
-> để thích nghi một số decision boundary cụ thể?
+> thiết bị và thành phần mẫu khác, các cấu hình đã thử đem lại đánh đổi dự đoán–vận hành nào,
+> và lỗi theo lớp nào vẫn tồn tại dù score tổng thể được cải thiện?
 
-Đây là một vấn đề thực tế vì nguồn lực phát triển có hạn. Một nhóm không thể đồng thời thay encoder,
-sequence model, preprocessing và thu thập nhiều nhãn target-domain mà vẫn biết thành phần nào tạo ra lợi
-ích. Đánh giá chuyển miền không cập nhật trọng số cho biết pipeline hiện tại hỏng ở đâu trước khi chọn chiến lược thích nghi.
+Đánh giá dùng chung subject splits và phép đo bắt cặp giúp phân biệt lợi ích quan sát được của từng
+cấu hình với một thứ hạng benchmark đơn thuần. Các đối chiếu không phải thiết kế factorial: E1 thay
+cả mô hình chuỗi và recipe huấn luyện; E2 thay gói feature/context và recipe encoder. Nghiên cứu chưa
+đo lợi tức đầu tư phát triển, hiệu quả thu nhãn hay hiệu quả của một phương pháp thích nghi.
 
 ## Ba câu hỏi nghiên cứu cần giữ
 
 | Câu hỏi | Quyết định thực tế mà câu hỏi hỗ trợ | Bằng chứng hiện có | Câu trả lời được phép kết luận | Giá trị |
 |---|---|---|---|---|
-| RQ1. TCN và ResNet-1D có tạo ra incremental benefit đủ ổn định để đáng thay kiến trúc không? | Có nên tiếp tục đầu tư vào architecture search hay không? | E1−E0 và E2−E1 trên cùng 10 fold, cùng subject, cùng protocol; kiểm định theo subject; hai seed | Không thiết lập được lợi thế dự đoán ổn định. Lợi ích chắc hơn là vận hành: pipeline nhanh hơn, nhưng lớn hơn về parameter và memory. | Ngăn việc diễn giải các chênh lệch benchmark nhỏ như bằng chứng kiến trúc vượt trội. |
-| RQ2. Lựa chọn pipeline/preprocessing nào giữ được lợi ích khi chuyển sang SHHS1 mà không cập nhật trọng số? | Trước khi có target labels, nên giữ hoặc thay phần nào của pipeline? | Hai locked comparisons E3−E0 và E3−E6 trên 180 SHHS subject; E0/E3 inductive, E6 transductive ở cấp bản ghi; các component contrasts phụ; seed-123 sensitivity | E3 tốt hơn hai locked references; các preprocessing contrasts quan sát được lớn hơn architecture contrasts. Band-pass là ứng viên giải thích phần lớn khác biệt, nhưng E3−E2 và E4 extension là secondary/post-hoc nên chưa chứng minh nhân quả cho một operation. | Chuyển ưu tiên từ tiếp tục đổi backbone sang signal handling và target-domain evaluation. |
-| RQ3. Lỗi nào phải xử lý trước khi triển khai và generic normalisation có đủ không? | Nếu chỉ có ít nhãn SHHS, nên dùng chúng ở đâu và đánh giá metric nào? | Class-wise F1, confusion channels, đối chiếu E0/E3, transition-region metrics và E6 sensitivity | N3→N2 là failure mode chung của E0/E3 và là ưu tiên thứ nhất; N2→REM trên E3 là ưu tiên thứ hai. Per-record z-score không cứu N3, do đó không phải stand-alone remedy. Thí nghiệm kế tiếp nên là class-specific calibration hoặc limited fine-tuning có nhãn. | Biến một aggregate domain gap thành mục tiêu thích nghi, đồng thời tránh quy sai lỗi N3 cho riêng kiến trúc E3. |
+| RQ1. Các thay thế cấu hình mô hình chuỗi và feature/context đem lại lợi ích nào? | Cân nhắc đánh đổi dự đoán và vận hành trong các cấu hình đã thử | E1−E0 và E2−E1 trên cùng 10 fold và đối tượng; khác recipe được khai báo; hai seed | Chưa thiết lập lợi thế dự đoán ổn định qua các kiểm tra đã báo cáo. ResNet–TCN có forward pass nhanh hơn trong benchmark, nhưng nhiều tham số và tốn peak memory hơn. | Phân biệt lợi ích vận hành đo được với claim ưu thế kiến trúc. |
+| RQ2. Lợi ích pipeline nào giữ được khi chuyển sang SHHS1 mà không cập nhật trọng số? | Đánh giá lại signal handling khi đổi cohort | Hai so sánh chính E3−E0/E3−E6 trên 180 người; E6 transductive; E1/E2 và E4 là các extension trên cùng cohort | E3 cao hơn hai đối chứng chính ở seed 42. E3−E2 hậu nghiệm lớn hơn các contrast E1−E0/E2−E1 đã thử; E4 seed 123 còn cao hơn E3. | Bằng chứng cụ thể rằng lựa chọn preprocessing đáng được kiểm tra cùng với pipeline, không phải quy luật preprocessing luôn quan trọng hơn kiến trúc. |
+| RQ3. Score tổng thể che khuất lỗi theo lớp nào? | Xác định mục tiêu cho kiểm chứng tiếp theo | Confusion counts E0/E3/E6, oracle riêng E3 và chẩn đoán vùng nhãn | N3→N2 tái diễn ở E0/E3; N2→REM đứng thứ hai trong oracle E3. Pipeline z-score E6 đã thử không khắc phục N3. | Chỉ ra lỗi còn tồn tại qua pipeline và giới hạn của cải thiện aggregate; chưa khẳng định nguyên nhân, cách khắc phục hay cách phân bổ nhãn tối ưu. |
 
 ## Vai trò đúng của E6 và z-score
 
 “E6 không cải thiện N3” không phải đóng góp độc lập. Nếu viết thành một contribution riêng, reviewer có
 thể phản bác đúng rằng đây chỉ là một phép thử tuỳ ý không thành công.
 
-E6 chỉ có lý do xuất hiện khi đặt trong RQ3:
+E6 là một contrast preprocessing đã định trong chiến dịch và cung cấp thêm thông tin cho RQ3:
 
 1. Record-wise normalisation là một cách sửa rẻ và phổ biến khi nghi ngờ scale mismatch.
 2. Nếu nó cứu N3, nhóm có thể thử một biện pháp không cần target labels.
 3. Nó không cứu N3: recall 0.2005 so với 0.2582 của E3; gần transition là 0.0721 so với 0.0733.
-4. Vì vậy, generic normalisation không đủ và nguồn lực nên chuyển sang labelled, class-specific
-   adaptation.
+4. Vì vậy, pipeline z-score theo bản ghi đã thử không khắc phục lỗi N3. E6 được huấn luyện riêng;
+   đây không phải phép can thiệp chỉ thay biên độ lên cùng model đóng băng.
 
-Giá trị không nằm ở việc “z-score thất bại”, mà ở quyết định mà kết quả đó loại bỏ: không nên tiếp tục
-coi một thay đổi scale toàn cục là giải pháp deployment cho lỗi N3.
+Kết quả không loại trừ vai trò của biên độ, mọi cách chuẩn hóa không nhãn hoặc những chiến lược
+thích nghi khác. Calibration/fine-tuning là hướng nghiên cứu tiếp theo có thể chọn, không phải bước
+bắt buộc để bài đánh giá thực nghiệm này có đóng góp.
 
 ## Những thông tin cần nằm trong main paper
 
@@ -48,8 +55,9 @@ coi một thay đổi scale toàn cục là giải pháp deployment cho lỗi N3
 6. Đối chiếu E0/E3 cho N3→N2, phân tích N2→REM của E3 và transition-region N3 recall; ghi rõ phản thực 74,5% được tính trên E3.
 7. E6 N3 metrics như sensitivity result, không gọi là contribution.
 8. Operational trade-off: latency, parameter count và memory.
-9. Limitations ảnh hưởng trực tiếp đến inference: hai seed, một external cohort, ground-truth-anchored
-   evaluation window, chưa có calibration và không tách được montage khỏi age/population.
+9. Limitations ảnh hưởng trực tiếp đến inference: hai seed cố định, một hướng chuyển cohort,
+   ground-truth-anchored evaluation window, EDF out-of-fold khác SHHS ensemble, chưa kiểm chứng một
+   biện pháp calibration/adaptation và chưa tách được montage khỏi thành phần quần thể.
 
 ## Những thông tin không nên chiếm chỗ trong main paper
 
@@ -71,14 +79,14 @@ kết quả làm thay đổi kết luận hoặc gọi post-hoc result là confi
 
 Các cách diễn đạt nên dùng:
 
-- Thay “the architecture did not improve” bằng “the architectural substitutions did not establish a
-  stable predictive advantage under paired inference”.
+- Thay “the architecture did not improve” bằng “the evaluated sequence-model and feature/context
+  replacements did not establish a stable predictive advantage across the reported checks”.
 - Thay “z-scoring failed” bằng “record-wise normalisation was not sufficient to resolve the dominant N3
   transfer error”.
 - Thay “E3 is superior” bằng “E3 was the strongest evaluated complete procedure under the locked SHHS
   comparisons”.
-- Thay “preprocessing causes better transfer” bằng “in the observed post-hoc comparison,
-  preprocessing was the stronger development axis; no individual operation was identified as causal”.
+- Thay “preprocessing causes better transfer” bằng “the observed post-hoc preprocessing contrast was
+  larger than the evaluated sequence-model and feature/context contrasts on this SHHS1 sample”.
 - Thay “we identified an amplitude-threshold mechanism” bằng “the pattern is consistent with a
   conservative N3 boundary; montage and age are plausible but confounded contributors”.
 - Thay “correcting two channels restores performance” bằng “the counterfactual analysis ranks these two
@@ -100,32 +108,41 @@ Các cách diễn đạt nên dùng:
 
 Cross-scenario sleep staging đã có các phương pháp domain adaptation dùng Sleep-EDF và SHHS1. Vì vậy,
 đánh giá chuyển miền không cập nhật trọng số tự nó không còn là novelty đủ lớn. Bài phải phân biệt rõ rằng nó không đề xuất một
-adaptation algorithm; nó cung cấp bước chẩn đoán trước adaptation: lựa chọn pipeline nào giữ được lợi
-ích và target labels nên được dùng cho boundary nào. Bản thảo đã bổ sung hai đối chiếu literature:
+adaptation algorithm; nó kết hợp đánh giá pipeline bắt cặp, đánh đổi vận hành và phân tích lỗi theo lớp
+trên hai cohort. Những lỗi nổi bật là ứng viên cho kiểm chứng tiếp theo, chưa chứng minh target labels
+nên được phân bổ thế nào. Các đối chiếu literature cần giữ gồm:
 
 - He et al., *Cross-scenario automatic sleep stage classification using transfer learning and
   single-channel EEG*, BSPC 2023, DOI 10.1016/j.bspc.2022.104501.
 - Van Der Donckt et al., *Do not sleep on traditional machine learning*, BSPC 2023, DOI
   10.1016/j.bspc.2022.104429.
+- SleepInceptionNet của Haghayegh và cộng sự, JMIR 2023, đã khảo sát preprocessing/representation
+  single-channel; không gọi ý tưởng đánh giá preprocessing là mới tự thân.
+- ADAST là đối chiếu về thích nghi miền không nhãn có cập nhật mô hình, khác trọng số nguồn cố định
+  và chuẩn hóa input ở E6. Related work không thay thế một baseline chạy cùng protocol.
 
 ## Việc còn chặn submission
 
-1. **Provenance:** hash trong SHHS USB manifest khớp snapshot lịch sử `configs/shhs_zero_shot_v1.json`;
+1. **Provenance:** hash trong run manifest SHHS khớp snapshot lịch sử `configs/shhs_zero_shot_v1.json`;
    `configs/shhs_v1_protocol.json` là hồ sơ mở rộng sau chạy. Đã ghi biên bản đối chiếu tại
    `Reports/SHHS_PROTOCOL_PROVENANCE.md`; không thay hash snapshot bằng hash của hồ sơ mở rộng.
-   và metrics. Không nên submit khi đường provenance này còn mơ hồ.
+   Ngày 05-09-2026 đã kiểm tra trực tiếp 540 ensemble prediction hashes và confusion counts. Đây là
+   kiểm tra toàn vẹn và tái tính từ prediction, không phải tái huấn luyện/tái sinh độc lập. Link archive
+   và quyền chia sẻ vẫn cần tác giả xác nhận.
 2. **External baseline:** bản thảo đã nói rõ không claim SOTA, nhưng reviewer vẫn có thể yêu cầu một
    baseline hiện đại chạy cùng protocol. Nếu không chạy thêm, phải nhấn mạnh internal paired control và
    protocol non-comparability; đây vẫn là điểm yếu.
-3. **Uncertainty:** thiếu absolute CI và full subject-level vectors trên Sleep-EDF. Nếu artifacts cho phép
-   khôi phục với chi phí thấp, đây là bổ sung đáng làm hơn tuning.
-4. **Target venue:** bài phù hợp hơn với biomedical signal processing/robustness hoặc applied sleep
-   technology; không nên định vị như một paper phương pháp mới cho JBI.
+3. **Uncertainty:** aggregate package chưa cung cấp đầy đủ absolute CI và phân bố theo đối tượng của
+   mọi kết quả. Có prediction gốc thì có thể khôi phục; nếu cần chạy phân tích mới phải chốt phạm vi
+   và báo tác giả trước. Không giả rằng thiếu trong một JSON đồng nghĩa không thể tính.
+4. **Thông tin trước nộp:** tác giả đã xác nhận Quân đứng đầu/liên hệ, nhưng CRediT chưa được điền;
+   ethics, quyền NSRR/DUA, funding, competing interests và archive chưa được tác giả xác nhận.
+   Guide for Authors BSPC trả HTTP 403 khi audit, nên template/word limit/review mode vẫn cần kiểm tra.
 
 ## Phán quyết
 
-Bản thảo sau khi định hướng lại có một câu hỏi có ích: nó giúp quyết định nên đầu tư vào đâu trước khi
-đưa một sleep-staging pipeline sang dataset khác. Đóng góp nằm ở paired evidence và error prioritisation,
-không nằm ở ResNet-TCN hay ở một negative z-score experiment. Đây là một paper mức vừa, có thể nộp sau
-khi giải quyết provenance và làm rõ uncertainty; nó không phải SOTA paper và không nên được bán theo
-hướng đó.
+Bài có đóng góp thực nghiệm có thể trình bày rõ: các lựa chọn pipeline được đánh giá bắt cặp, lợi ích
+vận hành đi cùng chi phí cụ thể, và score chuyển cohort tốt hơn không đồng nghĩa lỗi N3 đã được xử lý.
+Không cần tự hạ giá trị này chỉ vì backbone quen thuộc; đồng thời cần đối chiếu literature và giữ claim
+trong phạm vi đã đo. Khả năng nộp phải dựa trên các gate khoa học, provenance, khai báo và package cuối,
+không trên một nhãn “mức vừa”, xác suất chấp nhận suy đoán hoặc điều kiện adaptation mặc định.

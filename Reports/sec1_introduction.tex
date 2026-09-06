@@ -3,14 +3,14 @@
 
 Phân giai đoạn giấc ngủ là nhiệm vụ nền tảng trong phân tích đa ký giấc ngủ. Các phương pháp tự động từ EEG một kênh có thể giảm yêu cầu về thiết bị và chi phí xử lý, nhưng điểm số trong một bộ dữ liệu chưa đủ trả lời liệu hệ thống có đáng được phát triển hoặc chuyển sang một cohort khác. Hiệu năng có thể thay đổi do phép chia đối tượng, lựa chọn mô hình, xử lý tín hiệu, montage, quần thể và quy tắc chấm. Đặc biệt, N1 thường khó nhận diện và có mức đồng thuận liên chấm thấp~\cite{rosenberg2013aasm}; chênh lệch nhỏ giữa các mô hình cũng dễ bị lẫn với khác biệt giữa đối tượng nếu không sử dụng thiết kế đánh giá bắt cặp.
 
-ZleepAnlystNet đề xuất một quy trình hai giai đoạn, kết hợp các bộ trích đặc trưng CNN với mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu này dùng mốc đó để khảo sát ResNet-1D, mạng tích chập theo thời gian và các pipeline tiền xử lý. Trọng tâm không phải chứng minh một kiến trúc mới hoặc vượt SOTA, mà là tránh hai quyết định tốn kém nhưng thiếu căn cứ: tiếp tục thay kiến trúc khi lợi ích chỉ mang tính mô tả, và áp dụng một biện pháp chuẩn hóa chung khi lỗi ngoài miền thực tế tập trung ở một số ranh giới lớp.
+ZleepAnlystNet đề xuất một quy trình hai giai đoạn, kết hợp các bộ trích đặc trưng CNN với mô hình chuỗi BiLSTM~\cite{jadhav2024zleepanlystnet}. Nghiên cứu này dùng mốc đó để khảo sát ResNet-1D, mạng tích chập theo thời gian và các pipeline tiền xử lý. Trọng tâm là đo lợi ích, chi phí vận hành và giới hạn chuyển miền của những cấu hình cụ thể trên cùng phép chia đối tượng. Cách tiếp cận này bổ sung cho nghiên cứu kiến trúc: một điểm số tổng thể tốt hơn chưa cho biết lợi ích có trải đều theo người hoặc theo giai đoạn giấc ngủ hay không.
 
 \subsection{Câu hỏi nghiên cứu}
 
 Nghiên cứu tập trung vào bốn câu hỏi gắn với quyết định phát triển:
 
 \begin{enumerate}
-  \item Các thay thế BiLSTM$\rightarrow$TCN và CNN$\rightarrow$ResNet-1D có tạo lợi ích dự báo đủ ổn định để biện minh cho thay đổi kiến trúc, hay giá trị chính chỉ nằm ở vận hành?
+  \item Thay cấu hình mô hình chuỗi BiLSTM bằng TCN cùng lịch huấn luyện tương ứng, hoặc thay gói CNN C/P/N bằng ResNet-1D chỉ dùng epoch hiện tại, đem lại lợi ích dự báo và đánh đổi vận hành nào?
   \item Trong cùng họ ResNet-1D--TCN, pipeline xử lý tín hiệu nào giữ thứ hạng tốt hơn khi chuyển từ Sleep-EDF sang SHHS1 mà không cập nhật trọng số?
   \item Khoảng hụt ngoài miền tập trung ở lớp và kênh nhầm lẫn nào; một biện pháp rẻ là z-score theo bản ghi có giải quyết được lỗi chi phối hay không?
   \item Quy trình kiểm soát có đủ để phân biệt kết quả dự báo chính với bằng chứng hỗ trợ về tốc độ, hình học biểu diễn và ngữ cảnh cục bộ hay không?
@@ -24,13 +24,13 @@ Trong phạm vi một nghiên cứu thực nghiệm, báo cáo đóng góp:
 
 \begin{itemize}
   \item một hồ sơ thực nghiệm bắt cặp theo đối tượng, tách rõ kiểm soát tính hợp lệ, kết quả xác nhận, phân tích hậu nghiệm và phần mở rộng sau giao thức;
-  \item bằng chứng rằng phép thay mô hình chuỗi E1--E0 và phép thay gói đặc trưng/ngữ cảnh E2--E1 chưa tạo ưu thế dự báo ổn định, trong khi ResNet-1D--TCN đem lại đánh đổi vận hành đo được;
+  \item định lượng hiệu ứng của phép thay cấu hình mô hình chuỗi/lịch huấn luyện E1--E0 và phép thay gói đặc trưng/ngữ cảnh E2--E1, cùng đánh đổi vận hành rõ rệt của ResNet-1D--TCN;
   \item một đánh giá chuyển miền không cập nhật trọng số trên mẫu SHHS1 đã khóa, cho thấy toàn bộ pipeline E3 giữ lợi thế so với hai đối chứng đã định trước nhưng vẫn chịu khoảng hụt chuyển miền lớn;
-  \item định vị định lượng lỗi N3$\rightarrow$N2 tái diễn ở cả E0 và E3, cùng lỗi N2$\rightarrow$REM, để chuyển kết quả thành ưu tiên thích nghi; đối chứng E6 cho thấy z-score theo bản ghi không phải biện pháp độc lập đủ để sửa lỗi N3;
+  \item định lượng lỗi N3$\rightarrow$N2 tái diễn ở E0/E3 và kênh N2$\rightarrow$REM của E3, làm cơ sở chọn câu hỏi kiểm chứng tiếp; pipeline z-score E6 đã thử không khắc phục thiếu N3;
   \item các phân tích hỗ trợ về ngữ cảnh và không gian đặc trưng, được giữ đúng vai trò thay vì nâng thành cơ chế hoặc đóng góp chính.
 \end{itemize}
 
-Kết luận trong miền áp dụng cho Sleep-EDF Expanded và hai seed cố định đã đánh giá. Kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức không cập nhật trọng số tương ứng; E0/E1/E2/E3 là inductive, còn E6 dùng thống kê toàn bản ghi đích nên có tính transductive. Báo cáo không đề xuất thuật toán thích nghi mới, không tuyên bố vượt SOTA, không xác lập cơ chế sinh lý và không suy rộng sang giá trị lâm sàng. Giá trị của nó nằm ở việc thu hẹp quyết định tiếp theo bằng bằng chứng bắt cặp và sai số định vị được.
+Kết luận trong miền áp dụng cho Sleep-EDF Expanded và hai seed cố định đã đánh giá; kết luận ngoài miền áp dụng cho mẫu SHHS1 và giao thức không cập nhật trọng số tương ứng. E6 có thêm phụ thuộc transductive do dùng thống kê toàn bản ghi đích, còn các cấu hình khác không ước lượng thống kê chuẩn hóa từ đích. Toàn bộ đánh giá vẫn là ngoại tuyến. Nghiên cứu cung cấp bằng chứng thực nghiệm có thể kiểm tra cho lựa chọn pipeline và lỗi chuyển cohort; chưa xác lập cơ chế sinh lý hoặc hiệu quả lâm sàng của một biện pháp khắc phục.
 
 \subsection{Cấu trúc báo cáo}
 

@@ -1,6 +1,9 @@
 # Biên bản kiểm định báo cáo Gate 1--8 và chuyển miền SHHS1
 
-Ngày cập nhật: 2026-08-31
+Ngày cập nhật diễn giải và provenance: 2026-09-05.
+
+Các ghi nhận build/PDF ở dưới mô tả snapshot trước revision; không dùng chúng thay biên bản kiểm tra
+PDF mới. Trạng thái bản sửa chuẩn bị nộp BSPC được ghi riêng trong revision log và readiness report.
 
 Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau giao thức seed 123 trên Sleep-EDF Expanded; Gate 8; các chiến dịch chuyển miền SHHS1 không cập nhật trọng số bằng checkpoint seed 42 và extension E4 bằng checkpoint seed 123; phân tích thành phần E1/E2 và các đối chiếu E3−E2/E4. Tài liệu hiện hành được quản lý trên nhánh `main`.
 
@@ -17,7 +20,7 @@ Phạm vi: chiến dịch v2 chính seed 42 và phân tích độ nhạy sau gia
 - Gate 7: bước tạo bảng, hình và ma trận truy nguyên đã hoàn tất; đầu ra cuối được hợp nhất trong gói Gate 8.
 - Gate 8: `runs/v2/gate8/analysis_seed42.json`, `runs/v2/publication/gate8/publication_manifest.json`, `runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md` và `runs/v2/publication/gate8/gate8_validation_report.json`.
 - Phân bố nhãn: `data/manifests/processed_validation_v2.json` cho Sleep-EDF và `Reports/SHHS_E3_E2_PAIRED_AUDIT.json` cho mẫu SHHS1 test đã khóa.
-- Phân tích lỗi theo lớp: các trường `per_class` và `confusion_matrix` trong `runs/v2/analysis/gate5_paired_results_seed42.json` (E3--E6 trên Sleep-EDF), `Reports/SHHS_E3_E2_PAIRED_AUDIT.json` (E3--E2 trên SHHS1) và `Reports/SHHS_E0_E3_E6_N3_AUDIT.json` (đối chiếu N3 gộp E0/E3/E6 từ run manifest đã khóa; SHA-256 `6b12447f27cf71f8a7b7c100919ab5438dc69fc3efd9f4d7a1439c3f29b6496b`). Đây là chẩn đoán mô tả, không mở thêm họ kiểm định.
+- Phân tích lỗi theo lớp: các trường `per_class` và `confusion_matrix` trong `runs/v2/analysis/gate5_paired_results_seed42.json` (E3--E6 trên Sleep-EDF), `Reports/SHHS_E3_E2_PAIRED_AUDIT.json` (E3--E2 trên SHHS1) và `Reports/SHHS_E0_E3_E6_N3_AUDIT.json` (đối chiếu N3 gộp E0/E3/E6 từ run manifest đã khóa; SHA-256 hiện tại `3333b5f12788e592323f05a3a1514fdd3fe724832fcc34e0419669c57223b0db`). Phiên bản trước và việc sửa tỷ lệ dẫn xuất E3 N3→N2 được truy nguyên ở `SHHS_PROTOCOL_PROVENANCE.md`; confusion counts không đổi. Đây là chẩn đoán mô tả, không mở thêm họ kiểm định.
 - Phân tích vùng thay đổi nhãn: `runs/v2/analysis/transition_regions_edf_seed42_t2.json`, SHA-256 `d323e30937be0b3a48a44b7333f5ccced47631eb22bfb62d09136474c9c397e3`, và `runs/v2/analysis/transition_regions_shhs_t2.json`, SHA-256 `d91e45144e037f0b5aee7c3a9e4fd7ca353d5a218511793f847e9307ffbd25c3`. Đây là phân tích hậu nghiệm trên test đã mở; vùng được tạo từ nhãn tham chiếu và chỉ dùng để đánh giá ngoại tuyến.
 - SHHS1: test gate SHA-256 `51828329b2ebb2d99e5d71d6b9c78fd5a3fad037162fa50855af52066e4d2646` và phân tích bắt cặp SHA-256 `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`.
 - Thành phần SHHS1: test gate SHA-256 `fbc4080f4e25625382c1658e7ee25bc25ec23588b09e88e33e2ac3ab1596228c` và phân tích byte-giống-hệt SHA-256 `39ad18082eadc263b479e6badfcf87149cae16d0267cad050a026ab8d949a74c`.
@@ -28,7 +31,7 @@ Mã băm SHA-256 của manifest split là
 `6bc7ad74c07ff05f1d880cb5e720eea12386824ef465b966507906fa248925de`.
 Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 fold và seed 42. Chiến dịch độ nhạy seed 123 thêm 60 lượt chạy hoàn chỉnh trên cùng split và cấu hình; cả 60 artifact seed 123 đều vượt kiểm định sâu cho cả validation và test.
 
-## Các phép kiểm tra tài liệu
+## Các phép kiểm tra tài liệu của snapshot trước revision
 
 - Báo cáo dài đã được biên dịch bằng MiKTeX 25.12 theo chuỗi `pdflatex -> bibtex -> pdflatex -> pdflatex`; log cuối không còn tham chiếu hoặc trích dẫn chưa xác định. Hai cảnh báo hệ thống về hyphenation tiếng Việt và protrusion T5 không ảnh hưởng đến PDF.
 - PDF cuối gồm 39 trang cho báo cáo dài, 12 trang cho bài tiếng Việt, 12 trang cho bài tiếng Anh và 4 trang supplementary. Toàn bộ 67 trang đã được kết xuất thành ảnh và kiểm tra trực quan; bảng và đoạn chẩn đoán vùng thay đổi nhãn nằm đúng phần Kết quả, không tràn lề hoặc trôi xuống sau tài liệu tham khảo.
@@ -45,13 +48,14 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - Trong seed 42, chỉ E3 so với E6 có khác biệt Macro-F1 có ý nghĩa sau hiệu chỉnh Holm trong bốn so sánh chính của Gate 5. Seed 123 giữ hiệu ứng dương `+0,010249` và CI `[0,002435;0,017989]` nhưng không giữ ý nghĩa Holm (`p=0,131289`).
 - Cả bốn đối chiếu giữ cùng hướng dương ở hai seed. E3−E6 là đối chiếu duy nhất có CI dương trong cả hai seed; không đối chiếu nào đạt Holm trong cả hai. Không gộp p-value và không xem hai seed là mẫu ngẫu nhiên đại diện mọi khởi tạo.
 - Đối chiếu hậu nghiệm E3--E0 cho $\Delta$ Macro-F1 = 0,015024, CI 95% [0,005746; 0,025871], Wilcoxon p = 0,012321 và thắng/hòa/thua 49/0/29. Kết quả hỗ trợ toàn bộ quy trình E3 trong chiến dịch hiện tại, nhưng không phải bằng chứng xác nhận định trước và không tách được đóng góp của từng thành phần.
-- Trên Sleep-EDF, E1 so với E0 và E2 so với E1 chưa đủ bằng chứng khác biệt sau hiệu chỉnh Holm. Chỉ E1--E0 cô lập thay đổi mô hình chuỗi; E2--E1 thay đồng thời encoder, ngữ cảnh C/P/N và số chiều đặc trưng, nên là đối chiếu gói đặc trưng/ngữ cảnh chứ không phải hiệu ứng riêng của encoder.
+- Trên Sleep-EDF, E1 so với E0 và E2 so với E1 chưa đủ bằng chứng khác biệt sau hiệu chỉnh Holm. E1--E0 giữ encoder/cache nhưng đổi cả cấu hình mô hình chuỗi và recipe huấn luyện (learning rate, batch, số epoch tối đa và patience). E2--E1 thay gói C/P/N 75 chiều bằng ResNet current-epoch 128 chiều, đồng thời đổi recipe/chọn encoder. Cả hai không cô lập hiệu ứng kiến trúc; các controls về subject splits và đánh giá vẫn có giá trị.
+- EDF E3--E2 có CI gộp hoàn toàn dương nhưng Wilcoxon--Holm theo đối tượng không có ý nghĩa. Macro-F1 từ ma trận gộp không phải trung bình có trọng số số epoch của các Macro-F1 từng người; sự khác nhau giữa hai phân tích không chứng minh hiệu ứng do riêng nhóm nhiều epoch gây ra.
 - Trong phân tích SHHS thứ cấp khóa trước suy luận E1/E2, E1--E0 đạt `+0,006515`, CI `[0,001922;0,010871]`, p Holm `0,003252`, thắng/hòa/thua `108/0/72`; bằng chứng ủng hộ E1 trên mẫu này nhưng hiệu ứng nhỏ.
 - E2--E1 đạt `-0,012800`, CI `[-0,022087;-0,003495]`, p Holm `0,010049`, thắng/hòa/thua `80/0/100`; giả thuyết E2 cao hơn E1 không được ủng hộ và hướng quan sát ngược lại.
 - Cohort E1/E2 đã được mở trước cho E0/E3/E6; do đó hai kết quả thành phần là bằng chứng ngoại miền thứ cấp trên cùng mẫu SHHS.
 - E3−E2 trên SHHS đạt `+0,047504`, CI `[0,037242;0,057923]`, Wilcoxon `p=2,35e-17` và thắng/hòa/thua `147/0/33`. F1 N1, recall N1 và Macro-F1 chuyển pha đều có CI hoàn toàn dương. Kết quả cung cấp bằng chứng mạnh cho toàn chế độ tiền xử lý E3 so với raw trên mẫu hiện tại; ba thao tác tiền xử lý chưa được tách riêng.
 - Gate 8 không tìm thấy bằng chứng rằng nhóm P/N cải thiện Macro-F1 tại vùng chuyển pha; kết quả này không chứng minh P/N vô dụng, không định lượng “phần trăm thông tin”, và không chứng minh tương đương.
-- Silhouette thấp hơn của E2 không chứng minh ResNet-1D vô ích; nó chỉ bác bỏ giả thuyết đơn giản rằng embedding E2 tách lớp tuyến tính tốt hơn logits E1 dưới phép đo đã khóa.
+- Silhouette thấp hơn của E2 không chứng minh ResNet-1D vô ích; trong phép đo hình học Euclid đã khóa, embedding E2 không có silhouette cao hơn softmax E1. Silhouette không phải phép kiểm tra trực tiếp khả năng phân lớp tuyến tính hoặc một thước đo hiệu năng chuỗi.
 - Benchmark Gate 6 đo suy luận forward đã khóa, không gồm I/O, tiền xử lý hoặc huấn luyện; vì vậy không được diễn giải thành tốc độ huấn luyện.
 - Thời gian huấn luyện/validation được báo cáo riêng từ chiến dịch seed 123: E2 nhanh hơn E0 khoảng 12,2 lần theo wall-clock của giao thức; đây là số đo vận hành quan sát được, phụ thuộc vào phần cứng, dừng sớm và điều phối lượt chạy.
 - Chiến dịch SHHS chính đã đạt: 180 test, 169.012 epoch hợp lệ, 5.400 dự đoán theo fold, 540 tổ hợp và 0 lỗi cổng test.
@@ -64,7 +68,8 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 - E3--E6 trong đánh giá chuyển miền, với E6 transductive ở cấp bản ghi, tăng 0,027359, CI [0,018172; 0,036979], p Holm `1,87e-08`, thắng/hòa/thua 125/0/55.
 - Hai kết quả SHHS cho phép kết luận E3 tốt hơn E0/E6 trên mẫu đã khóa, không cho phép quy nguyên nhân riêng cho kiến trúc/tiền xử lý hoặc tuyên bố xác nhận lâm sàng.
 - Extension seed 123 đã đạt 180 test, 169.012 epoch hợp lệ, 9.000 dự đoán theo fold, 900 tổ hợp và 0 lỗi cổng test. E4 đạt Macro-F1 theo đối tượng 0,5732; cao hơn E2 `+0,032320`, CI `[0,023649;0,041035]`, p Holm `7,40e-13`, thắng/hòa/thua `135/1/44`; cao hơn E3 theo hướng E4 `+0,009820`, CI `[0,007298;0,012503]`, p Holm `1,89e-10`. Đây là bằng chứng bắt cặp mở rộng trên cùng cohort, không phải kiểm định tương đương/không thua kém, không tách nhân quả của riêng band-pass.
-- Provenance E6 đã được xác minh ở cấp artifact: đủ 180/180 tệp dự đoán và các ma trận nhầm lẫn tính lại đều khớp run manifest. Protocol hash trong run manifest (`165d7cdf...fe93`) khớp snapshot lịch sử `configs/shhs_zero_shot_v1.json` được giữ trong kho. Hash (`9541e233...fe9`) thuộc `configs/shhs_v1_protocol.json`, là hồ sơ mở rộng sau chạy; biên bản đối chiếu nằm ở `SHHS_PROTOCOL_PROVENANCE.md`. Vì vậy protocol provenance đã truy nguyên được, còn kết quả E6 vẫn là tái phân tích mô tả từ dự đoán đã khóa, không phải một lượt tái sinh mới.
+- Ngày 05-09-2026, cả 540/540 tệp dự đoán tổ hợp E0/E3/E6 khớp SHA-256 trong run manifest gốc; ma trận nhầm lẫn từng bản ghi và tổng gộp tính lại đều khớp. Protocol hash (`165d7cdf...fe93`) khớp snapshot `configs/shhs_zero_shot_v1.json`; hash (`9541e233...fe9`) thuộc hồ sơ mở rộng sau chạy `configs/shhs_v1_protocol.json`. Xem `SHHS_PROTOCOL_PROVENANCE.md` cho hash manifest, phạm vi kiểm tra và lịch sử N3 audit. Không tái chạy training/inference/bootstrap, chưa kiểm tra toàn bộ 5.400 prediction theo fold hay chuỗi raw/checkpoint trong lần sửa này.
+- E6 dùng mean/std từ toàn bộ bản ghi đích không nhãn, nên có tính transductive dù trọng số không cập nhật. Pipeline E6 đã thử không khắc phục N3; không suy từ đó rằng biên độ bị loại trừ, mọi chuẩn hóa không nhãn đều thất bại hoặc bắt buộc phải dùng target labels.
 - E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của bài báo MATLAB gốc. Báo cáo đã bổ sung bảng đối chiếu trực tiếp và nêu rõ khác quần thể/giao thức.
 - Gói NPZ đã được chuẩn hóa bằng serializer `sleeptcn_deterministic_npz_v1`. Manifest nội dung
   `data/manifests/processed_artifact_manifest_v2.json` và audit độc lập xác nhận 765/765 tệp khớp
@@ -74,16 +79,22 @@ Chiến dịch chính gồm 60 lượt chạy hoàn chỉnh: 6 cấu hình, 10 f
 
 ## Trạng thái
 
-Báo cáo đã cập nhật đầy đủ Gate 1--8, độ nhạy seed 123, đánh giá chuyển miền SHHS không cập nhật trọng số, extension E4, phân tích E1/E2, E3−E2, E6 theo lớp và xếp hạng lỗi phản thực; đủ điều kiện làm tài liệu kết quả nội bộ và nền tảng cho bản thảo nghiên cứu. Các kết quả từ artifact đã khóa có thể được báo cáo với giới hạn provenance nêu trên; gói tái lập cấp protocol chỉ nên phát hành sau khi hoàn tất đối chiếu hash SHHS. Các tuyên bố về tương đương, không thua kém, suy rộng cho toàn bộ cohort SHHS hoặc giá trị lâm sàng nằm ngoài phạm vi hiện tại.
+Báo cáo bao phủ Gate 1--8, độ nhạy seed 123, SHHS không cập nhật trọng số, các extension, E6 theo lớp và oracle. Protocol hash đã được đối chiếu và confusion counts chính đã được tái tính từ prediction; không còn lý do mô tả snapshot hash như một mâu thuẫn chưa giải quyết. Tuy nhiên, việc này không thay tái sinh độc lập toàn pipeline hoặc xác nhận quyền phát hành archive. Readiness cho BSPC còn phụ thuộc source/PDF sau sửa, declarations của tác giả và Guide hiện hành. Các tuyên bố tương đương, không thua kém, suy rộng toàn SHHS hoặc xác nhận lâm sàng vẫn nằm ngoài phạm vi.
 
-PDF hiện hành trong kho: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
+## Mã băm PDF lịch sử
 
-SHA-256 báo cáo dài: `72ff90634412bcf979e02c7002396a18e1248eeafff4159f503434125ac2d941`.
+Các hash dưới đây được giữ từ biên bản ngày 31-08-2026 và **không phải hash của bản build mới**.
+Tra `REPORT_MANIFEST.sha256` và `paper_en/SUBMISSION_MANIFEST.sha256` sau khi revision được build/QA
+để xác định package hiện hành.
 
-PDF bài báo hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
+Đường dẫn PDF báo cáo dài: `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
 
-SHA-256 bài báo tiếng Việt: `c7172a57ca5d7d975c705cccba524006524c46a8645c55c3a50d8500fc70d2d4`.
+SHA-256 lịch sử báo cáo dài: `72ff90634412bcf979e02c7002396a18e1248eeafff4159f503434125ac2d941`.
 
-PDF paper tiếng Anh hiện hành trong kho: `Reports/output/pdf/SleepTCN_Scientific_Article_EN.pdf`.
+Đường dẫn bài báo VI: `Reports/output/pdf/SleepTCN_Scientific_Article_VI.pdf`.
 
-SHA-256 paper tiếng Anh: `042fd0be35c92a2c5584f99f2dd5ffb903f8dfd3f98c94bf6260a00188b83f4f`.
+SHA-256 lịch sử bài báo VI: `c7172a57ca5d7d975c705cccba524006524c46a8645c55c3a50d8500fc70d2d4`.
+
+Đường dẫn bài báo ENG: `Reports/output/pdf/SleepTCN_Scientific_Article_EN.pdf`.
+
+SHA-256 lịch sử bài báo ENG: `042fd0be35c92a2c5584f99f2dd5ffb903f8dfd3f98c94bf6260a00188b83f4f`.

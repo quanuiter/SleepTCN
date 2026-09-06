@@ -8,7 +8,10 @@ Trạng thái: **SUY LUẬN, KIỂM ĐỊNH VÀ PHÂN TÍCH BẮT CẶP ĐÃ Đ�
 Chiến dịch đánh giá trực tiếp các checkpoint đã huấn luyện trên Sleep-EDF Expanded trên mẫu SHHS
 Visit 1 đã khóa, không cập nhật trọng số bằng SHHS. Đây là đánh giá zero-shot đồng thời chịu dịch
 chuyển quần thể, thiết bị và montage EEG; nó không phải xác nhận lâm sàng và không đại diện cho toàn bộ
-SHHS.
+SHHS. Ở E6, mean/std được tính từ toàn bộ recording đích không nhãn; đây là chuẩn hóa target-record
+có tính transductive. “Zero-shot” là tên chiến dịch không cập nhật trọng số, không có nghĩa mọi cấu
+hình đều inductive thuần. Cửa sổ đánh giá dựa nhãn tham chiếu là bước benchmark, không phải quy tắc
+vận hành trên một recording chưa được chấm.
 
 Ba cấu hình được đánh giá:
 
@@ -71,7 +74,7 @@ Phân tích thứ cấp nhất quán với kết luận chính:
 
 - E3-E0: Macro-F1 gộp +0,0338, CI [0,0230; 0,0445]; accuracy +0,0368; kappa +0,0461.
 - E3-E6: Macro-F1 gộp +0,0367, CI [0,0266; 0,0469]; accuracy +0,0274; kappa +0,0392.
-- Tại vùng ±1 epoch quanh chuyển pha thật liên tiếp, E3-E0 tăng Macro-F1 0,0366 và E3-E6 tăng
+- Tại vùng ±1 epoch quanh thay đổi nhãn tham chiếu liên tiếp, E3-E0 tăng Macro-F1 0,0366 và E3-E6 tăng
   0,0183; cả hai CI bootstrap hỗ trợ đều dương.
 
 ## Kết luận được phép
@@ -100,7 +103,8 @@ precision và recall: recall N3 vẫn thấp, còn precision REM còn hạn ch�
 E3 là N3→N2 (16.674), N2→REM (11.605), N2→N1 (5.947), W→N1 (4.481) và N1→REM (1.717) epoch.
 Đối chiếu E0 cho thấy N3→N2 không phải lỗi riêng của E3: E0 có 16.480/22.806 epoch N3 bị gán N2
 (72,3%) và recall N3 0,2610, gần như E3 với 73,1% và recall 0,2582. Vì vậy, E3 cải thiện hiệu năng
-tổng thể nhưng không cải thiện nhận diện N3 so với 15-CNN--BiLSTM. Ma trận E3--E2 đầy đủ được giữ
+tổng thể và có precision N3 cao hơn (0,9440 so với 0,9007), nhưng chưa khắc phục bỏ sót N3 so với
+15-CNN--BiLSTM. Ma trận E3--E2 đầy đủ được giữ
 trong `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`; đối chiếu E0/E3/E6 được giữ trong
 `Reports/SHHS_E0_E3_E6_N3_AUDIT.json`.
 
@@ -118,6 +122,10 @@ trong `Reports/SHHS_E3_E2_PAIRED_AUDIT.json`; đối chiếu E0/E3/E6 được g
 - Test manifest SHA-256: `f9cd5ebbd20f26b188b5dc13ac6e417ff8ef0fa8dcae78760cfcb27940bf58cf`.
 - Phân tích bắt cặp SHA-256: `83aa53fed3dc7be9b6f14cb63ddbd7417a7af256b9f308383500ee6e068943df`.
 - Artifact chứa ID và dự đoán nằm ngoài Git tại `E:\research\Dataset\SHHS_v1\zero_shot_v1`.
+
+Lần kiểm tra revision ngày 05-09-2026 xác nhận 540/540 ensemble hashes và confusion counts từng
+bản ghi/tổng gộp khớp manifest gốc. Không tái chạy training, inference hoặc bootstrap; phạm vi chi tiết
+ở `../Reports/SHHS_PROTOCOL_PROVENANCE.md` và danh mục ở `../Reports/ARTIFACT_INDEX.md`.
 
 ## Phân tích thành phần bổ sung E1/E2
 

@@ -14,11 +14,11 @@ Bảy mã E0--E6 được định nghĩa trong giao thức; sáu cấu hình ho�
 \textbf{Mã} & \textbf{Bộ trích đặc trưng/tiền xử lý} & \textbf{Mô hình chuỗi} & \textbf{Mục tiêu hoặc trạng thái} \\
 \midrule
 E0 & CNN của mốc tham chiếu & BiLSTM & Đối chứng nội bộ \\
-E1 & Giữ mốc tham chiếu & TCN & Đánh giá thay đổi mô hình chuỗi \\
+E1 & Giữ encoder/đặc trưng E0 & TCN & Thay cấu hình mô hình chuỗi và lịch huấn luyện \\
 E2 & ResNet-1D dùng epoch hiện tại & TCN & Thay gói đặc trưng/ngữ cảnh E1 \\
 E3 & ResNet-1D và xử lý biên độ chính & TCN & Cấu hình đề xuất \\
 E4 & ResNet-1D và lọc dải & TCN & Đối chiếu tiền xử lý \\
-E5 & ResNet-1D, lọc dải và cắt $\pm800~\mu\mathrm{V}$ & TCN & Loại trước phân tích hiệu năng \\
+E5 & ResNet-1D, lọc dải và cắt $\pm800~\mu\mathrm{V}$ & TCN & Kiểm toán đầu vào đồng nhất với E4 \\
 E6 & ResNet-1D và z-score theo bản ghi & TCN & Đối chiếu đổi thang \\
 \bottomrule
 \end{tabularx}
@@ -26,7 +26,9 @@ E6 & ResNet-1D và z-score theo bản ghi & TCN & Đối chiếu đổi thang \\
 
 E0 là đối chứng nội bộ đã hiệu chỉnh theo giao thức v2, không phải bản sao định lượng của bài báo gốc. Vì vậy, các đối chiếu trong nghiên cứu được hiểu là so sánh giữa các cấu hình trong cùng thí nghiệm.
 
-E1 dùng lại đúng encoder E0 và chỉ thay BiLSTM bằng TCN, nên E1--E0 cô lập thay đổi mô hình chuỗi. E1 cung cấp vector 75 chiều từ các nhánh C/P/N, còn E2 dùng embedding ResNet-1D 128 chiều chỉ từ epoch hiện tại. Vì vậy E2--E1 đồng thời thay encoder, bỏ ngữ cảnh P/N tường minh và đổi số chiều đặc trưng; đây là đối chiếu gói đặc trưng/ngữ cảnh, không phải phép cô lập riêng encoder.
+E1 dùng lại đúng encoder và cache đặc trưng E0, thay cấu hình BiLSTM bằng TCN cùng lịch huấn luyện tương ứng. Learning rate, batch size và quy tắc dừng sớm của hai mô hình chuỗi khác nhau; E1--E0 vì vậy không cô lập tác động kiến trúc. E1 cung cấp vector 75 chiều từ các nhánh C/P/N, còn E2 dùng embedding ResNet-1D 128 chiều chỉ từ epoch hiện tại. E2--E1 đồng thời thay encoder, ngữ cảnh P/N tường minh, số chiều đặc trưng và cách huấn luyện/chọn encoder; đây là đối chiếu gói đặc trưng/ngữ cảnh, không phải phép cô lập riêng encoder.
+
+Encoder E0/E1 gồm 15 CNN, mỗi CNN có đầu ra softmax năm lớp. Các nhóm C/P/N dùng epoch hiện tại, liền trước hoặc liền sau để dự đoán nhãn của epoch trung tâm; dịch ngữ cảnh chỉ diễn ra trong từng bản ghi, lặp epoch đầu/cuối tại biên. Ghép các đầu ra tạo vector 75 chiều, không mặc định là xác suất đã hiệu chuẩn. ResNet-1D dùng ba khối dư 64/128/128 kênh và pooling toàn cục để tạo embedding 128 chiều. TCN gồm sáu khối, hai tích chập kernel 3 mỗi khối, dilation 1/2/4/8/16/32 và dropout 0,2. Padding đối xứng cho trường tiếp nhận lý thuyết 253 epoch. Mô hình chuỗi xử lý toàn bản ghi với padding và mặt nạ hợp lệ; cửa sổ 100 epoch chỉ thuộc phép benchmark, không phải cửa sổ huấn luyện.
 
 E5 ban đầu được dùng để tách tác động của phép cắt biên $\pm800~\mu\mathrm{V}$ khỏi lọc dải E4. Kiểm toán toàn bộ 153 bản ghi cho thấy E4 và E5 giống nhau từng bit và tỷ lệ mẫu bị cắt bằng 0; do đó E5 không tạo điều kiện dữ liệu độc lập. Fold 00 được giữ làm bằng chứng kiểm toán, còn E5 bị loại trước các bảng hiệu năng và kiểm định thống kê để tránh một đối chiếu giả tạo giữa hai đầu vào đồng nhất.
 
@@ -42,9 +44,9 @@ Không phải mọi Gate đều được xem là một đóng góp khoa học đ
 \toprule
 \textbf{Quyết định} & \textbf{Bằng chứng chính} & \textbf{Đầu ra được phép kết luận} \\
 \midrule
-Có nên thay kiến trúc/gói đặc trưng? & Gate 5, Gate 6; E1--E0 và E2--E1 & Hiệu ứng TCN riêng; hiệu ứng gói E2; đánh đổi tốc độ--tài nguyên \\
+Có nên thay cấu hình/gói đặc trưng? & Gate 5, Gate 6; E1--E0 và E2--E1 & Hiệu ứng cấu hình và lịch huấn luyện E1; hiệu ứng gói E2; đánh đổi tốc độ--tài nguyên \\
 Pipeline nào đáng mang sang miền mới? & E3--E6 trong miền; E3--E0/E6 trên SHHS1; E3--E2 và E4 mở rộng & Thứ hạng toàn pipeline; không quy nhân quả cho một thao tác \\
-Thích nghi miền nên nhắm vào đâu? & F1 theo lớp, tỷ lệ dự đoán/nhãn thật, ma trận nhầm lẫn, vùng chuyển pha & Ưu tiên ranh giới lớp; không suy ra cơ chế sinh lý \\
+Lỗi chuyển miền tập trung ở đâu? & F1 theo lớp, tỷ lệ dự đoán/nhãn thật, ma trận nhầm lẫn, vùng thay đổi nhãn & Xác định kênh lỗi đáng kiểm chứng tiếp; không suy ra cơ chế sinh lý \\
 Các phân tích phụ có thay đổi quyết định không? & Silhouette và Gate 8 & Giới hạn của proxy hình học và ngữ cảnh mã hóa trùng lặp \\
 Kết quả có truy nguyên được không? & Gate 1--4, Gate 7 và manifest & Tính hợp lệ của artifact; không phải bằng chứng về độ chính xác \\
 \bottomrule
@@ -53,7 +55,29 @@ Kết quả có truy nguyên được không? & Gate 1--4, Gate 7 và manifest &
 
 \subsection{Huấn luyện và khóa đánh giá}
 
-Mỗi cấu hình được huấn luyện riêng trên cùng các fold theo đối tượng. Mô hình được lựa chọn bằng Macro-F1 trên validation. Tập test được giữ kín trong toàn bộ giai đoạn huấn luyện và chỉ được mở sau khi hoàn tất tất cả lượt validation. Sau khi mở, mỗi đối tượng được đánh giá đúng một lần ở vai trò test ngoài fold.
+Các cấu hình dùng cùng các fold theo đối tượng. Encoder CNN15 được chọn theo weighted validation loss; ResNet-1D và mô hình chuỗi được chọn theo validation Macro-F1. Encoder đã chọn được đóng băng trước khi tạo cache và huấn luyện mô hình chuỗi; E1 tái sử dụng encoder/cache của E0. Tập test được giữ kín trong giai đoạn lựa chọn mô hình. Mỗi đối tượng chỉ có một vai trò test ngoài fold trong mỗi cấu hình và seed.
+
+\begin{table}[H]
+\centering
+\caption{Thiết lập huấn luyện theo thành phần; patience tính theo số lần validation không cải thiện}
+\label{tab:component_training}
+\small
+\begin{tabularx}{\textwidth}{lYYYY}
+\toprule
+ & \textbf{CNN15} & \textbf{ResNet-1D} & \textbf{BiLSTM} & \textbf{TCN} \\
+\midrule
+Optimizer & Adam & AdamW & Adam & Adam \\
+Learning rate & 0,001 & 0,001 & 0,01 & 0,0005 \\
+Weight decay & 0 & 0,0001 & 0 & 0 \\
+Batch size & 64 epoch & 64 epoch & 4 bản ghi & 8 bản ghi \\
+Epoch tối đa & 1.000 & 40 & 1.000 & 300 \\
+Patience & 10 & 8 & 10 & 30 \\
+Chọn checkpoint & Weighted loss & Macro-F1 & Macro-F1 & Macro-F1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Mỗi CNN chuyên biệt lớp $c$ vẫn phân loại năm lớp với trọng số cross-entropy $w_c=0,5/(n_c/N)$ và $w_{k\ne c}=0,5/((N-n_c)/N)$. ResNet dùng $w_c=N/(5n_c)$; các số đếm $n_c$ và $N$ chỉ lấy từ tập huấn luyện. Mô hình chuỗi dùng masked cross-entropy với trọng số lớp bằng nhau và gradient clipping norm 1,0. Validation được thực hiện cuối mỗi training epoch. Nhãn không hợp lệ và padding bị loại khỏi loss và chỉ số. Khác biệt ở Bảng~\ref{tab:component_training} là một phần của cấu hình được so sánh, không được gộp vào một tác động kiến trúc riêng.
 
 Quy trình này tách lựa chọn mô hình khỏi đánh giá cuối và bảo đảm các cấu hình sử dụng cùng khóa thời gian, cùng nhãn và cùng đơn vị suy luận. Mô hình đã chọn, dự đoán và chỉ số được kiểm tra tính nhất quán trước khi tổng hợp.
 
@@ -74,7 +98,7 @@ Các cổng được tổ chức theo chuỗi bằng chứng:
 
 \subsection{Phân tích thống kê}
 
-Macro-F1 gộp trên dự đoán test ngoài fold là chỉ số mô tả chính. Khoảng tin cậy 95\% của chênh lệch Macro-F1 gộp được ước lượng bằng bootstrap bắt cặp theo cụm đối tượng; kiểm định Wilcoxon hai phía được thực hiện trên chênh lệch Macro-F1 của từng đối tượng. Hai phép phân tích trả lời các câu hỏi khác nhau: bootstrap định lượng bất định của chênh lệch gộp, còn Wilcoxon đánh giá thứ hạng của các chênh lệch ở cấp đối tượng. Hiệu chỉnh Holm chỉ áp dụng cho bốn đối chiếu đã định trước: E1--E0 (mô hình chuỗi), E2--E1 (gói đặc trưng/ngữ cảnh), E3--E2 (chế độ xử lý chính) và E3--E6 (đối chiếu với z-score)~\cite{efron1994bootstrap,wilcoxon1945,holm1979}.
+Macro-F1 gộp trên Sleep-EDF được tính từ tổng các ma trận nhầm lẫn test ngoài fold, không phải trung bình có trọng số số epoch của Macro-F1 từng người. Khoảng tin cậy 95\% của chênh lệch gộp dùng bootstrap bắt cặp theo cụm đối tượng: các đêm của một người và các cấu hình được lấy lại mẫu cùng nhau. Wilcoxon signed-rank hai phía dùng chênh lệch Macro-F1 của từng đối tượng; đây không phải kiểm định chênh lệch trung bình. Macro-F1 luôn lấy trung bình trên năm lớp cố định, với F1 bằng 0 khi mẫu số của lớp bằng 0. Hai phép phân tích mô tả những khía cạnh khác nhau; bất đồng giữa chúng không tự xác định nhóm người nào tạo ra chênh lệch gộp. CI là khoảng marginal 95\%, còn Holm hiệu chỉnh các $p$-value trong bốn đối chiếu định trước của từng seed: E1--E0 (cấu hình mô hình chuỗi và lịch huấn luyện), E2--E1 (gói đặc trưng/ngữ cảnh), E3--E2 (chế độ xử lý chính) và E3--E6 (đổi thang so với z-score)~\cite{efron1994bootstrap,wilcoxon1945,holm1979}.
 
 Đối chiếu toàn bộ cấu hình với mốc ban đầu được thực hiện sau khi đã quan sát kết quả nên được ghi rõ là hậu nghiệm. Các phân tích bổ sung không được nhập ngược vào nhóm giả thuyết chính.
 
@@ -88,20 +112,22 @@ Benchmark được thực hiện trên cùng phần cứng cho tất cả cấu 
 
 \subsection{Ablation nhóm ngữ cảnh (Gate 8 nội bộ)}
 
-Gate 8 giữ nguyên mô hình chuỗi và chỉ thay đổi sự hiện diện của ba nhóm ngữ cảnh: epoch hiện tại, epoch liền trước và epoch liền sau. Nhóm bị loại được thay bằng giá trị trung bình ước lượng từ dữ liệu huấn luyện của từng fold; validation và test không tham gia bước ước lượng.
+Gate 8 giữ họ TCN và lịch huấn luyện, thay đổi các nhóm đặc trưng C/P/N được cung cấp. Nhóm bị loại được thay bằng trung bình theo từng chiều từ các epoch có nhãn hợp lệ của tập huấn luyện từng fold. Cùng phép thay áp dụng cho train, validation và test, giữ nguyên 75 chiều; TCN được huấn luyện lại cho từng điều kiện CP, CN và C. Điều kiện đầy đủ CPN tái sử dụng E1. Đây không phải phép xóa đặc trưng chỉ lúc suy luận; validation và test không tham gia ước lượng giá trị thay thế.
 
 Tiêu chí chính là Macro-F1 tại vùng chuyển pha. Ba so sánh ablation dùng cùng bootstrap cụm, Wilcoxon theo đối tượng và hiệu chỉnh Holm. Gate 8 đo hiệu ứng dự báo có điều kiện trong một quy trình cụ thể; không đo tỷ lệ thông tin, không xác định quan hệ nhân quả và không thiết lập tương đương.
 
 \subsection{Đánh giá chuyển miền không cập nhật trọng số trên SHHS1}
 
-Chiến dịch SHHS được tiến hành độc lập sau khi các mô hình Sleep-EDF đã được khóa. Trọng số không được cập nhật bằng dữ liệu SHHS. Mỗi cấu hình sử dụng các mô hình tương ứng với các fold đã huấn luyện, sau đó tổ hợp dự đoán ở cấp đối tượng. Các kiểm tra kỹ thuật xác nhận khả năng sử dụng mô hình, căn chỉnh epoch và tính đầy đủ của dự đoán trước khi tính chỉ số.
+Chiến dịch SHHS được tiến hành sau khi các mô hình Sleep-EDF đã được khóa, không cập nhật trọng số bằng SHHS. Với mỗi cấu hình, xác suất của mười mô hình outer fold được lấy trung bình cho từng epoch rồi chọn lớp có xác suất lớn nhất. Trên Sleep-EDF, mỗi người chỉ được dự đoán bởi mô hình ngoài fold chưa huấn luyện trên người đó. Vì cách tổ hợp mô hình và thành phần cohort khác nhau, chênh lệch điểm giữa Sleep-EDF và SHHS1 là chênh lệch mô tả giữa hai điều kiện đánh giá, không phải ước lượng riêng tác động dịch chuyển miền. Chỉ số chính SHHS là trung bình Macro-F1 từng người; bootstrap theo đối tượng và Wilcoxon bắt cặp được báo cáo với family hai đối chiếu chính E3--E0/E6, tách khỏi các family mở rộng.
 
-Riêng E6 tính trung bình và độ lệch chuẩn trên toàn bộ tín hiệu của từng bản ghi SHHS đích sau lọc và cắt biên, không dùng nhãn. Do đó E6 là chuẩn hóa bản ghi đích không nhãn có tính transductive; E0/E1/E2/E3 không dùng thống kê của bản ghi đích và mới là các phép suy luận thuần inductive. Thuật ngữ ``zero-shot'' trong tên chiến dịch chỉ khẳng định không cập nhật trọng số hoặc dùng nhãn SHHS, không được dùng để che khuất khác biệt này.
+Riêng E6 tính trung bình và độ lệch chuẩn trên toàn bộ tín hiệu của từng bản ghi SHHS đích sau lọc và cắt biên, trước cắt cửa sổ ngủ, không dùng nhãn. E6 do đó có phụ thuộc transductive ở cấp bản ghi; E0/E1/E2/E3 không ước lượng thống kê chuẩn hóa từ bản ghi đích. Thuật ngữ ``zero-shot'' trong tên chiến dịch chỉ việc không huấn luyện/cập nhật trọng số bằng SHHS. Nhãn tham chiếu vẫn được dùng để dựng cửa sổ đánh giá, xác định vùng nhãn và tính chỉ số; tất cả mô hình trong nghiên cứu đều được đánh giá ngoại tuyến.
 
 Kết quả SHHS không được nhập ngược vào Gate 1--8. Đây là đánh giá ngoài miền trên mẫu đã khóa, nhằm kiểm tra độ bền của hướng hiệu ứng chứ không phải kiểm định lâm sàng hoặc đánh giá trên toàn bộ cohort SHHS.
 
 \subsection{Định vị lỗi chuyển miền và phân tích phản thực}
 
-Để biến chênh lệch tổng hợp thành quyết định thích nghi, báo cáo phân tích precision, recall, F1, tỷ lệ số dự đoán trên số nhãn thật và ma trận nhầm lẫn theo lớp. Phân tích được lặp tại vùng $\pm1$ epoch quanh chuyển pha vì đây là nơi các ranh giới giai đoạn khó nhất. E6 được dùng như một đối chứng độ nhạy: nếu loại bỏ mức biên độ tuyệt đối theo từng bản ghi là biện pháp đủ dùng, lỗi N3 của E6 phải giảm so với E3.
+Để xác định cấu trúc lỗi ngoài chỉ số tổng hợp, báo cáo phân tích precision, recall, F1, tỷ lệ số dự đoán trên số nhãn thật và ma trận nhầm lẫn theo lớp. Tỷ lệ dự đoán/nhãn thật mô tả tần suất phát lớp, không đo calibration xác suất. E6 kiểm tra liệu pipeline z-score đã huấn luyện tương ứng có khắc phục thiếu N3 hay không; đối chiếu này không phải can thiệp riêng lên biên độ của cùng một mô hình đóng băng.
 
-Phân tích phản thực lần lượt sửa một kênh nhầm lẫn trong ma trận dự đoán E3 rồi tính lại \mf. Đây là phép xếp hạng đòn bẩy tiềm năng cho can thiệp, không phải hiệu năng có thể đạt được, không bảo toàn mọi tương tác giữa lớp và không chứng minh nguyên nhân tạo ra lỗi. Vì \mf\ phi tuyến, tổng phần trăm khoảng hụt được phục hồi bởi nhiều kênh có thể vượt 100\%.
+Với $j$ là epoch đầu mang nhãn mới sau một cặp nhãn hợp lệ liên tiếp, vùng lân cận là hợp của các tập $\{j-1,j,j+1\}$. Khoảng trống nhãn không tạo một thay đổi liên tục. Vùng ổn định gồm các epoch hợp lệ cách ít nhất ba epoch so với cả hai vị trí $j-1$ và $j$ của mọi thay đổi nhãn trong bản ghi; bản ghi không có thay đổi nhãn cũng được xử lý theo quy tắc này. Hai vùng không bù nhau: 21.539 epoch Sleep-EDF và 21.073 epoch SHHS1 nằm ngoài cả hai vùng, không được gộp vào vùng ổn định. Kiểm tra persistent chỉ giữ thay đổi có ít nhất ba epoch liên tiếp cùng nhãn ở mỗi phía. Các vùng đều được xác định từ nhãn tham chiếu, nên là chẩn đoán ngoại tuyến chứ không phải bộ phát hiện chuyển pha sinh lý.
+
+Phân tích phản thực (oracle) chuyển các số đếm ở đúng ô nhầm lẫn đã chọn sang ô dự đoán đúng trong ma trận E3 rồi tính lại \mf; nhãn tham chiếu và hỗ trợ từng lớp không đổi. Phép tính định lượng quy mô của các kênh lỗi trong cùng ma trận, không dự báo hiệu năng một thuật toán có thể đạt hoặc hiệu quả một chiến lược thu nhãn. Tỷ phần oracle dùng chênh lệch điểm quan sát giữa EDF ngoài fold và SHHS ensemble làm mẫu số. Các phần riêng không cộng tuyến tính do Macro-F1 phi tuyến; kết quả đồng thời có thể vượt chênh lệch giữa hai điểm gốc.

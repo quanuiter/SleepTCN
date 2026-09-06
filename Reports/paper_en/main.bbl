@@ -6,9 +6,9 @@ R.~S. Rosenberg and S.~Van~Hout, ``The american academy of sleep medicine
   Clinical Sleep Medicine}, vol.~9, no.~1, pp.~81--87, 2013.
 
 \bibitem{jadhav2024zleepanlystnet}
-N.~Jirakittayakorn, Y.~Wongsawat, and S.~Mitrirattanakul, ``Zleepanlystnet: a
+N.~Jirakittayakorn, Y.~Wongsawat, and S.~Mitrirattanakul, ``{ZleepAnlystNet}: a
   novel deep learning model for automatic sleep stage scoring based on
-  single-channel raw eeg data using separating training,'' {\em Scientific
+  single-channel raw {EEG} data using separating training,'' {\em Scientific
   Reports}, vol.~14, p.~9859, 2024.
 
 \bibitem{bai2018tcn}
@@ -22,10 +22,10 @@ K.~He, X.~Zhang, S.~Ren, and J.~Sun, ``Deep residual learning for image
   and Pattern Recognition}, pp.~770--778, 2016.
 
 \bibitem{supratak2017deepsleepnet}
-A.~Supratak, H.~Dong, C.~Wu, and Y.~Guo, ``Deepsleepnet: A model for automatic
-  sleep stage scoring based on raw single-channel eeg,'' {\em IEEE Transactions
-  on Neural Systems and Rehabilitation Engineering}, vol.~25, no.~11,
-  pp.~1998--2008, 2017.
+A.~Supratak, H.~Dong, C.~Wu, and Y.~Guo, ``{DeepSleepNet}: A model for
+  automatic sleep stage scoring based on raw single-channel eeg,'' {\em IEEE
+  Transactions on Neural Systems and Rehabilitation Engineering}, vol.~25,
+  no.~11, pp.~1998--2008, 2017.
 
 \bibitem{eldele2021attnsleep}
 E.~Eldele, Z.~Chen, C.~Liu, M.~Wu, C.-K. Kwoh, X.~Li, and C.~Guan, ``An
@@ -35,7 +35,7 @@ E.~Eldele, Z.~Chen, C.~Liu, M.~Wu, C.-K. Kwoh, X.~Li, and C.~Guan, ``An
 
 \bibitem{phan2022sleeptransformer}
 H.~Phan, K.~Mikkelsen, O.~Y. Ch{\'e}n, P.~Koch, A.~Mertins, and M.~De~Vos,
-  ``Sleeptransformer: Automatic sleep staging with interpretability and
+  ``{SleepTransformer}: Automatic sleep staging with interpretability and
   uncertainty quantification,'' {\em IEEE Transactions on Biomedical
   Engineering}, vol.~69, no.~8, pp.~2456--2467, 2022.
 
@@ -76,7 +76,7 @@ B.~Kemp, A.~H. Zwinderman, B.~Tuk, H.~A.~C. Kamphuisen, and J.~J.~L.
   Engineering}, vol.~47, no.~9, pp.~1185--1194, 2000.
 
 \bibitem{physionetSleepEDF}
-{PhysioNet}, ``Sleep-edf database expanded, version 1.0.0.''
+{PhysioNet}, ``{Sleep-EDF} database expanded, version 1.0.0.''
   \url{https://physionet.org/content/sleep-edfx/1.0.0/}, 2013.
 \newblock Accessed 14 August 2026.
 
@@ -97,12 +97,6 @@ M.~Massimini, R.~Huber, F.~Ferrarelli, S.~Hill, and G.~Tononi, ``The sleep slow
   oscillation as a traveling wave,'' {\em Journal of Neuroscience}, vol.~24,
   no.~31, pp.~6862--6870, 2004.
 
-\bibitem{ohayon2004metaanalysis}
-M.~M. Ohayon, M.~A. Carskadon, C.~Guilleminault, and M.~V. Vitiello,
-  ``Meta-analysis of quantitative sleep parameters from childhood to old age in
-  healthy individuals: developing normative sleep values across the human
-  lifespan,'' {\em Sleep}, vol.~27, no.~7, pp.~1255--1273, 2004.
-
 \bibitem{rechtschaffen1968}
 A.~Rechtschaffen and A.~Kales, {\em A Manual of Standardized Terminology,
   Techniques and Scoring System for Sleep Stages of Human Subjects}.
@@ -111,10 +105,15 @@ A.~Rechtschaffen and A.~Kales, {\em A Manual of Standardized Terminology,
 
 \bibitem{berry2017aasm}
 R.~B. Berry, R.~Brooks, C.~E. Gamaldo, S.~M. Harding, R.~M. Lloyd, S.~F. Quan,
-  M.~T. Troester, and B.~V. Vaughn, {\em The AASM Manual for the Scoring of
+  M.~T. Troester, and B.~V. Vaughn, {\em The {AASM} Manual for the Scoring of
   Sleep and Associated Events: Rules, Terminology and Technical Specifications,
   Version 2.4}.
 \newblock Darien, IL: American Academy of Sleep Medicine, 2017.
+
+\bibitem{davidson2025n3}
+S.~Davidson, R.~Sharman, S.~D. Kyle, and L.~Tarassenko, ``Is it time to revisit
+  the scoring of slow wave ({N3}) sleep?,'' {\em Sleep}, vol.~48, no.~10,
+  p.~zsaf063, 2025.
 
 \bibitem{saerens2002adjusting}
 M.~Saerens, P.~Latinne, and C.~Decaestecker, ``Adjusting the outputs of a

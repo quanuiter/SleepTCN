@@ -3,7 +3,7 @@
 
 \subsection{Chuẩn hóa và căn chỉnh dữ liệu}
 
-Tín hiệu EEG được chuyển về đơn vị vật lý, căn chỉnh với nhãn theo thời gian và chia thành các epoch 30 giây. Mọi biến thể dùng cùng cửa sổ, cùng nhãn và cùng chỉ số thời gian gốc. Nhờ vậy, sự khác biệt giữa các cấu hình có thể được quy về chế độ xử lý tín hiệu hoặc thành phần mô hình thay vì khác biệt do dữ liệu.
+Tín hiệu EEG được chuyển về $\mu\mathrm{V}$, căn chỉnh với nhãn theo thời gian và chia thành các epoch 30 giây. Mọi biến thể dùng cùng cửa sổ, cùng nhãn và cùng chỉ số thời gian gốc. Cách kiểm soát này tránh việc so sánh các cấu hình trên những epoch khác nhau; nó không loại bỏ các khác biệt về mô hình và lịch huấn luyện được nêu trong phương pháp.
 
 \subsection{Các chế độ xử lý tín hiệu}
 
@@ -26,10 +26,10 @@ Lọc dải và z-score & 0,5--30 Hz & Có & Theo bản ghi \\
 \end{tabularx}
 \end{table}
 
-Lọc dải được thực hiện trên tín hiệu liên tục trước khi chia epoch và không tạo lệch pha. Đây là lựa chọn phù hợp cho đánh giá ngoại tuyến. Chế độ chia hằng số bảo toàn quan hệ biên độ tương đối sau khi giới hạn biên độ. Với E6, trung bình và độ lệch chuẩn được tính từ toàn bộ tín hiệu đã lọc và cắt của chính bản ghi đích, không dùng nhãn; cách làm này có tính transductive ở cấp bản ghi và không phải suy luận zero-shot thuần inductive.
+Lọc Butterworth bậc 4, 0,5--30 Hz được thực hiện tiến--lùi trên tín hiệu liên tục trước chia epoch, phù hợp với đánh giá ngoại tuyến. E3 giới hạn ở $\pm800~\mu\mathrm{V}$ rồi chia 100; E6 dùng cùng lọc/giới hạn nhưng thay phép chia bằng z-score. Trung bình và độ lệch chuẩn E6 được tính từ toàn bộ tín hiệu đã lọc/giới hạn của chính bản ghi, trước cắt cửa sổ ngủ, kể cả phần ngoài cửa sổ đánh giá. Không dùng nhãn hay thống kê gộp cohort để tính hai đại lượng này; bản ghi có độ lệch chuẩn bằng 0 hoặc không hữu hạn bị từ chối. Ở miền đích, đây là chuẩn hóa không nhãn với phụ thuộc transductive cấp bản ghi, không phải zero-shot thuần inductive.
 
 \subsection{Kiểm định tính nhất quán}
 
-Các biến thể được kiểm tra về số lượng epoch, nhãn, mặt nạ hợp lệ, vị trí thời gian và phân bố lớp. Kiểm tra độc lập xác nhận năm chế độ có cùng cấu trúc dữ liệu khoa học. Một biến thể giới hạn biên độ được xác định trùng dữ liệu với chế độ lọc dải trên toàn bộ bản ghi hiện có; vì vậy biến thể này không được xem là một điều kiện độc lập trong phân tích thống kê.
+Các biến thể được kiểm tra về số lượng epoch, nhãn, mặt nạ hợp lệ, vị trí thời gian và phân bố lớp. Kiểm toán Sleep-EDF xác nhận E4 và E5 giống từng bit trên 153/153 bản ghi, tỷ lệ mẫu bị giới hạn bằng 0; vì vậy E5 không tạo một đầu vào độc lập. Hồ sơ kiểm toán SHHS riêng cũng ghi nhận không có mẫu vượt ngưỡng giới hạn trong 200 bản ghi được xử lý thuộc các nhóm adaptation, validation và test. Bằng chứng SHHS này được tách khỏi kiểm toán E4/E5 trên Sleep-EDF, không suy từ cohort này sang cohort kia.
 
 Quy trình kiểm định không điều chỉnh dữ liệu để khớp với các kết quả lịch sử. Mọi kết quả trong báo cáo đều dựa trên các artifact đã khóa và các phép đối chiếu được ghi nhận trong hồ sơ truy nguyên.

@@ -1,6 +1,7 @@
 # Trạng thái dự án: Gate 1--8, SHHS zero-shot và độ nhạy hai seed
 
-Ngày cập nhật: **2026-08-25**
+Ngày cập nhật diễn giải: **2026-09-05**. Trạng thái hoàn tất các campaign dưới đây không tự đồng nghĩa
+manuscript sẵn sàng nộp; xem revision log/readiness report trong `Reports/` cho bản sửa BSPC.
 
 Nhánh tài liệu hiện hành: `main`
 
@@ -37,8 +38,9 @@ suy luận trên CPU và không sửa artifact Gate 1--8.
   split/cấu hình sau khi kết quả seed 42 đã được quan sát; vì vậy nó là phân tích độ nhạy sau giao thức.
 - Sáu cấu hình chính: E0, E1, E2, E3, E4 và E6. E5 bị loại vì dữ liệu khoa học trùng bitwise E4.
 
-Thiết kế này đã khắc phục lỗ hổng so sánh khác split/khác seed: mọi so sánh chính dùng cùng subject,
-bản ghi, epoch gốc và nhãn thật.
+Mọi so sánh chính dùng cùng subject, bản ghi, epoch gốc và nhãn thật. E1−E0 giữ encoder/cache nhưng
+thay cả mô hình chuỗi và recipe huấn luyện; E2−E1 thay gói C/P/N 75 chiều bằng ResNet current-epoch
+128 chiều cùng recipe/chọn encoder. Các controls này hỗ trợ so sánh cấu hình, không cô lập kiến trúc.
 
 ## Gate 4–7: kết quả chính
 
@@ -117,7 +119,10 @@ So sánh chính bắt cặp trên 180 đối tượng:
 - E3-E0: +0,0412, CI 95% [0,0314; 0,0512], p Holm 2,65e-13, thắng/hòa/thua 138/0/42.
 - E3-E6: +0,0274, CI 95% [0,0182; 0,0370], p Holm 1,87e-08, thắng/hòa/thua 125/0/55.
 
-Kết luận: E3 cao hơn E0 và E6 trong mẫu SHHS1 đã khóa theo giao thức zero-shot này. Không quy nguyên
+E6 tính mean/std từ toàn bộ recording đích không nhãn: đây là chuẩn hóa target-record có tính
+transductive, không phải zero-shot thuần inductive. Trọng số mô hình vẫn chỉ được học từ nguồn.
+
+Kết luận: E3 cao hơn E0 và E6 trong mẫu SHHS1 đã khóa của chiến dịch seed 42 này. Không quy nguyên
 nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang toàn bộ SHHS hay thực hành lâm sàng.
 
 ### Phân tích bổ sung E1/E2 trên cùng 180 đối tượng
@@ -142,10 +147,10 @@ nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang to�
   chứng độ nhạy sau giao thức trên cùng dữ liệu. Kết luận ngoài miền chỉ áp dụng cho mẫu
   180 đối tượng SHHS1, montage và giao thức zero-shot đã khóa.
 - “Đơn giản hóa” là giảm số mô hình thành phần/vận hành, không phải tiết kiệm tham số hoặc VRAM.
-- Đã có đánh giá SHHS1 zero-shot giới hạn và hai seed Sleep-EDF cố định; chưa có thích nghi miền, đa
+- Đã có đánh giá SHHS1 không cập nhật trọng số với E6 transductive và hai seed Sleep-EDF cố định; chưa có thích nghi trọng số, đa
   kênh, đủ số seed để mô hình hóa biến thiên khởi tạo hoặc xác nhận lâm sàng.
 - Không có kiểm định tương đương hoặc không thua kém với biên định trước.
-- Gate 8 là phân tích cơ chế bổ sung được thiết kế sau khi đã xem E0–E6; không trình bày như xác nhận
+- Gate 8 là phân tích ngữ cảnh bổ sung được thiết kế sau khi đã xem E0–E6; không trình bày như xác nhận
   độc lập hoàn toàn.
 - E0 là mốc tái hiện đã hiệu chỉnh để so sánh nội bộ, không phải bản sao định lượng của kết quả MATLAB
   trong bài báo gốc.
@@ -159,5 +164,14 @@ nhân riêng cho ResNet, TCN hoặc tiền xử lý; không khái quát sang to�
 
 Giao thức v2 được đóng tại Gate 8; zero-shot v1, phần bổ sung E1/E2, đối chiếu E3−E2 và độ nhạy
 seed 42/123 cũng đã đóng. Không mở lại test hoặc thay đổi giả thuyết của các chiến dịch này. Mọi
-adaptation, fine-tuning, seed bổ sung hoặc cohort mới phải có giao thức đăng ký trước riêng và giữ
+adaptation, fine-tuning, seed bổ sung hoặc cohort mới phải có giao thức riêng định trước, được tác giả
+chấp thuận, và giữ
 nguyên kết luận của các chiến dịch đã khóa.
+
+## Kiểm tra provenance trong revision BSPC
+
+Ngày 05-09-2026, original SHHS run manifest khớp hash được lưu, 540/540 prediction tổ hợp E0/E3/E6
+khớp hash và confusion matrices tính lại đều khớp từng bản ghi/tổng gộp. Snapshot protocol lịch sử
+`configs/shhs_zero_shot_v1.json` khớp hash `165d7cdf...fe93`; hồ sơ mở rộng `shhs_v1_protocol.json`
+có hash khác là đúng vai trò. Không tái sinh prediction, training hoặc CI trong phép kiểm tra này;
+xem `../Reports/SHHS_PROTOCOL_PROVENANCE.md` để biết toàn bộ phạm vi và các kiểm tra chưa thực hiện.

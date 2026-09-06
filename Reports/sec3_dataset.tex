@@ -32,7 +32,7 @@ Sleep-EDF có 298 epoch Movement hoặc Unknown bị loại khỏi các chỉ s�
 
 \subsection{Cắt cửa sổ và bảo toàn trục thời gian}
 
-Cửa sổ được xác định từ vùng ngủ thực tế và giữ một khoảng Wake ở hai đầu để bảo toàn ngữ cảnh chuyển tiếp. Epoch Movement hoặc Unknown nằm trong cửa sổ không bị xóa; chúng chỉ được loại khỏi loss và các chỉ số. Nhờ đó, vị trí thời gian và quan hệ lân cận được giữ nhất quán giữa các biến thể tiền xử lý.
+Cửa sổ giữ tối đa 30 phút Wake trước epoch ngủ đầu và sau epoch ngủ cuối, xác định từ nhãn tham chiếu N1--N3/REM. Epoch Movement hoặc Unknown nằm trong cửa sổ không bị xóa; chúng chỉ được loại khỏi loss và các chỉ số. Nhờ đó, vị trí thời gian và quan hệ lân cận được giữ nhất quán giữa các biến thể. Đây là quy tắc dựng mẫu đánh giá có sử dụng nhãn, không phải quy trình xác định cửa sổ ngủ không nhãn khi triển khai.
 
 \subsection{Chia theo đối tượng}
 
@@ -44,7 +44,7 @@ Phép chia theo epoch có thể đưa các đoạn tín hiệu lân cận hoặc
 
 \subsection{Mẫu đánh giá ngoài miền SHHS Visit 1}
 
-Chiến dịch ngoài miền sử dụng một mẫu SHHS Visit 1 đã được khóa trước khi xem kết quả mô hình. SHHS là nghiên cứu đoàn hệ đa trung tâm và dữ liệu được phân phối qua National Sleep Research Resource~\cite{quan1997shhs,zhang2018nsrr}. Mẫu kiểm tra gồm 180 đối tượng; việc suy luận được thực hiện trên EEG C4--A1 và không cập nhật trọng số bằng dữ liệu SHHS. Các mô hình được đánh giá bằng toàn bộ các fold tương ứng, sau đó tổ hợp xác suất theo đối tượng.
+Chiến dịch ngoài miền sử dụng một mẫu SHHS Visit 1 đã được khóa trước khi xem kết quả mô hình. SHHS là nghiên cứu đoàn hệ đa trung tâm và dữ liệu được phân phối qua National Sleep Research Resource~\cite{quan1997shhs,zhang2018nsrr}. Quy trình chọn dùng trường chất lượng \texttt{overall\_shhs1} với các giá trị 3--7, sắp thứ tự xác định bằng SHA-256 và selection seed 42, không dựa trên điểm số mô hình. Tổng cộng 220 người được phân vai: 5 adaptation, 15 validation, 180 test và 20 dự phòng. Kiểm tra kỹ thuật ban đầu dùng 5 người adaptation và 5 người validation; kết quả báo cáo không thay thế người test bằng nhóm dự phòng. EEG C4--A1 được lấy mẫu lại từ 125 về 100 Hz. Mô hình không được cập nhật trọng số bằng SHHS; mười mô hình outer fold được tổ hợp bằng trung bình xác suất tại từng epoch.
 
 SHHS khác Sleep-EDF về quần thể, thiết bị, montage và tần số lấy mẫu. Vì vậy, kết quả SHHS được trình bày như bằng chứng ngoài miền cho mẫu và giao thức cụ thể, không phải phép xác nhận cho toàn bộ quần thể hoặc thực hành lâm sàng.
 

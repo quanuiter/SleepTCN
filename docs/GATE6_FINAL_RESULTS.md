@@ -45,8 +45,8 @@ SHA-256:
 | E4 — ResNet-1D + TCN | 1.085.578 | 3,5739 | 3,6427 | 27.980 | 75,54 | 3,76× |
 | E6 — ResNet-1D + TCN | 1.085.578 | 3,5756 | 3,6426 | 27.967 | 75,54 | 3,76× |
 
-E2/E3/E4/E6 dùng cùng kiến trúc nên các chênh lệch rất nhỏ giữa chúng là nhiễu đo, không phải tác động
-của preprocessing. E2 nhanh hơn E1 khoảng **3,50×** trong phép đo này.
+E2/E3/E4/E6 dùng cùng kiến trúc và benchmark không đo preprocessing; các chênh lệch thời gian rất nhỏ
+không được diễn giải là hiệu ứng preprocessing. E2 nhanh hơn E1 khoảng **3,50×** trong phép đo này.
 
 ## Đánh đổi độ phức tạp
 
@@ -94,8 +94,8 @@ xác nhận.
 Thông điệp phù hợp cho khóa luận/bài báo:
 
 > ResNet-1D + TCN đem lại quy trình ít mô hình thành phần hơn và suy luận nhanh hơn, đổi lại số tham số
-> và peak VRAM cao hơn. Cải thiện chất lượng mạnh nhất trong thí nghiệm hiện tại đến từ lựa chọn xử lý
-> biên độ E3 so với z-score E6, không phải từ bằng chứng rằng embedding ResNet tách lớp tốt hơn.
+> và peak VRAM cao hơn. Trong bốn contrast chính của chiến dịch seed 42, E3−E6 có chênh lệch Macro-F1
+> lớn nhất và đạt Holm. Kết quả này không xác lập cơ chế biên độ hoặc ưu thế hình học lớp của ResNet.
 
 ## Giới hạn
 

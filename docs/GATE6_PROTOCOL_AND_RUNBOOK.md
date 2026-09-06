@@ -17,7 +17,8 @@ Gate 6 là bằng chứng bổ sung sau Gate 5, không được dùng để thay
 - Mỗi mô hình/vòng: 20 lượt làm nóng, 100 lượt đo; tổng 300 lượt đo/mô hình.
 - Đồng bộ CUDA trước và sau từng lượt. Báo cáo latency trung vị, p95, throughput và peak VRAM.
 - Số tham số được tính từ đúng mô hình đã nạp checkpoint.
-- E2/E3/E4/E6 cùng kiến trúc; chênh lệch tốc độ giữa chúng chỉ là nhiễu phép đo.
+- E2/E3/E4/E6 cùng kiến trúc và benchmark không bao gồm preprocessing; không diễn giải chênh lệch
+  tốc độ nhỏ giữa chúng thành hiệu ứng tiền xử lý.
 
 ### Không gian đặc trưng
 

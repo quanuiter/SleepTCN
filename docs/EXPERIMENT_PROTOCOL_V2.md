@@ -4,6 +4,13 @@
 > khi mở test. Seed 123 được chạy sau giao thức như phân tích độ nhạy, không được hồi tố thành một phần
 > của tập seed xác nhận định trước; xem `MULTISEED_SENSITIVITY_RESULTS.md`.
 
+> Diễn giải cập nhật 05-09-2026, không thay đổi JSON lịch sử: E1 giữ encoder/cache nhưng đổi cả cấu hình
+> mô hình chuỗi và recipe (learning rate, batch, maximum epochs, patience). E2 thay gói C/P/N 75 chiều
+> bằng ResNet current-epoch 128 chiều, đồng thời đổi recipe/chọn encoder. Nhãn ngắn “mô hình chuỗi” và
+> “bộ trích xuất” ở bảng gốc dưới đây không có nghĩa architecture-only effect. Các seed 123/2025 được
+> nêu như dự kiến trong protocol; chỉ 42/123 có kết quả được báo cáo và seed 123 được trình bày là độ
+> nhạy sau khi xem seed 42. Thời điểm quyết định phải được tác giả xác nhận, không suy chỉ từ hash.
+
 ## Câu hỏi nghiên cứu
 
 1. TCN thay BiLSTM có cải thiện khi giữ nguyên 15CNN và dữ liệu hay không?

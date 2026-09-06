@@ -1,5 +1,10 @@
 # Gói tái lập và kiểm toán dữ liệu
 
+Tài liệu này mô tả hợp đồng tái lập dữ liệu, không xác nhận đã có một public archive đầy đủ. Danh mục
+artifact và phạm vi kiểm tra hiện tại nằm ở `../Reports/ARTIFACT_INDEX.md`; URL/version/license của
+archive cho reviewer vẫn cần tác giả quyết định. SHHS data, prediction và manifest theo người nằm
+ngoài kho và phải được xử lý theo quyền truy cập/chia sẻ tương ứng.
+
 Gói tái lập gồm hai lớp kiểm chứng bổ sung:
 
 1. `processed_artifact_manifest_v2.json` khóa snapshot NPZ đang dùng bằng path tương đối, kích thước

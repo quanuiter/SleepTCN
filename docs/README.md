@@ -10,6 +10,8 @@ minh họa và kiểm tra môi trường.
 2. [REPRODUCIBILITY_PACKAGE.md](REPRODUCIBILITY_PACKAGE.md) — hợp đồng môi trường, dữ liệu và audit.
 3. [REPORT_GATE1_8_AUDIT.md](../Reports/REPORT_GATE1_8_AUDIT.md) — kiểm định nội dung báo cáo.
 4. [CLAIM_EVIDENCE_MATRIX.md](../runs/v2/publication/gate8/CLAIM_EVIDENCE_MATRIX.md) — biên phát biểu khoa học.
+5. [ARTIFACT_INDEX.md](../Reports/ARTIFACT_INDEX.md) — danh mục file, hash và phạm vi kiểm tra trong
+   revision BSPC; tách aggregate có trong kho khỏi prediction/dữ liệu bên ngoài.
 
 ## Phân loại tài liệu
 
@@ -30,6 +32,6 @@ minh họa và kiểm tra môi trường.
 - Protocol và runbook mô tả thiết kế, điều kiện tái lập và giới hạn của từng phân tích.
 - `runs/v2/publication/gate8/` là gói kết quả công bố cuối; các bảng và hình Gate 7 đã được hợp nhất vào
   gói này.
-- `Reports/` chứa báo cáo tổng hợp và các biên bản kiểm toán; mọi diễn giải phải phù hợp với ma trận bằng
-  chứng trong gói Gate 8.
+- `Reports/` chứa báo cáo tổng hợp và các biên bản kiểm toán; diễn giải Gate 8 phải phù hợp với ma trận
+  bằng chứng của Gate 8, còn SHHS và các extension dùng nguồn/ledger riêng được dẫn trong artifact index.
 - Các tài liệu lịch sử vẫn có thể được truy nguyên từ lịch sử Git khi cần đối chiếu.

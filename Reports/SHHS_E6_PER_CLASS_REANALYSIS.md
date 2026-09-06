@@ -70,14 +70,15 @@ near-identical N3 recall (0.2610 and 0.2582), and 16,480 (72.3%) versus 16,674
 performance overall but does not materially improve N3 detection over the
 15-CNN--BiLSTM control.
 
-The pre-specified follow-up hypothesis that per-record z-scoring would rescue
-N3 detection on SHHS1 is not supported. E6 has lower overall N3 recall than E3
+The descriptive follow-up asks whether the evaluated E6 pipeline resolved N3
+under-detection. It did not: E6 has lower overall N3 recall than E3
 (0.2005 vs 0.2582), lower N3 F1 (0.3283 vs 0.4055), and remains strongly
 under-emitting for N3 (predicted/true ratio 0.2215). In the transition region,
-N3 recall is essentially unchanged (0.0721 vs 0.0733).
+N3 recall is 0.0721 versus 0.0733; no equivalence test was performed.
 
-The defensible claim is consequently that per-record z-scoring does not resolve
-the cross-model N3 failure observed on SHHS1. The result is useful as
-a negative control/sensitivity analysis, but should not be presented as an
-improvement or as proof that absolute amplitude scale alone explains the domain
-gap.
+The tested record-wise z-scoring pipeline did not resolve the N3 failure observed
+on SHHS1. E6 was trained as a separate pipeline, not obtained by changing only
+the amplitude scale at inference in the same frozen model. This descriptive
+sensitivity result does not establish a mechanism, rule out amplitude-related
+contributors or exclude other label-free approaches. It should not be presented
+as a formal negative control or a validated deployment remedy.
