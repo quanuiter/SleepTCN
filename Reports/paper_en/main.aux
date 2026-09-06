@@ -54,23 +54,25 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Complexity, latency and training cost}{7}{subsection.4.3}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded.}}{8}{table.caption.5}\protected@file@percent }
 \newlabel{tab:complexity}{{5}{8}{Full-pipeline forward benchmark on a Tesla V100 (fold 0, seed 42; batch 1, sequence length 100). Throughput is in epochs\,s$^{-1}$ and peak allocated memory in MiB; I/O and preprocessing are excluded}{table.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {Silhouette coefficient of standardised features across 20-component PCA.} The figure provides a visual comparison of the spatial representation structure between configuration E1 (15-branch CNN) and E2 (ResNet-1D). Although the ResNet-1D encoder (E2) exhibits lower cluster density (lower Silhouette coefficient) in the PCA-reduced feature space, its single-branch, current-epoch architecture drastically reduces complexity and optimises computational speed when coupled with the TCN sequence model (as quantified in Table~\ref {tab:complexity}). This illustrates the trade-off between feature geometry compactness and end-to-end pipeline efficiency.}}{8}{figure.caption.6}\protected@file@percent }
+\newlabel{SM-fig:sup_representation_context}{{1}{8}{\textbf {Silhouette coefficient of standardised features across 20-component PCA.} The figure provides a visual comparison of the spatial representation structure between configuration E1 (15-branch CNN) and E2 (ResNet-1D). Although the ResNet-1D encoder (E2) exhibits lower cluster density (lower Silhouette coefficient) in the PCA-reduced feature space, its single-branch, current-epoch architecture drastically reduces complexity and optimises computational speed when coupled with the TCN sequence model (as quantified in Table~\ref {tab:complexity}). This illustrates the trade-off between feature geometry compactness and end-to-end pipeline efficiency}{figure.caption.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Cross-cohort evaluation on SHHS1}{8}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Cross-cohort performance on 180 locked SHHS1 participants (seed 42). All model weights were trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics. Intervals are subject-cluster bootstrap intervals for subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}.}}{9}{table.caption.6}\protected@file@percent }
-\newlabel{tab:shhs-performance}{{6}{9}{Cross-cohort performance on 180 locked SHHS1 participants (seed 42). All model weights were trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics. Intervals are subject-cluster bootstrap intervals for subject-mean \mf }{table.caption.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Locked paired comparisons on SHHS1 subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 180$).}}{9}{table.caption.7}\protected@file@percent }
-\newlabel{tab:shhs-paired}{{7}{9}{Locked paired comparisons on SHHS1 subject-mean \mf \ ($n = 180$)}{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Cross-cohort performance on 180 locked SHHS1 participants (seed 42). All model weights were trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics. Intervals are subject-cluster bootstrap intervals for subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}.}}{9}{table.caption.7}\protected@file@percent }
+\newlabel{tab:shhs-performance}{{6}{9}{Cross-cohort performance on 180 locked SHHS1 participants (seed 42). All model weights were trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics. Intervals are subject-cluster bootstrap intervals for subject-mean \mf }{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Locked paired comparisons on SHHS1 subject-mean \ensuremath  {\mathrm  {macro\text  {-}F1}}\ ($n = 180$).}}{9}{table.caption.8}\protected@file@percent }
+\newlabel{tab:shhs-paired}{{7}{9}{Locked paired comparisons on SHHS1 subject-mean \mf \ ($n = 180$)}{table.caption.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Cross-model errors and their temporal distribution}{9}{subsection.4.5}\protected@file@percent }
 \newlabel{sec:gap}{{4.5}{9}{Cross-model errors and their temporal distribution}{subsection.4.5}{}}
 \citation{massimini2004travelling}
 \citation{davidson2025n3}
-\citation{haghayegh2023sleepinceptionnet}
-\citation{vdd2023traditional}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces N3 under-detection across the primary SHHS1 configurations (seed 42). All models share 22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2.}}{10}{table.caption.8}\protected@file@percent }
-\newlabel{tab:cross-model-n3}{{8}{10}{N3 under-detection across the primary SHHS1 configurations (seed 42). All models share 22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2}{table.caption.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces N3 under-detection across the primary SHHS1 configurations (seed 42). All models share 22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2.}}{10}{table.caption.9}\protected@file@percent }
+\newlabel{tab:cross-model-n3}{{8}{10}{N3 under-detection across the primary SHHS1 configurations (seed 42). All models share 22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2}{table.caption.9}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{10}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}What the pipeline comparisons establish}{10}{subsection.5.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Aggregate improvement leaves a shared N3 deficit}{10}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Positioning and limits of generalisation}{10}{subsection.5.3}\protected@file@percent }
+\citation{haghayegh2023sleepinceptionnet}
+\citation{vdd2023traditional}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Positioning and limits of generalisation}{11}{subsection.5.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{11}{section.6}\protected@file@percent }
 \bibstyle{ieeetr}
 \bibdata{references}

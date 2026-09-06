@@ -543,6 +543,16 @@ In the sequential seed-123 campaign, complete training and validation for E2 and
 end-to-end runtime comparison. Full timings for the specified training and early-stopping recipes are
 reported in Supplementary Table~\ref{SM-tab:sup_seed123_runtime}.
 
+\begin{figure}[htbp]
+    \centering
+    % Đổi tên nhãn tạm thời thành Supplementary Figure cho riêng hình này
+    \captionsetup{name=Supplementary Figure} 
+    \includegraphics[width=0.75\textwidth]{./figures/gate8_feature_silhouette_en.pdf}
+    \caption{\textbf{Silhouette coefficient of standardised features across 20-component PCA.} 
+    The figure provides a visual comparison of the spatial representation structure between configuration E1 (15-branch CNN) and E2 (ResNet-1D). Although the ResNet-1D encoder (E2) exhibits lower cluster density (lower Silhouette coefficient) in the PCA-reduced feature space, its single-branch, current-epoch architecture drastically reduces complexity and optimises computational speed when coupled with the TCN sequence model (as quantified in Table~\ref{tab:complexity}). This illustrates the trade-off between feature geometry compactness and end-to-end pipeline efficiency.}
+    \label{SM-fig:sup_representation_context}
+\end{figure}
+
 \FloatBarrier
 
 Additional descriptive representation and context-group analyses are reported in
@@ -806,11 +816,8 @@ cooperative agreements U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL6436
 U01HL53940, U01HL53941 and U01HL63463.
 
 \subsection*{Acknowledgements}
-
-This work uses Sleep-EDF Expanded distributed by PhysioNet and data from the Sleep Heart Health Study
-obtained through the National Sleep Research Resource.
-The authors thank Nguyen Ho Duy Tri for academic supervision, guidance in defining the research topic,
-and constructive comments on earlier versions of the manuscript.
+This research was supported by The VNUHCM University of Information Technology’s Scientific
+Research Support Fund.
 
 \subsection*{CRediT authorship contribution statement}
 
