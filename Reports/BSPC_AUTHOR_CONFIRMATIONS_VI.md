@@ -8,6 +8,7 @@ Cập nhật 06-09-2026. Đây là phần thông tin tác giả/hồ sơ nộp, 
 - Theo xác nhận mới nhất, cả hai tác giả đã đọc và duyệt bản cuối. CRediT đã được ghi theo phân công đã thống nhất: Ngô Nhật Quân chịu trách nhiệm về conceptualization, methodology, software, data curation, formal analysis, investigation, visualization, viết bản đầu và sửa bài; Phạm Thái Sơn tham gia validation, investigation, visualization và sửa bài.
 - Bản thảo không ghi tỷ lệ phần trăm đóng góp; CRediT mô tả vai trò thực tế thay cho con số phần trăm.
 - Không tự thêm “Supervision” cho Sơn hoặc thêm giảng viên làm đồng tác giả chỉ dựa vào chức danh. Hãy ghi đúng đóng góp thực tế và hỏi người liên quan.
+- Theo quyết định của tác giả chính, Nguyễn Hồ Duy Trí không được liệt kê là đồng tác giả. Bản thảo ghi lời cảm ơn về hướng dẫn học thuật, định hướng đề tài và góp ý cho các phiên bản trước; cần có sự đồng ý của thầy trước khi giữ tên trong bản nộp cuối.
 - Mỗi tác giả đã xác nhận đọc và duyệt bản cuối. ORCID chỉ điền nếu đã có và kiểm tra đúng tài khoản.
 
 ## 2. Ethics: yêu cầu đạo đức nghiên cứu
