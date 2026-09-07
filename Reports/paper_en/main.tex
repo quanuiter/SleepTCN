@@ -20,6 +20,7 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{caption}
+\DeclareCaptionType{suppfig}[Supplementary Figure]{}
 \usepackage{subcaption}
 \usepackage[section]{placeins}
 \usepackage{xcolor}
@@ -27,7 +28,7 @@
 \usepackage{xurl}
 \usepackage{xr-hyper}
 \usepackage{hyperref}
-\externaldocument[SM-]{supplement}[SleepTCN_Supplement_EN.pdf]
+\externaldocument[SM-]{supplement}[supplement.pdf]
 \usepackage{fancyhdr}
 \usepackage{authblk}               % structured author / affiliation block
 \usepackage{titlesec}
@@ -75,7 +76,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\itshape Ngo \textit{et al.}}
+\fancyhead[L]{\small\itshape Ngo and Pham}
 \fancyhead[R]{\small\itshape Pipeline choices under sleep-staging dataset shift}
 \fancyfoot[C]{\thepage}
 \setlength{\headheight}{14pt}
@@ -106,7 +107,8 @@ Vietnam National University Ho Chi Minh City, Ho Chi Minh City, Viet Nam}
 \vspace{-1.0em}
 \begin{center}
 \small
-$^{\ast}$First and corresponding author: \texttt{23521258@gm.uit.edu.vn}
+Ngo Nhat Quan: \texttt{23521258@gm.uit.edu.vn} $^{\ast}$(Corresponding author) \\[0.2em]
+Pham Thai Son: \texttt{23521361@gm.uit.edu.vn}
 \end{center}
 
 \vspace{0.4em}
@@ -306,6 +308,25 @@ $2.02\times$ as much N3 and $0.38\times$ as much N1. We report the per-class rat
 Table~\ref{tab:class-distribution} because Section~\ref{sec:gap} uses their \emph{direction} as evidence.
 
 \subsection{Preprocessing conditions}
+
+To evaluate the individual and joint impacts of architectural design and preprocessing choices, we
+propose an end-to-end processing pipeline, as illustrated in Figure~\ref{fig:pipeline}. The signal is
+first calibrated and processed continuous-wise to preserve amplitude relationships, after which a
+1D-ResNet epoch encoder and a TCN sequence model extract local and temporal characteristics,
+respectively.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/gate8_pipeline_overview_en.png}
+    \caption{\textbf{End-to-end processing pipeline for the proposed ResNet-1D--TCN single-channel
+    sleep staging framework (E3 configuration).} The raw continuous EEG signal is sequentially
+    preprocessed (band-pass filtered, clipped, and scaled), segmented into 30\,s epochs (3{,}000
+    samples), encoded into 128-dimensional feature vectors by a 1D-ResNet, and temporally modeled by
+    a six-block non-causal TCN with a 253-epoch receptive field before final Softmax classification.}
+    \label{fig:pipeline}
+\end{figure}
+
+\FloatBarrier
 
 All conditions operate on the continuous calibrated signal in microvolts before epoching. Four active
 signal conditions enter the performance analysis, and one audit-only condition (E5) records a planned
@@ -533,25 +554,39 @@ E6 & 1{,}085{,}578 & 3.5756 & 27{,}967 & 75.54 & $3.76\times$ \\
 
 As Table~\ref{tab:complexity} shows, the ResNet-1D--TCN family provides a measured $3.76\times$ speed-up
 over the CNN--BiLSTM control while carrying $4.37\times$ the parameters and 28.4\% more peak allocated
-memory. The implementation is therefore faster but not smaller. In the forward benchmark, E1 reuses
+memory. We quantify this operational trade-off between predictive power and computational cost across
+both evaluation settings in Figure~\ref{fig:speedup_tradeoff}. As visualized in the cross-cohort panel,
+the ResNet-1D--TCN configuration (E3) translates its computational efficiency into robust
+generalization on the unseen SHHS1 cohort (Section~\ref{sec:shhs}), rather than trading accuracy away
+for speed. The implementation is therefore faster but not smaller. In the forward benchmark, E1 reuses
 the same encoder as E0 and changes the sequence model, giving a $1.07\times$ speed-up; the larger E2--E0 difference is associated
 primarily with replacing 15 independently executed CNN branches by one ResNet-1D encoder, together with
 the full-pipeline implementation.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{./figures/gate8_speedup_f1_tradeoff_en.png}
+    \caption{\textbf{Inference speed-up versus \mf\ trade-off across Sleep-EDF (in-domain) and SHHS1
+    (cross-cohort) datasets.} The proposed ResNet-1D--TCN configuration (E3) achieves a $3.76\times$
+    forward-pass speed-up over the CNN--BiLSTM control (E0) while simultaneously improving aggregate
+    classification performance in both evaluation settings.}
+    \label{fig:speedup_tradeoff}
+\end{figure}
+
+\FloatBarrier
 
 In the sequential seed-123 campaign, complete training and validation for E2 and E3 was observed to be
 12.2$\times$ and 10.2$\times$ faster than E0. E1 reused E0 encoder checkpoints and therefore has no
 end-to-end runtime comparison. Full timings for the specified training and early-stopping recipes are
 reported in Supplementary Table~\ref{SM-tab:sup_seed123_runtime}.
 
-\begin{figure}[htbp]
+\begin{suppfig}[htbp]
     \centering
-    % Đổi tên nhãn tạm thời thành Supplementary Figure cho riêng hình này
-    \captionsetup{name=Supplementary Figure} 
     \includegraphics[width=0.75\textwidth]{./figures/gate8_feature_silhouette_en.pdf}
     \caption{\textbf{Silhouette coefficient of standardised features across 20-component PCA.} 
     The figure provides a visual comparison of the spatial representation structure between configuration E1 (15-branch CNN) and E2 (ResNet-1D). Although the ResNet-1D encoder (E2) exhibits lower cluster density (lower Silhouette coefficient) in the PCA-reduced feature space, its single-branch, current-epoch architecture drastically reduces complexity and optimises computational speed when coupled with the TCN sequence model (as quantified in Table~\ref{tab:complexity}). This illustrates the trade-off between feature geometry compactness and end-to-end pipeline efficiency.}
     \label{SM-fig:sup_representation_context}
-\end{figure}
+\end{suppfig}
 
 \FloatBarrier
 
@@ -560,6 +595,7 @@ Supplementary Fig.~\ref{SM-fig:sup_representation_context} and Table~\ref{SM-tab
 they provide complementary evidence on feature geometry and temporal context.
 
 \subsection{Cross-cohort evaluation on SHHS1}
+\label{sec:shhs}
 
 \begin{table}[t]
 \centering
@@ -670,6 +706,14 @@ is 0.6121/0.6326 on Sleep-EDF but only 0.0633/0.0733 on SHHS1. Stable-region SHH
 at 0.4008/0.3900. Thus, N3 under-detection extends beyond the boundary neighbourhoods; it cannot be
 described solely as an error at label changes. The region definitions and supports are provided in
 the supplement, including the epochs omitted from the near-versus-stable comparison.
+
+Furthermore, as detailed in the context ablation study (Figure \ref{fig:context_ablation}), removing the explicit Current/Previous/Next (C/P/N) epoch context does not significantly degrade boundary performance (Holm $p = 1.000$). This strongly supports the premise that sequence models with extended receptive fields, such as the evaluated TCN (253 epochs), successfully capture broad temporal dynamics natively, rendering the localized C/P/N clustering redundant.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/gate8_context_ablation_effects_en.pdf}
+    \caption{\textbf{Context-ablation effects on boundary macro-F1.}}
+    \label{fig:context_ablation}
+\end{figure}
 
 E6 provides a label-free but transductive sensitivity check. Its complete-target-record $z$-score lowers
 N3 recall to 0.2005; boundary-neighbourhood recall is 0.0721 versus 0.0733 for E3.
