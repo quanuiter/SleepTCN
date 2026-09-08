@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.27)  7 SEP 2026 22:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.14)  8 SEP 2026 22:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -726,17 +726,14 @@ File: t1ntxtlf.fd 2021/05/24 v1.1 font definition file for T1/ntx/tlf
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
 (Font)              scaled to size 10.95pt on input line 90.
 
-(main.aux
-
-LaTeX Warning: Label `SM-fig:sup_representation_context' multiply defined.
-
-)
+(main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 90.
 LaTeX Font Info:    Trying to load font information for OML+ntxmi on input line
  90.
- (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlntxmi.fd
+
+(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlntxmi.fd
 File: omlntxmi.fd 2015/08/25 Fontinst v1.933 font definitions for OML/ntxmi.
 )
 LaTeX Font Info:    ... okay on input line 90.
@@ -1046,7 +1043,7 @@ LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
 (Font)              scaled to size 5.5pt on input line 131.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 12.0pt on input line 153.
+(Font)              scaled to size 12.0pt on input line 154.
 
 [1
 
@@ -1055,97 +1052,97 @@ N/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ec-tlf.enc}{C:/Users/
 ADMIN/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ot1-tlf.enc}]
 [2]
 LaTeX Font Info:    Font shape `T1/ntxtt/m/n' will be
-(Font)              scaled to size 10.95pt on input line 273.
+(Font)              scaled to size 10.95pt on input line 271.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 6.1pt on input line 306.
+(Font)              scaled to size 6.1pt on input line 304.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
-(Font)              scaled to size 10.95pt on input line 308.
+(Font)              scaled to size 10.95pt on input line 306.
  [3]
-<./figures/gate8_pipeline_overview_en.png, id=157, 2180.145pt x 726.715pt>
+<./figures/gate8_pipeline_overview_en.png, id=158, 2180.145pt x 726.715pt>
 File: ./figures/gate8_pipeline_overview_en.png Graphic file (type png)
 <use ./figures/gate8_pipeline_overview_en.png>
 Package pdftex.def Info: ./figures/gate8_pipeline_overview_en.png  used on inpu
-t line 320.
+t line 318.
 (pdftex.def)             Requested size: 419.95967pt x 139.98454pt.
 LaTeX Font Info:    Trying to load font information for TS1+ntxtlf on input lin
-e 336.
+e 334.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\ts1ntxtlf.fd
 File: ts1ntxtlf.fd 2015/01/18 v1.0 fd file for TS1/ntxtlf
 )
 LaTeX Font Info:    Font shape `TS1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.95pt on input line 336.
+(Font)              scaled to size 10.95pt on input line 334.
 
 [4{C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/tex-gyre/q-ts1.
 enc} <./figures/gate8_pipeline_overview_en.png (PNG copy)>] [5]
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 7.3pt on input line 468.
+(Font)              scaled to size 7.3pt on input line 466.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 5.5pt on input line 468.
+(Font)              scaled to size 5.5pt on input line 466.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 10.0pt on input line 503.
+(Font)              scaled to size 10.0pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 7.3pt on input line 503.
+(Font)              scaled to size 7.3pt on input line 500.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 5.5pt on input line 503.
+(Font)              scaled to size 5.5pt on input line 500.
  [6]
 <./figures/gate8_speedup_f1_tradeoff_en.png, id=188, 2055.68pt x 990.70125pt>
 File: ./figures/gate8_speedup_f1_tradeoff_en.png Graphic file (type png)
 <use ./figures/gate8_speedup_f1_tradeoff_en.png>
 Package pdftex.def Info: ./figures/gate8_speedup_f1_tradeoff_en.png  used on in
-put line 568.
+put line 559.
 (pdftex.def)             Requested size: 396.63411pt x 191.15274pt.
  [7]
 <./figures/gate8_feature_silhouette_en.pdf, id=201, 354.12299pt x 267.39899pt>
 File: ./figures/gate8_feature_silhouette_en.pdf Graphic file (type pdf)
 <use ./figures/gate8_feature_silhouette_en.pdf>
 Package pdftex.def Info: ./figures/gate8_feature_silhouette_en.pdf  used on inp
-ut line 585.
+ut line 576.
 (pdftex.def)             Requested size: 349.96877pt x 264.28107pt.
 Package hyperref Info: bookmark level for unknown suppfig defaults to 0 on inpu
-t line 587.
+t line 578.
 
 [8 <./figures/gate8_speedup_f1_tradeoff_en.png>] [9 <./figures/gate8_feature_si
 lhouette_en.pdf>]
@@ -1154,32 +1151,22 @@ pt>
 File: figures/gate8_context_ablation_effects_en.pdf Graphic file (type pdf)
 <use figures/gate8_context_ablation_effects_en.pdf>
 Package pdftex.def Info: figures/gate8_context_ablation_effects_en.pdf  used on
- input line 713.
+ input line 704.
 (pdftex.def)             Requested size: 349.96877pt x 264.28107pt.
-
-Overfull \hbox (2.44295pt too wide) in paragraph at lines 710--717
-[]\T1/ntxtlf/m/n/10.95 (-20) Furthermore, as de-tailed in the con-text ab-la-ti
-on study (Fig-ure [][]3[][]), re-mov-ing the ex-plicit Cur-rent/Previous/Next
- []
-
-[10] [11 <./figures/gate8_context_ablation_effects_en.pdf>] [12] [13] (main.bbl
-[14]) [15] (main.aux)
+ [10] [11 <./figures/gate8_context_ablation_effects_en.pdf>]
+[12] (main.bbl [13] [14]) [15] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2020/03/25>
  ***********
-
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 3D1ED95C06A0C9413AD3DEFBE0DCB019;4092.
+(rerunfilecheck)             Checksum: C5127D6E3311490C4B38D474B6910B31;4248.
  ) 
 Here is how much of TeX's memory you used:
- 20791 strings out of 467871
- 333368 string characters out of 5418376
- 789264 words of memory out of 5000000
- 49042 multiletter control sequences out of 15000+600000
+ 20792 strings out of 467871
+ 333310 string characters out of 5418376
+ 790662 words of memory out of 5000000
+ 49043 multiletter control sequences out of 15000+600000
  740079 words of font info for 278 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,16n,117p,1003b,688s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1195,7 +1182,7 @@ s/type1/public/newtx/txsys.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fo
 nts/type1/public/newtx/ztmb.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/f
 onts/type1/public/newtx/ztmr.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/
 fonts/type1/public/newtx/ztmri.pfb>
-Output written on main.pdf (15 pages, 1584666 bytes).
+Output written on main.pdf (15 pages, 1583358 bytes).
 PDF statistics:
  410 PDF objects out of 1000 (max. 8388607)
  77 named destinations out of 1000 (max. 500000)

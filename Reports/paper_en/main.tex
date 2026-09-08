@@ -138,8 +138,9 @@ over 72\% of N3 epochs as N2; N3 recall was 0.2610 for the control, 0.2582 for E
 
 \noindent
 \textbf{Conclusions.} The evaluated pipeline combined faster computation with improved aggregate
-transfer performance, but left a shared N3 deficit unresolved. Preprocessing choices and stage-specific
-errors are consequential alongside model design when assessing cross-cohort use.
+cross-cohort performance and revealed a shared cross-cohort N3 under-detection pattern across both model
+families. Preprocessing choices and stage-specific errors are consequential alongside model design when
+assessing cross-cohort use.
 \end{abstract}
 
 \vspace{0.3em}
@@ -190,17 +191,14 @@ Our contributions are the following.
 documents their model and training differences, and pairs aggregate effects with subject-level inference.
 \item A locked cross-cohort evaluation on 180 SHHS Visit-1 participants, showing that the ranking and
 magnitude of design choices can differ between internal validation and cross-cohort use.
-\item A class- and confusion-channel analysis showing that under-detection of N3 as N2 recurs in both
-the 15-CNN--BiLSTM control and ResNet-1D--TCN, while over-detection of REM from N2 is a second prominent
-E3 error channel. The evaluated record-wise normalisation pipeline does not resolve N3 under-detection.
+\item A class- and confusion-channel analysis revealing a shared cross-cohort N3 under-detection pattern
+across the 15-CNN--BiLSTM control and ResNet-1D--TCN, while over-detection of REM from N2 is a second
+prominent E3 error channel. The evaluated record-wise normalisation pipeline does not change this pattern.
 \item A quantified operational trade-off: the implemented ResNet-1D--TCN pipeline reduces measured
 forward latency and training-and-validation wall-clock time relative to the 15-branch CNN--BiLSTM
 control, while increasing parameter count and peak memory. These operational gains are distinguished
 from predictive differences within and across cohorts.
 \end{enumerate}
-
-Throughout, we distinguish pre-specified comparisons, secondary evidence and post-hoc contrasts, and we
-confine claims to the evidence class that supports them.
 
 %==============================================================================
 \section{Related work}
@@ -477,9 +475,8 @@ E6 & 0.7691 & 0.8230 & 0.7573 & 0.5124 \\
 \end{tabular}
 \end{table}
 
-E3 leads the primary seed-42 campaign on all four metrics (Table~\ref{tab:sleepedf-performance}).
-Table~\ref{tab:paired-sleepedf} distinguishes this aggregate ranking from the evidence for paired
-improvements across subjects.
+E3 leads the primary seed-42 campaign on all four metrics (Table~\ref{tab:sleepedf-performance}); the
+paired results are reported in Table~\ref{tab:paired-sleepedf}.
 
 \begin{table}[t]
 \centering
@@ -503,21 +500,15 @@ E3\,--\,E6 & \textbf{0.021319} & $\boldsymbol{[0.012179, 0.030698]}$ & \textbf{0
 \end{tabular}}
 \end{table}
 
-E3\,--\,E6 is the only pre-specified contrast with both a positive pooled-metric bootstrap interval
-and a Holm-significant subject-level Wilcoxon result. The E1\,--\,E0 and E2\,--\,E1 intervals include
-zero. E3\,--\,E2 has a positive pooled interval but a non-significant Wilcoxon result.
-
-E3\,--\,E2 deserves particular attention because it is the clearest case of estimand disagreement in the
-study. Its pooled bootstrap interval marginally excludes zero ($[0.000305, 0.014520]$), yet only 37 of
-78 subjects improve, $\dsign = -0.051$, and both the Wilcoxon and sign tests are far from significance
-($p_{\mathrm{sign}} = 0.734$). The analyses capture different aspects of performance: an aggregate
-gain need not be accompanied by improvement for most subjects. Their disagreement does not, by itself,
-identify which subjects drive the pooled change. The evidence supports a small pooled improvement for
-this contrast, but not a consistent subject-level advantage.
-
-For the post-hoc E3\,--\,E0 contrast, the complete E3 pipeline adds $0.0150$ \mf\ over E0, with a
-fully positive interval. This comparison represents the combined architecture, preprocessing and
-training configuration rather than any single component.
+Among the pre-specified contrasts, only E3\,--\,E6 has a positive pooled-metric bootstrap interval
+($[0.012179, 0.030698]$) together with a Holm-significant subject-level Wilcoxon result
+($p=0.0012$). The
+E1\,--\,E0 and E2\,--\,E1 intervals include zero. E3\,--\,E2 has a positive pooled interval
+($[0.000305, 0.014520]$) but a non-significant Holm-adjusted Wilcoxon result ($p=0.8989$), despite improvement in
+only 37 of 78 subjects ($\dsign=-0.051$; $p_{\mathrm{sign}}=0.734$), supporting a small pooled
+improvement rather than a consistent subject-level advantage. The post-hoc E3\,--\,E0 contrast adds
+$0.0150$ \mf\ over E0 with interval $[0.005746, 0.025871]$; it represents the combined architecture,
+preprocessing and training configuration.
 
 \subsection{Per-class and seed-sensitivity checks}
 
@@ -585,7 +576,7 @@ reported in Supplementary Table~\ref{SM-tab:sup_seed123_runtime}.
     \includegraphics[width=0.75\textwidth]{./figures/gate8_feature_silhouette_en.pdf}
     \caption{\textbf{Silhouette coefficient of standardised features across 20-component PCA.} 
     The figure provides a visual comparison of the spatial representation structure between configuration E1 (15-branch CNN) and E2 (ResNet-1D). Although the ResNet-1D encoder (E2) exhibits lower cluster density (lower Silhouette coefficient) in the PCA-reduced feature space, its single-branch, current-epoch architecture drastically reduces complexity and optimises computational speed when coupled with the TCN sequence model (as quantified in Table~\ref{tab:complexity}). This illustrates the trade-off between feature geometry compactness and end-to-end pipeline efficiency.}
-    \label{SM-fig:sup_representation_context}
+    \label{fig:main_representation_context}
 \end{suppfig}
 
 \FloatBarrier
@@ -675,8 +666,8 @@ stage transition over time.
 
 N3 is the dominant class loss: E3 N3 F1 falls from 0.8085 on Sleep-EDF to 0.4055 on SHHS1, with
 precision 0.9440 but recall 0.2582. E0 shows nearly the same recall (0.2610) and N3$\rightarrow$N2
-rate (72.3\% versus 73.1\% for E3), so E3's aggregate transfer advantage does not resolve N3 and the
-failure is not specific to the ResNet-1D--TCN configuration (Table~\ref{tab:cross-model-n3}).
+rate (72.3\% versus 73.1\% for E3), revealing a shared cross-cohort N3 under-detection pattern across
+both model families despite E3's aggregate transfer advantage (Table~\ref{tab:cross-model-n3}).
 N2$\rightarrow$REM is the second-largest E3 confusion channel.
 
 \begin{table}[t]
@@ -707,7 +698,7 @@ at 0.4008/0.3900. Thus, N3 under-detection extends beyond the boundary neighbour
 described solely as an error at label changes. The region definitions and supports are provided in
 the supplement, including the epochs omitted from the near-versus-stable comparison.
 
-Furthermore, as detailed in the context ablation study (Figure \ref{fig:context_ablation}), removing the explicit Current/Previous/Next (C/P/N) epoch context does not significantly degrade boundary performance (Holm $p = 1.000$). This strongly supports the premise that sequence models with extended receptive fields, such as the evaluated TCN (253 epochs), successfully capture broad temporal dynamics natively, rendering the localized C/P/N clustering redundant.
+Furthermore, as detailed in the context ablation study (Figure \ref{fig:context_ablation}), removing the explicit Current/\allowbreak Previous/\allowbreak Next (C/P/N) epoch context does not significantly degrade boundary performance (Holm $p = 1.000$). This strongly supports the premise that sequence models with extended receptive fields, such as the evaluated TCN (253 epochs), successfully capture broad temporal dynamics natively, rendering the localized C/P/N clustering redundant.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/gate8_context_ablation_effects_en.pdf}
@@ -745,15 +736,15 @@ and E3 on that sample. Signal handling is therefore a material part of the evalu
 behaviour, rather than a negligible implementation detail. These configuration-level comparisons do
 not isolate the contribution of each preprocessing operation.
 
-\subsection{Aggregate improvement leaves a shared N3 deficit}
+\subsection{Aggregate improvement reveals a shared cross-cohort N3 under-detection pattern}
 
-The class-wise analysis changes the interpretation of E3's overall advantage. E0 and E3 both
+The class-wise analysis reveals a shared failure mode alongside E3's overall advantage. E0 and E3 both
 misclassify more than 72\% of true N3 as N2, with recall near 0.26 despite precision above 0.90.
-The alternative E6 pipeline has still lower N3 recall. Thus, choosing the better aggregate score
-does not address this common failure. The oracle calculation shows the numerical importance of
+The alternative E6 pipeline has still lower N3 recall. This common failure persists despite the better
+aggregate score. The oracle calculation shows the numerical importance of
 N3$\rightarrow$N2 for E3, while the regional analysis shows that the deficit is present in stable
-N3 as well as around reference-label changes. Together, these observations provide a more specific
-target for subsequent validation than the overall transfer score alone.
+N3 as well as around reference-label changes. Together, these observations identify a more specific
+cross-model failure mode for subsequent validation than the overall transfer score alone.
 
 Several explanations remain plausible. The datasets use different EEG derivations, and population,
 acquisition and scoring conditions change at the same time. Evidence on slow-wave spatial structure
@@ -773,33 +764,20 @@ can trade one error for another. N2$\rightarrow$REM is a second candidate channe
 
 \subsection{Positioning and limits of generalisation}
 
-The contribution lies in connecting paired pipeline comparisons to their computational trade-offs
-and cross-cohort error structure. This complements studies of preprocessing and input representations,
-such as SleepInceptionNet~\cite{haghayegh2023sleepinceptionnet}, and systematic comparisons of
-traditional and deep pipelines~\cite{vdd2023traditional}. It differs from adaptation-method studies
-because no target-domain weight update is evaluated. E0 is our reimplementation of the
-ZleepAnlystNet design under the stated subject-wise protocol, not a claim to reproduce every original
-training detail.
+This study connects paired pipeline comparisons with computational trade-offs and cross-cohort error
+structure, complementing work on preprocessing, input representations and conventional/deep pipeline
+comparisons~\cite{haghayegh2023sleepinceptionnet,vdd2023traditional}. E0 is a reimplementation of the
+ZleepAnlystNet design under the stated protocol, and no target-domain weight update is evaluated; the
+results therefore concern locked pipeline transfer rather than adaptation.
 
-Published scores cannot be ranked directly against these results without matching dataset subset,
-subject splits, derivation, wake trimming and preprocessing. Wake trimming changes the evaluated class
-composition; its isolated numerical effect was not tested here. Likewise, the difference between
-Sleep-EDF out-of-fold predictions and SHHS ten-model ensembles means that the cross-cohort score
-difference is not a controlled estimate of any one source of domain shift.
-
-The evidence covers one transfer direction and one locked SHHS1 sample. Two training seeds provide a
-sensitivity check, not a precise estimate of initialisation variability. The SHHS component extensions
-and reference-label diagnostics were evaluated after the cohort had been opened; they refine the
-interpretation of the primary results but are not independent confirmations. Subject-cluster inference
-preserves the dependence between recordings, while pooled stage metrics do not describe the full
-distribution of individual patients' errors. Additional subject-level summaries and an unseen target
-sample would strengthen that aspect of validation.
-
-Finally, these are offline, retrospective evaluations. The sequence models use future context, and
-the benchmark window and regional masks use reference labels. Neither the forward speed-up nor the
-error localisation constitutes a real-time or clinical validation result. Independent validation of
-the N3 pattern, followed by a separately specified correction study if warranted, is a natural extension
-of the empirical findings.
+The evidence covers one transfer direction and one locked SHHS1 sample. Published scores require matched
+subsets, splits, derivations and preprocessing for direct comparison, while the Sleep-EDF out-of-fold and
+SHHS ensemble procedures make the cross-cohort score difference descriptive. Two seeds provide a
+sensitivity check, and the opened-sample extensions and reference-label diagnostics refine rather than
+independently confirm the primary results. These offline evaluations use future context and reference
+labels for some diagnostics, so the speed-up and error localisation are not real-time or clinical
+validation. Independent validation of the cross-model N3 pattern and a separately specified correction
+study remain appropriate next steps.
 
 %==============================================================================
 \section{Conclusion}
@@ -817,14 +795,13 @@ configuration difference was associated with preprocessing under a fixed archite
 These findings demonstrate the value of evaluating signal handling alongside model design, rather than
 assuming that an in-domain model ranking will carry over to another cohort.
 
-The class-wise results reveal a limitation hidden by that aggregate improvement. E0 and E3
-both systematically under-call N3 as N2, showing that E3's overall transfer advantage does not solve
-N3 detection; N2 is also frequently over-called as REM by E3. Per-record $z$-scoring does not repair
-the N3 deficit, and the cross-cohort diagnostic locates poor recall both near reference-label changes
-and within stable SHHS1 regions. The study therefore delivers both a computationally faster pipeline
-with improved aggregate transfer performance and a specific cross-model error pattern for further
-validation. Whether calibration, adaptation or montage-aware signal representations can correct that
-pattern remains an experimental question.
+The class-wise results revealed a shared cross-cohort N3 under-detection pattern across both model
+families: E0 and E3 systematically under-call N3 as N2, while E3 also frequently over-calls N2 as REM.
+Per-record $z$-scoring does not repair this cross-model failure mode, which appears both near reference-label
+changes and within stable SHHS1 regions. The study therefore combines a faster pipeline with improved
+aggregate cross-cohort performance and a specific N3 pattern requiring independent validation; whether
+calibration, adaptation or montage-aware signal representations can correct it remains an experimental
+question.
 
 %------------------------------------------------------------------------------
 \subsection*{Reproducibility and data availability}
