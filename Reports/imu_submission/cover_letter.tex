@@ -1,0 +1,50 @@
+\documentclass[11pt,a4paper]{letter}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+
+\signature{Ngo Nhat Quan\\Corresponding author\\Faculty of Information Systems\\University of Information Technology\\Vietnam National University Ho Chi Minh City\\\texttt{23521258@gm.uit.edu.vn}}
+\address{Faculty of Information Systems\\University of Information Technology\\Vietnam National University Ho Chi Minh City\\Ho Chi Minh City, Viet Nam}
+\date{\today}
+
+\begin{document}
+
+\begin{letter}{Editor-in-Chief\\Informatics in Medicine Unlocked}
+
+\opening{Dear Editor-in-Chief,}
+
+Please consider our manuscript, ``Architecture and Preprocessing Choices under Dataset Shift in
+Single-Channel EEG Sleep Staging: A Controlled Evaluation on Sleep-EDF and SHHS1,'' for publication as
+an Original Research article in \emph{Informatics in Medicine Unlocked}.
+
+Automatic sleep staging is a medical-data analysis problem in which performance can be sensitive to the
+cohort, acquisition system, EEG derivation and preprocessing pipeline. Our study compares six active
+configurations on shared subject-wise Sleep-EDF partitions and evaluates locked transfer, without weight
+updates, on 180 SHHS1 participants. It combines subject-level inference with computational measurements
+and class-specific error analysis. The main finding is deliberately bounded: the evaluated
+ResNet-1D--TCN pipeline was faster and improved aggregate cross-cohort performance relative to the
+CNN--BiLSTM control, but both model families retained substantial N3 under-detection. Preprocessing also
+produced a material cross-cohort contrast under a fixed architecture and training recipe.
+
+We believe the manuscript fits the journal because it examines the reliability and practical evaluation
+of automated EEG analysis rather than presenting an architecture-only benchmark. This positioning is
+consistent with prior IMU work on automatic sleep scoring using recurrent, convolutional and
+knowledge-guided methods. The manuscript does not claim clinical deployment or that a correction for the
+observed N3 failure mode has been validated.
+
+The manuscript is original, has not been published previously, and is not under consideration by another
+journal. Both authors have approved the manuscript and agree with its submission. The authors declare no
+competing interests. Funding, ethics, data availability, CRediT authorship and use of generative AI are
+disclosed in the manuscript. Sleep-EDF is publicly available through PhysioNet; access to de-identified
+SHHS data is managed by the National Sleep Research Resource, and restricted participant-level data are
+not redistributed.
+
+Thank you for considering our work.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}

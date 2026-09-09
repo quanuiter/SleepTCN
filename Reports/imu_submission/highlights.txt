@@ -1,0 +1,6 @@
+Highlights
+
+- Six sleep-staging pipelines were compared on shared subject-wise partitions.
+- The faster pipeline reduced forward-pass time by 3.76-fold.
+- Preprocessing materially affected cross-cohort transfer performance.
+- Aggregate transfer gains did not resolve deep-sleep under-detection.

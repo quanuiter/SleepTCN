@@ -1,0 +1,8 @@
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+main.pdf
+supplement.pdf
+cover_letter.pdf
