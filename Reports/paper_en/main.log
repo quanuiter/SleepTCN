@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.14)  8 SEP 2026 22:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.14)  12 SEP 2026 09:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -505,25 +505,12 @@ Package caption Info: Standard document class detected.
 \c@caption@flags=\count318
 \c@continuedfloat=\count319
 )
-Package caption Info: Option `declare type' requires the `newfloat' package on 
-input line 23.
-
-(C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newfloat\newfloat.sty
-Package: newfloat 2023/10/01 v1.2 Defining new floating environments (AR)
-)
-Package newfloat Info: New float `suppfig' with options `' on input line 23.
-\c@suppfig=\count320
-\newfloat@ftype=\count321
-Package newfloat Info: float type `suppfig'=8 on input line 23.
-
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
 Package: subcaption 2023/07/28 v1.6b Sub-captions (AR)
 Package caption Info: New subtype `subfigure' on input line 238.
-\c@subfigure=\count322
+\c@subfigure=\count320
 Package caption Info: New subtype `subtable' on input line 238.
-\c@subtable=\count323
-Package caption Info: New subtype `subsuppfig' on input line 238.
-\c@subsuppfig=\count324
+\c@subtable=\count321
 ) (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty
 Package: placeins 2005/04/18  v 2.2
 ) (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
@@ -533,8 +520,8 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@outerparindent=\dimen269
 \enit@toks=\toks35
 \enit@inbox=\box58
-\enit@count@id=\count325
-\enitdp@description=\count326
+\enit@count@id=\count322
+\enitdp@description=\count323
 ) (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/xurl\xurl.sty
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
 
@@ -591,7 +578,7 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count327
+\c@section@level=\count324
 )
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
 ty
@@ -599,8 +586,8 @@ Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \@linkdim=\dimen270
-\Hy@linkcounter=\count328
-\Hy@pagecounter=\count329
+\Hy@linkcounter=\count325
+\Hy@pagecounter=\count326
  (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -608,7 +595,7 @@ Now handling font encoding PD1 ...
 ) (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count330
+\Hy@SavedSpaceFactor=\count327
  (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
@@ -621,7 +608,7 @@ Package hyperref Info: Plain pages OFF on input line 4210.
 Package hyperref Info: Backreferencing OFF on input line 4215.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count331
+\c@Hy@tempcnt=\count328
 LaTeX Info: Redefining \url on input line 4801.
 \XeTeXLinkMargin=\dimen271
 
@@ -633,7 +620,7 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count332
+\Fld@menulength=\count329
 \Field@Width=\dimen272
 \Fld@charsize=\dimen273
 Package hyperref Info: Hyper figures OFF on input line 6078.
@@ -643,16 +630,16 @@ Package hyperref Info: backreferencing OFF on input line 6093.
 Package hyperref Info: Link coloring OFF on input line 6098.
 Package hyperref Info: Link coloring with OCG OFF on input line 6103.
 Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count333
-\c@Item=\count334
-\c@Hfootnote=\count335
+\Hy@abspage=\count330
+\c@Item=\count331
+\c@Hfootnote=\count332
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count336
-\c@bookmark@seq@number=\count337
+\Fld@listcount=\count333
+\c@bookmark@seq@number=\count334
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
 echeck.sty
@@ -667,7 +654,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip60
 )
-Package xr Info: IMPORTING LABELS FROM supplement.aux on input line 31.
+Package xr Info: IMPORTING LABELS FROM supplement.aux on input line 30.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
@@ -692,9 +679,9 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 Package: authblk 2001/02/27 1.3 (PWD)
 \affilsep=\skip75
 \@affilsep=\skip76
-\c@Maxaffil=\count338
-\c@authors=\count339
-\c@affil=\count340
+\c@Maxaffil=\count335
+\c@authors=\count336
+\c@affil=\count337
 )
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
 Package: titlesec 2025/01/04 v2.17 Sectioning titles
@@ -716,79 +703,79 @@ Package: abstract 2009/06/08 v1.2a configurable abstracts
 \absparindent=\skip82
 \absparsep=\skip83
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 75.
+Package hyperref Info: Option `colorlinks' set `true' on input line 74.
 LaTeX Font Info:    Trying to load font information for T1+ntxtlf on input line
- 90.
+ 89.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\t1ntxtlf.fd
 File: t1ntxtlf.fd 2021/05/24 v1.1 font definition file for T1/ntx/tlf
 )
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.95pt on input line 90.
+(Font)              scaled to size 10.95pt on input line 89.
 
 (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 90.
+LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 89.
 LaTeX Font Info:    Trying to load font information for OML+ntxmi on input line
- 90.
+ 89.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlntxmi.fd
 File: omlntxmi.fd 2015/08/25 Fontinst v1.933 font definitions for OML/ntxmi.
 )
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 89.
 LaTeX Font Info:    Trying to load font information for U+ntxexa on input line 
-90.
+89.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxexa.fd
 File: untxexa.fd 2012/04/16 Fontinst v1.933 font definitions for U/ntxexa.
 )
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 89.
 LaTeX Font Info:    Trying to load font information for LMS+ntxsy on input line
- 90.
+ 89.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmsntxsy.fd
 File: lmsntxsy.fd 2016/07/02 Fontinst v1.933 font definitions for LMS/ntxsy.
 )
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 89.
 LaTeX Font Info:    Trying to load font information for LMX+ntxexx on input lin
-e 90.
+e 89.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmxntxexx.fd
 File: lmxntxexx.fd 2016/07/03 Fontinst v1.933 font definitions for LMX/ntxexx.
 )
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 90.
-LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count341
+\scratchcounter=\count338
 \scratchdimen=\dimen279
 \scratchbox=\box60
-\nofMPsegments=\count342
-\nofMParguments=\count343
+\nofMPsegments=\count339
+\nofMParguments=\count340
 \everyMPshowfont=\toks38
-\MPscratchCnt=\count344
+\MPscratchCnt=\count341
 \MPscratchDim=\dimen280
-\MPnumerator=\count345
-\makeMPintoPDFobject=\count346
+\MPnumerator=\count342
+\makeMPintoPDFobject=\count343
 \everyMPtoPDFconversion=\toks39
 )
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
@@ -801,17 +788,17 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@mv@tabular=\count347
-\c@mv@boldtabular=\count348
-LaTeX Info: Command `\dddot' is already robust on input line 90.
-LaTeX Info: Command `\ddddot' is already robust on input line 90.
-LaTeX Info: Redefining \microtypecontext on input line 90.
-Package microtype Info: Applying patch `item' on input line 90.
-Package microtype Info: Applying patch `toc' on input line 90.
-Package microtype Info: Applying patch `eqnum' on input line 90.
-Package microtype Info: Applying patch `footnote' on input line 90.
-Package microtype Info: Applying patch `verbatim' on input line 90.
-LaTeX Info: Redefining \microtypesetup on input line 90.
+\c@mv@tabular=\count344
+\c@mv@boldtabular=\count345
+LaTeX Info: Command `\dddot' is already robust on input line 89.
+LaTeX Info: Command `\ddddot' is already robust on input line 89.
+LaTeX Info: Redefining \microtypecontext on input line 89.
+Package microtype Info: Applying patch `item' on input line 89.
+Package microtype Info: Applying patch `toc' on input line 89.
+Package microtype Info: Applying patch `eqnum' on input line 89.
+Package microtype Info: Applying patch `footnote' on input line 89.
+Package microtype Info: Applying patch `verbatim' on input line 89.
+LaTeX Info: Redefining \microtypesetup on input line 89.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -863,7 +850,7 @@ File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 90.
+Package hyperref Info: Link coloring ON on input line 89.
 (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
@@ -1041,9 +1028,9 @@ LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
 (Font)              scaled to size 10.0pt on input line 120.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 5.5pt on input line 131.
+(Font)              scaled to size 5.5pt on input line 133.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 12.0pt on input line 154.
+(Font)              scaled to size 12.0pt on input line 158.
 
 [1
 
@@ -1052,109 +1039,90 @@ N/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ec-tlf.enc}{C:/Users/
 ADMIN/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ot1-tlf.enc}]
 [2]
 LaTeX Font Info:    Font shape `T1/ntxtt/m/n' will be
-(Font)              scaled to size 10.95pt on input line 271.
+(Font)              scaled to size 10.95pt on input line 275.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 6.1pt on input line 304.
+(Font)              scaled to size 6.1pt on input line 308.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
-(Font)              scaled to size 10.95pt on input line 306.
+(Font)              scaled to size 10.95pt on input line 310.
  [3]
-<./figures/gate8_pipeline_overview_en.png, id=158, 2180.145pt x 726.715pt>
-File: ./figures/gate8_pipeline_overview_en.png Graphic file (type png)
-<use ./figures/gate8_pipeline_overview_en.png>
-Package pdftex.def Info: ./figures/gate8_pipeline_overview_en.png  used on inpu
-t line 318.
-(pdftex.def)             Requested size: 419.95967pt x 139.98454pt.
+<./figures/gate8_pipeline_overview_en.pdf, id=157, 476.4741pt x 162.09961pt>
+File: ./figures/gate8_pipeline_overview_en.pdf Graphic file (type pdf)
+<use ./figures/gate8_pipeline_overview_en.pdf>
+Package pdftex.def Info: ./figures/gate8_pipeline_overview_en.pdf  used on inpu
+t line 322.
+(pdftex.def)             Requested size: 419.95967pt x 142.87315pt.
 LaTeX Font Info:    Trying to load font information for TS1+ntxtlf on input lin
-e 334.
+e 340.
 
 (C:\Users\ADMIN\AppData\Local\Programs\MiKTeX\tex/latex/newtx\ts1ntxtlf.fd
 File: ts1ntxtlf.fd 2015/01/18 v1.0 fd file for TS1/ntxtlf
 )
 LaTeX Font Info:    Font shape `TS1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.95pt on input line 334.
+(Font)              scaled to size 10.95pt on input line 340.
 
 [4{C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/tex-gyre/q-ts1.
-enc} <./figures/gate8_pipeline_overview_en.png (PNG copy)>] [5]
+enc} <./figures/gate8_pipeline_overview_en.pdf>] [5]
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 7.3pt on input line 466.
+(Font)              scaled to size 7.3pt on input line 477.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 5.5pt on input line 466.
+(Font)              scaled to size 5.5pt on input line 477.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 10.0pt on input line 500.
+(Font)              scaled to size 10.0pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 7.3pt on input line 500.
+(Font)              scaled to size 7.3pt on input line 511.
 LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 5.5pt on input line 500.
+(Font)              scaled to size 5.5pt on input line 511.
  [6]
-<./figures/gate8_speedup_f1_tradeoff_en.png, id=188, 2055.68pt x 990.70125pt>
-File: ./figures/gate8_speedup_f1_tradeoff_en.png Graphic file (type png)
-<use ./figures/gate8_speedup_f1_tradeoff_en.png>
-Package pdftex.def Info: ./figures/gate8_speedup_f1_tradeoff_en.png  used on in
-put line 559.
-(pdftex.def)             Requested size: 396.63411pt x 191.15274pt.
- [7]
-<./figures/gate8_feature_silhouette_en.pdf, id=201, 354.12299pt x 267.39899pt>
-File: ./figures/gate8_feature_silhouette_en.pdf Graphic file (type pdf)
-<use ./figures/gate8_feature_silhouette_en.pdf>
-Package pdftex.def Info: ./figures/gate8_feature_silhouette_en.pdf  used on inp
-ut line 576.
-(pdftex.def)             Requested size: 349.96877pt x 264.28107pt.
-Package hyperref Info: bookmark level for unknown suppfig defaults to 0 on inpu
-t line 578.
-
-[8 <./figures/gate8_speedup_f1_tradeoff_en.png>] [9 <./figures/gate8_feature_si
-lhouette_en.pdf>]
-<figures/gate8_context_ablation_effects_en.pdf, id=257, 354.12299pt x 267.39899
-pt>
-File: figures/gate8_context_ablation_effects_en.pdf Graphic file (type pdf)
-<use figures/gate8_context_ablation_effects_en.pdf>
-Package pdftex.def Info: figures/gate8_context_ablation_effects_en.pdf  used on
- input line 704.
-(pdftex.def)             Requested size: 349.96877pt x 264.28107pt.
- [10] [11 <./figures/gate8_context_ablation_effects_en.pdf>]
-[12] (main.bbl [13] [14]) [15] (main.aux)
+<./figures/gate8_primary_speedup_f1_en.pdf, id=216, 416.23305pt x 172.42317pt>
+File: ./figures/gate8_primary_speedup_f1_en.pdf Graphic file (type pdf)
+<use ./figures/gate8_primary_speedup_f1_en.pdf>
+Package pdftex.def Info: ./figures/gate8_primary_speedup_f1_en.pdf  used on inp
+ut line 569.
+(pdftex.def)             Requested size: 419.95967pt x 173.97237pt.
+ [7] [8 <./figures/gate8_primary_speedup_f1_en.pdf>] [9] [10] [11] (main.bbl [1
+2] [13]) [14] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2020/03/25>
@@ -1163,28 +1131,33 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: C5127D6E3311490C4B38D474B6910B31;4248.
  ) 
 Here is how much of TeX's memory you used:
- 20792 strings out of 467871
- 333310 string characters out of 5418376
- 790662 words of memory out of 5000000
- 49043 multiletter control sequences out of 15000+600000
- 740079 words of font info for 278 fonts, out of 8000000 for 9000
+ 20588 strings out of 467871
+ 329027 string characters out of 5418376
+ 796423 words of memory out of 5000000
+ 48842 multiletter control sequences out of 15000+600000
+ 740439 words of font info for 280 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,16n,117p,1003b,688s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/NewTXB
 MI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/N
-ewTXMI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/tex
--gyre/qtmr.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public
-/txfonts/t1xtt.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/pu
-blic/newtx/txbmiaX.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/newtx/txbsys.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/newtx/txmiaX.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/font
-s/type1/public/newtx/txsys.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fo
-nts/type1/public/newtx/ztmb.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/newtx/ztmr.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/
-fonts/type1/public/newtx/ztmri.pfb>
-Output written on main.pdf (15 pages, 1583358 bytes).
+ewTXMI.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmbx10.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/amsfonts/cm/cmbx9.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/ADMIN/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/ADMIN/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/ADMIN/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/tex-gyre/qtmr.pfb><C:/Users/ADMIN/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/public/txfonts/t1xtt.pfb><C:/Users/ADMIN/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/newtx/txbmiaX.pfb><C:/Users/ADMIN/A
+ppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txbsys.pfb><C:/Users/ADMI
+N/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txmiaX.pfb><C:/Users/A
+DMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txsys.pfb><C:/Users
+/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmb.pfb><C:/User
+s/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmr.pfb><C:/Use
+rs/ADMIN/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmri.pfb>
+Output written on main.pdf (14 pages, 367206 bytes).
 PDF statistics:
  410 PDF objects out of 1000 (max. 8388607)
- 77 named destinations out of 1000 (max. 500000)
- 43189 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 74 named destinations out of 1000 (max. 500000)
+ 43179 words of extra memory for PDF output out of 51595 (max. 10000000)
 

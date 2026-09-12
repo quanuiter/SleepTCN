@@ -1,0 +1,6 @@
+Highlights
+
+- Paired subject-wise evaluation compared six sleep-staging configurations.
+- Inference was 3.76-fold faster, with higher parameter and memory costs.
+- Preprocessing gave the largest observed post-hoc transfer contrast.
+- Aggregate transfer gains left deep-sleep under-detection unresolved.

@@ -1,5 +1,12 @@
 # SleepTCN artifact index for the BSPC revision
 
+Editorial addendum, 11 September 2026: the active BSPC pipeline figure is
+`Reports/paper_en/figures/gate8_pipeline_overview_en.pdf`, with original TikZ source in
+`Reports/paper_en/figure_sources/gate8_pipeline_overview_en.tex`. It is a processing schematic,
+not experimental data. The legacy PNG remains in the checkout but is not used in the revised BSPC
+manuscript or source ZIP. Current guide compliance and outstanding author confirmations are tracked
+in `Reports/BSPC_SUBMISSION_CHECKLIST_20260911.md`.
+
 Index updated: **2026-09-06**. Paths below are relative to the repository root unless explicitly marked
 external. The review baseline is commit `1710c49fe529f7d498598ad25ff108163f3e6f06`; manuscript edits are
 working-tree revisions, not a newly created release. No protocol, prediction or checkpoint was changed
@@ -162,9 +169,10 @@ prove which settings produced a historical checkpoint.
 
 ## Publication files
 
-The 06 September 2026 source/PDF delivery is identified by `Reports/REPORT_MANIFEST.sha256` and
-`Reports/paper_en/SUBMISSION_MANIFEST.sha256`. Build results, all-page visual checks and independent
-source-bundle validation are recorded in `Reports/BSPC_FINAL_READINESS_REPORT.md`. The portable ZIP is
+The current source/PDF delivery is identified by `Reports/REPORT_MANIFEST.sha256` and
+`Reports/paper_en/SUBMISSION_MANIFEST.sha256`. The 06 September build notes in
+`Reports/BSPC_FINAL_READINESS_REPORT.md` are historical; outstanding confirmations after the
+11 September revision are in `Reports/BSPC_SUBMISSION_CHECKLIST_20260911.md`. The portable ZIP is
 `Reports/output/source/SleepTCN_BSPC_Manuscript_Source.zip`. Manifest membership is a file list, not
 proof of complete experimental replay. Update the publication manifests again after any subsequent
 author changes; do not change expected hashes in historical scientific run records.

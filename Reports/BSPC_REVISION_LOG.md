@@ -1,5 +1,27 @@
 # BSPC revision log
 
+## 11 September 2026: supplied Guide for Authors compliance pass
+
+Read the 22-page publisher guide supplied by the author. Replaced the low-resolution processing
+PNG in the BSPC bundle with an original editable TikZ vector schematic, added figure-level AI
+assistance disclosure, completed the postal affiliation from the official UIT website, and clarified
+abstract abbreviations, data access and the absence of sex/gender-stratified evaluation. Bibliography
+output was adjusted to expose available DOI information. Vietnamese reports are synchronised.
+The old PNG is preserved outside the active BSPC package. This is a presentation/metadata revision,
+not additional experimentation. Funder role, factual CRediT, ethics basis, supervisor consent and
+the portal's declarations-tool document remain confirmations, not inferred facts.
+
+## 11 September 2026: evidence wording and submission consistency
+
+Corrected overinterpretation of the E1 context ablation and silhouette analysis; retained these
+supporting analyses in the supplement. Replaced the mixed-seed performance figure with the existing
+reproducible primary-seed vector figure. Restored supervisor and SHHS/NSRR acknowledgements,
+clarified archived repository snapshot wording, and synchronised Vietnamese acknowledgements.
+No numerical experimental outputs or historical protocol hashes were changed. Rebuild and packaging
+are reproducible with `scripts/rebuild_bspc_delivery.ps1`. Outstanding factual confirmations and
+publisher requirements are listed in `BSPC_SUBMISSION_CHECKLIST_20260911.md`; this revision does not
+assert that those confirmations have been obtained or that submission acceptance is assured.
+
 Revision performed 05–06 September 2026 against baseline commit `1710c49fe529f7d498598ad25ff108163f3e6f06`. The pre-submission audit remains a historical input; this log and the final readiness report describe the resulting revision.
 
 ## Scope authorised and respected

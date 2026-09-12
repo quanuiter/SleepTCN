@@ -1,5 +1,16 @@
 # Bảng nối kết luận với bằng chứng: bản sửa chuẩn bị BSPC
 
+## Bổ sung 11-09-2026
+
+- Không diễn giải Holm p = 1.000 thành tương đương, P/N dư thừa hoặc cơ chế TCN đã được chứng minh.
+  Ablation là Sleep-EDF/E1, giữ C và thay P/N bằng trung bình training rồi retrain.
+- Silhouette không phải mật độ cụm; không suy quan hệ đánh đổi giữa silhouette và tốc độ.
+- Hình trade-off chính chỉ gồm E0/E3/E6 seed 42. Không trộn SHHS E4 seed 123 vào ranking seed 42.
+- E4 thực sự có benchmark median 3.5739345 ms trong `gate6_latency_fold00_seed42.json`;
+  việc bỏ khỏi hình primary không có nghĩa thiếu số đo.
+- Các xác nhận ethics, CRediT, nguồn hình và quy định upload còn ở
+  `BSPC_SUBMISSION_CHECKLIST_20260911.md`; không xem khai báo trong bài là kiểm chứng độc lập.
+
 Cập nhật 06-09-2026. Đọc cùng `BSPC_REVISION_LOG.md`, `ARTIFACT_INDEX.md` và
 `BSPC_FINAL_READINESS_REPORT.md`. Đường dẫn dưới đây tương đối với repository root.
 Đây là bản đồ kiểm tra câu chữ, không phải một phân tích thống kê mới hay đăng ký trước công khai.

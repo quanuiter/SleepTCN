@@ -113,7 +113,7 @@ REM & 25.835 & 0,827439 & 0,841339 & 0,834331 & 0,822702 & 0,819741 & 0,821219 &
 \end{tabular}}
 \end{table}
 
-E3 có F1 cao hơn E6 ở cả năm lớp, trong khi N1 vẫn là lớp khó nhất của cả hai cấu hình. Chênh lệch lớn nhất nằm ở N3 (+0,062782); các lớp còn lại tăng từ +0,002551 đến +0,015199. Ma trận nhầm lẫn của E3 và E6 được trình bày theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán.
+E3 có F1 cao hơn E6 ở cả năm lớp, trong khi N1 vẫn là lớp khó nhất của cả hai cấu hình. Chênh lệch $\Delta$F1 lớn nhất nằm ở N3 (+0,062782); các lớp còn lại tăng từ +0,002551 đến +0,015199. Ma trận nhầm lẫn của E3 và E6 được trình bày theo thứ tự hàng là nhãn thật và cột là nhãn dự đoán.
 
 \begin{table}[H]
 \centering
@@ -140,7 +140,7 @@ E6--REM & 527 & 1.752 & 2.191 & 187 & 21.178 \\
 \end{tabular}}
 \end{table}
 
-Trong toàn bộ phân tích ma trận nhầm lẫn, ký hiệu A$\rightarrow$B nghĩa là epoch mang nhãn tham chiếu A nhưng được mô hình dự đoán thành B; ký hiệu này không biểu thị một chuyển pha sinh lý theo thời gian. Các cặp nhầm lẫn lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Mẫu hình này định vị các kênh sai số nổi bật trong mẫu Sleep-EDF.
+Trong toàn bộ phân tích ma trận nhầm lẫn, ký hiệu A$\rightarrow$B nghĩa là epoch mang nhãn tham chiếu A nhưng được mô hình dự đoán thành B; ký hiệu này không biểu thị một chuyển pha sinh lý theo thời gian. Năm cặp nhầm lẫn có số lượng lớn nhất của E3 là N2$\rightarrow$N1 (5.496 epoch), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N1$\rightarrow$W (3.283) và N2$\rightarrow$REM (2.432). Mẫu hình này định vị các kênh sai số nổi bật trong mẫu Sleep-EDF.
 
 E3 có giá trị mô tả cao nhất trong chiến dịch chính. Bảng~\ref{tab:primary_stats} trình bày bốn so sánh chính đã định trước, trong đó E3--E6 là đối chiếu có bằng chứng mạnh nhất.
 
@@ -454,7 +454,7 @@ E2--REM & 439 & 262 & 726 & 0 & 24.507 \\
 \end{tabular}}
 \end{table}
 
-Các cặp nhầm lẫn lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch; nhãn tham chiếu N3, dự đoán N2), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi.
+Năm cặp nhầm lẫn có số lượng lớn nhất của E3 trên SHHS1 là N3$\rightarrow$N2 (16.674 epoch; nhãn tham chiếu N3, dự đoán N2), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N2$\rightarrow$W (2.348). So với E2, số epoch N2 bị gán thành REM giảm 5.702, trong khi số epoch N3 bị gán thành N2 tăng 147. F1 N3 vẫn tăng nhẹ do số dự đoán đúng N3 tăng và sự cân bằng precision--recall thay đổi.
 
 Đối chiếu với mốc 15-CNN--BiLSTM E0 cho thấy lỗi N3 không phát sinh riêng ở E3. Trên cùng 22.806 epoch N3, E0 gán 16.480 epoch thành N2 (72,3\%) và đạt recall N3 0,2610; E3 gán 16.674 epoch thành N2 (73,1\%) và đạt recall 0,2582. F1 N3 của hai mô hình gần như bằng nhau (0,4048 và 0,4055), mặc dù \mf\ gộp của E3 cao hơn E0. Bảng~\ref{tab:shhs_n3_crossmodel} vì vậy tách hai kết luận: E3 cải thiện hiệu năng tổng thể, nhưng thay đổi kiến trúc và pipeline không giải quyết được nhận diện N3 ngoài miền.
 
@@ -557,7 +557,7 @@ E3 trên Sleep-EDF tham chiếu & 0,7904 & -- \\
 \end{tabular}
 \end{table}
 
-Đây không phải hiệu năng một thuật toán thực tế được bảo đảm đạt. Trong các kênh đã xét trên E3, N3$\rightarrow$N2 có mức tăng oracle lớn nhất, tiếp theo là N2$\rightarrow$REM. Tỷ phần trong bảng dùng chênh lệch điểm mô tả giữa hai điều kiện đánh giá làm mẫu số; sửa đồng thời có thể vượt điểm EDF ban đầu. Do Macro-F1 phi tuyến, không cộng các tỷ phần oracle riêng để dự đoán hiệu ứng đồng thời. Việc N3$\rightarrow$N2 cũng chiếm 72,3\% N3 ở E0 củng cố tính đáng chú ý của kênh lỗi, không biến oracle thành đối chiếu nhân quả hoặc bằng chứng rằng thích nghi có nhãn tối ưu hơn mọi hướng khác. Nếu kiểm chứng một biện pháp khắc phục, cần đánh giá đồng thời recall và false-positive N3 trên test không dùng để chọn biện pháp.
+Đây không phải hiệu năng một thuật toán thực tế được bảo đảm đạt. Trong các kênh đơn đã xét trên E3, N3$\rightarrow$N2 có mức tăng Macro-F1 oracle lớn nhất, tiếp theo là N2$\rightarrow$REM. Tỷ phần trong bảng dùng chênh lệch điểm mô tả giữa hai điều kiện đánh giá làm mẫu số; sửa đồng thời có thể vượt điểm EDF ban đầu. Do Macro-F1 phi tuyến, không cộng các tỷ phần oracle riêng để dự đoán hiệu ứng đồng thời. Việc N3$\rightarrow$N2 cũng chiếm 72,3\% N3 ở E0 củng cố tính đáng chú ý của kênh lỗi, không biến oracle thành đối chiếu nhân quả hoặc bằng chứng rằng thích nghi có nhãn tối ưu hơn mọi hướng khác. Nếu kiểm chứng một biện pháp khắc phục, cần đánh giá đồng thời recall và false-positive N3 trên test không dùng để chọn biện pháp.
 
 \subsection{Phân tích bổ sung thành phần E1/E2 trên SHHS1}
 

@@ -37,7 +37,7 @@ Theo hồ sơ kiểm toán đã lưu, dự đoán E6 và chỉ số tính lại 
 
 Snapshot dữ liệu dẫn xuất gồm 765 tệp thuộc năm biến thể tiền xử lý. Kiểm toán độc lập xác nhận 765/765 tệp khớp SHA-256 trong manifest nội dung, có metadata ZIP chuẩn hóa, đọc được và nhất quán về nhãn, vị trí thời gian, hình dạng cùng quan hệ biến đổi khoa học. Mã băm container lịch sử được bảo toàn trong trường truy nguyên riêng.
 
-Khóa byte của snapshot bảo đảm tính toàn vẹn khi lưu trữ và trao đổi, nhưng không thay thế phép tái sinh độc lập từ EDF gốc trong môi trường phần mềm đã khóa. Gói mã nguồn đi kèm giao thức và công cụ kiểm định cho bước tái sinh đó.
+Khóa byte của snapshot bảo đảm tính toàn vẹn khi lưu trữ và trao đổi, nhưng không thay thế phép tái sinh độc lập từ EDF gốc trong môi trường phần mềm đã khóa. Gói mã nguồn đi kèm giao thức và công cụ kiểm định cho bước tái sinh đó. Kho công khai chỉ chứa mã nguồn, giao thức, phép chia và các tổng hợp kết quả; không chứa dữ liệu cấp người tham gia SHHS, mã định danh hoặc dự đoán cấp người tham gia. Sleep-EDF Expanded có thể truy cập công khai qua PhysioNet (\url{https://physionet.org/content/sleep-edfx/1.0.0/}); quyền truy cập Sleep Heart Health Study được quản lý qua NSRR (\url{https://sleepdata.org/datasets/shhs/pages}).
 
 \subsection{Biên diễn giải khoa học}
 
@@ -53,7 +53,7 @@ Các phép thay cấu hình E1/E2 chưa cho ưu thế ổn định & Đã cô l�
 ResNet-1D--TCN nhanh hơn và gọn hơn về vận hành & Mô hình nhẹ hơn về tham số hoặc bộ nhớ \\
 E3 cao hơn E0/E6 trên mẫu SHHS1 đã khóa & E3 đã giải quyết dịch chuyển miền hoặc vượt SOTA \\
 E3--E2/E4 cho lợi ích của cấu hình tiền xử lý trên mẫu đã khảo sát & Một thao tác riêng là nguyên nhân hoặc trục tiền xử lý luôn ưu việt \\
-N3$\rightarrow$N2 tái diễn ở E0/E3 và có đòn bẩy phản thực lớn nhất trên E3 & E3 gây ra lỗi này hoặc sửa kênh này chắc chắn đạt \mf\ 0,7444 \\
+N3$\rightarrow$N2 tái diễn ở E0/E3 và có mức tăng Macro-F1 phản thực lớn nhất trong các kênh đơn được xét trên E3 & E3 gây ra lỗi này hoặc sửa kênh này chắc chắn đạt \mf\ 0,7444 \\
 E6 không sửa được lỗi N3 trong pipeline này & Biên độ tuyệt đối không liên quan đến N3 \\
 Gate 8 chưa cho thấy giá trị biên của P/N & Ngữ cảnh thời gian hoàn toàn vô dụng \\
 Silhouette không phù hợp để chọn encoder ở đây & Embedding CNN tốt hơn ResNet cho mọi nhiệm vụ \\
@@ -64,10 +64,15 @@ Các điều kiện chưa được kiểm định tương đương & Giá trị 
 
 \subsection{Thông tin tác giả và các xác nhận trước công bố}
 
+\begingroup\small\setstretch{1.0}
+
 Ngô Nhật Quân là tác giả đứng đầu và tác giả liên hệ, email \texttt{23521258@gm.uit.edu.vn}; Phạm Thái Sơn là đồng tác giả thứ hai. Hai tác giả đã đọc và duyệt bản cuối. Ngô Nhật Quân: Conceptualization, Methodology, Software, Data curation, Formal analysis, Investigation, Visualization, Writing -- original draft, Writing -- review and editing. Phạm Thái Sơn: Validation, Investigation, Visualization, Writing -- review and editing.
 
 Các tác giả trân trọng cảm ơn Nguyễn Hồ Duy Trí đã hướng dẫn học thuật, định hướng đề tài nghiên cứu và góp ý xây dựng cho các phiên bản trước của bản thảo.
 
-Tác giả xác nhận đã xin được quyền truy cập SHHS qua NSRR và xác nhận phân tích thứ cấp dữ liệu đã khử định danh không cần xét duyệt đạo đức tại đơn vị áp dụng. Nghiên cứu nhận khoảng 6.000.000 VND hỗ trợ sinh viên từ Trường Đại học Công nghệ Thông tin, Đại học Quốc gia Thành phố Hồ Chí Minh; hai tác giả tuyên bố không có xung đột lợi ích. Repository mã nguồn là \url{https://github.com/quanuiter/SleepTCN}; báo cáo không công bố dữ liệu hạn chế hoặc mã định danh SHHS.
+Tác giả xác nhận đã xin được quyền truy cập SHHS qua NSRR và, theo xác nhận của tác giả, phân tích thứ cấp dữ liệu đã khử định danh không cần xét duyệt đạo đức tại đơn vị áp dụng; báo cáo không nêu mã phê duyệt. Nghiên cứu nhận khoảng 6.000.000 VND hỗ trợ sinh viên từ Trường Đại học Công nghệ Thông tin, Đại học Quốc gia Thành phố Hồ Chí Minh; hai tác giả tuyên bố không có xung đột lợi ích. Repository mã nguồn công khai là \url{https://github.com/quanuiter/SleepTCN}; đường truy cập dữ liệu gốc và phạm vi chia sẻ được nêu ở mục Tình trạng dữ liệu dẫn xuất phía trên.
 
-OpenAI Codex chỉ hỗ trợ biên tập, tổ chức nội dung, kiểm tra nhất quán với code/artifact và dựng hình từ các tổng hợp số liệu đã lưu; không huấn luyện thêm mô hình hoặc tạo dữ liệu thực nghiệm. Tác giả không dùng công cụ AI nào khác, hai tác giả đã đọc và duyệt bản cuối và chịu trách nhiệm về nội dung trước công bố.
+Sleep Heart Health Study được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and Blood Institute: U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360, U01HL53938, U01HL53940, U01HL53941 và U01HL63463. National Sleep Research Resource được hỗ trợ bởi National Heart, Lung, and Blood Institute (R24 HL114473 và 75N92019R002).
+
+OpenAI Codex chỉ hỗ trợ biên tập, tổ chức nội dung, kiểm tra nhất quán với code/artifact, viết mã dựng các biểu đồ có thể tái lập từ các tổng hợp số liệu đã lưu và soạn sơ đồ quy trình xử lý nguyên bản bằng TikZ cho bản thảo tiếng Anh. Sơ đồ này chỉ minh họa luồng xử lý và mô hình, không mô tả các dạng sóng đo được. Các hỗ trợ này không huấn luyện thêm mô hình hoặc tạo dữ liệu thực nghiệm. Tác giả không dùng công cụ AI nào khác, hai tác giả đã đọc và duyệt bản cuối và chịu trách nhiệm về nội dung trước công bố.
+\par\endgroup

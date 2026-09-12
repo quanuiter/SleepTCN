@@ -53,7 +53,8 @@
 \title{\textbf{Lựa chọn kiến trúc và tiền xử lý khi chuyển bộ dữ liệu trong phân giai đoạn giấc ngủ từ EEG đơn kênh: Đánh giá có kiểm soát trên Sleep-EDF và SHHS1}\\[0.55em]
 \large Architecture and Preprocessing Choices under Dataset Shift in Single-Channel EEG Sleep Staging: A Controlled Evaluation on Sleep-EDF and SHHS1}
 \author{Ngô Nhật Quân\thanks{Tác giả chính và tác giả liên hệ: \texttt{23521258@gm.uit.edu.vn}} \and Phạm Thái Sơn\\
-\small Trường Đại học Công nghệ Thông tin, Đại học Quốc gia TP. Hồ Chí Minh}
+\small Trường Đại học Công nghệ Thông tin, Đại học Quốc gia TP. Hồ Chí Minh\\
+\small Khu phố 34, phường Linh Xuân, Thành phố Hồ Chí Minh, Việt Nam}
 \date{Bản thảo nghiên cứu, tháng 9 năm 2026}
 
 \begin{document}
@@ -277,7 +278,7 @@ REM & 0,827439 & 0,841339 & 0,834331 & 0,822702 & 0,819741 & 0,821219 & +0,01311
 \end{tabular}}
 \end{table}
 
-N1 là lớp khó nhất của E3. Chênh lệch lớn nhất nằm ở N3, trong khi các lớp còn lại cải thiện ở mức nhỏ hơn. Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N2$\rightarrow$N1 (5.496), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N3$\rightarrow$N2 (2.377) và REM$\rightarrow$N2 (1.984). Các số đếm này chỉ mô tả cấu trúc sai số của mẫu Sleep-EDF.
+N1 là lớp khó nhất của E3. Chênh lệch F1 lớn nhất nằm ở N3, trong khi các lớp còn lại cải thiện ở mức nhỏ hơn. Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N2$\rightarrow$N1 (5.496), N1$\rightarrow$N2 (4.867), W$\rightarrow$N1 (3.888), N1$\rightarrow$W (3.283) và N2$\rightarrow$REM (2.432). Các số đếm này chỉ mô tả cấu trúc sai số của mẫu Sleep-EDF.
 
 \begin{table}[t]
 \centering
@@ -468,7 +469,7 @@ REM & 0,605237 & 0,893923 & 0,721785 & 0,488616 & 0,944976 & 0,644158 & +0,07762
 \end{tabular}}
 \end{table}
 
-Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N3$\rightarrow$N2 (16.674), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N1$\rightarrow$REM (1.717). Đối chiếu cùng mẫu cho thấy E0 cũng gán 16.480/22.806 epoch N3 thành N2, tương ứng 72,3\%, và có recall N3 0,2610 so với 0,2582 của E3. Vì vậy, lỗi N3$\rightarrow$N2 tái diễn ở cả hai họ kiến trúc: E3 cải thiện hiệu năng tổng thể và có precision N3 cao hơn (0,9440 so với 0,9007), nhưng chưa khắc phục việc bỏ sót N3.
+Trong ma trận nhầm lẫn E3, các cặp sai số lớn nhất là N3$\rightarrow$N2 (16.674), N2$\rightarrow$REM (11.605), N2$\rightarrow$N1 (5.947), W$\rightarrow$N1 (4.481) và N2$\rightarrow$W (2.348). Đối chiếu cùng mẫu cho thấy E0 cũng gán 16.480/22.806 epoch N3 thành N2, tương ứng 72,3\%, và có recall N3 0,2610 so với 0,2582 của E3. Vì vậy, lỗi N3$\rightarrow$N2 tái diễn ở cả hai họ kiến trúc: E3 cải thiện hiệu năng tổng thể và có precision N3 cao hơn (0,9440 so với 0,9007), nhưng chưa khắc phục việc bỏ sót N3.
 
 Trong kiểm tra hậu nghiệm dùng cùng định nghĩa vùng lân cận thay đổi nhãn, \mf\ của E0/E3 tại vùng lân cận so với vùng ổn định là 0,6179/0,6321 so với 0,8175/0,8346 trên Sleep-EDF, và 0,4323/0,4689 so với 0,5959/0,6220 trên SHHS1. Recall N3 tương ứng là 0,6121/0,6326 so với 0,9216/0,9316 trên Sleep-EDF, nhưng chỉ 0,0633/0,0733 so với 0,4008/0,3900 trên SHHS1. Kết quả cùng hướng khi chỉ giữ các thay đổi nhãn có ít nhất ba epoch liên tiếp cùng nhãn ở mỗi phía. Thiếu N3 vì vậy không giới hạn ở vùng ranh giới và vẫn hiện diện rõ trong các vùng nhãn ổn định của SHHS1.
 
@@ -512,7 +513,7 @@ REM & 655 & 784 & 1.311 & 1 & 23.183 \\
 
 E1--E0 trên SHHS đạt $+0,00651$ \mf\ theo đối tượng, \ci\ $[0,00192;0,01087]$, $p_{Holm}=0,00325$ và thắng/hòa/thua 108/0/72. Đây là lợi ích nhỏ của cấu hình TCN cùng lịch huấn luyện tương ứng khi giữ bộ trích đặc trưng E0. E2--E1 đạt $-0,01280$, \ci\ $[-0,02209;-0,00350]$, $p_{Holm}=0,01005$ và 80/0/100; gói ResNet-1D 128 chiều chỉ dùng epoch hiện tại không vượt gói CNN C/P/N 75 chiều trên tín hiệu SHHS chưa lọc dải. Vì toàn bộ gói đặc trưng/ngữ cảnh thay đổi, chênh lệch này không thể quy riêng cho encoder.
 
-Đối chiếu hậu nghiệm E3--E2, cùng họ ResNet-1D--TCN và lịch huấn luyện nhưng khác chế độ tiền xử lý, cho $+0,04750$ \mf\ theo đối tượng, \ci\ $[0,03724;0,05792]$, Wilcoxon $p=2,35\times10^{-17}$ và thắng/hòa/thua 147/0/33. F1 N1 tăng 0,06183 và \mf\ vùng chuyển pha tăng 0,04700. Đây là chênh lệch cấu hình lớn nhất quan sát được trên mẫu SHHS1.
+Đối chiếu hậu nghiệm E3--E2, cùng họ ResNet-1D--TCN và lịch huấn luyện nhưng khác chế độ tiền xử lý, cho $+0,04750$ \mf\ theo đối tượng, \ci\ $[0,03724;0,05792]$, Wilcoxon $p=2,35\times10^{-17}$ và thắng/hòa/thua 147/0/33. F1 N1 tăng 0,06183 và \mf\ vùng chuyển pha tăng 0,04700. Đây là chênh lệch Macro-F1 trung bình theo đối tượng lớn nhất trong các đối chiếu cấu hình SHHS1 được báo cáo.
 
 Một phân tích mở rộng sử dụng checkpoint seed 123 của cả năm cấu hình để đánh giá E4, chỉ sử dụng lọc dải, trên cùng mẫu SHHS1. E4 đạt \mf\ theo đối tượng 0,5732, \mf\ gộp 0,6147, accuracy 0,7064, $\kappa=0,5869$ và F1 N1 0,3492. So với E2 cùng seed, chênh lệch \mf\ theo đối tượng là $+0,03232$, CI 95\% $[0,02365;0,04104]$, Wilcoxon--Holm $p=7,40\times10^{-13}$ và thắng/hòa/thua 135/1/44. E4 cũng cao hơn E3 cùng seed 0,00982, CI $[0,00730;0,01250]$ và $p_{Holm}=1,89\times10^{-10}$. Các đối chiếu này được xem là bằng chứng thứ cấp vì thực hiện sau khi mẫu SHHS1 đã được mở.
 
@@ -538,7 +539,7 @@ Oracle sửa N3$\rightarrow$N2 trong ma trận E3 nâng Macro-F1 SHHS1 từ 0,60
 
 Silhouette E2 thấp hơn E1 chỉ cho thấy các cụm Euclid kém tách biệt hơn trong pipeline phân tích đã dùng, không chứng minh biểu diễn E2 kém hữu ích cho dự đoán chuỗi. Ablation huấn luyện lại TCN chưa phát hiện lợi ích tăng thêm có ý nghĩa của các nhóm P/N; kết quả không thiết lập tương đương hoặc phủ định ngữ cảnh thời gian nói chung.
 
-Nghiên cứu gồm hai seed cố định và một hướng chuyển tới mẫu 180 người SHHS1. Các phân tích thành phần và vùng nhãn hậu nghiệm không phải xác nhận độc lập. Các cohort khác đồng thời về quần thể, montage, thiết bị và thực hành chấm, nên nghiên cứu định vị lỗi mà chưa xác định nguyên nhân. Mô hình hai chiều/không nhân quả và lọc tiến--lùi chỉ phù hợp với đánh giá ngoại tuyến; thời gian forward không phải độ trễ ra quyết định trực tuyến.
+Nghiên cứu gồm hai seed cố định và một hướng chuyển tới mẫu 180 người SHHS1. Các phân tích thành phần và vùng nhãn hậu nghiệm không phải xác nhận độc lập. Nghiên cứu không thực hiện phân tích hiệu năng phân tầng theo giới tính hoặc giới (sex/gender), nên chưa đánh giá được mức độ nhất quán của các kết quả giữa các nhóm này. Các cohort khác đồng thời về quần thể, montage, thiết bị và thực hành chấm, nên nghiên cứu định vị lỗi mà chưa xác định nguyên nhân. Mô hình hai chiều/không nhân quả và lọc tiến--lùi chỉ phù hợp với đánh giá ngoại tuyến; thời gian forward không phải độ trễ ra quyết định trực tuyến.
 
 Một kiểm chứng tiếp theo có thể lặp lại mẫu lỗi trên cohort chưa xem hoặc trên đối chứng mạnh dưới cùng giao thức. Nếu đánh giá biện pháp khắc phục N3, cần tách tập thích nghi/validation khỏi test và báo đồng thời recall, precision, false-positive N3, ảnh hưởng lên N2 và hiệu năng ở cả vùng lân cận lẫn vùng ổn định. Dữ liệu hiện tại chưa chứng minh chiến lược thu nhãn nào tối ưu, cũng chưa so sánh hiệu quả của calibration hoặc fine-tuning.
 
@@ -550,11 +551,11 @@ Trên SHHS1, E0/E3 cùng gán hơn 72\% N3 thành N2 dù E3 có điểm tổng t
 
 \subsection*{Khả năng tái lập và tính sẵn có dữ liệu}
 
-Mã nguồn, giao thức, phép chia và các tổng hợp kết quả được lưu trong kho dự án tại \url{https://github.com/quanuiter/SleepTCN}. Snapshot lịch sử \texttt{configs/shhs\_zero\_shot\_v1.json} khớp hash protocol ghi trong run manifest SHHS gốc; hồ sơ mở rộng sau chạy được giữ riêng. Việc khớp hash xác nhận danh tính artifact, không thay thế tái huấn luyện hoặc tái sinh dự đoán độc lập. Sleep-EDF Expanded được cung cấp qua PhysioNet; tác giả xác nhận đã xin được quyền truy cập SHHS qua NSRR cho phân tích này. Bản thảo không công bố dữ liệu hạn chế hoặc mã định danh SHHS.
+Mã nguồn, giao thức, phép chia và các tổng hợp kết quả được lưu trong kho dự án công khai tại \url{https://github.com/quanuiter/SleepTCN}. Snapshot lịch sử \texttt{configs/shhs\_zero\_shot\_v1.json} khớp hash protocol ghi trong run manifest SHHS gốc; hồ sơ mở rộng sau chạy được giữ riêng. Việc khớp hash xác nhận danh tính artifact, không thay thế tái huấn luyện hoặc tái sinh dự đoán độc lập. Sleep-EDF Expanded có thể truy cập công khai qua PhysioNet (\url{https://physionet.org/content/sleep-edfx/1.0.0/}); quyền truy cập Sleep Heart Health Study được quản lý qua NSRR (\url{https://sleepdata.org/datasets/shhs/pages}) và tác giả xác nhận đã xin được quyền truy cập cho phân tích này. Kho công khai và bộ bài nộp chỉ chứa mã nguồn, giao thức, phép chia và các tổng hợp kết quả; không chứa dữ liệu cấp người tham gia SHHS, mã định danh hoặc dự đoán cấp người tham gia.
 
 \subsection*{Đạo đức và quyền sử dụng dữ liệu}
 
-Phân tích sử dụng dữ liệu nghiên cứu sẵn có và không tuyển người tham gia mới. Tác giả xác nhận đã xin được quyền truy cập SHHS qua NSRR cho phân tích này và xác nhận rằng phân tích thứ cấp dữ liệu đã khử định danh không cần xét duyệt đạo đức tại đơn vị áp dụng; không có mã phê duyệt được nêu.
+Phân tích sử dụng dữ liệu nghiên cứu sẵn có và không tuyển người tham gia mới. Tác giả xác nhận đã xin được quyền truy cập SHHS qua NSRR cho phân tích này; theo xác nhận của tác giả, phân tích thứ cấp dữ liệu đã khử định danh không cần xét duyệt đạo đức tại đơn vị áp dụng. Báo cáo không nêu mã phê duyệt.
 
 \subsection*{Tài trợ}
 
@@ -563,7 +564,7 @@ Nghiên cứu nhận khoảng 6.000.000 VND hỗ trợ sinh viên từ Trường
 
 \subsection*{Lời cảm ơn}
 
-Nghiên cứu sử dụng Sleep-EDF Expanded do PhysioNet phân phối và dữ liệu Sleep Heart Health Study qua National Sleep Research Resource. Tác giả xác nhận đã xin được quyền truy cập SHHS qua NSRR cho phân tích này; mọi acknowledgement bắt buộc của nguồn dữ liệu sẽ được giữ trong bản nộp. Các tác giả trân trọng cảm ơn Nguyễn Hồ Duy Trí đã hướng dẫn học thuật, định hướng đề tài nghiên cứu và góp ý xây dựng cho các phiên bản trước của bản thảo.
+Nghiên cứu sử dụng Sleep-EDF Expanded do PhysioNet phân phối và dữ liệu Sleep Heart Health Study qua National Sleep Research Resource. Sleep Heart Health Study được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and Blood Institute: U01HL53916, U01HL53931, U01HL53934, U01HL53937, U01HL64360, U01HL53938, U01HL53940, U01HL53941 và U01HL63463. National Sleep Research Resource được hỗ trợ bởi National Heart, Lung, and Blood Institute (R24 HL114473 và 75N92019R002). Các tác giả trân trọng cảm ơn Nguyễn Hồ Duy Trí đã hướng dẫn học thuật, định hướng đề tài nghiên cứu và góp ý xây dựng cho các phiên bản trước của bản thảo.
 
 \subsection*{Đóng góp của tác giả (CRediT)}
 
@@ -575,7 +576,7 @@ Hai tác giả tuyên bố không có xung đột lợi ích.
 
 \subsection*{Sử dụng công cụ AI trong chuẩn bị bản thảo}
 
-OpenAI Codex hỗ trợ chỉnh sửa câu chữ, tổ chức nội dung, đối chiếu báo cáo với code/artifact và viết mã dựng hình tiếng Anh từ các tổng hợp số liệu đã lưu. Lượt chỉnh sửa này không huấn luyện thêm mô hình hoặc tạo dữ liệu thực nghiệm mới. Tác giả xác nhận không dùng công cụ AI nào khác cho việc chuẩn bị bản thảo. Hai tác giả đã đọc và duyệt bản cuối; trách nhiệm đối với nội dung thuộc về các tác giả.
+OpenAI Codex hỗ trợ chỉnh sửa câu chữ, tổ chức nội dung, đối chiếu báo cáo với code/artifact, viết mã dựng các biểu đồ có thể tái lập từ các tổng hợp số liệu đã lưu và soạn sơ đồ quy trình xử lý nguyên bản bằng TikZ cho bản thảo tiếng Anh. Sơ đồ này chỉ minh họa luồng xử lý và mô hình, không mô tả các dạng sóng đo được. Các hỗ trợ này không huấn luyện thêm mô hình hoặc tạo dữ liệu thực nghiệm mới. Tác giả xác nhận không dùng công cụ AI nào khác cho việc chuẩn bị bản thảo. Hai tác giả đã đọc và duyệt bản cuối; trách nhiệm đối với nội dung thuộc về các tác giả.
 
 \renewcommand{\refname}{Tài liệu tham khảo}
 \begingroup

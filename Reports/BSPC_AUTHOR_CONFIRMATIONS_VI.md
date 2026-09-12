@@ -1,6 +1,9 @@
 # Những việc Quân cần xác nhận trước khi nộp BSPC
 
-Cập nhật 06-09-2026. Đây là phần thông tin tác giả/hồ sơ nộp, **không phải yêu cầu chạy thêm thí nghiệm**. Các xác nhận mới nhất đã được đưa vào bản thảo; trước khi upload chỉ cần đối chiếu lại văn bản của đơn vị và chốt revision/release của repository.
+Cập nhật kiểm tra 11-09-2026. Nội dung dưới đây lưu thông tin tác giả đã cung cấp trước đó,
+không phải xác minh độc lập mọi khai báo. Các việc còn cần xác nhận được liệt kê đầy đủ trong
+`BSPC_SUBMISSION_CHECKLIST_20260911.md`, gồm căn cứ ethics, vai trò CRediT thực tế, đồng ý của
+người được cảm ơn, nguồn hình và yêu cầu portal. Đây không phải yêu cầu chạy thêm thí nghiệm.
 
 ## 1. Tên và đóng góp của tác giả
 
@@ -44,7 +47,8 @@ Hiện đã có mã, protocol snapshots, aggregate kết quả và `Reports/ARTI
 - GitHub có thể dùng làm repository nếu link truy cập được và nội dung không chứa dữ liệu SHHS hạn chế, subject IDs hoặc prediction cấp cá thể. Chọn repository hoặc archive người phản biện truy cập được; xác nhận với đồng tác giả những gì được phép đưa lên.
 - Ghi version/commit/release thật và license do chủ sở hữu chấp thuận; model không tự cấp license hoặc tự public kho mã.
 - Có thể tách mã/aggregate công bố được khỏi dữ liệu SHHS hạn chế. Việc thiếu quyền chia sẻ raw data phải được giải thích, không che bằng câu “fully reproducible”.
-- Nếu journal yêu cầu ẩn danh, cách cung cấp archive phải phù hợp với review mode thực tế; chưa được giả định BSPC dùng mode nào trong lượt này.
+- BSPC dùng single-anonymized review theo Guide for Authors đã được tác giả gửi ngày 11-09-2026;
+  giữ tên tác giả trong manuscript.
 
 ## 7. Khai báo AI
 
@@ -54,13 +58,17 @@ Không có công cụ AI nào khác được dùng cho việc chuẩn bị bản
 
 ## 8. Kiểm tra yêu cầu BSPC trong cổng nộp
 
-[Guide for Authors chính thức](https://www.sciencedirect.com/journal/biomedical-signal-processing-and-control/publish/guide-for-authors) trả HTTP 403 trong môi trường chỉnh bài. Vì vậy các mục sau vẫn cần bạn mở trực tiếp hoặc gửi nội dung hướng dẫn:
+Đã đọc đủ PDF 22 trang của Guide for Authors do tác giả gửi ngày 11-09-2026.
+Việc trang web trả HTTP 403 trước đó không còn ngăn việc đối chiếu guide.
 
-- Loại bài, abstract format/giới hạn, keywords, word limit và những phần được tính.
-- Review ẩn danh hay không, title page, line numbering và template/file nguồn chấp nhận.
-- Supplement, dữ liệu/mã, cover letter, highlights và graphical abstract có bắt buộc không.
-- Hướng dẫn chung của Elsevier: highlights có 3–5 bullet, mỗi bullet không quá 85 ký tự kể cả khoảng trắng; nguồn hiện có 4 bullet đã kiểm tra độ dài. Chuẩn bị Word nếu yêu cầu upload áp dụng. [Elsevier Highlights](https://www.elsevier.com/researcher/author/tools-and-resources/highlights).
-- Không coi 5.000 từ hay một template cụ thể là điều kiện bắt buộc khi chưa đối chiếu hướng dẫn hiện hành.
+- Abstract dưới 250 từ; keywords 1–7; full paper thông thường khoảng 5.000 từ, không phải giới hạn cứng.
+- Review single-anonymized; cung cấp tên tác giả và địa chỉ bưu chính đầy đủ; LaTeX là nguồn hợp lệ.
+- Highlights bắt buộc, file editable riêng, 3–5 ý, mỗi ý tối đa 85 ký tự; graphical abstract khuyến khích.
+- Hoàn thành declarations tool và upload file Word xuất từ công cụ, kể cả khi không có competing interests.
+- Supplement nộp đồng thời, có dẫn chiếu và mô tả file; nhà xuất bản không dàn trang lại supplement.
+- Research data theo Option C: cung cấp repository/citation/link hoặc lý do không thể chia sẻ;
+  quyền truy cập NSRR không tự cho phép phân phối lại dữ liệu.
+- Vẫn cần kiểm tra các trường và loại file thực tế trên portal khi upload.
 
 ## 9. Có cần thêm số liệu không?
 

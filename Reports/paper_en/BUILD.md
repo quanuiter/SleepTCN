@@ -1,11 +1,20 @@
 # Building the English manuscript
 
+Current editorial checklist (11 September 2026): `../BSPC_SUBMISSION_CHECKLIST_20260911.md`.
+The author-supplied 22-page BSPC Guide for Authors has now been reviewed. The current bundle uses
+an editable TikZ pipeline schematic rather than the former low-resolution PNG, and includes
+figure-level AI assistance disclosure. `SUBMISSION_BUILD.md` describes the current upload items.
+The delivery notes below dated 06 September are historical. Build all current delivery files with
+`powershell -File scripts/rebuild_bspc_delivery.ps1` from the repository root. This does not train
+models. Commit `f7c22e7` identifies an archived repository snapshot, not a newly verified execution
+revision. Author declarations still require the confirmations in the current checklist.
+
 For the 06 September 2026 delivery, see `../BSPC_FINAL_READINESS_REPORT.md` and
 `../BSPC_AUTHOR_CONFIRMATIONS_VI.md`. The independently build-checked source ZIP is
 `../output/source/SleepTCN_BSPC_Manuscript_Source.zip`; its build instructions are in
-`SUBMISSION_BUILD.md`. The author confirmations have been incorporated. The experimental source and
-provenance records cited in the manuscript are fixed at commit `f7c22e7`; push the final editorial
-revision before submission.
+`SUBMISSION_BUILD.md`. Author-supplied declarations have been incorporated, with outstanding
+verification listed in the current checklist. Commit `f7c22e7` is the archived repository snapshot
+cited by the manuscript; push and separately identify the final editorial revision before submission.
 
 From `Reports/paper_en`, build the supplement first so that the manuscript can import its table
 labels through `xr-hyper`:

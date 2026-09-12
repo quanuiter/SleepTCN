@@ -1,5 +1,15 @@
 # Bàn giao bản sửa chuẩn bị nộp BSPC
 
+> **Cập nhật 11-09-2026:** nội dung bàn giao 06-09 bên dưới là hồ sơ lịch sử, không mô tả
+> bộ nộp hiện hành. Lượt sửa 11-09 xử lý lệch source/PDF/ZIP và diễn giải quá mạnh trong
+> figure/context analysis. Xem `BSPC_SUBMISSION_CHECKLIST_20260911.md` cho các xác nhận
+> còn thiếu. Không coi trạng thái “hoàn tất”, số trang hoặc hash cũ là chứng nhận sẵn sàng Submit.
+
+> **Lượt đối chiếu guide:** đã đọc bản PDF 22 trang do tác giả cung cấp. Yêu cầu cơ bản đã
+> được đối chiếu; không còn chờ truy cập trang ScienceDirect. Các mục cần xác nhận vẫn gồm
+> vai trò tài trợ, CRediT thực tế, căn cứ ethics, sự đồng ý của người được cảm ơn và file xuất từ
+> declarations tool. Xem checklist hiện hành; phần kỹ thuật lịch sử bên dưới không thay thế lượt build mới.
+
 Ngày kiểm tra cuối: **06-09-2026**. Baseline: `1710c49fe529f7d498598ad25ff108163f3e6f06`.
 Các thay đổi hiện nằm trong working tree; chưa tạo commit/release hoặc nộp bài.
 
