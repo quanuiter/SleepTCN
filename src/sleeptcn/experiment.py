@@ -518,12 +518,13 @@ def train_sequence_model(
         raise ValueError("train_sequences must not be empty")
     cfg = sequence_component_config(context.config, kind)
     feature_dim = train_sequences[0].features.shape[1]
+    # Model initialization must not inherit RNG state from encoder training/cache work.
+    seed_everything(context.seed)
     model = build_sequence_model(context.config, kind, input_dim=feature_dim)
     learning_rate = cfg["learning_rate"]
     batch_size = cfg["batch_size_records"]
     max_epochs = cfg["max_epochs"]
     patience = cfg["early_stopping_patience_validations"]
-    seed_everything(context.seed)
     generator = torch.Generator().manual_seed(context.seed)
     train_loader = _loader(
         FeatureSequenceDataset(train_sequences),

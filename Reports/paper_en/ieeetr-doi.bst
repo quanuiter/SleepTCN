@@ -16,7 +16,7 @@
 %   12/ 8/10    (OP&HWT) Clarify license.
 %
 % Local derivative for this manuscript: retains IEEE numeric ordering and emits
-% DOI fields as clickable doi.org links when a DOI is present.
+% DOI/URL links and article identifiers; titles retain protected proper nouns.
 
 ENTRY
   { address
@@ -25,6 +25,7 @@ ENTRY
     chapter
     doi
     edition
+    eid
     editor
     howpublished
     institution
@@ -40,6 +41,7 @@ ENTRY
     series
     title
     type
+    url
     volume
     year
   }
@@ -260,7 +262,13 @@ FUNCTION {format.editors}
 FUNCTION {format.title}
 { title empty$
     { "" }
-    { "``" title "t" change.case$ * ",''" * }
+    { "``" title "t" change.case$ *
+      title #-1 #1 substring$ "?" =
+      title #-1 #1 substring$ "!" = or
+        { "''" * }
+        { ",''" * }
+      if$
+    }
   if$
 }
 
@@ -315,7 +323,11 @@ FUNCTION {format.date}
 
 FUNCTION {format.doi}
 { doi empty$
-    { "" }
+    { url empty$
+        { "" }
+        { "Available at: \url{" url * "}" * }
+      if$
+    }
     { "doi: \url{https://doi.org/" doi * "}" * }
   if$
 }
@@ -409,6 +421,13 @@ FUNCTION {format.pages}
         { "p.~" pages * }
       if$
     }
+  if$
+}
+
+FUNCTION {format.article.locator}
+{ eid empty$
+    { format.pages }
+    { "Art.~no.~" eid * }
   if$
 }
 
@@ -598,11 +617,11 @@ FUNCTION {article}
         { format.number output }
         'skip$
       if$
-      format.pages output
+      format.article.locator output
       format.date "year" output.check
     }
     { format.article.crossref output.nonnull
-      format.pages output
+      format.article.locator output
     }
   if$
   new.block

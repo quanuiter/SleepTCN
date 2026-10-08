@@ -1,0 +1,117 @@
+{
+  "status": "prepared_not_launched_requires_upload_consent_runtime_and_runner_preflight",
+  "purpose": "Compare full-source ADAST with matched source-only; compare final-epoch adaptation effects across learning budgets.",
+  "seed": 123,
+  "completed_folds_reused": [
+    0,
+    1
+  ],
+  "folds_to_train": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "arms": [
+    "source_only_full_source",
+    "adast_full_source"
+  ],
+  "rounds": 2,
+  "epochs_per_round": 15,
+  "batch_size": 128,
+  "limited_steps_per_epoch": 38,
+  "source_loss_weights_by_round": [
+    1,
+    0.1
+  ],
+  "target_loss_weights_by_round": [
+    0,
+    0.01
+  ],
+  "adversarial_weight": 1,
+  "similarity_weight": 0.001,
+  "optimizer": {
+    "name": "Adam",
+    "lr": 0.001,
+    "betas": [
+      0.5,
+      0.99
+    ],
+    "weight_decay": 0.0003
+  },
+  "scheduler": "joint optimizer groups x0.1 after epoch10 round0; discriminator LR unchanged",
+  "sampling": "whole source train per epoch; retain last partial batch; cycle first4864 of seeded target permutation",
+  "source_sampling_seed": "123 + global_epoch_zero_based",
+  "target_sampling_seed": "123 + 10000 + global_epoch_zero_based",
+  "base_runner_sha256": "fd6071fa77fc463e25890f34350ad1a22fc946bd9e37a95fe2d801a984a3b204",
+  "required_torch": "2.11.0+cu130",
+  "backend": "CUDA_float32_deterministic_no_tf32",
+  "adaptation_subjects": 5,
+  "adaptation_epochs": 4989,
+  "checkpoint_primary": "final_epoch30_for_both_budgets",
+  "checkpoint_secondary": "strict_maximum_source_attention_source_validation_macro_f1_first_tie",
+  "no_target_score_based_checkpoint_or_configuration_choice": true,
+  "paired_budget_contrast": "(ADAST_full - source_only_full) - (ADAST_limited - source_only_limited), final_epoch30_only, same participant resampling",
+  "max_seconds": 18000,
+  "cpu_training_fallback": false,
+  "automatic_restart": false,
+  "automatic_continuation": false,
+  "target_test_data_upload": false,
+  "target_labels_upload": false,
+  "remaining_fold_sizes": [
+    {
+      "fold": 2,
+      "train_epochs": 152192,
+      "validation_epochs": 19396,
+      "updates_per_model": 35670
+    },
+    {
+      "fold": 3,
+      "train_epochs": 156616,
+      "validation_epochs": 19457,
+      "updates_per_model": 36720
+    },
+    {
+      "fold": 4,
+      "train_epochs": 158698,
+      "validation_epochs": 17314,
+      "updates_per_model": 37200
+    },
+    {
+      "fold": 5,
+      "train_epochs": 156997,
+      "validation_epochs": 21158,
+      "updates_per_model": 36810
+    },
+    {
+      "fold": 6,
+      "train_epochs": 153349,
+      "validation_epochs": 20962,
+      "updates_per_model": 35970
+    },
+    {
+      "fold": 7,
+      "train_epochs": 155344,
+      "validation_epochs": 19163,
+      "updates_per_model": 36420
+    },
+    {
+      "fold": 8,
+      "train_epochs": 160437,
+      "validation_epochs": 15869,
+      "updates_per_model": 37620
+    },
+    {
+      "fold": 9,
+      "train_epochs": 160094,
+      "validation_epochs": 19506,
+      "updates_per_model": 37530
+    }
+  ],
+  "projected_training_validation_seconds": 14632.391177285253,
+  "projected_with_20_percent_reserve_seconds": 17558.869412742304
+}

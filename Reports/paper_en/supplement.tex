@@ -8,15 +8,18 @@
 \newcommand{\mf}{\ensuremath{\mathrm{macro\text{-}F1}}}
 \newcommand{\ci}{95\% CI}
 \title{Supplementary Material\\\large Architecture and Preprocessing Choices under Dataset Shift in Single-Channel EEG Sleep Staging: A Controlled Evaluation on Sleep-EDF and SHHS1}
-\author{Ngo Nhat Quan and Pham Thai Son}
+\author{Ngo Nhat Quan, Pham Thai Son, Tri Nguyen Ho Duy and Tri Nguyen}
+\hypersetup{pdfauthor={Ngo Nhat Quan; Pham Thai Son; Tri Nguyen Ho Duy; Tri Nguyen}}
 \date{}
 
 \begin{document}
 \maketitle
 
-This supplement contains implementation details and descriptive tables moved from the main manuscript.
-The evidence labels are unchanged: seed 42 is primary, seed 123 is a post-protocol sensitivity repeat,
+This supplement provides model specifications, training settings and supporting statistical analyses.
+Seed 42 is primary, seed 123 is a post-protocol sensitivity repeat,
 SHHS1 E1/E2 analyses are secondary on an opened cohort, and SHHS1 E3--E2/E4 analyses are post-hoc.
+The E4 extension now includes both seeds 42 and 123 on that same cohort; seed-specific results
+are kept separate and do not alter the original primary comparison family.
 E6 estimates mean and standard deviation from each complete unlabelled target recording; it is label-free
 but transductive at recording level, not purely inductive zero-shot inference.
 
@@ -178,6 +181,19 @@ measurements characterise offline computation, not the time until future EEG nee
 bidirectional model becomes available. Training-and-validation wall-clock times additionally
 depend on the recipes and stopping rules in Table~\ref{tab:sup_training}.
 
+\subsection*{Statistical implementation}
+
+Bootstrap samples draw subjects with replacement and use the same sampled subjects for both
+configurations, retaining all nights of each sampled subject. The 95\% percentile interval uses
+the 2.5th and 97.5th percentiles of 10,000 paired resamples. The primary Sleep-EDF analysis uses
+bootstrap seed 2026; context analyses use 2028, and the SHHS1 E1/E2 and E3--E2 extensions use
+2031 and 2032, respectively. Each analysis retains its archived seed and comparison family.
+Two-sided Wilcoxon tests use \texttt{zero\_method="wilcox"}, excluding zero differences from
+ranking, no continuity correction and automatic selection of the calculation method. If all paired
+differences are zero, the implementation returns $p=1$. Holm correction applies to Wilcoxon
+$p$-values within each stated family, not to the percentile intervals. Non-significance is not
+interpreted as equivalence between configurations.
+
 \section*{Supplementary results}
 
 \begin{table}[H]
@@ -303,6 +319,31 @@ E4--E2 & +.0323 & [.0236, .0410] & $7.40\times10^{-13}$ & 135/1/44 \\
 E3--E4 & -.0098 & [$-.0125$, $-.0073$] & $1.89\times10^{-10}$ & 56/1/123 \\
 E3--E6 & +.0131 & [.0023, .0239] & .0085 & 111/0/69 \\
 E3--E0 & +.0331 & [.0225, .0438] & $5.19\times10^{-9}$ & 131/0/49 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Additional E4--E3 comparisons on the same 180 SHHS1 participants and 169,012 labelled
+epochs. Every result uses the mean probabilities of all ten source-fold models at its stated seed.
+Intervals are paired subject-cluster percentile bootstrap intervals (10,000 resamples, bootstrap
+seed 2031), not intervals over training seeds. E4 seed 42 was newly inferred from historical
+checkpoints; its E3 control and both seed-123 results are verified archived predictions.
+The original seed-123 Holm analysis remains in Table~\ref{tab:sup_shhs_seed123_paired}; no new
+seed-42 $p$-value is added to the primary comparison family.}
+\label{tab:sup_e4_two_seeds}
+\begin{tabular}{llrrrr}
+\toprule
+Seed & Model & Subject-mean \mf & Pooled \mf & N3 recall & N3 F1 \\
+\midrule
+42 & E3 & .5680 & .6099 & .2582 & .4055 \\
+42 & E4 & .5811 & .6234 & .2728 & .4233 \\
+123 & E3 & .5634 & .6031 & .2410 & .3840 \\
+123 & E4 & .5732 & .6147 & .2591 & .4068 \\
+\midrule
+\multicolumn{2}{l}{E4--E3, seed 42} & +.0131 & \multicolumn{3}{l}{\ci\ [.0111, .0153] for subject-mean difference} \\
+\multicolumn{2}{l}{E4--E3, seed 123} & +.0098 & \multicolumn{3}{l}{\ci\ [.0073, .0125] for subject-mean difference} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -492,8 +533,9 @@ CPN & .780230 & +.002753 & .620055 & +.000953 & .5115 \\
 
 For the protocol-specified CPN--C boundary comparison, $\Delta\mf=0.000953$, \ci\
 $[-0.004588,0.006568]$ and Holm $p=1.000$ (36/78 subjects improved). Secondary CPN--CP and CPN--CN
-intervals also include zero with Holm $p=1.000$. The result does not show that temporal context or P/N
-information is useless; it only finds no detectable marginal benefit for this encoding in E1.
+intervals also include zero with Holm $p=1.000$. These comparisons did not detect an incremental
+boundary-performance benefit from the explicit P/N feature groups under the E1 recipe. The TCN
+continues to use temporal context across the sequence in every condition.
 
 \begin{figure}[H]
 \centering
@@ -512,13 +554,683 @@ Plots were drawn from archived aggregates using repository code with OpenAI Code
 \label{fig:sup_representation_context}
 \end{figure}
 
+\section*{Supplementary Methods S2: additional intervention experiments}
+\label{sec:sup_interventions}
+
+These experiments address errors observed in the original SHHS1 evaluation. They use the same
+180 test participants. Model selection uses source validation, and adaptation uses unlabelled
+target data. All target recordings are processed in full, without annotation-based
+windowing, before applying the historical scoring mask (169,012 labelled epochs from 183,528
+inferred epochs). Every contrast uses a control with the same inference context. In particular,
+the unmodified full-record E3 control is not interchangeable with the historical trimmed-context
+E3 ensemble. We report 10,000 paired participant-bootstrap resamples (seed 2031), with marginal
+95\% intervals, separately from the primary Holm families. These intervals condition on the fitted
+models and do not incorporate training variability.
+
+\subsection*{Temperature scaling and prior correction: ten-fold ensemble}
+
+For each seed-123 E3 fold, a positive temperature is fitted by minimising negative log-likelihood
+on that fold's archived source-validation predictions, with bounds $[0.05,20]$. This validation
+set was also used for historical checkpoint selection. The source prior is the mean calibrated
+validation posterior. EM estimates a target prior from 4,989 full-record epochs of five fixed,
+unlabelled adaptation participants, disjoint from the 180 test participants. Initialisation uses
+the source prior; the stopping tolerance is $10^{-8}$, the maximum is 1,000 iterations, and a
+$10^{-12}$ floor prevents zero probabilities. No true target prevalence or class-specific
+multiplier is supplied. For each fold, the calibrated posterior is multiplied by the estimated
+target/source prior ratio and renormalised. All ten fits are frozen before target inference.
+We average all ten fold probabilities separately for the raw, temperature-only and
+temperature-plus-EM arms, without fold selection. Temperature scaling preserves each model's
+argmax but can alter the argmax after probability averaging across differently calibrated models.
+
+\begin{table}[H]
+\centering\small
+\caption{Additional calibration experiment: all ten E3 folds, seed 123, full-record inference
+on 180 SHHS1 participants. Each column averages the same ten models. A dash denotes undefined
+N3 precision because the EM ensemble predicts no N3 epochs.}
+\label{tab:sup_calibration_intervention}
+\begin{tabular}{lrrr}
+\toprule
+Metric & Raw & Temperature & Temperature + EM \\
+\midrule
+Subject-mean \mf & .5590 & .5595 & .4899 \\
+Pooled \mf & .5989 & .5994 & .5021 \\
+Accuracy & .6957 & .6957 & .6372 \\
+N3 precision & .9443 & .9446 & --- \\
+N3 recall & .2410 & .2421 & .0000 \\
+N3 F1 & .3840 & .3855 & .0000 \\
+N2 recall & .7306 & .7287 & .7288 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Temperature-only minus raw subject-mean \mf\ is $0.00049$ (\ci\ $[0.00002,0.00097]$),
+a small absolute change. Temperature-plus-EM minus temperature-only is $-0.0696$
+($[-0.0793,-0.0600]$). All ten EM fits converge, but each places its N3 prior near the numerical
+floor; 98.83\% of reference N3 epochs are then labelled N2. The estimated prior describes
+the output of this EM procedure on five adaptation participants, rather than their measured
+N3 prevalence. In this experiment, EM correction eliminated N3 predictions and reduced
+subject-mean \mf\ relative to temperature scaling alone.
+
+\subsection*{Class-weighted TCN: matched ten-fold ensemble}
+
+For each seed-123 fold, the corresponding verified historical E3 encoder is frozen and both
+sequence classifiers are trained with the same initial weights and source batch order. The
+control uses unweighted cross-entropy; the intervention uses $N/(5n_c)$ computed separately
+from that fold's valid source-training labels. Both arms use Adam at learning rate 0.0005,
+batches of eight recordings, gradient norm clipping at 1, at most 300 epochs and patience 30.
+Strict maximum pooled source-validation \mf\ selects each checkpoint. No target labels are
+used for fitting, stopping, class weights or selection. All 20 checkpoints are frozen before
+the new target ensemble evaluation, and all ten probabilities are averaged in each arm.
+The historical E3 model is not the matched unweighted control.
+
+Verified CPU pairs from folds 0--5 are reused; folds 6--9 are fresh CUDA pairs, not continuations
+of partially trained CPU models. Both arms within each fold use the same backend. PyTorch
+versions are 2.5.1 (CPU) and 2.11.0 (CUDA); the experiment is therefore mixed-backend, not a
+uniform-backend replication. Independent CPU replay of CUDA source-validation and outer-test
+predictions reproduces their confusion matrices and metrics. New training timings do not
+replace the historical operational benchmark. This intervention trains sequence classifiers
+on frozen features, not the encoders end-to-end. The earlier fold-0 result is retained below,
+not counted as an independent replication of the ten-fold result.
+
+\begin{table}[H]
+\centering\small
+\caption{Matched class-weighting experiment: ten-fold ensembles, seed 123, full-record
+inference on 180 SHHS1 participants. Both arms average ten newly trained sequence classifiers
+with the same fold-specific frozen encoders. Per-class metrics and error rates are pooled.}
+\label{tab:sup_weighted_intervention}
+\begin{tabular}{lrr}
+\toprule
+Metric & Unweighted & Weighted \\
+\midrule
+Subject-mean \mf & .5530 & .5514 \\
+Pooled \mf & .5930 & .5928 \\
+Accuracy & .6892 & .6663 \\
+N3 precision & .9462 & .9342 \\
+N3 recall & .2345 & .3225 \\
+N3 F1 & .3759 & .4795 \\
+N2 recall & .7260 & .6728 \\
+N3$\rightarrow$N2 rate & .7497 & .6549 \\
+N2$\rightarrow$N3 rate & .0038 & .0063 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Weighted minus unweighted subject-mean \mf\ is $-0.0016$ (\ci\ $[-0.0049,0.0017]$).
+For pooled metrics, the differences are $-0.0002$ ($[-0.0032,0.0027]$) in \mf,
+$0.1036$ ($[0.0938,0.1137]$) in N3 F1, $0.0880$ ($[0.0805,0.0954]$) in N3 recall,
+$-0.0120$ ($[-0.0187,-0.0050]$) in N3 precision and $-0.0531$ ($[-0.0577,-0.0488]$)
+in N2 recall. N3$\rightarrow$N2 errors decrease by $0.0948$, while N2$\rightarrow$N3
+errors increase by $0.0025$. Intervals that include zero do not establish equivalence or
+non-inferiority. Bootstrap resampling pairs participants, not epochs, and conditions on the
+fixed fitted models; it does not quantify training or backend variability.
+
+On the source outer tests (78 participants, 195,469 labelled epochs, out-of-fold rather than
+ensembled predictions), unweighted/weighted pooled \mf\ is 0.7878/0.7840 and accuracy
+0.8330/0.8213. N3 recall increases from 0.8059 to 0.8724, whereas precision decreases from
+0.8121 to 0.7404 and F1 from 0.8090 to 0.8010. Increased recall alone therefore does not
+establish an overall improvement on source or target.
+
+\subsection*{Class-weighted TCN: earlier matched single-fold pilot}
+
+This comparison uses fold 0 and seed 123. The verified E3 encoder is frozen, and both TCNs are
+trained anew with identical initial weights and source batch order. The control uses unweighted
+cross-entropy; the intervention uses $N/(5n_c)$ from valid source-training labels only. Weights in
+W/N1/N2/N3/REM order are $(0.5755,1.8330,0.5671,3.2466,1.5493)$. Both arms use Adam with learning
+rate 0.0005, batches of eight recordings, gradient norm clipping at 1, at most 300 epochs, and
+patience 30. Strict improvement in pooled source-validation \mf\ determines selection. The
+unweighted/weighted runs stop at epochs 42/53 and select epochs 12/23. Target labels are not used
+for fitting, stopping, class-weight choice or checkpoint selection. The retrained unweighted TCN,
+not the historical E3 checkpoint, is the matched control.
+
+\begin{table}[H]
+\centering\small
+\caption{Matched class-weighting experiment: fold 0, seed 123, 180 SHHS1 participants.
+Both columns are single-model predictions, not ten-fold ensembles.}
+\label{tab:sup_weighted_pilot}
+\begin{tabular}{lrr}
+\toprule
+Metric & Unweighted & Weighted \\
+\midrule
+Subject-mean \mf & .5431 & .5363 \\
+Pooled \mf & .5861 & .5790 \\
+Accuracy & .6837 & .6510 \\
+N3 precision & .9400 & .9253 \\
+N3 recall & .2432 & .3221 \\
+N3 F1 & .3864 & .4779 \\
+N2 recall & .7646 & .6708 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Weighted minus unweighted subject-mean \mf\ is $-0.0068$ (\ci\ $[-0.0135,0.0001]$),
+whereas N3 recall increases by $0.0789$ ($[0.0720,0.0863]$) and N2 recall decreases by
+$0.0938$ (difference interval $[-0.1097,-0.0785]$). The first interval does not establish
+equivalence or non-inferiority. On the source outer-test set (eight participants, 19,506 labelled
+epochs), pooled \mf\ is 0.7716/0.7672 and N3 recall is 0.8678/0.9098 for unweighted/weighted
+training. N3 F1 decreases from 0.8031 to 0.7698 on source, showing that greater recall alone is
+not sufficient evidence of a better classifier.
+
+\subsection*{ADAST: limited-budget matched ten-fold adaptation comparison}
+
+Ten new CUDA pairs use the same harmonised ADAST design as the earlier pilot below,
+on all source outer folds at seed 123. The upstream model/configuration files and similarity
+penalty are unchanged. Both arms in every fold start from identical weights and receive the
+same source permutations and 1,140 updates. Each epoch samples 4,864 valid source-training
+epochs, not a complete pass through that fold's source data. The same five unlabelled adaptation
+participants supply 4,989 epochs; the 180 test participants provide no training signals or labels.
+All 20 final fixed-budget checkpoints are frozen before local target inference or scoring.
+For each arm, maximum dual-head logits are softmaxed within each fold and all ten probability
+arrays are averaged. Target inference uses source attention for the source-only arm and target
+attention for ADAST. The historical full-record scoring mask is then applied to both arms.
+Source results use each outer fold's test subjects once (78 participants, 195,469 valid epochs),
+with source attention for both arms; they are out-of-fold predictions, not ensembles.
+The CUDA pairs and CPU inference are kept separate from the historical operational benchmark.
+Participant-bootstrap intervals condition on these fitted models, not training randomness.
+
+\begin{table}[H]
+\centering\small
+\caption{Matched ten-fold ADAST comparison, seed 123: 180 SHHS1 participants,
+169,012 valid scored epochs. Both arms use ten fresh CUDA-trained models and local
+full-record inference; the source-only arm is the matched dual-head control, not E3.}
+\label{tab:sup_adast_intervention}
+\begin{tabular}{lrr}
+\toprule
+Metric & Source-only & ADAST \\
+\midrule
+Subject-mean \mf & .4949 & .4497 \\
+Pooled \mf & .5539 & .5072 \\
+Accuracy & .6977 & .6951 \\
+Cohen's $\kappa$ & .5488 & .5367 \\
+N3 precision & .9266 & .9225 \\
+N3 recall & .3195 & .4269 \\
+N3 F1 & .4752 & .5837 \\
+N1 recall & .1974 & .0000 \\
+N2 recall & .8712 & .8655 \\
+REM recall & .4343 & .2938 \\
+N3$\rightarrow$N2 rate & .6747 & .5588 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+ADAST minus source-only subject-mean \mf\ is $-0.0452$ (\ci\ $[-0.0558,-0.0347]$),
+whereas the N3-recall difference is $0.1074$ ($[0.0714,0.1422]$) and the N3-F1
+difference is $0.1085$ ($[0.0721,0.1442]$). N3$\rightarrow$N2 errors decrease,
+but more than half of true N3 epochs remain misclassified as N2. The ADAST ensemble
+produces no N1 predictions, and REM recall decreases. On source out-of-fold testing,
+source-only/ADAST pooled \mf\ is 0.6665/0.5276, accuracy is 0.7724/0.7116,
+N3 recall is 0.7689/0.5933, N1 recall is 0.1538/0.0039 and REM recall is
+0.5895/0.2337. The source subject-mean \mf\ difference is $-0.1388$
+($[-0.1520,-0.1250]$). Thus, target N3 recall improved while aggregate source and target
+performance declined. The comparison uses a shared architecture and training budget for
+ADAST and its source-only control. The subsequent source-validation studies examine
+training-budget and loss-component effects; the full-source ten-fold evaluation below
+tests transfer under the larger budget.
+
+\subsection*{ADAST: earlier matched single-fold pilot}
+
+The harmonised implementation uses the upstream ADAST model classes and similarity penalty
+at revision \href{https://github.com/emadeldeen24/ADAST/commit/e0fb503544ddd38f71027c09e3401b900f3dabc3}{\texttt{e0fb503}}, with this study's E3 preprocessing
+and source split (fold 0, seed 123). It is not an exact reproduction of the published data protocol.
+Both arms use the same initialisation, source permutations and 1,140 updates: two rounds of
+15 epochs, each with 38 batches of 128 epochs. The shorter unlabelled-target loader determines
+this budget; each epoch presents 4,864 of the 157,200 source-training epochs, not a full source pass.
+The five adaptation participants supply 4,989 epochs. The matched source-only control retains
+the two classifiers and similarity regularisation, but has no target forward pass, adversarial
+loss or pseudo-label loss. Both arms use the same source-loss schedule (1 then 0.1), Adam
+(learning rate 0.001, betas 0.5/0.99, weight decay 0.0003). After epoch 10 of round 0,
+the learning rate is multiplied by 0.1 for every joint-optimizer parameter group in the
+implemented adapter, not only the encoder.
+ADAST uses adversarial weight 1, similarity weight 0.001, and target-loss weights 0 then 0.01.
+Pseudo-labels are fixed at each round's start from the mean of the two logits. Inference takes
+the elementwise maximum of those logits, with source attention for the control and target
+attention for ADAST on SHHS. The final fixed-budget checkpoints are used; no target-label
+validation or performance-based selection is performed.
+
+\begin{table}[H]
+\centering\small
+\caption{Harmonised ADAST comparison: fold 0, seed 123, 180 SHHS1 participants.
+The source-only arm is the matched dual-head control, not E3.}
+\label{tab:sup_adast_pilot}
+\begin{tabular}{lrr}
+\toprule
+Metric & Source-only & ADAST \\
+\midrule
+Subject-mean \mf & .4755 & .4214 \\
+Pooled \mf & .5319 & .4766 \\
+Accuracy & .6820 & .6762 \\
+N3 precision & .9277 & .9270 \\
+N3 recall & .2657 & .2622 \\
+N3 F1 & .4131 & .4087 \\
+N1 recall & .2521 & .0077 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+ADAST minus source-only subject-mean \mf\ is $-0.0542$ (\ci\ $[-0.0641,-0.0443]$);
+the N3-recall difference is $-0.0035$ ($[-0.0426,0.0345]$). On the source outer-test set,
+evaluated with source attention in both arms, pooled \mf\ is 0.6562/0.5015 and N1 recall is
+0.1049/0.0015. Thus the deterioration is not restricted to SHHS. This single-fold, limited-budget
+comparison does not rank ADAST against the ten-fold E3 ensemble or establish that unsupervised
+adaptation is generally ineffective. This pilot is retained separately from the new ten-fold
+CUDA comparison. Subsequent source-validation budget and loss-component experiments are reported below.
+
+\subsection*{ADAST: source-validation learning-budget and loss-component experiments}
+
+Two subsequent development campaigns used source fold 0, seed 123: source-only/ADAST at
+limited/full-source learning budgets, then a fresh full-source ADAST reference with three
+single-factor loss interventions. Training and source-validation data comprise 157,200 and
+18,763 valid epochs respectively. Both campaigns reuse the same five unlabelled adaptation
+participants (4,989 epochs), without source outer-test or SHHS test access. Each model trains
+for two rounds of 15 epochs on T4 CUDA float32, using matched initialisation, source order and
+the earlier optimiser schedule. Limited training has 38 updates per epoch (1,140 total);
+full-source training has 1,229 updates per epoch (36,870 total), retaining the final batch of
+16 source epochs. The larger budget also increases target presentations and changes scheduler
+timing in update units; it is not a source-coverage-only intervention.
+
+Both attention paths are evaluated on the same source validation set. The selected checkpoint
+maximises source-attention validation \mf, retaining the first tie; epoch-30 checkpoints are
+reported separately. No target-attention validation rule or SHHS score selects a checkpoint.
+Full-validation CPU inference from all eight selected/final checkpoints in each campaign and
+recomputation of all 124 initial/per-epoch validation diagnostics are performed independently.
+Participant-bootstrap intervals from the ten-fold transfer experiments are not attached to
+these one-fold development comparisons.
+
+\begin{table}[H]
+\centering\small
+\caption{Source-validation learning-budget comparison: fold 0, seed 123.
+All scores use source attention; selected checkpoints follow the fixed validation criterion.}
+\label{tab:sup_adast_budget_development}
+\begin{tabular}{llrrrrr}
+\toprule
+Arm & Budget & \shortstack{Selected\\epoch} & \shortstack{Selected\\\mf} & \shortstack{Selected\\N1 recall} & \shortstack{Final\\\mf} & \shortstack{Final\\N1 recall} \\
+\midrule
+Source-only & Limited & 15 & .6585 & .1956 & .6316 & .1243 \\
+ADAST & Limited & 11 & .6470 & .1673 & .5236 & .0000 \\
+Source-only & Full source & 9 & .7174 & .5380 & .6911 & .2847 \\
+ADAST & Full source & 22 & .6934 & .2338 & .6784 & .1591 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The larger budget improves selected-checkpoint \mf\ in both learning conditions and avoids
+complete N1 loss at epoch 30 in ADAST. Nevertheless, selected-checkpoint source-only \mf\
+remains higher. For the full-source pair at epoch 30, ADAST/source-only N3 recall is
+.8068/.5783, whereas N1 recall is .1591/.2847. In the limited ADAST arm, N1 recall falls
+.1060 $\rightarrow$ .0096 at epochs 15 $\rightarrow$ 16, when source CE weight falls
+1 $\rightarrow$ .1 and pseudo CE weight rises 0 $\rightarrow$ .01 simultaneously.
+In the full-source ADAST reference, N1 recall instead rises .1660 $\rightarrow$ .1934
+at that boundary. The limited-budget trajectory is not a universal epoch-16 collapse.
+
+The second campaign keeps the full-source budget and changes one configured component per
+arm: source CE remains 1 in round two, pseudo CE remains 0 in both rounds, or adversarial
+weight is 0. The latter arm skips discriminator forward/backward/optimiser steps, retaining
+target forward passes, the pseudo-label schedule and other losses. The discriminator weights
+remain unchanged and its optimiser state remains empty. The reference, keep-source and
+no-pseudo arms have identical saved validation logits through epoch 15; their interventions
+take effect from epoch 16. The fresh reference reproduces all 30 validation metrics of the
+previous full-source ADAST arm. Similarity weight remains .001 throughout.
+
+\begin{table}[H]
+\centering\small
+\caption{Full-source ADAST loss interventions on source validation: fold 0, seed 123.
+Selected and final checkpoints are separate comparisons. The selected no-pseudo checkpoint
+precedes intervention activation and is also present in the reference trajectory.}
+\label{tab:sup_adast_loss_development}
+\begin{tabular}{llrrrrr}
+\toprule
+Arm & Checkpoint & Epoch & \mf & N1 recall & N3 recall & REM recall \\
+\midrule
+Reference & Selected & 22 & .6934 & .2338 & .8261 & .7139 \\
+Keep source CE & Selected & 22 & .6941 & .2664 & .8323 & .6490 \\
+No pseudo CE & Selected & 7 & .6891 & .4902 & .8834 & .5486 \\
+No adversarial loss & Selected & 29 & .6943 & .2416 & .7115 & .6865 \\
+\midrule
+Reference & Final & 30 & .6784 & .1591 & .8068 & .7544 \\
+Keep source CE & Final & 30 & .6809 & .2064 & .8095 & .6742 \\
+No pseudo CE & Final & 30 & .6717 & .1769 & .8192 & .6430 \\
+No adversarial loss & Final & 30 & .6777 & .2425 & .6025 & .6764 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Retaining source CE increases selected-checkpoint N1 F1 .2988 $\rightarrow$ .3238 and
+recall .2338 $\rightarrow$ .2664, while N1 precision is .4138/.4128. N3 recall increases
+slightly but N3 precision decreases .7533 $\rightarrow$ .7399 and F1 .7880 $\rightarrow$ .7834;
+REM recall and F1 decrease. Its selected \mf\ gain over the reference is .000673.
+Removing adversarial loss gives the highest selected \mf\ among these four arms, a gain
+of .000887, but lowers N3 recall by .1146 and raises N3 precision .7533 $\rightarrow$ .8294.
+At fixed epoch 30, no-pseudo improves N1 recall modestly but lowers overall \mf\ and REM
+recall; no-adversarial increases N1 recall but lowers N3 recall by .2043. High N1 recall at
+the selected no-pseudo epoch 7 is not an effect of disabling pseudo-label learning, which
+has zero weight in the reference at that point. These interventions identify distinct
+stage-wise trade-offs rather than a uniformly improved configuration.
+
+\begin{table}[H]
+\centering\small
+\caption{Five-stage F1 for the full-source ADAST loss interventions on source validation.}
+\label{tab:sup_adast_loss_allclass}
+\begin{tabular}{llrrrrr}
+\toprule
+Arm & Checkpoint & W & N1 & N2 & N3 & REM \\
+\midrule
+Reference & Selected & .8771 & .2988 & .8151 & .7880 & .6880 \\
+Keep source CE & Selected & .8831 & .3238 & .8100 & .7834 & .6700 \\
+No pseudo CE & Selected & .8818 & .4055 & .7692 & .7776 & .6116 \\
+No adversarial loss & Selected & .8804 & .3111 & .8205 & .7660 & .6934 \\
+\midrule
+Reference & Final & .8812 & .2295 & .8073 & .7944 & .6796 \\
+Keep source CE & Final & .8835 & .2722 & .8014 & .7880 & .6596 \\
+No pseudo CE & Final & .8797 & .2465 & .7925 & .7848 & .6548 \\
+No adversarial loss & Final & .8772 & .3074 & .8108 & .7173 & .6757 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Target-attention diagnostics of the same checkpoints on the same source validation
+set, not SHHS evaluation. Target attention does not select checkpoints.}
+\label{tab:sup_adast_loss_attention}
+\begin{tabular}{llrrr}
+\toprule
+Arm & Checkpoint & \mf & N1 recall & N3 recall \\
+\midrule
+Reference & Selected & .6780 & .2225 & .8302 \\
+Keep source CE & Selected & .6789 & .2599 & .8599 \\
+No pseudo CE & Selected & .6803 & .4259 & .8551 \\
+No adversarial loss & Selected & .5227 & .1521 & .0773 \\
+\midrule
+Reference & Final & .6674 & .1586 & .8116 \\
+Keep source CE & Final & .6628 & .1899 & .8682 \\
+No pseudo CE & Final & .6546 & .1517 & .8116 \\
+No adversarial loss & Final & .5026 & .1352 & .0628 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Without adversarial loss, the target-attention path receives neither adversarial nor pseudo-CE
+loss contributions in round one; source CE uses source attention, and similarity regularises
+the two classifier heads. Target forward passes and optimiser/weight decay are retained.
+The no-adversarial path therefore has a different learning condition, as intended by the
+intervention. Its poor target-attention N3 recall in Table~\ref{tab:sup_adast_loss_attention}
+must be considered alongside the stronger source-attention scores; it is not evidence of
+better cross-cohort adaptation.
+
+The selected source-validation ranking is no-adversarial, keep-source, reference, then no-pseudo by
+selected validation \mf; all remain below the full-source source-only score .7174.
+These source-validation comparisons distinguish the effects of loss components from
+the ten-fold SHHS transfer results reported above.
+
+\subsection*{ADAST: three-arm confirmation on another source fold}
+
+Fold 1, seed 123, compared fresh source-only, ADAST-reference and retained-source-CE
+models with identical source orders; the ADAST arms shared target orders and round-one
+predictions. Each arm used 30 full-source passes over 152,825 training epochs: 1,194
+updates per pass (batch 128, final batch 121), or 35,820 updates. Validation comprised
+23,881 epochs (W/N1/N2/N3/REM: 9,912/1,911/7,133/1,968/2,957). The same five unlabelled
+adaptation participants were reused, without source outer-test or SHHS test access.
+Selection retained the source-validation rule above; epoch 30 was reported separately.
+
+The comparison reports aggregate \mf\ and all five stage F1 scores for both attention
+paths, using source attention for checkpoint selection. Selected and final checkpoints
+are reported separately to distinguish the best validation result from the end-of-training result.
+
+\begin{table}[H]
+\centering\small
+\caption{Fold-1 confirmation, seed 123: selected and final source-attention metrics
+on the same source validation. Stage columns are F1.}
+\label{tab:sup_adast_confirmation}
+\begin{tabular}{llrrrrrrr}
+\toprule
+Arm & Checkpoint & Epoch & \mf & W & N1 & N2 & N3 & REM \\
+\midrule
+Source-only & Selected & 10 & .7370 & .9432 & .3200 & .8427 & .8568 & .7224 \\
+Reference & Selected & 27 & .6907 & .9392 & .2175 & .8021 & .8096 & .6852 \\
+Keep source CE & Selected & 27 & .6892 & .9382 & .2302 & .7935 & .8161 & .6680 \\
+\midrule
+Source-only & Final & 30 & .7176 & .9444 & .2415 & .8333 & .8503 & .7184 \\
+Reference & Final & 30 & .6857 & .9391 & .2175 & .7968 & .8077 & .6672 \\
+Keep source CE & Final & 30 & .6814 & .9397 & .2158 & .7865 & .7999 & .6653 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Target-attention diagnostics for the fold-1 checkpoints on the same source
+validation, not SHHS. This path does not select checkpoints. Stage columns are F1.}
+\label{tab:sup_adast_confirmation_attention}
+\begin{tabular}{llrrrrrr}
+\toprule
+Arm & Checkpoint & \mf & W & N1 & N2 & N3 & REM \\
+\midrule
+Source-only & Selected & .6914 & .8955 & .2911 & .8201 & .7880 & .6624 \\
+Reference & Selected & .6817 & .9339 & .2089 & .7937 & .8003 & .6715 \\
+Keep source CE & Selected & .6727 & .9318 & .2085 & .7802 & .7864 & .6564 \\
+\midrule
+Source-only & Final & .6213 & .8318 & .2052 & .7650 & .6403 & .6642 \\
+Reference & Final & .6824 & .9360 & .2115 & .7949 & .7951 & .6743 \\
+Keep source CE & Final & .6714 & .9343 & .2073 & .7761 & .7731 & .6660 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Retaining source loss increased selected N1 recall .1502 $\rightarrow$ .1627, but reduced
+REM recall .7376 $\rightarrow$ .6980. N3 recall changed .9644 $\rightarrow$ .9649 and
+precision .6975 $\rightarrow$ .7070. Through target attention, N3 recall increased
+.9670 $\rightarrow$ .9756 but precision decreased .6826 $\rightarrow$ .6587, lowering
+F1. At epoch 30, N1 F1
+and \mf\ were also lower than the reference: the selected N1 benefit was not uniform
+across checkpoints or paths. The fold-0 N1 gain and REM trade-off remain separate.
+Training/validation used 2,975.78 seconds on T4, excluding upload and result verification.
+
+\subsection*{ADAST: full-source ten-fold transfer and matched budget contrast}
+
+The full-source comparison comprises ten source-only/ADAST pairs at seed 123.
+Four previously evaluated models from folds 0--1 are reused after checking their
+checkpoint, input and verification hashes; the retained-source-CE and other ablation
+arms are excluded. Sixteen models for folds 2--9 complete 30 epochs on T4 CUDA.
+Each epoch covers the entire source-training partition for that fold, yielding
+35,670--37,620 updates per model over 30 epochs. The paired arms share initial
+weights and source permutations and use the same five unlabelled adaptation
+participants (4,989 epochs). The input bundle physically contains the source
+records covered by the earlier authorised fold-0/1 train/validation union; each
+model uses only its own fold's training and validation roles. SHHS evaluation
+signals and labels remain local and are not used for training.
+
+The main comparison uses epoch 30 in both arms and both budgets, rather than
+choosing a checkpoint on SHHS. Within each fold, the maximum of the two classifier
+logits is softmaxed; probabilities are averaged in float64 across ten folds before
+float32 storage. SHHS uses source attention for source-only and target attention
+for ADAST. The full recordings supply 183,528 input epochs and the common scoring
+mask retains 169,012 epochs from 180 participants. Sleep-EDF outer-test predictions
+use source attention for both arms, each participant in its own fold; these are
+out-of-fold results, not ensemble predictions.
+
+The new training outputs pass independent recomputation of all 496 validation
+diagnostics and CPU inference of all 32 selected/final checkpoints on their complete
+source-validation partitions through both attention paths. The local evaluation
+recomputes prediction hashes, confusion matrices and participant bootstrap results,
+with 40 target model--record and 20 source model--batch inference replays. These
+checks supplement the proof checks for the four reused models.
+
+\begin{table}[H]
+\centering\small
+\renewcommand{\arraystretch}{1.0}
+\caption{Epoch-30 full-source pooled class metrics. SHHS1: 180 participants,
+169,012 scored epochs, ten-model ensemble per arm. Sleep-EDF: 78 participants,
+195,469 outer-test epochs, out-of-fold predictions. SO is the matched source-only
+dual-head control; AD is ADAST. Supports are true-class epoch counts.}
+\label{tab:sup_adast_fullsource_classes}
+\begin{tabular}{lllrrrr}
+\toprule
+Cohort & Arm & Stage & Precision & Recall & F1 & Support \\
+\midrule
+SHHS1 & SO & W & .8317 & .8372 & .8344 & 36,983 \\
+ & SO & N1 & .1267 & .1568 & .1401 & 7,002 \\
+ & SO & N2 & .7152 & .7981 & .7544 & 76,287 \\
+ & SO & N3 & .9463 & .2432 & .3869 & 22,806 \\
+ & SO & REM & .5631 & .6976 & .6231 & 25,934 \\
+ & AD & W & .8216 & .8441 & .8327 & 36,983 \\
+ & AD & N1 & .1299 & .1057 & .1165 & 7,002 \\
+ & AD & N2 & .8103 & .6369 & .7132 & 76,287 \\
+ & AD & N3 & .8823 & .6111 & .7221 & 22,806 \\
+ & AD & REM & .4375 & .8360 & .5744 & 25,934 \\
+\midrule
+Sleep-EDF & SO & W & .9061 & .9293 & .9176 & 65,941 \\
+ & SO & N1 & .4392 & .2850 & .3457 & 21,522 \\
+ & SO & N2 & .7892 & .8878 & .8356 & 69,132 \\
+ & SO & N3 & .8209 & .7868 & .8035 & 13,039 \\
+ & SO & REM & .7362 & .6727 & .7030 & 25,835 \\
+ & AD & W & .9216 & .9034 & .9124 & 65,941 \\
+ & AD & N1 & .4374 & .2255 & .2976 & 21,522 \\
+ & AD & N2 & .7580 & .8429 & .7982 & 69,132 \\
+ & AD & N3 & .6864 & .8995 & .7786 & 13,039 \\
+ & AD & REM & .6295 & .6278 & .6287 & 25,835 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\renewcommand{\arraystretch}{1.0}
+\caption{Matched participant-bootstrap budget contrasts on the same 180 SHHS1
+participants. Effects are ADAST minus its source-only control; the difference of
+effects is full-source minus limited-budget. All four systems use the same
+10,000 participant resamples (seed 2031). Intervals condition on the fitted models.}
+\label{tab:sup_adast_fullsource_contrasts}
+\begin{tabular}{lrr}
+\toprule
+Contrast / metric & Difference & 95\% CI \\
+\midrule
+Limited: subject-mean \mf & $-.0452$ & $[-.0558,-.0347]$ \\
+Full-source: subject-mean \mf & $.0445$ & $[.0352,.0539]$ \\
+Difference of effects: subject-mean \mf & $.0897$ & $[.0767,.1023]$ \\
+Full-source: pooled \mf & $.0440$ & $[.0345,.0536]$ \\
+Full-source: accuracy & $-.0025$ & $[-.0140,.0088]$ \\
+Full-source: N1 F1 & $-.0236$ & $[-.0385,-.0077]$ \\
+Full-source: N2 F1 & $-.0412$ & $[-.0549,-.0281]$ \\
+Full-source: N3 F1 & $.3351$ & $[.3025,.3683]$ \\
+Full-source: REM F1 & $-.0488$ & $[-.0629,-.0339]$ \\
+Full-source: N3 recall & $.3679$ & $[.3442,.3912]$ \\
+Full-source: N3$\rightarrow$N2 rate & $-.3836$ & $[-.4076,-.3590]$ \\
+Full-source: N2$\rightarrow$N3 rate & $.0192$ & $[.0146,.0245]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Full-source subject-mean \mf\ is .5010/.5455 and pooled \mf\ .5478/.5918
+for source-only/ADAST. N3$\rightarrow$N2 errors fall from 17,163 to 8,414 of
+22,806 true N3 epochs (rates .7526/.3689), while N2$\rightarrow$N3 errors rise
+from 299 to 1,763 of 76,287 true N2 epochs (.0039/.0231). The N3 benefit is
+accompanied by lower N1, N2 and REM F1. REM recall increases, but its precision
+decreases enough to lower F1; recall alone therefore does not demonstrate a
+general REM improvement. Accuracy changes .6898 $\rightarrow$ .6873, with a
+paired interval spanning zero, not evidence of equivalence.
+
+On Sleep-EDF, source-only/ADAST subject-mean \mf\ is .6613/.6281 (difference
+$-.0332$, \ci\ $[-.0434,-.0229]$), pooled \mf\ .7211/.6831 and accuracy
+.8003/.7707. N3 recall increases while its precision and F1 decrease. Thus the
+positive SHHS class-balanced effect does not represent uniform improvement across
+classes or cohorts. Increasing the budget also increases target exposure and changes
+the scheduler's timing in update units; the contrast does not isolate source-data
+coverage. Folds and epochs are not treated as independent statistical samples, and
+the intervals do not include seed-to-seed training variation. The historical latency
+and workflow benchmarks are unchanged by this CUDA campaign.
+
+\subsection*{ADAST: secondary source-validation checkpoint evaluation}
+
+Each of the same twenty full-source models supplies its checkpoint with the highest
+source-validation \mf\ through source attention, using the first epoch in a tie.
+The SHHS attention paths, ten-fold probability averaging and scoring mask are unchanged;
+source results remain out-of-fold through source attention. No model is retrained or
+selected by SHHS performance. This secondary analysis changes the checkpoint rule,
+not the participants, adaptation data, loss or training budget. Epoch 30 remains the
+primary comparison across the two learning budgets.
+
+\begin{table}[H]
+\centering\small
+\caption{Secondary full-source evaluation with checkpoints selected by source validation.
+SHHS1 uses ten-fold ensembles on the same 180 participants; Sleep-EDF uses OOF
+predictions for 78 participants. Differences are ADAST minus source-only. The
+10,000 participant-bootstrap draws (seed 2031) condition on fitted models.}
+\label{tab:sup_adast_fullsource_best_summary}
+\begin{tabular}{llrrr}
+\toprule
+Cohort & Arm & Subject-mean \mf & Pooled \mf & Accuracy \\
+\midrule
+SHHS1 & Source-only & .5073 & .5552 & .6818 \\
+ & ADAST & .5396 & .5854 & .6709 \\
+Sleep-EDF & Source-only & .6681 & .7237 & .7947 \\
+ & ADAST & .6368 & .6921 & .7730 \\
+\bottomrule
+\end{tabular}
+\medskip
+
+\begin{tabular}{llrr}
+\toprule
+Cohort & Contrast metric & Difference & 95\% CI \\
+\midrule
+SHHS1 & Subject-mean \mf & $.0322$ & $[.0234,.0412]$ \\
+ & Pooled \mf & $.0302$ & $[.0212,.0395]$ \\
+ & N3 recall & $.3267$ & $[.3050,.3483]$ \\
+ & N3 F1 & $.2892$ & $[.2590,.3200]$ \\
+Sleep-EDF & Subject-mean \mf & $-.0313$ & $[-.0416,-.0205]$ \\
+ & Pooled \mf & $-.0316$ & $[-.0416,-.0221]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\renewcommand{\arraystretch}{1.0}
+\caption{Secondary full-source pooled class metrics at source-validation-selected
+checkpoints. SHHS1: 169,012 scored epochs; Sleep-EDF: 195,469 outer-test epochs.
+SO is source-only; AD is ADAST. Supports are true-class epoch counts.}
+\label{tab:sup_adast_fullsource_best_classes}
+\begin{tabular}{lllrrrr}
+\toprule
+Cohort & Arm & Stage & Precision & Recall & F1 & Support \\
+\midrule
+SHHS1 & SO & W & .8367 & .8253 & .8310 & 36,983 \\
+ & SO & N1 & .1276 & .1807 & .1495 & 7,002 \\
+ & SO & N2 & .7278 & .7555 & .7414 & 76,287 \\
+ & SO & N3 & .9333 & .2828 & .4340 & 22,806 \\
+ & SO & REM & .5302 & .7466 & .6201 & 25,934 \\
+ & AD & W & .8256 & .8374 & .8314 & 36,983 \\
+ & AD & N1 & .1271 & .1231 & .1251 & 7,002 \\
+ & AD & N2 & .8112 & .5992 & .6893 & 76,287 \\
+ & AD & N3 & .8891 & .6095 & .7232 & 22,806 \\
+ & AD & REM & .4163 & .8464 & .5581 & 25,934 \\
+\midrule
+Sleep-EDF & SO & W & .9189 & .9120 & .9154 & 65,941 \\
+ & SO & N1 & .4197 & .3546 & .3844 & 21,522 \\
+ & SO & N2 & .8090 & .8580 & .8328 & 69,132 \\
+ & SO & N3 & .7565 & .8182 & .7861 & 13,039 \\
+ & SO & REM & .7200 & .6805 & .6997 & 25,835 \\
+ & AD & W & .9231 & .9024 & .9126 & 65,941 \\
+ & AD & N1 & .4229 & .2605 & .3224 & 21,522 \\
+ & AD & N2 & .7735 & .8341 & .8026 & 69,132 \\
+ & AD & N3 & .7062 & .8875 & .7865 & 13,039 \\
+ & AD & REM & .6248 & .6485 & .6365 & 25,835 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For source-only/ADAST on SHHS1, N3$\rightarrow$N2 errors are 16,214/8,290 of
+22,806 true N3 epochs (rates .7110/.3635); N2$\rightarrow$N3 errors are 383/1,638
+of 76,287 true N2 epochs (.0050/.0215). N1, N2 and REM F1 decrease despite the
+positive aggregate class-balanced effect. The source outer-test loss also persists.
+Both checkpoint rules therefore show an N3 benefit with stage/cohort costs. They
+reuse the same cohorts and related fitted models, not independent replication samples.
+
 \section*{Provenance}
 
 The historical SHHS protocol matches the original run-manifest hash (`165d7cdf...fe93`), not the
 expanded post-run audit (`9541e233...fe9`). Table~\ref{tab:sup_boundary} reuses seed-123 diagnostics
 matched to the EDF campaign and 20 E0/E3 fold-prediction files, and the SHHS1 extension manifest and
-360 E0/E3 ensemble files. Hashes establish file identity, not independent replication or public
-preregistration. SHHS data and predictions remain externally held; E6 reanalyses locked predictions.
+360 E0/E3 ensemble files. The retained files are linked to these analyses by their SHA-256 hashes.
+SHHS data and predictions remain externally held; E6 uses retained predictions.
 Snapshot reconciliation is documented in \path{Reports/SHHS_PROTOCOL_PROVENANCE.md}.
 
 \end{document}

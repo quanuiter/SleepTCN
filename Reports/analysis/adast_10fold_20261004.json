@@ -1,0 +1,525 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-04",
+  "seed": 123,
+  "class_order": [
+    "W",
+    "N1",
+    "N2",
+    "N3",
+    "REM"
+  ],
+  "fold_models_per_arm": 10,
+  "training_backend": "twenty_fresh_CUDA_float32_models",
+  "inference_backend": "local_CPU_float32",
+  "scope": "Harmonized limited-budget post-hoc experiment, not exact published ADAST reproduction.",
+  "adaptation_subjects": 5,
+  "adaptation_epochs": 4989,
+  "updates_per_arm_per_fold": 1140,
+  "source_epoch_budget_per_training_epoch": 4864,
+  "target": {
+    "subjects": 180,
+    "valid_epochs": 169012,
+    "arms": {
+      "adast": {
+        "subject_mean_macro_f1": 0.4497207325535625,
+        "pooled": {
+          "n_valid_epochs": 169012,
+          "accuracy": 0.6950630724445601,
+          "macro_f1": 0.5072142773088619,
+          "cohen_kappa": 0.5367064563250419,
+          "confusion_matrix": [
+            [
+              34095,
+              0,
+              1724,
+              92,
+              1072
+            ],
+            [
+              2510,
+              0,
+              2534,
+              4,
+              1954
+            ],
+            [
+              5890,
+              0,
+              66024,
+              670,
+              3703
+            ],
+            [
+              323,
+              0,
+              12744,
+              9736,
+              3
+            ],
+            [
+              4064,
+              0,
+              14199,
+              52,
+              7619
+            ]
+          ],
+          "per_class": {
+            "W": {
+              "precision": 0.727251397124696,
+              "recall": 0.9219100667874429,
+              "f1": 0.8130924700411375,
+              "support": 36983
+            },
+            "N1": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 7002
+            },
+            "N2": {
+              "precision": 0.6790845975829262,
+              "recall": 0.8654685595186598,
+              "f1": 0.7610309373415094,
+              "support": 76287
+            },
+            "N3": {
+              "precision": 0.9224938411976502,
+              "recall": 0.4269052003858634,
+              "f1": 0.5836930455635492,
+              "support": 22806
+            },
+            "REM": {
+              "precision": 0.5309037697721413,
+              "recall": 0.29378422148530886,
+              "f1": 0.3782549335981134,
+              "support": 25934
+            }
+          }
+        }
+      },
+      "source_only": {
+        "subject_mean_macro_f1": 0.4949090262590625,
+        "pooled": {
+          "n_valid_epochs": 169012,
+          "accuracy": 0.6977137718031856,
+          "macro_f1": 0.5538813466858439,
+          "cohen_kappa": 0.5488440558208402,
+          "confusion_matrix": [
+            [
+              31526,
+              1884,
+              2624,
+              48,
+              901
+            ],
+            [
+              1718,
+              1382,
+              2124,
+              7,
+              1771
+            ],
+            [
+              3296,
+              2824,
+              66463,
+              459,
+              3245
+            ],
+            [
+              109,
+              2,
+              15388,
+              7287,
+              20
+            ],
+            [
+              2421,
+              3223,
+              8963,
+              63,
+              11264
+            ]
+          ],
+          "per_class": {
+            "W": {
+              "precision": 0.806910673150755,
+              "recall": 0.8524457183030041,
+              "f1": 0.8290534232706139,
+              "support": 36983
+            },
+            "N1": {
+              "precision": 0.14836285560923243,
+              "recall": 0.19737217937732077,
+              "f1": 0.16939388367959796,
+              "support": 7002
+            },
+            "N2": {
+              "precision": 0.6954961177036898,
+              "recall": 0.871223144179218,
+              "f1": 0.7735046465210738,
+              "support": 76287
+            },
+            "N3": {
+              "precision": 0.9266276703967447,
+              "recall": 0.31952117863720075,
+              "f1": 0.47518747962178026,
+              "support": 22806
+            },
+            "REM": {
+              "precision": 0.6548456485088077,
+              "recall": 0.4343333076270533,
+              "f1": 0.522267300336154,
+              "support": 25934
+            }
+          }
+        }
+      }
+    },
+    "contrast": "adast_minus_source_only",
+    "paired_difference": {
+      "unit": "subject",
+      "subjects": 180,
+      "resamples": 10000,
+      "seed": 2031,
+      "estimand": "difference_of_pooled_metrics",
+      "scope": "exploratory_same_cohort_fixed_checkpoints_not_confirmatory",
+      "metrics": {
+        "macro_f1": {
+          "left": 0.5072142773088619,
+          "right": 0.5538813466858439,
+          "difference": -0.04666706937698195,
+          "ci95": [
+            -0.05846217891097068,
+            -0.034698675337011056
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_f1": {
+          "left": 0.5836930455635492,
+          "right": 0.47518747962178026,
+          "difference": 0.10850556594176891,
+          "ci95": [
+            0.07211216722984784,
+            0.14424957579288242
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_recall": {
+          "left": 0.4269052003858634,
+          "right": 0.31952117863720075,
+          "difference": 0.10738402174866263,
+          "ci95": [
+            0.0713827115203347,
+            0.14223351861759842
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_precision": {
+          "left": 0.9224938411976502,
+          "right": 0.9266276703967447,
+          "difference": -0.004133829199094441,
+          "ci95": [
+            -0.0316638525817213,
+            0.025065055026804877
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n2_recall": {
+          "left": 0.8654685595186598,
+          "right": 0.871223144179218,
+          "difference": -0.005754584660558226,
+          "ci95": [
+            -0.015777864735301874,
+            0.004353329941210169
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_to_n2_rate": {
+          "left": 0.5588003157063931,
+          "right": 0.6747347189336139,
+          "difference": -0.11593440322722082,
+          "ci95": [
+            -0.15166121898791132,
+            -0.07874225932655755
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n2_to_n3_rate": {
+          "left": 0.00878262351383591,
+          "right": 0.0060167525266428094,
+          "difference": 0.0027658709871931,
+          "ci95": [
+            -0.0005439256788221288,
+            0.006104103472965162
+          ],
+          "defined_bootstrap_draws": 10000
+        }
+      },
+      "subject_mean_macro_f1": {
+        "difference": -0.04518829370550009,
+        "ci95": [
+          -0.05584187068144834,
+          -0.03468209199753186
+        ]
+      }
+    }
+  },
+  "source_OOF": {
+    "subjects": 78,
+    "valid_epochs": 195469,
+    "arms": {
+      "adast": {
+        "subject_mean_macro_f1": 0.4654711063352276,
+        "pooled": {
+          "n_valid_epochs": 195469,
+          "accuracy": 0.7115859803856366,
+          "macro_f1": 0.5275667876897943,
+          "cohen_kappa": 0.5771811439929161,
+          "confusion_matrix": [
+            [
+              60849,
+              109,
+              2621,
+              311,
+              2051
+            ],
+            [
+              6603,
+              83,
+              11481,
+              53,
+              3302
+            ],
+            [
+              1313,
+              24,
+              64388,
+              1646,
+              1761
+            ],
+            [
+              152,
+              0,
+              5143,
+              7736,
+              8
+            ],
+            [
+              3150,
+              176,
+              16426,
+              46,
+              6037
+            ]
+          ],
+          "per_class": {
+            "W": {
+              "precision": 0.8443392953779122,
+              "recall": 0.9227794543607164,
+              "f1": 0.8818184453075185,
+              "support": 65941
+            },
+            "N1": {
+              "precision": 0.21173469387755103,
+              "recall": 0.0038565189108818883,
+              "f1": 0.007575066167746646,
+              "support": 21522
+            },
+            "N2": {
+              "precision": 0.6435003348024665,
+              "recall": 0.9313776543424174,
+              "f1": 0.7611279559787458,
+              "support": 69132
+            },
+            "N3": {
+              "precision": 0.7900326797385621,
+              "recall": 0.5932970319809802,
+              "f1": 0.6776750908852,
+              "support": 13039
+            },
+            "REM": {
+              "precision": 0.45877346302910554,
+              "recall": 0.23367524675827367,
+              "f1": 0.30963738010976044,
+              "support": 25835
+            }
+          }
+        }
+      },
+      "source_only": {
+        "subject_mean_macro_f1": 0.6042356944621877,
+        "pooled": {
+          "n_valid_epochs": 195469,
+          "accuracy": 0.7724498513830838,
+          "macro_f1": 0.6664856557706254,
+          "cohen_kappa": 0.6792500867859882,
+          "confusion_matrix": [
+            [
+              60993,
+              1882,
+              1347,
+              114,
+              1605
+            ],
+            [
+              5053,
+              3310,
+              8918,
+              144,
+              4097
+            ],
+            [
+              682,
+              1675,
+              61432,
+              2249,
+              3094
+            ],
+            [
+              21,
+              10,
+              2975,
+              10026,
+              7
+            ],
+            [
+              1755,
+              2440,
+              6315,
+              96,
+              15229
+            ]
+          ],
+          "per_class": {
+            "W": {
+              "precision": 0.8903567674880299,
+              "recall": 0.924963224700869,
+              "f1": 0.9073301349994423,
+              "support": 65941
+            },
+            "N1": {
+              "precision": 0.3552645701406032,
+              "recall": 0.15379611560263917,
+              "f1": 0.21466325107818024,
+              "support": 21522
+            },
+            "N2": {
+              "precision": 0.7585414943139023,
+              "recall": 0.888618874038072,
+              "f1": 0.8184440343993765,
+              "support": 69132
+            },
+            "N3": {
+              "precision": 0.7938870852799114,
+              "recall": 0.768923997239052,
+              "f1": 0.7812061711079944,
+              "support": 13039
+            },
+            "REM": {
+              "precision": 0.6336967376830892,
+              "recall": 0.5894716469905168,
+              "f1": 0.6107846872681332,
+              "support": 25835
+            }
+          }
+        }
+      }
+    },
+    "contrast": "adast_minus_source_only",
+    "paired_difference": {
+      "unit": "subject",
+      "subjects": 78,
+      "resamples": 10000,
+      "seed": 2031,
+      "estimand": "difference_of_pooled_metrics",
+      "scope": "exploratory_same_cohort_fixed_checkpoints_not_confirmatory",
+      "metrics": {
+        "macro_f1": {
+          "left": 0.5275667876897943,
+          "right": 0.6664856557706254,
+          "difference": -0.1389188680808311,
+          "ci95": [
+            -0.15255265426627332,
+            -0.12450762474847123
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_f1": {
+          "left": 0.6776750908852,
+          "right": 0.7812061711079944,
+          "difference": -0.10353108022279445,
+          "ci95": [
+            -0.1348269476600019,
+            -0.07505974164229837
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_recall": {
+          "left": 0.5932970319809802,
+          "right": 0.768923997239052,
+          "difference": -0.17562696525807187,
+          "ci95": [
+            -0.2227871116020058,
+            -0.1311598611321267
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_precision": {
+          "left": 0.7900326797385621,
+          "right": 0.7938870852799114,
+          "difference": -0.003854405541349304,
+          "ci95": [
+            -0.043484151619095315,
+            0.03786453141697038
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n2_recall": {
+          "left": 0.9313776543424174,
+          "right": 0.888618874038072,
+          "difference": 0.04275878030434532,
+          "ci95": [
+            0.030588049847296333,
+            0.05578436467008434
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n3_to_n2_rate": {
+          "left": 0.3944320883503336,
+          "right": 0.22816166883963493,
+          "difference": 0.16627041951069868,
+          "ci95": [
+            0.12093925251307806,
+            0.21552013477174045
+          ],
+          "defined_bootstrap_draws": 10000
+        },
+        "n2_to_n3_rate": {
+          "left": 0.023809523809523808,
+          "right": 0.032531967829659204,
+          "difference": -0.008722444020135396,
+          "ci95": [
+            -0.01627115564988496,
+            -0.0013787793392629627
+          ],
+          "defined_bootstrap_draws": 10000
+        }
+      },
+      "subject_mean_macro_f1": {
+        "difference": -0.13876458812696013,
+        "ci95": [
+          -0.15196283706861913,
+          -0.12497254372930354
+        ]
+      }
+    }
+  },
+  "training_variance_not_in_bootstrap": true,
+  "target_test_labels_for_selection": false,
+  "verification_status": "passed",
+  "private_aggregate_sha256": "cf472a96dfeaf6cdbd0eb59d46e591c7c7863609a17eec35dad8f9b7b012950a",
+  "privacy": "Cohort aggregate only; no participant IDs, private paths or individual outputs."
+}

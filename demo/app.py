@@ -6,6 +6,7 @@ import hashlib
 import html
 import sys
 import tempfile
+from dataclasses import replace
 from pathlib import Path
 
 
@@ -30,6 +31,7 @@ from sleeptcn.demo import (  # noqa: E402
     inspect_edf_demo,
     load_demo_models,
     load_edf_demo_records,
+    load_demo_hypnogram,
     load_locked_prediction,
     load_processed_demo_record,
     n3_to_n2_mask,
@@ -205,7 +207,7 @@ def cached_processed_record_variant(path: str, variant: str) -> DemoRecord:
     return load_processed_demo_record(Path(path), variant)
 
 
-@st.cache_resource(show_spinner="Đang xác minh gói checkpoint và prediction…")
+@st.cache_resource(show_spinner="Đang xác minh mô hình và kết quả dự đoán…")
 def cached_asset_manifest() -> dict:
     return validate_asset_manifest(ASSET_ROOT)
 
@@ -236,6 +238,14 @@ def _with_temporary_edf(data: bytes, filename: str, function):
 @st.cache_data(show_spinner=False)
 def cached_edf_inspection(data: bytes, filename: str) -> dict:
     return _with_temporary_edf(data, filename, inspect_edf_demo)
+
+
+@st.cache_data(show_spinner=False)
+def cached_hypnogram(data: bytes, filename: str, inspection: dict, signal_filename: str) -> np.ndarray:
+    return _with_temporary_edf(
+        data, filename,
+        lambda path: load_demo_hypnogram(path, inspection, signal_filename, filename),
+    )
 
 
 @st.cache_data(show_spinner=False)
@@ -275,7 +285,7 @@ def brand() -> None:
         """
         <div class="brand"><div class="brand-mark">◒</div><div>
           <div class="brand-name">SleepTCN Explorer</div>
-          <div class="brand-sub">Single-channel EEG · Graduation thesis demo</div>
+          <div class="brand-sub">EEG một kênh · Trình diễn khóa luận tốt nghiệp</div>
         </div></div>
         """,
         unsafe_allow_html=True,
@@ -327,7 +337,7 @@ def record_stage_summary(stages: np.ndarray) -> pd.DataFrame:
     return pd.DataFrame(
         {
             "Giai đoạn": list(STAGE_NAMES),
-            "Epoch": counts.astype(int),
+            "Số đoạn": counts.astype(int),
             "Thời lượng (phút)": counts.astype(float) * .5,
             "Tỷ lệ": counts / total if total else np.zeros(len(STAGE_NAMES)),
         }
@@ -337,7 +347,7 @@ def record_stage_summary(stages: np.ndarray) -> pd.DataFrame:
 def stage_distribution_chart(summary: pd.DataFrame) -> alt.Chart:
     bars = alt.Chart(summary).mark_bar(cornerRadiusEnd=5, size=29).encode(
         y=alt.Y("Giai đoạn:N", sort=list(STAGE_NAMES), title=None),
-        x=alt.X("Epoch:Q", title="Số epoch (mỗi epoch = 30 giây)", scale=alt.Scale(zero=True)),
+        x=alt.X("Số đoạn:Q", title="Số đoạn (mỗi đoạn 30 giây)", scale=alt.Scale(zero=True)),
         color=alt.Color(
             "Giai đoạn:N",
             scale=alt.Scale(domain=list(STAGE_COLORS), range=list(STAGE_COLORS.values())),
@@ -345,13 +355,13 @@ def stage_distribution_chart(summary: pd.DataFrame) -> alt.Chart:
         ),
         tooltip=[
             alt.Tooltip("Giai đoạn:N"),
-            alt.Tooltip("Epoch:Q", format=".0f"),
+            alt.Tooltip("Số đoạn:Q", format=".0f"),
             alt.Tooltip("Thời lượng (phút):Q", format=".1f"),
             alt.Tooltip("Tỷ lệ:Q", format=".1%"),
         ],
     )
     labels = bars.mark_text(align="left", baseline="middle", dx=5, color="#27343D").encode(
-        text=alt.Text("Epoch:Q", format=".0f")
+        text=alt.Text("Số đoạn:Q", format=".0f")
     )
     return (bars + labels).properties(height=235).configure_view(stroke=None)
 
@@ -397,7 +407,7 @@ def sleep_timeline_chart(
         ),
         tooltip=[
             alt.Tooltip("minute:Q", title="Phút", format=".1f"),
-            alt.Tooltip("epoch:Q", title="Epoch gốc", format=".0f"),
+            alt.Tooltip("epoch:Q", title="Chỉ số đoạn gốc", format=".0f"),
             alt.Tooltip("stage:N", title="Giai đoạn"),
             alt.Tooltip("lane:N", title="Nguồn"),
         ],
@@ -422,20 +432,20 @@ def epoch_stage_html(
     if stage == "Bỏ qua":
         return (
             '<div class="epoch-stage" style="border-left-color:#94A3B8">'
-            f'<div class="epoch-stage-label">{html.escape(label_source)} của epoch đang xem</div>'
+            f'<div class="epoch-stage-label">{html.escape(label_source)} của đoạn đang xem</div>'
             '<div class="epoch-stage-value">Không có nhãn</div>'
-            '<div class="epoch-stage-detail">Epoch này được giữ trong trục thời gian nhưng không dùng để tính thống kê.</div></div>'
+            '<div class="epoch-stage-detail">Đoạn này được giữ trên trục thời gian nhưng không dùng để tính thống kê.</div></div>'
         )
     description = STAGE_DESCRIPTIONS[stage]
     minute = record.original_epoch_index[position] * .5
     confidence_text = (
-        f" · confidence {confidence:.0%}" if confidence is not None else ""
+        f" · điểm xác suất dự đoán {confidence:.0%}" if confidence is not None else ""
     )
     return (
         f'<div class="epoch-stage" style="border-left-color:{STAGE_COLORS[stage]}">'
-        f'<div class="epoch-stage-label">{html.escape(label_source)} của epoch đang xem</div>'
+        f'<div class="epoch-stage-label">{html.escape(label_source)} của đoạn đang xem</div>'
         f'<div class="epoch-stage-value">{stage} · {html.escape(description)}</div>'
-        f'<div class="epoch-stage-detail">Epoch gốc #{int(record.original_epoch_index[position])} · phút {minute:g}–{minute + .5:g} · 30 giây EEG{confidence_text}</div></div>'
+        f'<div class="epoch-stage-detail">Chỉ số đoạn gốc {int(record.original_epoch_index[position])} · phút {minute:g} đến {minute + .5:g} · 30 giây EEG{confidence_text}</div></div>'
     )
 
 
@@ -447,23 +457,24 @@ def render_stage_record(
     slider_key: str,
     display_record: DemoRecord | None = None,
     probabilities: np.ndarray | None = None,
+    compare_labels: bool = False,
 ) -> None:
     if len(stages) != len(record.x):
-        st.error("Số dự đoán không khớp số epoch của bản ghi.")
+        st.error("Số dự đoán không khớp số đoạn của bản ghi.")
         return
     if probabilities is not None and probabilities.shape != (len(record.x), len(STAGE_NAMES)):
-        st.error("Confidence không khớp số epoch hoặc số lớp của prediction.")
+        st.error("Bảng xác suất không khớp số đoạn hoặc số lớp dự đoán.")
         return
     display_record = display_record or record
     if (
         len(display_record.x) != len(record.x)
         or not np.array_equal(display_record.original_epoch_index, record.original_epoch_index)
     ):
-        st.error("Tín hiệu EEG hiển thị không căn chỉnh với prediction.")
+        st.error("Tín hiệu EEG hiển thị không khớp vị trí thời gian của dự đoán.")
         return
     summary = record_stage_summary(stages)
     valid_epochs = int((stages >= 0).sum())
-    epoch_label = "Epoch có nhãn" if label_source == "Nhãn chuyên gia" else "Epoch có dự đoán"
+    epoch_label = "Số đoạn có nhãn" if label_source == "Nhãn chuyên gia" else "Số đoạn có dự đoán"
     top_left, top_middle, top_right = st.columns(3)
     top_left.metric("Bản ghi", record.record_key)
     top_middle.metric("Thời lượng phân tích", format_duration(valid_epochs))
@@ -471,8 +482,8 @@ def render_stage_record(
 
     section(
         "01 · Phân bố giai đoạn ngủ",
-        "Đêm ngủ này gồm bao nhiêu epoch ở từng giai đoạn?",
-        f"Mỗi epoch dài 30 giây. Dữ liệu giai đoạn bên dưới là: {label_source}. Biểu đồ cho biết số epoch; bảng bên cạnh cho biết thêm thời lượng và tỷ lệ.",
+        "Đêm ngủ này gồm bao nhiêu đoạn ở từng giai đoạn?",
+        f"Mỗi đoạn dài 30 giây. Dữ liệu giai đoạn bên dưới là: {label_source}. Biểu đồ cho biết số đoạn; bảng bên cạnh cho biết thêm thời lượng và tỷ lệ.",
     )
     chart_column, table_column = st.columns([1.05, .95])
     with chart_column:
@@ -488,21 +499,21 @@ def render_stage_record(
     section(
         "02 · Nhìn toàn bộ đêm ngủ",
         "Giai đoạn nào xuất hiện ở thời điểm nào?",
-        f"Đường bậc thang đặt W/REM/N1/N2/N3 ở trục trái; mỗi điểm là một epoch 30 giây theo {label_source}. Rê chuột để xem thời điểm và kéo ngang để phóng to một vùng.",
+        f"Trục trái thể hiện W/REM/N1/N2/N3; mỗi đoạn dài 30 giây theo {label_source}. Rê chuột để xem thời điểm; cuộn để phóng to và kéo để dịch chuyển vùng đang xem.",
     )
     st.altair_chart(sleep_timeline_chart(record, stages, label_source), width="stretch")
 
     section(
-        "03 · Xem sóng EEG của một epoch",
-        "Lọc theo giai đoạn, rồi đối chiếu sóng EEG với kết quả phân giai đoạn của epoch đó",
-        "Đây là công cụ trực quan hóa dữ liệu nghiên cứu, không phải chẩn đoán y khoa. Một epoch 30 giây không nên được diễn giải tách rời toàn bộ bản ghi.",
+        "03 · Xem sóng EEG của một đoạn",
+        "Lọc theo giai đoạn dự đoán, rồi đối chiếu với sóng EEG",
+        "Đây là công cụ trực quan hóa dữ liệu nghiên cứu, không phải chẩn đoán y khoa. Một đoạn 30 giây không nên được diễn giải tách rời toàn bộ bản ghi.",
     )
     valid_positions = np.flatnonzero(stages >= 0)
     if len(valid_positions) == 0:
-        st.info("Bản ghi không có epoch phù hợp để hiển thị.")
+        st.info("Bản ghi không có đoạn phù hợp để hiển thị.")
         return
     stage_filter = st.selectbox(
-        "Chỉ xem epoch thuộc giai đoạn",
+        "Chỉ xem đoạn được dự đoán thuộc giai đoạn",
         ["Tất cả", *STAGE_NAMES],
         format_func=lambda value: (
             "Tất cả giai đoạn" if value == "Tất cả" else f"{value} · {STAGE_DESCRIPTIONS[value]}"
@@ -514,29 +525,44 @@ def render_stage_record(
         if stage_filter == "Tất cả"
         else np.flatnonzero(stages == STAGE_NAMES.index(stage_filter))
     )
+    comparison = "Tất cả"
+    if compare_labels and record.labels is not None:
+        comparison = st.selectbox(
+            "Đối chiếu với chuyên gia",
+            ["Tất cả", "Dự đoán đúng", "Dự đoán sai"],
+            key=f"{slider_key}_comparison",
+        )
+        if comparison != "Tất cả":
+            eligible = record.labels[positions] >= 0
+            matches = stages[positions] == record.labels[positions]
+            positions = positions[eligible & (matches if comparison == "Dự đoán đúng" else ~matches)]
     if len(positions) == 0:
-        st.info(f"Không có epoch {stage_filter} trong bản ghi này.")
+        st.info("Không có đoạn nào phù hợp với bộ lọc đã chọn.")
         return
-    selection = st.slider(
-        "Chọn epoch trong danh sách đã lọc",
-        min_value=1,
-        max_value=len(positions),
-        value=(len(positions) + 1) // 2,
-        step=1,
-        key=f"{slider_key}_epoch",
-    )
+    if len(positions) == 1:
+        selection = 1
+        st.caption("Chỉ có một đoạn phù hợp; đoạn này được chọn tự động.")
+    else:
+        selection = st.slider(
+            "Chọn đoạn trong danh sách đã lọc",
+            min_value=1,
+            max_value=len(positions),
+            value=(len(positions) + 1) // 2,
+            step=1,
+            key=f"{slider_key}_epoch_{stage_filter}_{comparison}",
+        )
     position = int(positions[selection - 1])
     confidence = (
         float(probabilities[position, int(stages[position])])
         if probabilities is not None
         else None
     )
-    st.caption(f"Đang xem epoch {selection}/{len(positions)} trong bộ lọc · epoch gốc #{int(record.original_epoch_index[position])}.")
+    st.caption(f"Đang xem đoạn {selection}/{len(positions)} trong bộ lọc · chỉ số đoạn gốc {int(record.original_epoch_index[position])} (bắt đầu từ 0).")
     signal_column, stage_column = st.columns([1.3, .7])
     with signal_column:
         st.altair_chart(eeg_chart(display_record, position), width="stretch")
         st.caption(
-            "Trục ngang: 30 giây trong epoch. Trục dọc: biên độ EEG gần đơn vị µV. "
+            "Trục ngang: 30 giây trong đoạn. Trục dọc: biên độ EEG theo đơn vị µV. "
             "Sóng này luôn là EEG gốc để E0 và E3 có thể được đối chiếu trên cùng tín hiệu."
         )
     with stage_column:
@@ -544,8 +570,19 @@ def render_stage_record(
             epoch_stage_html(record, stages, position, label_source, confidence),
             unsafe_allow_html=True,
         )
+        if compare_labels and record.labels is not None:
+            actual = int(record.labels[position])
+            if actual < 0:
+                st.info("Đoạn này không có nhãn chuyên gia hợp lệ để đối chiếu.")
+            else:
+                st.markdown(epoch_stage_html(record, record.labels, position, "Nhãn chuyên gia"), unsafe_allow_html=True)
+                if actual == int(stages[position]):
+                    st.success("Dự đoán khớp nhãn chuyên gia.")
+                else:
+                    st.warning("Dự đoán khác nhãn chuyên gia.")
+                st.caption("Đối chiếu tại một đoạn chỉ minh họa kết quả, không thay thế đánh giá trên toàn bộ tập kiểm tra.")
         st.markdown(
-            f'<div class="note note-blue"><b>Cách dùng khi demo.</b> Chọn một vùng trên timeline, kéo thanh đến thời điểm tương ứng, sau đó đọc sóng EEG cùng {html.escape(label_source)}. Confidence là softmax của model, không phải xác suất đúng đã hiệu chuẩn.</div>',
+            f'<div class="note note-blue"><b>Cách đọc.</b> Chọn đoạn bằng thanh trượt để xem sóng EEG cùng {html.escape(label_source)}. Điểm xác suất là đầu ra softmax của mô hình, không phải xác suất dự đoán đúng đã được hiệu chuẩn.</div>',
             unsafe_allow_html=True,
         )
 
@@ -558,22 +595,49 @@ def render_uploaded_record_explorer() -> None:
         key="uploaded_model",
         width="stretch",
     )
-    uploaded = st.file_uploader("Tải một file EDF", type=["edf", "rec"])
+    if model is None:
+        st.info("Chọn E3 hoặc E0 để tiếp tục.")
+        return
+    uploaded = st.file_uploader("Tải một tệp EDF", type=["edf", "rec"])
     if uploaded is None:
         st.info(f"Tải EDF có kênh EEG Fpz-Cz, 100 Hz và đơn vị µV để chạy dự đoán {model}.")
         return
     payload = uploaded.getvalue()
-    inspection = cached_edf_inspection(payload, uploaded.name)
-    if not inspection["ready"]:
-        st.error("EDF chưa phù hợp để chạy demo. Cần EEG Fpz-Cz, 100 Hz, đơn vị µV và ít nhất một epoch 30 giây.")
+    try:
+        inspection = cached_edf_inspection(payload, uploaded.name)
+    except (OSError, RuntimeError, ValueError):
+        st.error("Không đọc được tệp EDF. Tệp có thể bị hỏng hoặc không đúng định dạng. Hãy chọn lại tệp EEG hợp lệ.")
         return
+    if not inspection["ready"]:
+        st.error("EDF chưa phù hợp. Cần kênh EEG Fpz-Cz, 100 Hz, đơn vị µV và ít nhất một đoạn 30 giây.")
+        return
+    annotation_file = st.file_uploader(
+        "Tải nhãn chuyên gia (tùy chọn)", type=["edf"], key="expert_hypnogram",
+        help="Chọn tệp Hypnogram.edf đi kèm bản ghi Sleep-EDF. Nhãn chỉ dùng để đối chiếu, không đưa vào mô hình.",
+    )
+    expert_labels = None
+    if annotation_file is not None:
+        try:
+            expert_labels = cached_hypnogram(annotation_file.getvalue(), annotation_file.name, inspection, uploaded.name)
+        except ValueError as error:
+            st.error(f"Không thể đối chiếu nhãn: {error}")
+            st.caption("Chọn lại tệp nhãn hoặc bỏ tệp này để chỉ chạy dự đoán.")
+            return
+        except (OSError, RuntimeError):
+            st.error("Không đọc được tệp nhãn. Hãy chọn tệp Hypnogram EDF hợp lệ đi kèm tín hiệu.")
+            return
+        st.caption(f"Đã căn thời gian: {int((expert_labels >= 0).sum()):,}/{len(expert_labels):,} đoạn có nhãn hợp lệ. Đoạn thiếu nhãn, vận động hoặc chưa chấm được bỏ khỏi đánh giá.")
+        st.caption("Hãy bảo đảm hai tệp thuộc cùng người và cùng lần ghi. Thời gian khớp không tự chứng minh nguồn gốc khi tệp đã bị đổi tên.")
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    if inspection["trailing_samples"]:
+        st.warning(f"Bỏ {inspection['trailing_samples']:,} mẫu tín hiệu cuối vì chưa đủ một đoạn 30 giây.")
     st.caption(
-        f"Đầu vào hợp lệ: {inspection['complete_epochs']:,} epoch hoàn chỉnh. Demo chỉ chạy {model} trên {device.upper()} và không so sánh thêm mô hình khác."
+        f"Đầu vào hợp lệ: {inspection['complete_epochs']:,} đoạn hoàn chỉnh. Chạy {model} trên {device.upper()}. Tệp được xử lý trên máy đang chạy ứng dụng."
     )
     digest = hashlib.sha256(payload).hexdigest()
     run_key = f"{digest}:{model}:{device}"
     if st.button("Phân tích bản ghi", type="primary", width="stretch"):
+        st.session_state.pop("simple_edf_result", None)
         try:
             with st.spinner(f"Đang tiền xử lý và chạy {model}…"):
                 records = cached_uploaded_records(payload, uploaded.name)
@@ -587,14 +651,28 @@ def render_uploaded_record_explorer() -> None:
                 prediction,
             )
         except (FileNotFoundError, OSError, RuntimeError, ValueError) as error:
-            st.error(f"Không thể hoàn tất suy luận {model}. Hãy kiểm tra lại gói checkpoint demo và file EDF.")
+            st.error(f"Không thể hoàn tất suy luận {model}. Hãy kiểm tra lại tệp mô hình và tệp EDF.")
             st.caption(str(error))
+            return
     stored = st.session_state.get("simple_edf_result")
     if not stored or len(stored) != 4 or stored[0] != run_key:
         return
     _, record, display_record, prediction = stored
+    st.caption(f"Đã chạy trực tiếp {model} trên {device.upper()}. Thời gian suy luận: {prediction.elapsed_seconds:.2f} giây, không gồm nạp mô hình và tiền xử lý.")
+    compare_labels = False
+    st.caption("Suy luận sử dụng toàn bộ đoạn tín hiệu hoàn chỉnh, không cắt biên theo nhãn như giao thức thực nghiệm khóa luận.")
+    if expert_labels is None:
+        st.caption("Chưa tải nhãn chuyên gia nên chưa thể tính độ chính xác đối chiếu.")
+    else:
+        # Labels are attached only AFTER inference, never passed to predict_record.
+        record = replace(record, labels=expert_labels)
+        valid = expert_labels >= 0
+        accuracy = float(np.mean(prediction.predicted[valid] == expert_labels[valid]))
+        st.metric("Tỷ lệ khớp nhãn chuyên gia", f"{accuracy:.1%}")
+        st.caption(f"Tính trên {int(valid.sum()):,} đoạn có nhãn hợp lệ của bản ghi này, không phải kết quả đánh giá toàn bộ khóa luận.")
+        compare_labels = st.checkbox("Đối chiếu với nhãn chuyên gia", value=True, key="uploaded_compare_labels")
     st.markdown(
-        f'<div class="note note-amber"><b>Lưu ý.</b> Các giai đoạn dưới đây là dự đoán của {model}, không phải nhãn chuyên gia. Chúng chỉ phục vụ minh họa pipeline.</div>',
+        f'<div class="note note-amber"><b>Lưu ý.</b> Các giai đoạn dưới đây là dự đoán của {model}, không phải nhãn chuyên gia. Chúng chỉ phục vụ minh họa quy trình xử lý.</div>',
         unsafe_allow_html=True,
     )
     render_stage_record(
@@ -604,6 +682,7 @@ def render_uploaded_record_explorer() -> None:
         slider_key=f"uploaded_{model}_{digest[:12]}",
         display_record=display_record,
         probabilities=prediction.probabilities,
+        compare_labels=compare_labels,
     )
 
 
@@ -612,7 +691,7 @@ def render_sleep_record_explorer() -> None:
         """
         <div class="explorer-hero">
           <h1>Khám phá một đêm ngủ từ EEG</h1>
-          <p>Chọn một bản ghi mẫu hoặc tải EDF để chạy E3/E0. Demo chỉ làm ba việc: đếm giai đoạn ngủ, hiển thị chúng theo thời gian và cho xem sóng EEG của từng epoch.</p>
+          <p>Chọn bản ghi mẫu để xem dự đoán và đối chiếu với chuyên gia, hoặc tải EDF để chạy mô hình E3/E0. Khám phá diễn biến giai đoạn ngủ và tín hiệu EEG của từng đoạn 30 giây.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -640,6 +719,9 @@ def render_sleep_record_explorer() -> None:
         key="sample_model",
         width="stretch",
     )
+    if model is None:
+        st.info("Chọn E3 hoặc E0 để tiếp tục.")
+        return
     variant = EXPERIMENT_VARIANTS[model]
     model_path = PROCESSED_ROOT / variant / f"{selected_key}.npz"
     if not model_path.is_file():
@@ -654,14 +736,15 @@ def render_sleep_record_explorer() -> None:
     try:
         prediction = cached_locked_prediction(model, record)
     except (FileNotFoundError, ValueError) as error:
-        st.error("Không thể nạp prediction artifact đã khóa cho bản ghi mẫu.")
+        st.error("Không thể nạp kết quả dự đoán đã lưu cho bản ghi mẫu.")
         st.code(
             "python scripts/prepare_demo_assets.py --ref run-in-docker --fold 0 --seed 123",
             language="powershell",
         )
         st.caption(str(error))
         return
-    st.caption(f"Đang xem prediction artifact đã khóa của {model} trên {selected_key}; không chạy lại mô hình trong lúc trình diễn.")
+    st.caption(f"Đang xem kết quả dự đoán đã lưu và xác minh của {model} trên {selected_key}; không chạy lại mô hình. Chọn Tải EDF để chạy suy luận trực tiếp.")
+    compare_labels = st.checkbox("Đối chiếu với nhãn chuyên gia", value=False)
     render_stage_record(
         record,
         prediction.predicted,
@@ -669,6 +752,7 @@ def render_sleep_record_explorer() -> None:
         slider_key=f"sample_{model}_{record.record_key}",
         display_record=display_record,
         probabilities=prediction.probabilities,
+        compare_labels=compare_labels,
     )
 
 

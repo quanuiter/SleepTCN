@@ -4,6 +4,33 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 7 October 2026: the abstract and interpretation distinguish the
+primary E3 comparisons from the same-seed E4 extensions at seeds 42 and 123. Additional
+intervention experiments are reported with their own matched controls and ensemble sizes.
+Class weighting now reports a verified matched ten-fold ensemble, with CPU-trained folds 0--5
+and CUDA-trained folds 6--9. The earlier single-fold result remains separate. ADAST now reports
+a verified matched ten-fold CUDA-trained comparison, evaluated locally on all 180 SHHS
+participants and all source outer-test subjects at two matched budgets. With 1,140 updates,
+ADAST improves target N3 recall but reduces class-balanced performance and produces no N1
+predictions. With 30 complete source passes, epoch-30 ADAST improves subject-mean macro-F1
+by 0.0445 and N3 recall by 0.3679 over its matched control, while reducing N1/N2/REM F1
+and source outer-test performance. The paired difference of budget effects is 0.0897.
+The source-validation-selected secondary evaluation retains the same direction of
+N3 benefit and stage/source-performance costs: SHHS subject-mean macro-F1 improves
+by 0.0322. Supplementary Tables S32-S33 report aggregate and all-class results;
+epoch 30 remains primary. The earlier CPU pilot remains separate. New CUDA training times do not replace the
+historical benchmark.
+Two coauthors have been appended
+with the confirmed Information Systems affiliation; the corresponding author is unchanged.
+This is a working manuscript revision with limited-budget and full-source multi-fold ADAST comparisons, not
+a comprehensive UDA benchmark or a final
+submission approval. Author contribution statements still require all coauthors' confirmation.
+
+The current revision also reports the full-source budget and loss-component studies, including
+the three-arm fold-1 comparison. Results distinguish selected and final checkpoints and source-
+validation attention paths. A numerical and claim review preserved all table values and replaced
+repeated procedural caveats with direct descriptions of measured effects and experimental scope.
+
 The manuscript retains author-supplied declarations; these do not independently verify ethics,
 CRediT or figure provenance. It identifies archived repository snapshot `f7c22e7`, not a newly
 verified execution revision. Before submitting, push the
@@ -15,12 +42,14 @@ requirements against the current BSPC Guide for Authors.
 Run these commands from the bundle root. Build the supplement first because `main.tex` imports its
 table labels with `xr-hyper`:
 
-The processing schematic and speed--performance plot are supplied as PDFs with editable TikZ sources.
+The study-design schematic and speed--performance plot are supplied as vector PDFs. The schematic
+also has an editable SVG and a Matplotlib builder; the speed plot retains its TikZ source.
 From `figure_sources/`, run the following commands to rebuild them (the quoted output-directory
-argument also works in PowerShell). No experimental results are recalculated.
+argument also works in PowerShell). The schematic builder requires Python, Matplotlib and Arial
+(or a locally selected substitute font). No experimental results are recalculated.
 
 ```powershell
-pdflatex -interaction=nonstopmode -halt-on-error '-output-directory=../figures' gate8_pipeline_overview_en.tex
+python study_design.py
 pdflatex -interaction=nonstopmode -halt-on-error '-output-directory=../figures' gate8_primary_speedup_f1_en.tex
 ```
 
@@ -46,7 +75,8 @@ Standard TeX Live/MiKTeX packages are used, including `newtxtext`, `newtxmath`, 
 `fancyhdr` and `hyperref`. English figure dependencies are under `figures/`; no parent-directory
 assets are required by the active documents.
 The local `ieeetr-doi.bst` is included and must remain beside `main.tex`; it preserves numeric
-citation order while adding available DOI links. TikZ/PGFPlots is needed only to rebuild the vector sources.
+first-citation order, adds available DOI or URL links, and distinguishes article identifiers
+from page ranges. TikZ/PGFPlots is needed only to rebuild the speed-plot source.
 
 ## Final checks
 

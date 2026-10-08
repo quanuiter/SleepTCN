@@ -6,8 +6,9 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .venv/
+.venv-iris-benchmark/
 venv/
-
+KLTN/
 # Jupyter
 .ipynb_checkpoints/
 
@@ -71,3 +72,29 @@ Reports/paper/*.blg
 Reports/paper/*.log
 Reports/paper/*.out
 Reports/paper/main.pdf
+
+# Local-only operations/build files; tracked copies need explicit untracking.
+tmp/
+.miktex/
+*.private.json
+*.pending
+*.aux
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+Reports/paper_en/main.pdf
+Reports/paper_en/supplement.pdf
+Reports/paper_vi_translation/main.pdf
+configs/adast_development_followup_draft_20261004.json
+scripts/audit_cleanup_20261007.py
+scripts/cleanup_recoverable_20261007.ps1
+scripts/verify_cleanup_20261007.py
+scripts/diagnose_iris_gradients.py
+scripts/benchmark_iris_tcn.py

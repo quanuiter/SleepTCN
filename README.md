@@ -4,9 +4,11 @@ SleepTCN là kho nghiên cứu tái triển khai và đánh giá các quy trình
 kênh trên Sleep-EDF Expanded — Sleep Cassette. Nghiên cứu tập trung vào sự khác biệt giữa 15CNN–BiLSTM,
 15CNN–TCN và ResNet-1D–TCN, đồng thời đánh giá các phương án tiền xử lý tín hiệu.
 
-> **Trạng thái ngày 2026-08-25:** Gate 1–8 trên Sleep-EDF, chiến dịch zero-shot SHHS1, phân tích thành
-> phần E1/E2, đối chiếu E3−E2 và phân tích độ nhạy với seed 42/123 đã hoàn tất. Kết quả hiện hành được
-> trình bày tại `docs/STATUS_V2.md` và trong báo cáo `Reports/output/pdf/SleepTCN_Gate1_8_SHHS_Report.pdf`.
+> **Cập nhật 07-10-2026:** Ngoài Gate 1–8 và zero-shot lịch sử, đã hoàn tất các đối chiếu calibration,
+> class-weighting và ADAST/source-only mười fold ở hai ngân sách. Paper hiện hành gồm bản Anh,
+> bản dịch Việt BSPC và phụ lục trong `Reports/output/pdf/`; số liệu công khai ở `Reports/analysis/`.
+> Hướng dẫn checkout sạch, test không training và build paper: [PUBLIC_REPRODUCIBILITY](docs/PUBLIC_REPRODUCIBILITY.md).
+> `docs/STATUS_V2.md` vẫn mô tả chiến dịch Gate 1–8 lịch sử, không phải toàn bộ các lượt bổ sung.
 
 ## Kết quả chính
 
@@ -45,7 +47,7 @@ kênh trên Sleep-EDF Expanded — Sleep Cassette. Nghiên cứu tập trung và
 ## Tài liệu kết quả
 
 1. `docs/README.md` — mục lục tài liệu.
-2. `docs/STATUS_V2.md` — nguồn duy nhất cho trạng thái cuối.
+2. `docs/STATUS_V2.md` — trạng thái cuối của chiến dịch Gate 1–8 lịch sử.
 3. `docs/GATE8_FINAL_RESULTS.md` — kết quả và ranh giới kết luận Gate 8.
 4. `docs/SHHS_ZERO_SHOT_RESULTS.md` — kết quả zero-shot và phân tích thành phần.
 5. `docs/MULTISEED_SENSITIVITY_RESULTS.md` — độ nhạy theo hai seed cố định.
@@ -54,7 +56,8 @@ kênh trên Sleep-EDF Expanded — Sleep Cassette. Nghiên cứu tập trung và
 8. `docs/REPRODUCIBILITY_PACKAGE.md` — lock môi trường, audit hash và quy trình tái sinh NPZ.
 9. `docs/SOURCE_ARCHITECTURE.md` — ranh giới module và nguyên tắc tổ chức source.
 
-`STATUS_V2.md` là tài liệu chính thức về trạng thái và phạm vi kết luận. Các protocol và runbook ghi lại
+`STATUS_V2.md` ghi trạng thái và phạm vi Gate 1–8. Paper hiện hành và các bảng tổng hợp bổ sung ở
+`Reports/analysis/` bao gồm các can thiệp sau đó. Các protocol và runbook ghi lại
 thiết kế thực nghiệm, điều kiện tái lập và nguồn gốc của từng nhóm kết quả.
 
 ## Demo bảo vệ khóa luận
@@ -62,7 +65,11 @@ thiết kế thực nghiệm, điều kiện tái lập và nguồn gốc của 
 Giao diện Streamlit được giữ ở một màn hình trực quan: chọn bản ghi, xem số epoch W/N1/N2/N3/REM, đọc
 timeline bậc thang của cả đêm ngủ và lọc epoch theo W/N1/N2/N3/REM để xem 30 giây EEG cùng giai đoạn tương ứng.
 Người xem chọn một model E3 hoặc E0; cả bản ghi mẫu lẫn EDF tải lên đều hiển thị rõ đây là dự đoán của model đã
-chọn. Toàn bộ so sánh model, kiểm định và số liệu nghiên cứu được giữ trong báo cáo thay vì nhồi vào demo.
+chọn. Bản ghi mẫu có lựa chọn đối chiếu với nhãn chuyên gia và lọc đoạn dự đoán đúng/sai.
+Tệp EDF tải lên được chạy suy luận trực tiếp; ứng dụng phân biệt rõ với kết quả mẫu lưu sẵn.
+Có thể tải thêm Hypnogram EDF của Sleep-EDF để đối chiếu nhãn chuyên gia sau suy luận,
+lọc đoạn đúng/sai và xem tỷ lệ khớp trên các đoạn có nhãn hợp lệ.
+Các so sánh tổng hợp, kiểm định và số liệu nghiên cứu được giữ trong báo cáo.
 
 ```powershell
 python -m pip install -e ".[demo]"
@@ -81,8 +88,9 @@ Hướng dẫn đầy đủ và kịch bản trình bày: `docs/DEMO_STREAMLIT.m
 - Có hai seed huấn luyện cố định 42 và 123 trên Sleep-EDF. Seed 123 được chạy sau khi đã xem kết quả
   seed 42; phân tích này đánh giá khả năng lặp lại của hướng hiệu ứng và độ nhạy, chưa đủ để ước lượng
   toàn bộ phân phối biến thiên do khởi tạo.
-- Đã đánh giá zero-shot giới hạn trên 180 đối tượng SHHS1; chưa đại diện toàn bộ SHHS, chưa thích nghi
-  miền, đa kênh hoặc xác nhận lâm sàng.
+- Đã đánh giá zero-shot và bổ sung ADAST với năm người thích nghi không nhãn, chấm trên cùng
+  180 người SHHS1. Đây là cohort đã được xem trước; không đại diện toàn bộ SHHS hoặc xác nhận lâm sàng.
+  Các kết quả limited/full-source, weighted và pilot được báo riêng, không trộn ngân sách/backend.
 - Không có kiểm định tương đương hoặc không thua kém.
 
 ## Cấu trúc thư mục
@@ -105,5 +113,5 @@ tests/            Kiểm thử tự động
 - Giá trị p lớn hơn 0,05 không được diễn giải như bằng chứng về tính tương đương hoặc không thua kém.
 - Ablation C/P/N chỉ ước lượng hiệu ứng dự báo có điều kiện trong quy trình hiện tại, không đo tỷ lệ thông
   tin và không xác lập quan hệ nhân quả.
-- Kết luận SHHS chỉ áp dụng cho cohort và giao thức zero-shot đã khóa; chưa có cơ sở để suy rộng sang toàn
+- Kết luận SHHS chỉ áp dụng cho cohort và từng giao thức zero-shot/thích nghi đã báo; chưa có cơ sở để suy rộng sang toàn
   bộ SHHS hoặc thực hành lâm sàng.

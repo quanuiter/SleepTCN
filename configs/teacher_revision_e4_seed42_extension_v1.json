@@ -1,0 +1,18 @@
+{
+  "status": "additional_same_cohort_analysis_specified_before_new_E4_seed42_inference",
+  "seed": 42,
+  "folds": [0,1,2,3,4,5,6,7,8,9],
+  "contrast": "E4_minus_E3",
+  "selection": "all_historical_source_selected_checkpoints_no_target_ranking",
+  "target_subjects": 180,
+  "context": "historical_processed_benchmark_windows_identical_to_primary_E3; annotation_derived_windowing_disclosed",
+  "ensemble": "mean_of_ten_float32_probabilities_using_float64_accumulator_then_float32_argmax",
+  "E3_control": "hash_verified_historical_seed42_ensemble_with_numerical_replay_on_first_sorted_subject_all_ten_folds",
+  "E4": "new_inference_from_restored_historical_seed42_checkpoints",
+  "cpu_threads": 4,
+  "batch_size": 256,
+  "bootstrap_resamples": 10000,
+  "bootstrap_seed": 2031,
+  "statistics": "paired_subject_confidence_intervals; no_new_p_value_family; seed123_remains_separate_not_360_independent_subjects",
+  "limitations": "same_cohort_extension_not_new_holdout; no_hyperparameter_fitting_on_target; not_combined_with_full_record_intervention_results"
+}

@@ -16,7 +16,7 @@ import torch
 from .dataset import load_record
 from .features import expected_15cnn_keys, extract_15cnn_features
 from .models import BiLSTMSleepNet, EEGResNet1D, SleepCNN, SleepTCN
-from .preprocessing import PreprocessConfig, preprocess_signal_variant
+from .preprocessing import KEY_RE, LABEL_MAP, PreprocessConfig, preprocess_signal_variant
 
 
 STAGE_NAMES = ("W", "N1", "N2", "N3", "REM")
@@ -336,6 +336,7 @@ def inspect_edf_demo(path: Path, channel: str = "EEG Fpz-Cz") -> dict[str, Any]:
             "complete_epochs": 0,
             "trailing_samples": 0,
             "file_duration_seconds": float(reader.getFileDuration()),
+            "start_datetime": reader.getStartdatetime().isoformat(),
         }
         if channel in channels:
             index = channels.index(channel)
@@ -372,6 +373,61 @@ def inspect_edf_demo(path: Path, channel: str = "EEG Fpz-Cz") -> dict[str, Any]:
         and result["has_complete_epoch"]
     )
     return result
+
+
+def align_demo_annotations(
+    onsets: np.ndarray,
+    durations: np.ndarray,
+    descriptions: np.ndarray,
+    epoch_count: int,
+) -> np.ndarray:
+    """Align complete 30-second annotations; never infer or fill missing labels."""
+    if epoch_count <= 0 or not (len(onsets) == len(durations) == len(descriptions)):
+        raise ValueError("Số lượng chú giải hoặc số đoạn tín hiệu không hợp lệ.")
+    labels = np.full(epoch_count, -1, dtype=np.int8)
+    previous_end = 0.0
+    for onset_raw, duration_raw, description_raw in zip(onsets, durations, descriptions, strict=True):
+        onset, duration = float(onset_raw), float(duration_raw)
+        description = str(description_raw).strip()
+        if description not in LABEL_MAP:
+            raise ValueError("Tệp chứa chú giải không thuộc bộ nhãn Sleep-EDF được hỗ trợ.")
+        if not math.isfinite(onset) or not math.isfinite(duration) or onset < 0 or duration <= 0:
+            raise ValueError("Thời điểm hoặc thời lượng chú giải không hợp lệ.")
+        if onset < previous_end - 1e-6:
+            raise ValueError("Các chú giải bị chồng lấn hoặc không theo thứ tự thời gian.")
+        start, length = onset / 30.0, duration / 30.0
+        if not math.isclose(start, round(start), abs_tol=1e-7, rel_tol=0) or not math.isclose(length, round(length), abs_tol=1e-7, rel_tol=0):
+            raise ValueError("Chú giải không khớp ranh giới đoạn 30 giây; không tự làm tròn hoặc dịch nhãn.")
+        previous_end = onset + duration
+        first, last = int(round(start)), int(round(start)) + int(round(length))
+        labels[first:min(last, epoch_count)] = LABEL_MAP[description]
+    if not np.any(labels >= 0):
+        raise ValueError("Không có nhãn chuyên gia hợp lệ trong khoảng thời gian của tín hiệu.")
+    return labels
+
+
+def load_demo_hypnogram(
+    path: Path,
+    inspection: Mapping[str, Any],
+    signal_filename: str,
+    hypnogram_filename: str,
+) -> np.ndarray:
+    """Read Sleep-EDF annotations with strict recording/time alignment checks."""
+    import pyedflib
+
+    signal_key = KEY_RE.match(Path(signal_filename).name)
+    hypnogram_key = KEY_RE.match(Path(hypnogram_filename).name)
+    if signal_key is not None or hypnogram_key is not None:
+        if signal_key is None or hypnogram_key is None or signal_key.group(1) != hypnogram_key.group(1):
+            raise ValueError("Mã bản ghi trong tên tệp EEG và tệp nhãn không khớp. Hãy chọn đúng cặp PSG và Hypnogram.")
+    reader = pyedflib.EdfReader(str(path.resolve()))
+    try:
+        if reader.getStartdatetime().isoformat() != inspection['start_datetime']:
+            raise ValueError("Thời điểm bắt đầu của tệp nhãn và EEG không khớp. Ứng dụng không tự dịch thời gian.")
+        onsets, durations, descriptions = reader.readAnnotations()
+    finally:
+        reader.close()
+    return align_demo_annotations(onsets, durations, descriptions, int(inspection['complete_epochs']))
 
 
 def load_edf_demo_records(

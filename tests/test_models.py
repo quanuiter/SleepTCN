@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 import torch
 
@@ -30,6 +31,20 @@ class BiLSTMTests(unittest.TestCase):
 
 
 class ResNetTests(unittest.TestCase):
+    def test_fixed_input_scale_can_be_compensated_at_bias_free_stem(self) -> None:
+        torch.manual_seed(19)
+        model = EEGResNet1D().eval()
+        # Non-default running statistics also remain unchanged by the compensation.
+        model.stem[1].running_mean.copy_(torch.randn(32))
+        model.stem[1].running_var.copy_(torch.rand(32) + 0.5)
+        compensated = deepcopy(model)
+        with torch.no_grad():
+            compensated.stem[0].weight.mul_(100)
+            x = 40 * torch.randn(2, 1, 3000)
+            original = model(x)
+            rescaled = compensated(x / 100)
+        torch.testing.assert_close(rescaled, original, rtol=3e-5, atol=3e-6)
+
     def test_feature_and_logit_shapes(self) -> None:
         model = EEGResNet1D().eval()
         x = torch.randn(2, 1, 3000)

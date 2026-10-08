@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "status": "post_hoc_source_selected_pilot_specified_before_weighted_test_results",
+  "encoder": "recovered_full_E3_fold0_seed123_frozen",
+  "outer_fold": 0,
+  "seed": 123,
+  "arms": ["unweighted", "weighted"],
+  "loss_weights": "unweighted=ones; weighted=N_train/(5*count_train)",
+  "learning_rate": 0.0005,
+  "optimizer": "Adam",
+  "batch_size_records": 8,
+  "max_epochs": 300,
+  "patience": 30,
+  "gradient_clip_norm": 1.0,
+  "selection": "maximum_source_validation_pooled_macro_f1_strict_improvement",
+  "initialization": "seed_before_model_initialization_same_initial_weights_and_batch_order_for_both_arms",
+  "target": "180_locked_SHHS_test_subjects_full_record_E3_preprocessing_no_target_fitting",
+  "evaluation_mask": "historical_benchmark_mask_after_all_target_predictions",
+  "primary_contrast": "weighted_minus_unweighted",
+  "bootstrap_resamples": 10000,
+  "bootstrap_seed": 2031,
+  "p_values": "none_post_hoc_exploratory_marginal_intervals",
+  "limitations": [
+    "Single fold and training seed, selected by checkpoint availability.",
+    "The SHHS cohort has previously been examined and is not a new holdout.",
+    "Both sequence models are retrained; neither is a replacement for the archived E3 ten-fold ensemble.",
+    "The pretrained encoder is frozen and was previously selected on the same source validation fold.",
+    "No combination with EM, no loss-weight search, and no target-label model selection."
+  ]
+}

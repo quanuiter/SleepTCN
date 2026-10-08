@@ -1,0 +1,33 @@
+{
+  "status": "fixed_before_new_training",
+  "campaign_kind": "full_source_single_factor_loss_ablation",
+  "base_protocol_sha256": "0d9e559acbecb70aca542a6bca909b3996f6d34d89a18e17e2f68d65d15022fd",
+  "base_runner_sha256": "fd6071fa77fc463e25890f34350ad1a22fc946bd9e37a95fe2d801a984a3b204",
+  "base_manifest_sha256": "cbdf40d5800f238bf0ea5fbb2ac87bd11de7bfcc7eaab05c9e4c3cbd9ffc6b06",
+  "verified_reference_aggregate_sha256": "ff5ef23108fa3116ae4b8ebae3ebe945e2c6ee026f2c3ee615429ed8e52c9a99",
+  "arms": ["adast_reference_full_source", "adast_keep_source_ce_full_source", "adast_no_pseudo_full_source", "adast_no_adversarial_full_source"],
+  "arm_overrides": {
+    "adast_reference_full_source": {},
+    "adast_keep_source_ce_full_source": {"source_loss_weights_by_round": [1.0, 1.0]},
+    "adast_no_pseudo_full_source": {"target_loss_weights_by_round": [0.0, 0.0]},
+    "adast_no_adversarial_full_source": {"adversarial_weight": 0.0}
+  },
+  "sampling_budget": "full_source",
+  "fold": 0,
+  "seed": 123,
+  "epochs": 30,
+  "updates_per_epoch": 1229,
+  "updates_per_arm": 36870,
+  "fresh_reference_required": true,
+  "no_adversarial_semantics": "Skip discriminator forwards, backward and optimizer step; retain target attention forward, pseudo-label schedule and all other losses.",
+  "no_pseudo_semantics": "Set pseudo-CE coefficient to zero in both rounds; retain forward, pseudo-label generation and all other losses.",
+  "checkpoint_selection": "Strict maximum source-attention source-validation macro-F1; first tie; retain epoch-30 final separately.",
+  "candidate_ranking": "Source-validation macro-F1 at selected checkpoint, then N1/N3 and all-class tradeoffs; no target-test-based choice.",
+  "max_seconds": 18000,
+  "cpu_training_fallback": false,
+  "automatic_restart": false,
+  "automatic_multiseed_or_ten_fold_extension": false,
+  "source_outer_test_access": false,
+  "target_test_access": false,
+  "adaptation_subjects": 5
+}

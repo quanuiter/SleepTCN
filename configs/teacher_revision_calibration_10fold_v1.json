@@ -1,0 +1,19 @@
+{
+  "status": "additional_ten_fold_campaign_specified_before_new_ensemble_results",
+  "experiment": "E3",
+  "seed": 123,
+  "folds": [0,1,2,3,4,5,6,7,8,9],
+  "arms": ["raw", "calibrated", "calibrated_em"],
+  "temperature_fit": "each_fold_archived_source_validation_logits_only_NLL_bounds_0.05_to_20",
+  "source_prior": "mean_calibrated_source_validation_posterior_epoch_weighted",
+  "EM": {"adaptation_subjects": 5, "epochs": 4989, "labels_used": false, "max_iterations": 1000, "tolerance": 1e-8, "probability_floor": 1e-12},
+  "target_context": "full_record_no_annotation_windowing",
+  "order": "fit_each_fold_on_source_validation_and_locked_unlabelled_adaptation_then_freeze_all_fits_then_target_inference_then_average_ten_folds_then_score_historical_mask",
+  "ensemble": "float64_probability_average_then_float32; all_ten_folds_no_ranking",
+  "contrasts": ["calibrated_em_minus_calibrated", "calibrated_minus_raw"],
+  "bootstrap_resamples": 10000,
+  "bootstrap_seed": 2031,
+  "cpu_threads": 4,
+  "batch_size": 64,
+  "limitations": ["Same previously examined target cohort, not a new holdout.", "Source validation was also used for historical checkpoint selection.", "Raw full-record comparator is rerun and not mixed with historical trimmed-context E3.", "Two fixed calibration contrasts; no target-label tuning or model ranking."]
+}

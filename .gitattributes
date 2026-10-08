@@ -11,3 +11,18 @@
 # Publication manifests lock exact SHA-256 bytes; do not normalize line endings.
 runs/v2/publication/gate7/** -text
 runs/v2/publication/gate8/** -text
+
+# Preserve signed research/publication bytes; never renormalize frozen proofs.
+.gitattributes -text
+src/** -text
+scripts/** -text
+configs/** -text
+requirements/** -text
+requirements/lock-cu121.txt text eol=lf
+environment/pip-freeze.txt text eol=lf
+environment/*.sha256 text eol=lf
+data/manifests/** -text
+data/splits/** -text
+Reports/** -text
+runs/v2/analysis/** -text
+runs/v2/gate8/** -text

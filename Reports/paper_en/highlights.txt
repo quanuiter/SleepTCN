@@ -1,6 +1,6 @@
 Highlights
 
 - Paired subject-wise evaluation compared six sleep-staging configurations.
-- Inference was 3.76-fold faster, with higher parameter and memory costs.
-- Preprocessing gave the largest observed post-hoc transfer contrast.
-- Aggregate transfer gains left deep-sleep under-detection unresolved.
+- E3 forward passes were 3.76-fold faster than CNN--BiLSTM, with more parameters.
+- Band-pass-only E4 exceeded same-seed E3 in two-seed transfer comparisons.
+- Full-source ADAST raised N3 recall, with N1/N2/REM trade-offs.

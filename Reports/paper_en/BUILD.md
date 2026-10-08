@@ -1,13 +1,35 @@
 # Building the English manuscript
 
+Latest revision: 7 October 2026, `../ADAST_FULLSOURCE_PAPER_UPDATE_20261007_VI.md`
+and `../TEACHER_RESPONSE_20261003_VI.md`. ADAST now has verified ten-fold matched
+comparisons at limited and full-source budgets. The primary contrast uses epoch 30;
+historical pilots, loss-component studies and operational benchmarks remain separate.
+The completed source-validation-selected secondary evaluation is reported in
+Supplementary Tables S32-S33, without replacing the primary epoch-30 contrast.
+Rebuild or use the refreshed delivery PDFs and source ZIP; page counts in historical delivery
+notes may differ after revisions. The supplement now includes additional intervention methods.
+All four authors must approve this revised text before submission.
+
 Current editorial checklist (11 September 2026): `../BSPC_SUBMISSION_CHECKLIST_20260911.md`.
 The author-supplied 22-page BSPC Guide for Authors has now been reviewed. The current bundle uses
-an editable TikZ pipeline schematic rather than the former low-resolution PNG, and includes
+an editable vector study-design schematic rather than the former pipeline-only figure, and includes
 figure-level AI assistance disclosure. `SUBMISSION_BUILD.md` describes the current upload items.
 The delivery notes below dated 06 September are historical. Build all current delivery files with
 `powershell -File scripts/rebuild_bspc_delivery.ps1` from the repository root. This does not train
 models. Commit `f7c22e7` identifies an archived repository snapshot, not a newly verified execution
 revision. Author declarations still require the confirmations in the current checklist.
+
+The current entrypoint builds all three current PDFs in fresh staging: English and supplement
+with pdfLaTeX/BibTeX, and `paper_vi_translation/main.tex` with XeLaTeX and Times New Roman.
+It also builds the English source ZIP independently. It does not rebuild the older Vietnamese
+report in `Reports/paper`. Public evidence hashes are checked before packaging, never refreshed.
+Use `python scripts/build_public_delivery.py --verify-only` for a read-only integrity check.
+See `docs/PUBLIC_REPRODUCIBILITY.md` for clean-checkout prerequisites and exact-byte Git policy.
+
+Figure 1 was replaced on 1 October 2026 after author approval of its preview. Its current assets
+are `figures/study_design_en.pdf`, `figures/study_design_en.svg` and
+`figure_sources/study_design.py`. The source bundle describes how to rebuild it with Matplotlib.
+The earlier `gate8_pipeline_overview_en.*` assets are historical and no longer used by this paper.
 
 For the 06 September 2026 delivery, see `../BSPC_FINAL_READINESS_REPORT.md` and
 `../BSPC_AUTHOR_CONFIRMATIONS_VI.md`. The independently build-checked source ZIP is
@@ -134,10 +156,10 @@ explicitly scoped to E3 predictions and the observed pooled-score difference bet
 evaluation and SHHS ten-fold-model ensemble evaluation. This difference is not a pure causal effect
 of a single domain change.
 
-The predicted-to-true class ratio is a marginal emission diagnostic, not probability calibration.
-Label-prior shift remains a plausible contributor, but prior correction was not fitted or validated.
-Its usefulness depends on assumptions about the shift and cannot be inferred from class frequencies
-alone; it is not claimed as either sufficient or irrelevant.
+The predicted-to-true class ratio is a marginal emission diagnostic. The subsequent ten-fold
+temperature/EM experiment was completed: EM eliminated N3 predictions and reduced subject-mean
+macro-F1. The current manuscript reports this result alongside matched class-weighting and ADAST
+experiments, with the source-validation budget and loss studies reported separately.
 
 The post-hoc cross-cohort transition diagnostic uses reference labels to compare radius-one boundary
 neighbourhoods with stable interiors. It shows that these neighbourhoods are harder for E0 and E3 on
@@ -167,7 +189,8 @@ holdout would be needed for independent confirmation of a hypothesis developed f
    and source-file requirements. Access to the Guide returned HTTP 403 during the audit; a 5,000-word
    limit, mandatory template or anonymous-review mode has not been established here.
 2. Recheck the recorded CRediT, ethics/data-use, funding, competing-interest and AI-use declarations
-   against the authors' supporting records; both authors' approval is already confirmed.
+   against the authors' supporting records and obtain approval of the current revision from all
+   four authors.
 3. Treat `highlights.txt` as the editable source of the four highlights. Check the required upload
    format; Elsevier's general highlights guidance specifies a Word document, so do not assume that
    this internal text file is the final upload format. Each current bullet is below 85 characters.

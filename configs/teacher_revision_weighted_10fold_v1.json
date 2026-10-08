@@ -1,0 +1,22 @@
+{
+  "status": "additional_ten_fold_matched_loss_campaign_specified_before_ensemble_results",
+  "seed": 123,
+  "folds": [0,1,2,3,4,5,6,7,8,9],
+  "encoder": "corresponding_historical_source_selected_E3_encoder_frozen_each_fold",
+  "arms": ["unweighted", "weighted"],
+  "loss_weights": "ones_vs_N_train/(5*class_train_count)_per_fold",
+  "learning_rate": 0.0005,
+  "batch_size_records": 8,
+  "max_epochs": 300,
+  "patience": 30,
+  "gradient_clip_norm": 1.0,
+  "selection": "strict_maximum_source_validation_pooled_macro_f1",
+  "initialization": "seed_before_initialization_same_weights_and_source_batch_order_for_both_arms",
+  "fold0": "reuse_verified_matched_pair_from_original_pilot_with_identical_recipe; remaining_folds_retrain_both_arms",
+  "target": "full_record_label_independent_context; freeze_all_twenty_checkpoints_before_any_new_ensemble_scoring",
+  "ensemble": "mean_all_ten_fold_probabilities_float64_then_float32",
+  "contrast": "weighted_minus_unweighted",
+  "bootstrap_resamples": 10000,
+  "bootstrap_seed": 2031,
+  "limitations": ["Additional analysis on the previously examined cohort, not new holdout.", "Fixed seed123 does not characterize all training randomness.", "Paired subject bootstrap does not include training variance.", "No combination with EM, no weight search, no target-label selection."]
+}

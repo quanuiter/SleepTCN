@@ -55,6 +55,16 @@ class TrimTests(unittest.TestCase):
 
 
 class FilterTests(unittest.TestCase):
+    def test_e3_e4_are_only_a_scale_change_when_clipping_is_inactive(self) -> None:
+        config = PreprocessConfig()
+        time = np.arange(6000, dtype=np.float64) / 100.0
+        signal = 70 * np.sin(2 * np.pi * 1.2 * time) + 20 * np.sin(2 * np.pi * 11 * time)
+        e3, fraction3, _ = preprocess_signal_variant(signal, "filtered_v2", config)
+        e4, fraction4, _ = preprocess_signal_variant(signal, "bandpass_v2", config)
+        self.assertEqual(fraction3, 0.0)
+        self.assertEqual(fraction4, 0.0)
+        np.testing.assert_allclose(e3 * config.scale_factor, e4, rtol=2e-7, atol=1e-5)
+
     def test_filtered_v2_is_finite_and_preserves_length(self) -> None:
         config = PreprocessConfig()
         time = np.arange(30 * 100, dtype=np.float64) / 100.0

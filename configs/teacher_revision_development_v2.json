@@ -1,0 +1,40 @@
+{
+  "status": "bounded_development_plan_not_final_test_or_completed_training",
+  "date": "2026-10-04",
+  "historical_runs": "read_only_preserve_protocol_code_checkpoints_and_metrics",
+  "reference": "E3_historical_reference_E4_observed_better_SHHS_not_automatic_replacement",
+  "adast_diagnostic": {
+    "folds": [0,1,2,3,4,5,6,7,8,9],
+    "backend": "CPU_inference_only_no_optimizer_or_gradient",
+    "source_role": "validation_only_not_outer_test",
+    "adaptation_role": "existing_five_unlabelled_participants_only",
+    "target_test_access": false,
+    "views": ["source_only_source_attention", "adast_source_attention", "adast_target_attention"],
+    "head_rules": ["head1", "head2", "maximum", "mean"],
+    "head_rule_scope": "diagnostic_only_not_selecting_a_new_target_inference_rule",
+    "max_seconds": 1800
+  },
+  "weighted_development": {
+    "fold": 0,
+    "encoder": "existing_verified_E3_seed123_frozen",
+    "classifier_seed": 123,
+    "powers": [0.0,0.25,0.5,1.0],
+    "weights": "(N_train/(5*class_train_count))**power_no_extra_normalization",
+    "training": {"seed":123,"learning_rate":0.0005,"batch_size_records":8,"max_epochs":300,"patience":30,"gradient_clip_norm":1.0},
+    "backend": "fresh_matched_CUDA_models_no_silent_CPU_training_fallback",
+    "source_roles_in_bundle": ["train", "validation"],
+    "outer_test_in_bundle": false,
+    "target_data_in_bundle": false,
+    "selection": "strict_maximum_source_validation_pooled_macro_f1_per_arm",
+    "comparison": "source_validation_per_class_tradeoff_only_no_target_winner_selection",
+    "max_seconds": 18000
+  },
+  "adast_training_next_gate": "diagnose_then_lock_new_budget_sampling_LR_source_loss_schedule_and_ablation_protocol_before_GPU_run",
+  "final_campaign_next_gate": "no_automatic_10fold_multiseed_expansion_or_additional_cloud_data_upload",
+  "limitations": [
+    "Development diagnostics are not independent generalization evidence or causal ablation results.",
+    "Validation improvements cannot guarantee improvements on SHHS.",
+    "The historical 180-person SHHS sample remains previously examined.",
+    "One development fold and classifier seed do not characterize full-pipeline variance."
+  ]
+}
