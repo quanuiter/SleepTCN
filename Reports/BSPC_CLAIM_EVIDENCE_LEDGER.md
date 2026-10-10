@@ -1,5 +1,39 @@
 # Bảng nối kết luận với bằng chứng: bản sửa chuẩn bị BSPC
 
+## Cập nhật 05-10-2026
+
+Đối chiếu mới nhất nằm trong [CLAIM_REVIEW_20261005_VI.md](CLAIM_REVIEW_20261005_VI.md).
+Paper Anh, bản dịch Việt và phụ lục đã thay những câu phủ định chung bằng kết quả định lượng
+và phạm vi so sánh cụ thể. Giữ nguyên số bảng; E4 cao hơn E3 trên SHHS ở hai seed; trọng số lớp
+và ADAST tăng N3 với những đánh đổi khác nhau. Lợi ích N1 của can thiệp giữ loss nguồn được
+nêu rõ tại checkpoint được chọn, tách biệt với epoch cuối và đường target attention.
+
+Các mục tháng 9 bên dưới là lịch sử rà soát. EM, trọng số lớp và ADAST đã được thực hiện
+và có kết quả trong bản hiện tại, thay cho trạng thái đề xuất trong các ghi chú cũ.
+
+## Bổ sung 07-10-2026: ADAST toàn nguồn
+
+- Đánh giá phụ chọn checkpoint bằng validation nguồn: macro-F1 trung bình SHHS
+  0,5073/0,5396, chênh +0,0322, CI [0,0234; 0,0412]; N3 recall 0,2828/0,6095.
+  F1 N1/N2/REM và outer test nguồn vẫn giảm. Được phép kết luận cùng hướng
+  lợi ích N3 và chi phí xuất hiện dưới cả hai quy tắc checkpoint; không gọi là
+  xác nhận trên quần thể độc lập hoặc dùng điểm SHHS để thay đối chiếu chính.
+  Aggregate SHA `930edf8bdfbdacf4a76a1cb679da03ae3427edfee75e360c253678df006ce6a6`
+  khớp ba proof; Bảng S32-S33 và báo cáo hoàn tất ghi đủ số liệu.
+
+- Epoch 30, mười fold, cùng 180 người: source-only/ADAST macro-F1 trung bình
+  0,5010/0,5455; hiệu ứng +0,0445, CI [0,0352; 0,0539].
+- N3 recall 0,2432/0,6111, F1 0,3869/0,7221; nhầm N3→N2 0,7526/0,3689.
+- N1/N2/REM F1 và outer test nguồn giảm. REM recall tăng không đồng nghĩa
+  REM cải thiện tổng thể; accuracy CI chứa không không chứng minh tương đương.
+- Hiệu ứng ngân sách lớn trừ nhỏ +0,0897, CI [0,0767; 0,1023], cùng 10.000
+  mẫu bootstrap theo người cho bốn hệ thống. Không coi fold/epoch độc lập.
+- Đổi ngân sách đồng thời đổi số update, target exposure và lịch scheduler theo
+  update; không gọi đây là cô lập tác dụng độ phủ nguồn. CI điều kiện trên mô hình,
+  không gồm biến thiên khởi tạo. Không dùng SHHS để chọn checkpoint/cấu hình.
+- Bằng chứng tổng hợp và hồ sơ PDF/source mới: `ADAST_FULLSOURCE_PAPER_UPDATE_20261007_VI.md`.
+  Kết quả ngân sách nhỏ và các bảng lịch sử không bị thay thế.
+
 ## Bổ sung 11-09-2026
 
 - Không diễn giải Holm p = 1.000 thành tương đương, P/N dư thừa hoặc cơ chế TCN đã được chứng minh.

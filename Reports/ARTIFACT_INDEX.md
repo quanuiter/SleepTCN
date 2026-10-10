@@ -1,5 +1,58 @@
 # SleepTCN artifact index for the BSPC revision
 
+Full-source ADAST addendum, 7 October 2026: epoch-30 matched ten-fold source-only/
+ADAST evaluation and the paired four-system budget contrast are independently verified.
+See `Reports/ADAST_FULLSOURCE_PAPER_UPDATE_20261007_VI.md` and
+`Reports/analysis/adast_fullsource_20261007/`. Historical table values and pilot/ablation
+results are retained; the new aggregate benefit and stage/cohort costs are reported together.
+Source-validation-selected secondary evaluation is also complete: 180 target records,
+20 checkpoints and 10 OOF source folds independently verified. Its aggregate SHA is
+`930edf8bdfbdacf4a76a1cb679da03ae3427edfee75e360c253678df006ce6a6`.
+See `Reports/ADAST_FULLSOURCE_BEST_COMPLETION_20261007_VI.md` and the aggregate-only
+export `Reports/analysis/adast_fullsource_best_20261007/`; Supplementary Tables S32-S33
+retain epoch 30 as the primary comparison. Current PDF/source checks:
+`tmp/adast_best_paper_revision_20261007/delivery_verification.json`.
+
+Claim and numerical review, 5 October 2026: see Reports/CLAIM_REVIEW_20261005_VI.md.
+All existing manuscript table numbers are preserved. The English manuscript, Vietnamese
+translation and supplement state effects and trade-offs directly, with selected/final
+checkpoint distinctions retained. Current delivery checks are in
+tmp/claim_review_20261005/delivery_verification.json.
+
+Fold-1 confirmation addendum, 4 October 2026: three fresh source-only/reference/
+retained-source-CE models completed 30 epochs each; independent verification
+recomputed 93 diagnostics and six selected/final checkpoints. See
+`Reports/ADAST_SMALL_CONFIRMATION_20261004_VI.md` and
+`Reports/analysis/adast_small_confirmation_20261004/`. The selected N1 benefit
+recurs with a REM trade-off; the candidate does not satisfy the prelocked
+development rule. Supplementary Tables S28–S29 preserve separate checkpoint
+and attention-path results. The historical SHHS ensembles remain unchanged.
+
+Development addendum, 4 October 2026: the full-source learning-budget comparison
+and four-arm ADAST loss study are independently verified on fold-0 source
+validation. See `Reports/ADAST_DEVELOPMENT_BUDGET_20261004_VI.md` and
+`Reports/ADAST_LOSS_ABLATION_20261004_VI.md`. Public analyses and their hashes are
+in `Reports/analysis/adast_loss_ablation_20261004/`. All eight selected/final
+checkpoints and 124 validation diagnostics in the loss study were independently
+recomputed. These development results are separate from the historical SHHS
+ten-fold ensembles and do not supply new SHHS test scores. The EN manuscript,
+Vietnamese translation and Supplementary Tables S24–S27 include these results.
+
+Revision addendum, 4 October 2026: verified weighted and ADAST ten-fold matched
+comparisons are reported in `Reports/COLAB_SOURCE_TRAINING_20261004_VI.md` and
+`Reports/COLAB_ADAST_RESULTS_20261004_VI.md`, with public cohort aggregates in
+`Reports/analysis/weighted_10fold_20261004.json` and
+`Reports/analysis/adast_10fold_20261004.json`. Historical pilots remain separate.
+
+Revision addendum, 3 October 2026: the active Figure 1 is
+`Reports/paper_en/figures/study_design_en.pdf`, with SVG and builder beside it.
+The manuscript now includes same-seed E4 comparisons at seeds 42/123 and additional
+intervention results. Current status is in `Reports/TEACHER_REVISION_STATUS_20261003_VI.md`;
+the response to the supervisor is in `Reports/TEACHER_RESPONSE_20261003_VI.md`.
+New public aggregate results are in `Reports/analysis/teacher_revision_20261003.json`.
+Private predictions, source feature caches and restored checkpoint payloads remain under
+ignored `runs`/`data/cache` directories. The dated entries below document earlier revisions.
+
 Editorial addendum, 11 September 2026: the active BSPC pipeline figure is
 `Reports/paper_en/figures/gate8_pipeline_overview_en.pdf`, with original TikZ source in
 `Reports/paper_en/figure_sources/gate8_pipeline_overview_en.tex`. It is a processing schematic,

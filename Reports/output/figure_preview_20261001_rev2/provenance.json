@@ -1,0 +1,23 @@
+{
+  "status": "preview_only_not_inserted",
+  "replaces_preview": "D_study_design_overview",
+  "source_sha256": {
+    "Reports/paper_en/main.tex": "71fe0296e22a9b70658a85b46ccecdbef9229b6e12a63adbe26c64188c9db178",
+    "Reports/paper_en/supplement.tex": "28c1ae98a10e490d3a0e5e8bf22692559e64ba421d65d869424eeb653414d7c9"
+  },
+  "width_cm_at_insertion": 16.4,
+  "data_changes": false,
+  "font": "Arial; SVG text remains editable",
+  "design_changes": [
+    "Shared 15-CNN encoder and explicit E0/E1 fork",
+    "Three context groups with five CNN branches each",
+    "ResNet stem/three residual blocks/global pooling schematic",
+    "Separate fold/ensemble evaluation lane",
+    "Detailed qualifications moved to the proposed caption"
+  ],
+  "checks": {
+    "source_hashes": true,
+    "no_text_outside_canvas": true,
+    "svg_without_raster": true
+  }
+}

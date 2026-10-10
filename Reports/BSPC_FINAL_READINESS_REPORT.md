@@ -1,5 +1,58 @@
 # Bàn giao bản sửa chuẩn bị nộp BSPC
 
+> **Bổ sung 07-10-2026:** đã kiểm chứng đánh giá ADAST toàn nguồn mười fold
+> và đối chiếu ngân sách bắt cặp. Macro-F1 trung bình SHHS tăng 0,0445; N3
+> cải thiện nhưng F1 N1/N2/REM và outer test nguồn giảm. Bản Anh/Việt và phụ
+> lục được cập nhật đồng bộ, giữ nguyên các kết quả lịch sử. Xem
+> `ADAST_FULLSOURCE_PAPER_UPDATE_20261007_VI.md` và
+> `../tmp/adast_best_paper_revision_20261007/delivery_verification.json`
+> cho bộ bàn giao hiện hành. Các xác nhận tác giả/nộp bài vẫn là bước riêng.
+
+> **Đánh giá phụ hoàn tất tối 07-10:** checkpoint chọn bằng validation nguồn
+> cho chênh macro-F1 SHHS +0,0322 và cải thiện N3, đồng thời giảm F1 N1/N2/REM
+> và outer test nguồn. Bản thảo bổ sung S32-S33, giữ epoch 30 làm đối chiếu chính;
+> không huấn luyện lại. Xem `ADAST_FULLSOURCE_BEST_COMPLETION_20261007_VI.md`.
+
+> **Rà soát 05-10-2026:** số liệu bảng được giữ nguyên sau đối chiếu; cách viết claim,
+> đóng góp, thảo luận và kết luận đã chuyển sang mô tả trực tiếp kết quả cùng đánh đổi.
+> Xem CLAIM_REVIEW_20261005_VI.md. Hồ sơ PDF/source và QA của lần sửa này:
+> ../tmp/claim_review_20261005/delivery_verification.json.
+
+> **Xác nhận fold 1, 04-10-2026:** ba mô hình mới đã train đủ 30 epoch và
+> kiểm chứng độc lập (93 bộ chẩn đoán, sáu checkpoint best/final). Bản Anh
+> 16 trang, bản dịch Việt 17 trang và phụ lục 12 trang đã bổ sung S28–S29,
+> dựng lại và rà trực quan. Xem `ADAST_SMALL_CONFIRMATION_20261004_VI.md` và
+> `../tmp/adast_confirmation_revision_20261004/delivery_verification.json`.
+> Bản giữ trọng số học nguồn tăng F1 N1 nhỏ ở checkpoint được chọn nhưng
+> giảm REM và không tăng macro-F1; chưa chọn cấu hình cải tiến để đánh giá
+> SHHS. Không còn training/kiểm chứng dở dang trong lượt xác nhận được yêu cầu.
+
+> **Bổ sung phát triển 04-10-2026:** đã hoàn tất và kiểm chứng độc lập đối chiếu
+> ngân sách nguồn cùng bốn cấu hình ADAST tách thành phần loss. Bản Anh, bản dịch
+> Việt (16 trang mỗi bản) và phụ lục (12 trang, thêm S24–S27) đã dựng lại và rà
+> trực quan. Xem `ADAST_LOSS_ABLATION_20261004_VI.md` và hồ sơ bàn giao hiện hành.
+> Đây là điểm validation nguồn, không thay các kết quả chuyển quần thể mười fold;
+> chưa mở chạy thêm seed/fold hoặc chấm SHHS cho các checkpoint phát triển mới.
+
+> **Cập nhật 04-10-2026:** weighted TCN và ADAST đã có đối chứng bắt cặp đủ mười
+> fold, chấm trên 180 SHHS và kiểm chứng độc lập. Xem
+> `COLAB_SOURCE_TRAINING_20261004_VI.md`, `COLAB_ADAST_RESULTS_20261004_VI.md` và
+> `TEACHER_RESPONSE_20261003_VI.md`. Cải thiện N3 đi kèm đánh đổi; không coi đây là
+> benchmark UDA toàn diện hoặc xác nhận của cả bốn tác giả cho việc nộp bài.
+
+> **Cập nhật 03-10-2026:** xem `TEACHER_REVISION_STATUS_20261003_VI.md` và
+> `TEACHER_RESPONSE_20261003_VI.md` cho kết quả bổ sung và trả lời góp ý mới nhất.
+> Bản sửa phân biệt E4 hai seed, calibration mười fold và can thiệp/UDA một fold.
+> Chưa hoàn tất benchmark UDA nhiều fold; CRediT của Tri Nguyen vẫn cần xác nhận.
+> Các xác nhận sẵn sàng nộp, số trang và số tệp trong phần lịch sử dưới đây không
+> thay thế kiểm tra bộ bàn giao hiện hành.
+
+> **Cập nhật 01-10-2026:** đã bắt đầu triển khai góp ý thầy Trí; xem
+> `TEACHER_REVISION_IMPLEMENTATION_20261001_VI.md` và giao thức bổ sung
+> `../docs/TEACHER_REVISION_EXECUTION_V1.md`. Các thí nghiệm can thiệp/UDA chưa hoàn tất,
+> và CRediT của tác giả bổ sung còn cần xác nhận. Không coi hồ sơ lịch sử
+> dưới đây là xác nhận sẵn sàng nộp bản hiện hành.
+
 > **Cập nhật 11-09-2026:** nội dung bàn giao 06-09 bên dưới là hồ sơ lịch sử, không mô tả
 > bộ nộp hiện hành. Lượt sửa 11-09 xử lý lệch source/PDF/ZIP và diễn giải quá mạnh trong
 > figure/context analysis. Xem `BSPC_SUBMISSION_CHECKLIST_20260911.md` cho các xác nhận

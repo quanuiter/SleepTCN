@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "numeric_validation": true,
+  "source_and_submission_artifacts_unchanged": [
+    "main.tex",
+    "references.bib",
+    "supplement.tex",
+    "../output/pdf/SleepTCN_Scientific_Article_EN.pdf",
+    "../output/pdf/SleepTCN_Supplement_EN.pdf",
+    "figures/gate8_feature_silhouette_en.pdf",
+    "figures/gate8_feature_silhouette_en.png",
+    "figures/gate8_context_ablation_effects_en.pdf",
+    "figures/gate8_context_ablation_effects_en.png",
+    "../output/source/SleepTCN_BSPC_Manuscript_Source.zip",
+    "figures/gate8_pipeline_overview_en.png",
+    "figures/gate8_primary_speedup_f1_en.pdf",
+    "figure_sources/gate8_primary_speedup_f1_en.tex",
+    "figures/gate8_pipeline_overview_en.pdf",
+    "figure_sources/gate8_pipeline_overview_en.tex",
+    "ieeetr-doi.bst"
+  ],
+  "preview_assets": {
+    "A_stage_performance_and_n3": {
+      "pixels": [
+        2130,
+        900
+      ],
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "svg_has_editable_text": true,
+      "embedded_raster": false,
+      "svg_sha256": "4b8c41bd4e33da7d353e234b146a69970db4a0edfa095e3a1af0f96cd917fc15",
+      "png_sha256": "d25f584854c16055d77a573f22e464246515e5fde8661815f24d0154dacb059a"
+    },
+    "B_e3_normalised_confusion": {
+      "pixels": [
+        2130,
+        1065
+      ],
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "svg_has_editable_text": true,
+      "embedded_raster": false,
+      "svg_sha256": "fb6015f8c88f7eec7ff3097c46c30bef4e90d181c440e5640ee867644ef17167",
+      "png_sha256": "9eef9edf5e66870e920aa78258e4ecee56ccdba8190344bfb7f64746ce564c07"
+    },
+    "C_primary_paired_effects": {
+      "pixels": [
+        2130,
+        1095
+      ],
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "svg_has_editable_text": true,
+      "embedded_raster": false,
+      "svg_sha256": "f0d7d02313816ec89ff82276ad03231a87e4bd310c7b7acfe08abe1f69e84670",
+      "png_sha256": "4e5e3926b6899b2e31c5a5acfdc6e64f66f8bd7371a20f52d4e4ddce7a1ba080"
+    },
+    "D_study_design_overview": {
+      "pixels": [
+        2130,
+        1530
+      ],
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "svg_has_editable_text": true,
+      "embedded_raster": false,
+      "svg_sha256": "f873374f7e7503ef8d69bd21ca0841060bbe17a957b83e4e0ba354d0365f1cdc",
+      "png_sha256": "5986f7d59721335500827c734207ec1173ae21a654739481591d53bb9016f7f1"
+    }
+  },
+  "visual_review": "All four latest PNGs inspected after font/margin revisions.",
+  "manuscript_with_new_figures_rendered": false,
+  "reason": "Awaiting user approval before insertion."
+}
