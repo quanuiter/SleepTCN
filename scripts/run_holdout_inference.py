@@ -13,7 +13,10 @@ for source-only. ADAST is evaluated on the holdout ``filtered_v2`` epochs: these
 values as the full-record ``label_free_signal_variants`` output restricted to the scoring window,
 because the ADAST network classifies each 30-s epoch independently.
 
-The run is resumable: existing fold artifacts are validated and reused, never overwritten.
+Modes: ``gate`` (verify checkpoints once), ``worker`` (one of N parallel processes, each
+running a disjoint slice of the 120 arm x fold units and streaming records from disk),
+``finalize`` (ensembles + manifests once every fold artifact exists), ``progress``, or ``all``.
+The run is resumable: existing fold artifacts are kept and never overwritten.
 """
 
 from __future__ import annotations
@@ -243,72 +246,103 @@ def adast_predictor(args: argparse.Namespace, spec: dict[str, Any], fold: int):
     return predict, {"checkpoint_sha256": row["sha256"], "attention": spec["attention"]}
 
 
-# --------------------------------------------------------------------------- main loop
-def run_arm(args: argparse.Namespace, ctx: dict[str, Any], arm: str) -> dict[str, Any]:
+# --------------------------------------------------------------------------- work units
+def all_units() -> list[tuple[str, int]]:
+    """(arm, fold) units in protocol priority order: confirmatory seed-42 arms first."""
+    return [(arm, fold) for arm in ARM_ORDER for fold in FOLDS]
+
+
+def worker_units(index: int, count: int) -> list[tuple[str, int]]:
+    if count <= 0 or not 0 <= index < count:
+        raise ValueError("invalid worker index/count")
+    return all_units()[index::count]
+
+
+def run_unit(args: argparse.Namespace, ctx: dict[str, Any], arm: str, fold: int) -> int:
+    """Predict one fold of one arm for every record, streaming records from disk."""
     spec = arm_spec(ctx["protocol"], arm)
     entries = ctx["entries"][spec["variant"]]
-    records = [load_record(e, spec["variant"], args.processed_root) for e in entries]
     base_meta = {"schema_version": 1, "protocol_sha256": ctx["protocol_sha256"],
                  "preprocess_manifest_sha256": ctx["preprocess_manifest_sha256"], "arm": arm,
                  "data_variant": spec["variant"], "seed": spec["seed"], "role": ROLE,
                  "device": "cpu", "torch_version": torch.__version__}
-    fold_hashes: list[dict[str, Any]] = []
-    for fold in FOLDS:
-        pending = [r for r in records if not fold_path(args.output_root, arm, fold, r["record_key"]).exists()]
-        model_meta: dict[str, Any] | None = None
-        if pending:
-            maker = zero_shot_predictor if spec["kind"] == "zero_shot" else adast_predictor
-            predictor, model_meta = maker(args, spec, fold)
-        started = time.perf_counter()
-        for index, record in enumerate(records, start=1):
-            path = fold_path(args.output_root, arm, fold, record["record_key"])
-            if path.exists():
-                with np.load(path, allow_pickle=False) as z:
-                    stored = json.loads(str(z["metadata_json"].item()))
-                if stored.get("input_npz_sha256") != record["input_sha256"] or stored.get("outer_fold") != fold:
-                    raise ValueError(f"{path}: existing artifact refers to other input")
-            else:
-                assert model_meta is not None
-                metadata = {**base_meta, **model_meta, "artifact_type": "holdout_fold_prediction",
-                            "outer_fold": fold, "record_key": record["record_key"],
-                            "subject_id": record["subject_id"], "input_npz_sha256": record["input_sha256"]}
-                probabilities = predictor(record)
-                if probabilities.shape != (len(record["x"]), 5) or not np.isfinite(probabilities).all():
-                    raise ValueError(f"{arm}/{record['record_key']}: invalid probabilities")
-                save_probabilities(path, probabilities, record, metadata)
-            fold_hashes.append({"fold": fold, "record_key": record["record_key"], "sha256": sha256_file(path)})
-            if index % 50 == 0 or index == len(records):
-                rate = (time.perf_counter() - started) / max(1, len(pending))
-                print(f"[{arm}] fold {fold:02d} record {index}/{len(records)} ({rate:.2f}s/new record)", flush=True)
+    pending = [e for e in entries if not fold_path(args.output_root, arm, fold, e["record_key"]).exists()]
+    if not pending:
+        return 0
+    maker = zero_shot_predictor if spec["kind"] == "zero_shot" else adast_predictor
+    predictor, model_meta = maker(args, spec, fold)
+    started = time.perf_counter()
+    for index, entry in enumerate(pending, start=1):
+        record = load_record(entry, spec["variant"], args.processed_root)
+        metadata = {**base_meta, **model_meta, "artifact_type": "holdout_fold_prediction",
+                    "outer_fold": fold, "record_key": record["record_key"],
+                    "subject_id": record["subject_id"], "input_npz_sha256": record["input_sha256"]}
+        probabilities = predictor(record)
+        if probabilities.shape != (len(record["x"]), 5) or not np.isfinite(probabilities).all():
+            raise ValueError(f"{arm}/{record['record_key']}: invalid probabilities")
+        save_probabilities(fold_path(args.output_root, arm, fold, record["record_key"]), probabilities, record, metadata)
+        if index % 50 == 0 or index == len(pending):
+            rate = (time.perf_counter() - started) / index
+            print(f"[{arm}] fold {fold:02d} {index}/{len(pending)} new records ({rate:.2f}s/record)", flush=True)
+    return len(pending)
 
-    ensemble_hashes = []
-    for record in records:
-        parts = []
+
+def finalize_arm(args: argparse.Namespace, ctx: dict[str, Any], arm: str) -> dict[str, Any]:
+    """Verify all ten fold artifacts of an arm and write its ensembles and arm manifest."""
+    spec = arm_spec(ctx["protocol"], arm)
+    entries = ctx["entries"][spec["variant"]]
+    base_meta = {"schema_version": 1, "protocol_sha256": ctx["protocol_sha256"],
+                 "preprocess_manifest_sha256": ctx["preprocess_manifest_sha256"], "arm": arm,
+                 "data_variant": spec["variant"], "seed": spec["seed"], "role": ROLE,
+                 "device": "cpu", "torch_version": torch.__version__}
+    fold_hashes, ensemble_hashes = [], []
+    for entry in entries:
+        parts, reference_index = [], None
         for fold in FOLDS:
-            path = fold_path(args.output_root, arm, fold, record["record_key"])
+            path = fold_path(args.output_root, arm, fold, entry["record_key"])
+            if not path.exists():
+                raise FileNotFoundError(f"{path}: fold artifact missing")
             with np.load(path, allow_pickle=False) as z:
                 meta = json.loads(str(z["metadata_json"].item()))
-                if meta["input_npz_sha256"] != record["input_sha256"] or meta["arm"] != arm:
+                if (meta["input_npz_sha256"] != entry["output_sha256"] or meta["arm"] != arm
+                        or meta["outer_fold"] != fold or meta["protocol_sha256"] != ctx["protocol_sha256"]):
                     raise ValueError(f"{path}: provenance differs")
-                np.testing.assert_array_equal(z["original_epoch_index"], record["original_epoch_index"])
+                index = z["original_epoch_index"].copy()
+                if reference_index is None:
+                    reference_index = index
+                np.testing.assert_array_equal(index, reference_index)
                 parts.append(z["probabilities"].copy())
+            fold_hashes.append({"fold": fold, "record_key": entry["record_key"], "sha256": sha256_file(path)})
         mean = ensemble_probabilities(parts)  # float64 accumulator, cast to float32 (v1 and ADAST spec)
         prediction = np.argmax(mean, axis=1).astype(np.int8)  # ties -> lowest class index
-        path = ensemble_path(args.output_root, arm, record["record_key"])
+        path = ensemble_path(args.output_root, arm, entry["record_key"])
         metadata = {**base_meta, "artifact_type": "holdout_ensemble_prediction", "folds": list(FOLDS),
                     "aggregation": "arithmetic_mean_probability_float64_accumulator",
-                    "record_key": record["record_key"], "subject_id": record["subject_id"],
-                    "input_npz_sha256": record["input_sha256"]}
+                    "record_key": entry["record_key"], "subject_id": entry["subject_id"],
+                    "input_npz_sha256": entry["output_sha256"]}
         atomic_savez(path, {"metadata_json": np.array(json.dumps(metadata, sort_keys=True)),
                             "probabilities": mean, "prediction": prediction,
-                            "original_epoch_index": record["original_epoch_index"]})
-        ensemble_hashes.append({"record_key": record["record_key"], "subject_id": record["subject_id"],
+                            "original_epoch_index": reference_index})
+        ensemble_hashes.append({"record_key": entry["record_key"], "subject_id": entry["subject_id"],
                                 "sha256": sha256_file(path)})
-    summary = {"arm": arm, "status": "complete", "records": len(records), "folds": len(FOLDS),
+    summary = {"arm": arm, "status": "complete", "records": len(entries), "folds": len(FOLDS),
                "fold_artifacts": len(fold_hashes), "ensemble_artifacts": len(ensemble_hashes),
                "fold_records": fold_hashes, "ensemble_records": ensemble_hashes}
     atomic_write_json(args.output_root / "arm_manifests" / f"{arm}.json", summary, ensure_ascii=False, sort_keys=False)
     return summary
+
+
+def run_arm(args: argparse.Namespace, ctx: dict[str, Any], arm: str) -> dict[str, Any]:
+    for fold in FOLDS:
+        run_unit(args, ctx, arm, fold)
+    return finalize_arm(args, ctx, arm)
+
+
+def progress(args: argparse.Namespace, ctx: dict[str, Any]) -> tuple[int, int]:
+    root = args.output_root / "fold_predictions"
+    done = sum(1 for _ in root.glob("*/fold_*/*.npz")) if root.exists() else 0
+    total = sum(len(ctx["entries"][arm_spec(ctx["protocol"], a)["variant"]]) for a in ARM_ORDER) * len(FOLDS)
+    return done, total
 
 
 def main() -> int:
@@ -319,8 +353,10 @@ def main() -> int:
     parser.add_argument("--restore-workspace", type=Path, default=ROOT / "runs" / "holdout_ckpt_restore_20261010")
     parser.add_argument("--adast-backup", type=Path, default=ROOT / "runs" / "adast_fullsource_checkpoints_backup_20261010")
     parser.add_argument("--output-root", type=Path, default=ROOT / "runs" / "holdout_inference_v1")
-    parser.add_argument("--arms", nargs="+", default=ARM_ORDER, choices=ARM_ORDER)
-    parser.add_argument("--threads", type=int, default=8)
+    parser.add_argument("--mode", choices=("all", "gate", "worker", "finalize", "progress"), default="all")
+    parser.add_argument("--worker-index", type=int, default=0)
+    parser.add_argument("--num-workers", type=int, default=1)
+    parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--adast-batch-size", type=int, default=128)
     args = parser.parse_args()
@@ -329,30 +365,49 @@ def main() -> int:
     torch.use_deterministic_algorithms(True)
     torch.set_flush_denormal(True)
     ctx = load_inputs(args)
-    gate = checkpoint_gate(args, ctx, ARM_ORDER)
-    print(f"Checkpoint gate: {gate['status']} ({len(gate['arms'])} arms)", flush=True)
 
-    started = time.perf_counter()
-    for arm in [a for a in ARM_ORDER if a in args.arms]:
-        if (args.output_root / "arm_manifests" / f"{arm}.json").exists():
-            print(f"[{arm}] already complete, skipping", flush=True)
-            continue
-        run_arm(args, ctx, arm)
+    if args.mode == "progress":
+        done, total = progress(args, ctx)
+        print(f"{done}/{total}")
+        return 0
+    if args.mode in ("all", "gate"):
+        gate = checkpoint_gate(args, ctx, ARM_ORDER)
+        print(f"Checkpoint gate: {gate['status']} ({len(gate['arms'])} arms)", flush=True)
+        if args.mode == "gate":
+            return 0
+    gate_path = args.output_root / "checkpoint_gate.json"
+    if not gate_path.exists() or read_json(gate_path).get("status") != "passed":
+        raise ValueError("Run --mode gate first; no inference before a passed checkpoint gate")
+    if read_json(gate_path)["protocol_sha256"] != ctx["protocol_sha256"]:
+        raise ValueError("Checkpoint gate refers to another protocol")
 
-    done = {a: (args.output_root / "arm_manifests" / f"{a}.json").exists() for a in ARM_ORDER}
-    if all(done.values()):
-        manifest = {"schema_version": 1, "status": "complete_all_arms_no_metrics_computed",
-                    "protocol_sha256": ctx["protocol_sha256"],
-                    "preprocess_manifest_sha256": ctx["preprocess_manifest_sha256"],
-                    "checkpoint_gate_sha256": sha256_file(args.output_root / "checkpoint_gate.json"),
-                    "arm_manifest_sha256": {a: sha256_file(args.output_root / "arm_manifests" / f"{a}.json") for a in ARM_ORDER},
-                    "execution": {"device": "cpu", "torch_version": torch.__version__, "threads": args.threads,
-                                  "deterministic_algorithms": True, "flush_denormal": True,
-                                  "elapsed_seconds_this_session": time.perf_counter() - started}}
-        atomic_write_json(args.output_root / "run_manifest.json", manifest, ensure_ascii=False, sort_keys=False)
-        print("STATUS: ALL ARMS COMPLETE (no metrics computed)")
-    else:
-        print("Remaining arms:", [a for a, ok in done.items() if not ok])
+    if args.mode in ("all", "worker"):
+        units = all_units() if args.mode == "all" else worker_units(args.worker_index, args.num_workers)
+        started = time.perf_counter()
+        for arm, fold in units:
+            run_unit(args, ctx, arm, fold)
+        print(f"Worker {args.worker_index}/{args.num_workers}: {len(units)} units done in "
+              f"{time.perf_counter() - started:.0f}s", flush=True)
+        if args.mode == "worker":
+            return 0
+
+    # finalize: ensembles and manifests, only when every fold artifact exists.
+    done, total = progress(args, ctx)
+    if done != total:
+        print(f"Not finalized: {done}/{total} fold artifacts present")
+        return 2
+    for arm in ARM_ORDER:
+        finalize_arm(args, ctx, arm)
+        print(f"[{arm}] ensembles written", flush=True)
+    manifest = {"schema_version": 1, "status": "complete_all_arms_no_metrics_computed",
+                "protocol_sha256": ctx["protocol_sha256"],
+                "preprocess_manifest_sha256": ctx["preprocess_manifest_sha256"],
+                "checkpoint_gate_sha256": sha256_file(gate_path),
+                "arm_manifest_sha256": {a: sha256_file(args.output_root / "arm_manifests" / f"{a}.json") for a in ARM_ORDER},
+                "execution": {"device": "cpu", "torch_version": torch.__version__,
+                              "deterministic_algorithms": True, "flush_denormal": True}}
+    atomic_write_json(args.output_root / "run_manifest.json", manifest, ensure_ascii=False, sort_keys=False)
+    print("STATUS: ALL ARMS COMPLETE (no metrics computed)")
     return 0
 
 

@@ -86,6 +86,7 @@ def test_run_arm_rejects_changed_input(setup) -> None:
     rhi.run_arm(args, ctx, "E3_s42")
     entry = ctx["entries"]["filtered_v2"][0]
     np.savez(entry["output_path"], x=np.zeros((40, 3000), np.float32))
+    rhi.fold_path(args.output_root, "E3_s42", 3, entry["record_key"]).unlink()
     with pytest.raises(ValueError, match="input hash differs"):
         rhi.run_arm(args, ctx, "E3_s42")
 
@@ -97,3 +98,21 @@ def test_inputs_reject_other_protocol(setup, tmp_path: Path) -> None:
     args.preprocess_manifest.write_text(json.dumps(pre), encoding="utf-8")
     with pytest.raises(ValueError, match="another protocol"):
         rhi.load_inputs(args)
+
+
+def test_workers_partition_all_units_without_overlap() -> None:
+    units = rhi.all_units()
+    assert len(units) == 12 * 10
+    split = [rhi.worker_units(i, 4) for i in range(4)]
+    flat = [u for part in split for u in part]
+    assert sorted(flat) == sorted(units) and len(flat) == len(set(flat))
+    assert units[0] == ("E3_s42", 0)
+
+
+def test_finalize_requires_every_fold(setup) -> None:
+    args, _ = setup
+    ctx = rhi.load_inputs(args)
+    for fold in range(9):
+        rhi.run_unit(args, ctx, "E3_s42", fold)
+    with pytest.raises(FileNotFoundError):
+        rhi.finalize_arm(args, ctx, "E3_s42")
