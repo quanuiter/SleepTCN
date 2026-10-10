@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "status": "locked_before_holdout_preprocessing",
+  "protocol_document": "docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md",
+  "purpose": "Confirmatory zero-shot evaluation of the locked Sleep-EDF checkpoints on a fresh SHHS1 sample never used for preprocessing, inference, model selection, intervention design or analysis.",
+  "dataset": {
+    "name": "SHHS Visit 1",
+    "metadata_csv": "shhs/datasets/shhs1-dataset-0.21.0.csv",
+    "metadata_csv_sha256": "390b771ecadd153ea940d1fb3592a8a4e6b47178fd161e7c5499c30c18a4d4ab",
+    "eligibility": "overall_shhs1 in {3,4,5,6,7}",
+    "eligible_subjects": 5804
+  },
+  "cohort": {
+    "selection_method": "sort eligible subjects by sha256('shhs-v1-selection|42|subject_id'); identical ranking to the v1 selection",
+    "excluded_ranks": "1-220 (all v1 roles: adaptation 5, validation 15, test 180, reserve 20)",
+    "selected_ranks": [221, 720],
+    "n_target": 500,
+    "pre_lock_changes": [
+      {
+        "subject_id": "201669",
+        "selection_rank": 490,
+        "action": "excluded",
+        "reason": "no EDF or Profusion XML listed by NSRR on 2026-10-10"
+      },
+      {
+        "subject_id": "200157",
+        "selection_rank": 721,
+        "action": "added_as_replacement",
+        "reason": "lowest-ranked reserve with both files available"
+      }
+    ],
+    "final_list_file": "E:/research/Dataset/SHHS_v1/manifests/shhs1_holdout_final_seed42_n500.csv",
+    "final_list_sha256": "e6fea31b4a733d7e3f2a5689629e3e85663026f171176fa33f556fbe524a4e10",
+    "final_manifest_sha256": "e0ab519e894e9e4cde883b0dd8f23b5b88e606769ac692cd32ac3885567e08a5",
+    "subject_list_in_git": false,
+    "spares_in_rank_order": ["205364", "202804"],
+    "spare_rule": "If a subject fails a technical QC rule before inference, replace it by the next spare in rank order; if spares are exhausted, download ranks 724 onward in order. All replacements are logged before any inference.",
+    "technical_qc_exclusion_rules": [
+      "EEG channel absent or physical unit not uV",
+      "EEG sampling rate not 125 Hz",
+      "EDF and Profusion XML durations disagree beyond the v1 preprocessing tolerance",
+      "no scored N1, N2, N3 or REM epoch after label mapping",
+      "preprocessing raises an error under configs/shhs_preprocessing_v1.json"
+    ],
+    "post_inference_exclusions_allowed": false
+  },
+  "preprocessing": {
+    "config": "configs/shhs_preprocessing_v1.json",
+    "config_sha256": "7ce889234401da4b398b80d3b92c9275211c4d418de367a8413ddf6606f0e89e",
+    "variants": ["paper_raw_v1", "filtered_v2", "filtered_zscore_v2", "bandpass_v2"],
+    "changes_from_v1": "none; same resampling, label mapping, evaluation window and variant definitions"
+  },
+  "arms": {
+    "E0_s42": {"experiment": "E0", "seed": 42, "data_variant": "paper_raw_v1", "source": "git a005df3 runs/v2/full/E0/*/seed_42"},
+    "E2_s42": {"experiment": "E2", "seed": 42, "data_variant": "paper_raw_v1", "source": "git a005df3 runs/v2/full/E2/*/seed_42"},
+    "E3_s42": {"experiment": "E3", "seed": 42, "data_variant": "filtered_v2", "source": "git a005df3 runs/v2/full/E3/*/seed_42"},
+    "E4_s42": {"experiment": "E4", "seed": 42, "data_variant": "bandpass_v2", "source": "git a005df3 runs/v2/full/E4/*/seed_42"},
+    "E6_s42": {"experiment": "E6", "seed": 42, "data_variant": "filtered_zscore_v2", "source": "git a005df3 runs/v2/full/E6/*/seed_42"},
+    "E0_s123": {"experiment": "E0", "seed": 123, "data_variant": "paper_raw_v1", "source": "git 8af1d12 runs/v2/full/E0/*/seed_123"},
+    "E2_s123": {"experiment": "E2", "seed": 123, "data_variant": "paper_raw_v1", "source": "git 8af1d12 runs/v2/full/E2/*/seed_123"},
+    "E3_s123": {"experiment": "E3", "seed": 123, "data_variant": "filtered_v2", "source": "git 8af1d12 runs/v2/full/E3/*/seed_123"},
+    "E4_s123": {"experiment": "E4", "seed": 123, "data_variant": "bandpass_v2", "source": "git 8af1d12 runs/v2/full/E4/*/seed_123"},
+    "E6_s123": {"experiment": "E6", "seed": 123, "data_variant": "filtered_zscore_v2", "source": "git 8af1d12 runs/v2/full/E6/*/seed_123"},
+    "ADAST_full_e30": {"experiment": "ADAST full-source", "seed": 123, "checkpoint": "final (epoch 30)", "attention": "target", "source": "runs/teacher_revision_gpu_20261007/adast_fullsource_local/final/all_checkpoints_frozen.json"},
+    "SourceOnly_full_e30": {"experiment": "ADAST matched source-only", "seed": 123, "checkpoint": "final (epoch 30)", "attention": "source", "source": "runs/teacher_revision_gpu_20261007/adast_fullsource_local/final/all_checkpoints_frozen.json"}
+  },
+  "checkpoint_gate": {
+    "reference_hash_sources": {
+      "git_history_audit": "runs/teacher_revision_cpu_20261002/checkpoint_history_audit.json",
+      "git_history_audit_sha256": "42652cec34d172abbe63929ad20fbe48fc311efc8b1fd85c28c983f31e3b668c",
+      "adast_final_frozen_list": "runs/teacher_revision_gpu_20261007/adast_fullsource_local/final/all_checkpoints_frozen.json",
+      "adast_final_frozen_list_sha256": "35d288dfc6a10b118da3658f4906ccfe93aa29e67ebbea2a1361e6f3c7edb608",
+      "shhs_v1_inventories": "E:/research/Dataset/SHHS_v1/manifests/*checkpoint_inventory*.json"
+    },
+    "rule": "Every checkpoint must be restored and match its recorded SHA-256 before preprocessing output is used for inference. An arm with any missing or mismatching checkpoint is dropped and recorded before inference; no arm may be dropped after inference.",
+    "retraining_or_fine_tuning": false
+  },
+  "inference": {
+    "outer_folds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "zero_shot_ensemble": "softmax per fold, float64 arithmetic mean over ten folds, argmax, lowest-index tie-break (identical to configs/shhs_zero_shot_v1.json)",
+    "adast_ensemble": "identical to runs/teacher_revision_gpu_20261007/adast_fullsource_local/final/execution_specification.json; full-record inference then the v1 scoring mask",
+    "device": "cpu",
+    "deterministic_algorithms": true,
+    "all_arms_complete_before_any_metric": true,
+    "prediction_hashes_recorded": true
+  },
+  "metrics": {
+    "primary": "subject_mean_macro_f1",
+    "macro_f1_definition": "five fixed classes; class F1 = 0 when its denominator is zero (identical to v1)",
+    "secondary": ["pooled_macro_f1", "accuracy", "cohen_kappa", "per_class_precision", "per_class_recall", "per_class_f1", "n3_to_n2_rate"],
+    "sensitivity": "subject_mean_macro_f1 over classes present in the subject's reference labels; the number of subjects with an absent class is reported"
+  },
+  "statistics": {
+    "unit": "subject",
+    "bootstrap": {"type": "paired_subject_cluster_percentile", "estimand": "difference_in_subject_mean_macro_f1", "resamples": 10000, "seed": 2040},
+    "test": "two_sided_wilcoxon_signed_rank_on_subject_macro_f1_zero_method_wilcox",
+    "alpha": 0.05,
+    "descriptive": ["wins_ties_losses", "sign_dominance", "median_subject_difference"],
+    "uncertainty_scope": "conditional on fitted checkpoints; does not include training variability"
+  },
+  "hypotheses": {
+    "confirmatory_family": {
+      "multiplicity": "holm_over_3",
+      "H1": {"contrast": "E3_s42 - E0_s42", "v1_estimate": 0.0412, "expected_sign": "+"},
+      "H2": {"contrast": "E3_s42 - E6_s42", "v1_estimate": 0.0274, "expected_sign": "+"},
+      "H3": {"contrast": "E3_s42 - E2_s42", "v1_estimate": 0.0475, "expected_sign": "+", "interpretation": "band-pass effect: clipping is inactive and division by 100 is absorbed by the stem BatchNorm"},
+      "confirmation_rule": "Holm-adjusted p < 0.05 AND bootstrap 95% CI entirely on the expected side of zero"
+    },
+    "secondary": {
+      "S1_seed123_replication": {"contrasts": ["E3_s123 - E0_s123", "E3_s123 - E6_s123", "E3_s123 - E2_s123"], "multiplicity": "separate_holm_over_3"},
+      "S2_null_pair_and_run_to_run_reference": {
+        "contrasts": ["E4_s42 - E3_s42", "E4_s123 - E3_s123", "E3_s42 - E3_s123", "E4_s42 - E4_s123", "E0_s42 - E0_s123", "E6_s42 - E6_s123"],
+        "inference": "bootstrap CI only, no p-values",
+        "prespecified_expectation": "E4-E3 is not systematically larger in magnitude than same-configuration differences between seeds; E4-E3 is not interpreted as a preprocessing effect"
+      },
+      "S3_adast": {
+        "contrasts": ["ADAST_full_e30 - SourceOnly_full_e30"],
+        "descriptive_absolute_comparison": ["ADAST_full_e30 vs E3_s42", "ADAST_full_e30 vs E4_s42"],
+        "outcomes": ["subject_mean_macro_f1", "n3_recall", "n1_f1", "n2_f1", "rem_f1"],
+        "inference": "bootstrap CI only"
+      },
+      "S4_n3_under_detection": {
+        "arms": ["E0_s42", "E3_s42", "E4_s42", "E6_s42"],
+        "outcomes": ["n3_recall", "n3_precision", "n3_to_n2_rate"],
+        "prespecified_expectation": "n3_to_n2_rate > 0.5 for E0_s42 and E3_s42",
+        "inference": "subject-cluster bootstrap CI"
+      },
+      "S5_metric_sensitivity": "repeat H1-H3 with the present-class macro-F1",
+      "S6_e6_input_scale": "label-free per-record standard deviation of filtered_zscore_v2 inputs inside the evaluation window, summarised as median and IQR and compared descriptively with Sleep-EDF (median 0.77)",
+      "S7_pooled_with_v1": "descriptive only: H1-H3 on v1 test (180) plus holdout (500); never used for confirmation"
+    }
+  },
+  "claim_boundary": {
+    "allowed": "confirmation or non-confirmation of H1-H3 on an untouched SHHS1 sample under the locked v1 pipeline",
+    "forbidden": [
+      "adding or removing confirmatory contrasts after inference",
+      "excluding subjects after inference",
+      "selecting folds, checkpoints or seeds after viewing holdout scores",
+      "using holdout labels for any model, threshold, calibration or adaptation choice",
+      "equivalence or non-inferiority claims without a pre-specified margin",
+      "presenting the pooled 680-subject analysis as confirmatory"
+    ]
+  }
+}
