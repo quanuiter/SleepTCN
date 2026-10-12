@@ -170,7 +170,7 @@ behaviour when the recording device, montage or population changes.
 Published results in this field are hard to compare. Studies differ simultaneously in
 dataset version, subject partitioning, wake-trimming policy, filtering, normalisation, sequence length
 and model-selection rule, which makes architectural effects difficult to separate from other pipeline
-differences. For practical development, the relevant questions are which pipeline choices improve
+differences. For practical development, what matters is which pipeline choices improve
 prediction, what they cost computationally, and whether their benefits persist on another cohort.
 Answering these questions requires shared evaluation partitions, an explicit account of what changes
 between configurations, and evaluation data that did not influence the choices being compared.
@@ -186,33 +186,32 @@ filtering and amplitude handling within the same ResNet-1D-TCN model and trainin
 
 We ask three questions:
 \begin{enumerate}[label=(\roman*)]
-\item How do the evaluated configurations differ in classification performance and in the
-computational resources they require?
-\item With the model architecture and training settings held fixed, how do filtering and amplitude
-normalisation affect performance?
-\item When applied to another cohort without updating model weights, which configurations perform
-better, does the ranking hold on participants who were not used during development, and which sleep
-stages remain difficult to recognise?
+\item Which of the evaluated changes, to the sequence model, the epoch encoder, signal filtering or
+amplitude handling, account for differences in accuracy, computational cost and transfer to another
+cohort?
+\item Do the resulting differences between pipelines hold on participants who played no part in
+development, and are they larger than the variation between training runs?
+\item Which sleep-stage errors dominate after transfer, how do they depend on input amplitude, and can
+prior correction, class weighting or domain adaptation reduce them without losses in other stages?
 \end{enumerate}
 
-Our contributions are the following.
+Our contributions follow these questions.
 
 \begin{enumerate}[label=(\arabic*)]
-\item We quantify the trade-off between classification performance and computational cost. The
-implemented ResNet-1D-TCN pipeline requires less computation time than the CNN-BiLSTM baseline,
-despite having more parameters.
-\item We confirm on 500 held-out SHHS1 participants that this pipeline transfers better than the
-baseline, and show that band-pass filtering accounts for most of the advantage: without filtering, the
-same model performed close to the baseline.
+\item We show that the implemented ResNet-1D-TCN pipeline requires less computation than the
+CNN-BiLSTM baseline despite having more parameters, and that, among the evaluated changes, band-pass
+filtering rather than the encoder or sequence model accounts for most of its cross-cohort advantage:
+without filtering, the same model performed close to the baseline.
+\item We confirm this advantage on 500 held-out SHHS1 participants under a protocol fixed before their
+data were processed. We also show that two training seeds of one configuration can differ by as much as
+some configuration contrasts, and that the band-pass-only and scaled-input variants are equivalent runs
+of one pipeline whose score difference reflects numerical divergence during training; confidence
+intervals computed for fixed models therefore understate the uncertainty of pipeline comparisons.
 \item We identify N3-to-N2 confusion as a shared cross-cohort error that recurs in every zero-shot
 pipeline and in the held-out sample. An input-amplitude sweep shows that this error depends on, but is
-not explained by, signal amplitude, and matched experiments quantify how class weighting,
-batch-normalisation adaptation and adversarial domain adaptation trade N3 recall against the
-recognition of other stages.
-\item We show that two training seeds of an identical configuration can differ by as much as some of
-the configuration contrasts, and that the band-pass-only and scaled-input variants are equivalent runs
-of one pipeline whose score difference reflects numerical divergence during training. Confidence
-intervals computed for fixed models therefore understate the uncertainty of pipeline comparisons.
+not explained by, signal amplitude. In matched experiments, none of prior correction, class weighting,
+batch-normalisation adaptation or adversarial domain adaptation reduced this error without losses in
+other stages.
 \end{enumerate}
 
 %==============================================================================
@@ -959,9 +958,9 @@ model on unfiltered input. Band-pass filtering accounted for most of the transfe
 clipping never activated and batch normalisation absorbs a constant input scale, the band-pass-only and
 scaled variants were two numerically drifted runs of the same model, and band-pass filtering alone
 suffices to define the pipeline. All zero-shot pipelines classified most N3 epochs as N2. This decision
-depended strongly on input amplitude, but none of rescaling, class weighting, batch-normalisation
-adaptation or adversarial domain adaptation removed the error without losses in other stages. Pipeline comparisons for sleep staging
-should therefore report computational cost, stage-specific errors and variation between training runs,
+depended strongly on input amplitude, but none of rescaling, prior correction, class weighting,
+batch-normalisation adaptation or adversarial domain adaptation removed the error without losses in
+other stages. Pipeline comparisons for sleep staging should therefore report computational cost, stage-specific errors and variation between training runs,
 and should be confirmed on data that did not inform the comparisons.
 
 %------------------------------------------------------------------------------
