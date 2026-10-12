@@ -70,13 +70,13 @@
   urlcolor=linkblue,
   pdftitle={Architecture and Preprocessing Choices under Dataset Shift in Single-Channel EEG Sleep Staging: A Controlled Evaluation on Sleep-EDF and SHHS1},
   pdfauthor={Ngo Nhat Quan; Pham Thai Son; Tri Nguyen Ho Duy; Tri Nguyen},
-  pdfkeywords={sleep staging; single-channel EEG; temporal convolutional network; preprocessing; domain shift; paired evaluation}
+  pdfkeywords={sleep staging; single-channel EEG; temporal convolutional network; preprocessing; domain shift; external validation}
 }
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\itshape Ngo et al.}
-\fancyhead[R]{\small\itshape Pipeline choices under sleep-staging dataset shift}
+\fancyhead[L]{\small\itshape Single-channel EEG sleep staging}
+\fancyhead[R]{\small\itshape Pipeline choices under dataset shift}
 \fancyfoot[C]{\thepage}
 \setlength{\headheight}{14pt}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -121,40 +121,38 @@ Tri Nguyen: \texttt{tringuyen@uit.edu.vn}
 
 \begin{abstract}
 \noindent
-\textbf{Background.} Model and preprocessing choices can alter sleep-staging accuracy,
-computational cost and cross-cohort errors.
+\textbf{Background.} Model and preprocessing choices alter the accuracy, computational cost and
+cross-cohort errors of automatic sleep staging, but their effects are rarely confirmed on data not
+used during development.
 
 \noindent
-\textbf{Methods.} Six configurations were compared on 78 Sleep-EDF subjects using shared 10-fold
-partitions, paired bootstrap and Wilcoxon--Holm analysis. Primary transfer used 180 Sleep Heart Health
-Study Visit 1 (SHHS1) participants without weight updates. Record-wise normalisation was transductive.
-Matched interventions included ADAST at limited and full-source budgets.
+\textbf{Methods.} Six single-channel EEG configurations were trained on 78 Sleep-EDF subjects with
+shared subject-wise ten-fold partitions. Transfer without weight updates was examined on 180 Sleep
+Heart Health Study Visit~1 (SHHS1) participants and then tested on 500 further SHHS1 participants
+under a protocol committed before these data were processed.
 
 \noindent
-\textbf{Results.} The fixed-scale one-dimensional residual network (ResNet-1D) with temporal
-convolutional network (TCN) configuration
-(E3) reached pooled Sleep-EDF \mf\ 0.7904, exceeding its record-wise-normalised counterpart (E6) by
-0.0213 (\ci\ $[0.0122,0.0307]$; Holm $p=0.0012$). A second seed preserved the direction but not
-Holm significance. E3 delivered a $3.76\times$ forward-pass speed-up over the convolutional--bidirectional
-long short-term memory (CNN--BiLSTM) control,
-with $4.37\times$ as many parameters. On SHHS1, it improved subject-mean \mf\ over the control by
-0.0412 (\ci\ $[0.0314,0.0512]$). Additional same-cohort comparisons favoured band-pass-only E4
-over E3 at both seeds: differences of 0.0131 (seed 42, \ci\ $[0.0111,0.0153]$)
-and 0.0098 (seed 123, \ci\ $[0.0073,0.0125]$).
-Both primary pipelines misclassified over 72\% of N3 (deep-sleep) epochs as N2;
-E3 N3 recall was 0.2582. Full-source ADAST improved subject-mean \mf\ by 0.0445
-(\ci\ $[0.0352,0.0539]$) over its matched control; N3 recall increased
-0.2432 to 0.6111, with lower N1/N2/REM F1.
+\textbf{Results.} A one-dimensional residual network with a temporal convolutional network
+(ResNet-1D-TCN) on band-pass-filtered input (E3) reached a pooled Sleep-EDF \mf\ of 0.7904. Its
+forward pass was $3.76\times$ faster than that of a CNN-BiLSTM baseline (E0), with $4.37\times$ as
+many parameters. On the 500-participant sample, E3 improved subject-mean \mf\ over E0 by 0.0467
+(\ci\ 0.0403-0.0531), over record-wise $z$-scoring (E6) by 0.0293 (0.0231-0.0354) and over the
+same model on unfiltered input (E2) by 0.0515 (0.0460-0.0571); all three pre-specified hypotheses
+were confirmed. Band-pass-only input (E4), equivalent to E3 under batch normalisation, scored 0.009-0.014 higher,
+comparable to differences between two training seeds (0.005-0.020). E0 and E3 classified more than 72\%
+of N3 (deep-sleep) epochs as N2. This decision depended on input amplitude, but rescaling,
+batch-normalisation adaptation and adversarial domain adaptation each failed to correct it without
+losses in other stages.
 
 \noindent
-\textbf{Conclusions.} E3 combined faster computation with better aggregate transfer performance than
-the control; band-pass-only E4 achieved higher SHHS1 scores. N3-to-N2 confusion dominated deep-sleep
-errors. These findings support joint evaluation of model design, preprocessing and stage-specific performance.
+\textbf{Conclusions.} Band-pass filtering accounted for most of the cross-cohort gain, and
+N3-to-N2 confusion persisted in every zero-shot pipeline. Pipeline comparisons should report
+variation between training runs and be confirmed on data held out from development.
 \end{abstract}
 
 \vspace{0.3em}
 \noindent\textbf{Keywords:} sleep staging; single-channel EEG; temporal convolutional network;
-preprocessing; domain shift; paired evaluation.
+preprocessing; domain shift; external validation.
 
 \vspace{0.3em}
 \begin{center}\rule{0.9\textwidth}{0.4pt}\end{center}
@@ -162,7 +160,7 @@ preprocessing; domain shift; paired evaluation.
 %==============================================================================
 \section{Introduction}
 
-Sleep staging assigns one of five labels---W, N1, N2, N3 and REM---to every 30\,s epoch of a
+Sleep staging assigns one of five labels, namely W, N1, N2, N3 and REM, to every 30\,s epoch of a
 polysomnographic recording. Manual scoring is slow, requires trained expertise, and retains
 disagreement between scorers; in the inter-scorer reliability programme of the American
 Academy of Sleep Medicine, N1 shows the lowest agreement of all stages~\cite{rosenberg2013aasm}. An
@@ -170,48 +168,52 @@ automated system therefore has to be judged not by overall accuracy alone, which
 most frequent stages, but by class-balanced metrics, by stability across individuals, and by its
 behaviour when the recording device, montage or population changes.
 
-Progress in this field is difficult to read from published tables. Studies differ simultaneously in
+Progress in this field is difficult to compare across published tables. Studies differ simultaneously in
 dataset version, subject partitioning, wake-trimming policy, filtering, normalisation, sequence length
-and model-selection rule, making architectural effects difficult to distinguish from other pipeline
-differences across studies. For practical development, the relevant questions are which pipeline choices
-improve prediction, what they cost computationally, and whether their benefits persist on another cohort.
-Answering these questions requires shared evaluation partitions and an explicit account of what changes
-between configurations, including their training procedures.
+and model-selection rule, which makes architectural effects difficult to separate from other pipeline
+differences. For practical development, the relevant questions are which pipeline choices improve
+prediction, what they cost computationally, and whether their benefits persist on another cohort.
+Answering these questions requires shared evaluation partitions, an explicit account of what changes
+between configurations, and evaluation data that did not influence the choices being compared.
 
 We take ZleepAnlystNet~\cite{jadhav2024zleepanlystnet}, a two-stage single-channel model that couples a
-bank of class-specific convolutional encoders to a BiLSTM, as an internal control. E1 replaces the
-BiLSTM configuration with a temporal convolutional network (TCN)~\cite{bai2018tcn}, reusing the encoder
-and cached features but changing the sequence-model training recipe. E2 replaces E1's 75-dimensional
+bank of class-specific convolutional encoders to a BiLSTM, as an internal baseline, E0, reimplemented under the present protocol. E1 replaces the
+BiLSTM with a temporal convolutional network (TCN)~\cite{bai2018tcn}, reusing the encoder and cached
+features but changing the sequence-model training recipe. E2 replaces E1's 75-dimensional
 current/previous/next (C/P/N) feature-context package with a 128-dimensional current-epoch residual
 encoder~\cite{he2016resnet}, also changing encoder training and selection. These are comparisons of
 specified configurations, not isolated architectural effects. Preprocessing contrasts then examine
-filtering and amplitude handling within the same ResNet-1D--TCN model and training configuration.
+filtering and amplitude handling within the same ResNet-1D-TCN model and training configuration.
 
-Model and signal-processing choices can change both prediction quality and computational cost,
-but good performance on one dataset may not carry over to another. We therefore ask three questions:
+We ask three questions:
 \begin{enumerate}[label=(\roman*)]
-\item How do the evaluated model configurations differ in their ability to classify sleep stages
-and in the computational resources they require?
+\item How do the evaluated configurations differ in classification performance and in the
+computational resources they require?
 \item With the model architecture and training settings held fixed, how do filtering and amplitude
-normalisation choices affect classification performance?
-\item When applied to data from a different group of people without updating model weights,
-which configurations perform better, and which sleep stages remain difficult to recognise?
+normalisation affect performance?
+\item When applied to another cohort without updating model weights, which configurations perform
+better, does the ranking hold on participants who were not used during development, and which sleep
+stages remain difficult to recognise?
 \end{enumerate}
 
 Our contributions are the following.
 
 \begin{enumerate}[label=(\arabic*)]
-\item We quantify the trade-offs between classification performance and computational cost across
-the evaluated configurations. The implemented ResNet-1D--TCN pipeline requires less computation time
-than the CNN--BiLSTM control, despite having more parameters.
-\item We show that preprocessing choices can substantially affect performance on another dataset.
-Even with the ResNet-1D--TCN architecture and training settings held fixed, filtering and amplitude
-handling lead to different results on SHHS1. These comparisons show why preprocessing needs to be
-evaluated alongside the model.
-\item We identify N3-to-N2 confusion as a shared cross-cohort error: both CNN--BiLSTM and
-ResNet-1D--TCN misclassify more than 72\% of reference N3 epochs as N2. Matched intervention
-experiments quantify how class weighting and domain adaptation increase N3 recall while changing
-recognition of the other stages.
+\item We quantify the trade-off between classification performance and computational cost. The
+implemented ResNet-1D-TCN pipeline requires less computation time than the CNN-BiLSTM baseline,
+despite having more parameters.
+\item We show, on 500 SHHS1 participants held out from all development decisions, that the
+cross-cohort advantage of this pipeline over the baseline is confirmed and that band-pass filtering
+accounts for most of it: without filtering, the same model performed close to the baseline.
+\item We identify N3-to-N2 confusion as a shared cross-cohort error that recurs in every zero-shot
+pipeline and in the held-out sample. An input-amplitude sweep shows that this error depends on, but is
+not explained by, signal amplitude, and matched experiments quantify how class weighting,
+batch-normalisation adaptation and adversarial domain adaptation trade N3 recall against the
+recognition of other stages.
+\item We show that two training seeds of an identical configuration can differ by as much as some of
+the configuration contrasts, and that the band-pass-only and scaled-input variants are equivalent runs
+of one pipeline whose score difference reflects numerical divergence during training. Confidence
+intervals computed for fixed models therefore understate the uncertainty of pipeline comparisons.
 \end{enumerate}
 
 %==============================================================================
@@ -221,106 +223,113 @@ DeepSleepNet combined a dual-branch CNN with a BiLSTM to capture epoch morpholog
 dependence~\cite{supratak2017deepsleepnet}. AttnSleep introduced attention over multi-resolution
 features~\cite{eldele2021attnsleep}, and SleepTransformer applied self-attention with explicit
 uncertainty quantification~\cite{phan2022sleeptransformer}. Together these establish that sequential
-context matters substantially. They also illustrate the comparability problem: differences in dataset
-version, subject split and preprocessing between these works are large enough that cross-table
-comparison cannot substitute for an ablation carried out inside one protocol, a point emphasised in
-recent reviews of the field~\cite{phan2022review}.
+context matters. They also illustrate the comparability problem: differences in dataset version,
+subject split and preprocessing between these works are large enough that cross-table comparison
+cannot substitute for an ablation carried out inside one protocol, a point emphasised in a recent
+review~\cite{phan2022review}.
 
 Single-channel systems also span materially different input representations. SleepInceptionNet
-systematically compared raw, spectral and time--frequency inputs and selected a continuous-wavelet,
+systematically compared raw, spectral and time-frequency inputs and selected a continuous-wavelet,
 central-channel Inception model that scores one epoch at a time~\cite{haghayegh2023sleepinceptionnet}.
-That study reinforces two points relevant here: a single EEG channel can support five-stage scoring, and
-preprocessing choice is part of the model definition rather than a neutral implementation detail.
+That study supports two points relevant here: a single EEG channel can support five-stage scoring, and
+the choice of input representation is part of the model definition rather than a neutral
+implementation detail. Van Der Donckt et al.~\cite{vdd2023traditional} further showed that
+increasingly complex deep architectures need not outperform a carefully designed conventional pipeline
+under a matched protocol.
 
-Cross-dataset sleep staging is already an active methodological problem. For example, He et
-al.~\cite{he2023crossscenario} trained a domain-adaptation network across Sleep-EDF, SHHS1 and the
-PhysioNet Challenge data. ADAST instead uses domain-specific attention, adversarial alignment and
-iterative pseudo-label self-training on unlabelled target data~\cite{eldele2023adast}. These approaches
-adapt model representations or decision functions using the target domain; our label-free E6 condition
-only estimates recording-level normalisation statistics, with no learned target-domain or weight adaptation.
-Van Der Donckt et al.~\cite{vdd2023traditional} further showed that increasingly complex deep
-architectures need not outperform a carefully designed conventional pipeline under a matched protocol.
-Our contribution is a joint assessment of pipeline substitutions, preprocessing, computational cost
-and cross-cohort error structure. The paired comparisons quantify benefits within a common protocol;
-the cross-model analysis tests whether an aggregate transfer gain also addresses the dominant stage-specific
-failure. Neither question is answered by comparing scores from unrelated benchmark tables.
+Cross-dataset sleep staging is an active methodological problem. Models trained on many cohorts and
+channel configurations, such as U-Sleep~\cite{perslev2021usleep} and the mixed-cohort residual networks
+of Olesen et al.~\cite{olesen2021mixed}, seek robustness through the diversity of their training data.
+Domain-adaptation methods instead adapt to the target domain: He et al.~\cite{he2023crossscenario}
+trained a transfer-learning network across Sleep-EDF, SHHS1 and PhysioNet Challenge data, and ADAST uses
+domain-specific attention, adversarial alignment and iterative pseudo-label self-training on unlabelled
+target data~\cite{eldele2023adast}. Our study addresses a narrower question that these approaches leave
+open: within a single-source pipeline, which model and preprocessing choices determine transfer, what
+they cost, and whether their effects hold on data that did not inform them.
 
 Sleep-EDF Expanded is the standard public benchmark for single-channel
-EEG~\cite{kemp2000sleepEDF,physionetSleepEDF,pollard2026physionet}. The Sleep Heart Health Study (SHHS) is a large
-multi-centre cohort assembled to study sleep-disordered breathing and cardiovascular
+EEG~\cite{kemp2000sleepEDF,physionetSleepEDF,pollard2026physionet}. The Sleep Heart Health Study (SHHS)
+is a large multi-centre cohort assembled to study sleep-disordered breathing and cardiovascular
 risk~\cite{quan1997shhs}, distributed through the National Sleep Research Resource
 (NSRR)~\cite{zhang2018nsrr}. The two differ in age, comorbidity, recording hardware, montage and label
-distribution. SHHS therefore tests a form of cohort change not represented by a held-out split of
-Sleep-EDF. We use it to assess cross-cohort robustness, without equating retrospective transfer testing
-with clinical deployment validation.
+distribution, so SHHS tests a form of cohort change not represented by a held-out split of Sleep-EDF.
+We use it to assess cross-cohort robustness, without equating retrospective transfer testing with
+clinical validation.
 
 Two further strands of work inform the interpretation. Slow oscillations have a spatially varying
 amplitude and propagate across the cortex~\cite{massimini2004travelling}, while deep-sleep scoring uses
 amplitude criteria~\cite{rechtschaffen1968,berry2017aasm}. A recent SHHS analysis examined how those
 criteria relate to age- and sex-associated differences in N3 scoring~\cite{davidson2025n3}. Such work
-provides context for transfer between derivations and populations, rather than a mechanism established
+provides context for transfer between derivations and populations rather than a mechanism established
 by the present experiment. Differences in class prevalence can also affect predictions; prior correction
 and probability calibration address related but distinct problems~\cite{saerens2002adjusting,guo2017calibration}.
-We therefore examine class-wise errors and label proportions without treating marginal prediction
-counts as a calibration measure.
 
 %==============================================================================
 \section{Materials and methods}
 
 \subsection{Data and labels}
 
-Our Sleep Cassette analysis sample from Sleep-EDF Expanded comprises 153 recordings from 78 subjects; we use the
-Fpz--Cz derivation at 100\,Hz with 30\,s epochs (3{,}000 samples per epoch). Annotations are mapped to
-W, N1, N2, N3 and REM, merging the original stages 3 and 4 into N3; Movement and Unknown epochs retain their temporal position but are excluded from
-the loss and from all metrics. After windowing, 195{,}767 epochs remain, of which 195{,}469 are scored
-and 298 are Movement/Unknown.
+Our Sleep Cassette analysis sample from Sleep-EDF Expanded comprises 153 recordings from 78 subjects;
+we use the Fpz-Cz derivation at 100\,Hz with 30\,s epochs (3{,}000 samples per epoch). Annotations
+are mapped to W, N1, N2, N3 and REM, merging the original stages 3 and 4 into N3; Movement and Unknown
+epochs retain their temporal position but are excluded from the loss and from all metrics. After
+windowing, 195{,}767 epochs remain, of which 195{,}469 are scored and 298 are Movement/Unknown.
 
 An evaluation window is applied identically to both cohorts. It is anchored on the first and last true
-sleep epoch (any of N1, N2, N3, REM) and extended by 30\,min of wake on each side, i.e.\ 60 epochs per
+sleep epoch of type N1, N2, N3 or REM, and extended by 30\,min of wake on each side, i.e.\ 60 epochs per
 side. This policy is stated explicitly because it strongly affects the wake fraction and hence every
-aggregate metric, and because it is one of the principal reasons published numbers are not directly
-comparable. It is a benchmark window, not a deployable inference rule, since its anchors use ground-truth
-labels.
+aggregate metric, and because it is one of the reasons published numbers are not directly
+comparable. It is a benchmark window, not a deployable inference rule, since its anchors use
+reference labels.
 
 The SHHS Visit-1 selection used the metadata quality field \texttt{overall\_shhs1}, admitting values
-3--7. Eligible participant identifiers were ranked deterministically by SHA-256 with selection seed 42,
-then independently ranked for role assignment: 5 adaptation, 15 validation, 180 test and 20 reserve
-participants. These are the archived protocol's role names; in the primary experiments the adaptation
-group served technical checks, not model adaptation. No reserve replacements were required. The
-180-person test sample was selected before prediction review. Neither the adaptation nor validation
-group updated weights in the primary experiments; the additional ADAST experiment uses only the
-five adaptation participants' unlabelled signals for weight updates.
-The EEG channel is C4--A1 at 125\,Hz, resampled to 100\,Hz with a polyphase anti-aliasing
-filter (up 4, down 5, Kaiser window $\beta = 5.0$) applied to the continuous signal before epoching.
-SHHS labels are mapped $0\rightarrow$W, $1\rightarrow$N1, $2\rightarrow$N2, $\{3,4\}\rightarrow$N3,
-$5\rightarrow$REM, $\{6,9\}\rightarrow$excluded. Table~\ref{tab:class-distribution} reports both label
-distributions.
+3-7, which all 5{,}804 participants in the dataset release met. Participant identifiers were ranked
+deterministically by SHA-256 with selection seed 42, and the first 220 were assigned roles: 5
+adaptation, 15 validation, 180 test and 20 reserve participants. In the primary experiments the
+adaptation group served technical checks only; the ADAST experiment later used its five unlabelled
+recordings for weight updates. No reserve replacements were required. We refer to the 180 test
+participants as the \emph{first SHHS1 sample}; it was selected before predictions were reviewed, but all
+subsequent analyses and interventions in this study were developed on it.
+
+To test the main findings on data that had not informed them, we drew a \emph{holdout SHHS1 sample}
+from the same ranking: participants ranked 221 to 720, which excludes every participant assigned a role
+above. One ranked participant had no recording available and was replaced, before any processing, by
+the next-ranked participant. The 500 holdout participants (age $62.8 \pm 11.5$ years; 249 men and 251
+women) had not been used for preprocessing, inference, model selection, intervention design or
+analysis, and all passed the technical audit. Holdout recordings lasted 5.5-9.1\,h (median 8.8\,h).
+
+For both samples the EEG channel is C4-A1 at 125\,Hz, resampled to 100\,Hz with a polyphase
+anti-aliasing filter (up 4, down 5, Kaiser window $\beta = 5.0$) applied to the continuous signal
+before epoching. SHHS labels are mapped $0\rightarrow$W, $1\rightarrow$N1, $2\rightarrow$N2,
+$\{3,4\}\rightarrow$N3, $5\rightarrow$REM, $\{6,9\}\rightarrow$excluded. Table~\ref{tab:class-distribution}
+reports the three label distributions.
 
 \begin{table}[t]
 \centering
-\caption{Scored-label distribution in the two evaluation samples.}
+\caption{Scored-label distribution in the three evaluation samples. The ratio compares the share in
+the holdout SHHS1 sample with that in Sleep-EDF.}
 \label{tab:class-distribution}
 \small
-\begin{tabular}{lrr|rrr}
+\begin{tabular}{lrr|rr|rrr}
 \toprule
-\textbf{Stage} & \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{3}{c}{\textbf{SHHS1 test}} \\
- & \textbf{Epochs} & \textbf{Share} & \textbf{Epochs} & \textbf{Share} & \textbf{Ratio to EDF} \\
+& \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{2}{c|}{\textbf{SHHS1 first ($n=180$)}} & \multicolumn{3}{c}{\textbf{SHHS1 holdout ($n=500$)}} \\
+\textbf{Stage} & \textbf{Epochs} & \textbf{Share} & \textbf{Epochs} & \textbf{Share} & \textbf{Epochs} & \textbf{Share} & \textbf{Ratio} \\
 \midrule
-W   & 65{,}941 & 33.73\% & 36{,}983 & 21.88\% & 0.65 \\
-N1  & 21{,}522 & 11.01\% & 7{,}002  & 4.14\%  & 0.38 \\
-N2  & 69{,}132 & 35.37\% & 76{,}287 & 45.14\% & 1.28 \\
-N3  & 13{,}039 & 6.67\%  & 22{,}806 & 13.49\% & 2.02 \\
-REM & 25{,}835 & 13.22\% & 25{,}934 & 15.34\% & 1.16 \\
+W   & 65{,}941 & 33.73\% & 36{,}983 & 21.88\% & 99{,}674  & 21.74\% & 0.64 \\
+N1  & 21{,}522 & 11.01\% & 7{,}002  & 4.14\%  & 18{,}930  & 4.13\%  & 0.38 \\
+N2  & 69{,}132 & 35.37\% & 76{,}287 & 45.14\% & 207{,}848 & 45.34\% & 1.28 \\
+N3  & 13{,}039 & 6.67\%  & 22{,}806 & 13.49\% & 61{,}523  & 13.42\% & 2.01 \\
+REM & 25{,}835 & 13.22\% & 25{,}934 & 15.34\% & 70{,}434  & 15.36\% & 1.16 \\
 \midrule
-\textbf{Total scored} & \textbf{195{,}469} & \textbf{100\%} & \textbf{169{,}012} & \textbf{100\%} & \\
+\textbf{Total} & \textbf{195{,}469} & \textbf{100\%} & \textbf{169{,}012} & \textbf{100\%} & \textbf{458{,}409} & \textbf{100\%} & \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Observed class proportions differ, with total variation distance $0.187$ and
-$D_{\mathrm{KL}}(\text{EDF} \,\|\, \text{SHHS}) = 0.101$ nats. SHHS1 contains proportionally
-$2.02\times$ as much N3 and $0.38\times$ as much N1. We report the per-class ratios in
-Table~\ref{tab:class-distribution} to support interpretation of the class-wise errors. These marginal
+Observed class proportions differ between the cohorts. For the first SHHS1 sample, the total
+variation distance from Sleep-EDF is 0.187 and the Kullback-Leibler divergence
+$D_{\mathrm{KL}}(\text{EDF}\,\|\,\text{SHHS})$ is 0.101 nats. Both SHHS1
+samples contain about twice the N3 share and about 0.38 times the N1 share of Sleep-EDF. These marginal
 differences alone do not establish the label-shift assumption of unchanged class-conditional inputs.
 
 \subsection{Preprocessing conditions}
@@ -338,16 +347,15 @@ then modelled as a sequence by a BiLSTM or TCN.
     75 features for a BiLSTM or TCN. E2, E3, E4 and E6 use separately fitted current-epoch
     ResNet-1D encoders and TCNs. ResNet numbers denote output channels; GAP is global average
     pooling. Both TCNs have six non-causal dilated blocks. E3 and E6 additionally clip at
-    $\pm800\,\mu$V after band-pass filtering; E3 divides by 100, whereas E6 uses complete-record
-    $z$-score statistics. (b) Sleep-EDF uses ten shared subject-wise folds, with eight for
-    training, one for validation and one for testing per rotation. The primary SHHS1
-    evaluation compares E0, E3 and E6 on 180 participants, averaging class probabilities from
-    ten source-fold checkpoints before selecting the predicted class, without target-domain
-    model fitting. E6 uses unlabelled target-record statistics. E5 is an input-identity audit,
-    not an additional performance configuration. Training settings and secondary analyses are
-    described in the Methods and Supplement. The schematic was drawn with Matplotlib and OpenAI
-    Codex assistance; the symbols represent architecture and fold roles, not measured signals
-    or partition sizes.}
+    $\pm800\,\mu$V after band-pass filtering (the clip never activated); E3 divides by 100, whereas
+    E6 uses complete-record $z$-score statistics. (b) Sleep-EDF uses ten shared subject-wise folds,
+    with eight for training, one for validation and one for testing per rotation. SHHS1 evaluation
+    averages class probabilities from the ten source-fold checkpoints before selecting the predicted
+    class, without target-domain model fitting; the panel shows the configurations of the first
+    SHHS1 sample, and the holdout sample additionally includes E2 and E4. E6 uses unlabelled
+    target-record statistics. E5 is an input-identity audit, not an additional performance
+    configuration. The schematic was drawn with Matplotlib and OpenAI Codex assistance; the symbols
+    represent architecture and fold roles, not measured signals or partition sizes.}
     \label{fig:pipeline}
 \end{figure}
 
@@ -356,36 +364,52 @@ signal conditions enter the performance analysis, and one audit-only condition (
 clipping ablation:
 
 \begin{itemize}
-\item \textbf{Raw} (E0--E2): no filtering, no clipping, no rescaling; native $\mu$V retained.
-\item \textbf{Band-pass only} (E4): zero-phase Butterworth band-pass, order 4, 0.5--30\,Hz, implemented
-as second-order sections with forward--backward filtering.
+\item \textbf{Raw} (E0-E2): no filtering, no clipping, no rescaling; native $\mu$V retained.
+\item \textbf{Band-pass only} (E4): zero-phase Butterworth band-pass, order 4, 0.5-30\,Hz, implemented
+as second-order sections with forward-backward filtering.
 \item \textbf{Band-pass plus clipping} (E5; audit only): the E4 signal followed by a hard clip at
-$\pm800\,\mu$V. Across all 153 Sleep-EDF recordings, E5 and E4 were bitwise identical and the measured
-clipped-sample fraction was zero. Fold 0 was retained as an audit artifact; the remaining folds and all
-performance tests were cancelled before scores were inspected because E5 did not define an independent
-input condition.
-\item \textbf{Fixed-scale amplitude handling} (E3): the same band-pass, followed by a hard clip at
-$\pm800\,\mu$V and division by a constant factor of 100. The clip threshold is an absolute constant
-identical for every recording, so no record-level or cohort-level statistic is estimated and
-cross-subject leakage is not introduced; relative amplitude between recordings is preserved.
+$\pm800\,\mu$V. Across all 153 Sleep-EDF recordings, E5 and E4 were bitwise identical and the measured clipped-sample fraction was zero. Fold 0 was
+retained as an audit record; the remaining folds and all performance tests were cancelled before
+scores were inspected because E5 did not define an independent input condition.
+\item \textbf{Band-pass, clipping and division by 100} (E3): the same band-pass, followed by a hard clip
+at $\pm800\,\mu$V and division by a constant factor of 100. No record-level or cohort-level statistic
+is estimated.
 \item \textbf{Per-record $z$-score} (E6): the same band-pass and clip, followed by subtraction of the
 mean and division by the standard deviation computed over the whole filtered, clipped recording. This
 uses no target labels but does use all samples of the target recording, removes absolute amplitude
-differences between recordings and is transductive at the recording level rather than purely inductive.
+differences between recordings and is transductive at the recording level.
 \end{itemize}
 
-No notch filter is applied: 50\,Hz lies outside the 0.5--30\,Hz pass-band and at the Nyquist frequency
-of the 100\,Hz signal. The contrast E3\,--\,E6 therefore evaluates a practical preprocessing choice:
-preserving calibrated cross-recording amplitude relationships or applying record-wise normalisation.
-Because clipping never activated in the Sleep-EDF E5 audit, E3 and E4 differ on Sleep-EDF by the fixed division by 100;
-the corresponding SHHS audit also found zero clipped samples. The E3--E4 comparison therefore tests
-training and evaluation at two input scales on these data, not an active clipping effect.
+No notch filter is applied: 50\,Hz lies outside the 0.5-30\,Hz pass-band and at the Nyquist frequency
+of the 100\,Hz signal.
+
+The $\pm800\,\mu$V clip lies outside the range of both signals: band-pass-filtered Sleep-EDF values
+did not exceed $246\,\mu$V, every holdout SHHS1 EEG channel has a physical range of $\pm125\,\mu$V,
+and the preprocessing audit of the first SHHS1 sample recorded no clipped samples. Clipping
+therefore never activated, and E3 differs from E4 only by the factor of 100. This factor has almost no
+effect on the function the ResNet-1D encoder can represent: its first convolution has no bias and is
+followed by batch normalisation, which removes a positive constant input scale except through its
+stabilising constant $\varepsilon$; dividing the input by 100 is equivalent to multiplying $\varepsilon$
+of that layer by $10^{4}$. Because the normalised output does not depend on the input scale, the
+gradients with respect to all weights are also unchanged apart from this constant (Supplementary
+Section S4). E3 and E4 share seed, initialisation, batch order and optimiser settings, so in exact
+arithmetic each E3 run would follow the parameter trajectory of the corresponding E4 run; in practice,
+rounding differences let the two runs drift apart, and early stopping can select different epochs.
+E3 and E4 are therefore two realisations of the same band-pass pipeline, and E3-E2 estimates the
+effect of band-pass filtering together with variation between training runs.
+
+The record-wise statistics of E6 are computed over very different spans in the two cohorts. Sleep-EDF
+recordings last 17-24\,h (median 23\,h) and include long daytime segments outside the evaluation
+window, whereas SHHS1 recordings cover the night in bed. Within the evaluation window, the median
+standard deviation of E6 inputs was 0.77 in Sleep-EDF but 0.99 in the holdout SHHS1 sample
+(interquartile range 0.85-1.00). E6 thus presents SHHS1 signals to the model at about 1.3 times the
+relative scale seen in training, in addition to removing between-recording amplitude differences.
 
 \subsection{Model configurations}
 
 \begin{table}[t]
 \centering
-\caption{Experimental configuration codes. The identifiers denote signal--model combinations, not a
+\caption{Experimental configuration codes. The identifiers denote signal-model combinations, not a
 performance ranking or a sequence of model versions.}
 \label{tab:configs}
 \small
@@ -393,150 +417,161 @@ performance ranking or a sequence of model versions.}
 \toprule
 \textbf{ID} & \textbf{Signal condition} & \textbf{Epoch encoder} & \textbf{Sequence model and role} \\
 \midrule
-E0 & Raw & 15-branch CNN & BiLSTM; internal control \\
+E0 & Raw & 15-branch CNN & BiLSTM; internal baseline \\
 E1 & Raw & 15-branch CNN & TCN; sequence-model and training-recipe replacement \\
 E2 & Raw & ResNet-1D & TCN; encoder/context and encoder-training replacement \\
-E3 & Band-pass + clip + fixed scale & ResNet-1D & TCN; fixed-scale configuration \\
-E4 & Band-pass only & ResNet-1D & TCN; band-pass configuration \\
+E3 & Band-pass + clip + $\div100$ & ResNet-1D & TCN; band-pass configuration \\
+E4 & Band-pass only & ResNet-1D & TCN; band-pass configuration without scaling \\
 E5 & Band-pass + clip & ResNet-1D & TCN; audit only, identical input to E4 \\
-E6 & Band-pass + clip + $z$-score & ResNet-1D & TCN; alternative rescaling \\
+E6 & Band-pass + clip + $z$-score & ResNet-1D & TCN; record-wise normalisation \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Six active configurations (E0--E4 and E6) enter performance analysis; E5 documents the cancelled
-clipping-only contrast. The control encoder concatenates five-class softmax outputs from 15 CNN branches
-spanning current, previous and next epochs (C/P/N), giving 75 features per central epoch.
-Context stays within each recording, with edge-epoch replication. ResNet-1D produces 128 features from the current epoch only. The
-non-causal six-block TCN has a 253-epoch receptive field; the BiLSTM control has 128 hidden units per
-direction. Both sequence models process the retained recording with masked padding. These are offline
-models: the BiLSTM and TCN use future context, and zero-phase filtering and E6 normalisation use future
-signal samples. The forward benchmark is not a measure of online decision latency. Layer dimensions and
-all hyperparameters are reported in Supplementary Methods S1.
+Six active configurations (E0-E4 and E6) enter performance analysis; E5 documents the cancelled
+clipping-only contrast. The baseline encoder concatenates five-class softmax outputs from 15 CNN branches
+spanning current, previous and next epochs (C/P/N), giving 75 features per central epoch. Context stays
+within each recording, with edge-epoch replication. ResNet-1D produces 128 features from the current
+epoch only. The non-causal six-block TCN has a 253-epoch receptive field; the BiLSTM baseline has 128
+hidden units per direction. Both sequence models process the retained recording with masked padding.
+These are offline models: the BiLSTM and TCN use future context, and zero-phase filtering and E6
+normalisation use future signal samples. The forward benchmark is therefore not a measure of online
+decision latency. Layer dimensions and all hyperparameters are reported in Supplementary Methods S1.
 
 \subsection{Two-stage training and subject-wise cross-validation}
 
-The 78 subjects are partitioned into 10 subject-disjoint folds. In each evaluation round one fold is the
-test fold, the next fold (modulo 10) is the validation fold and the remainder are training folds. Both
-nights of a subject always share the same role. The same partition is used for every configuration, and
-the test fold never participates in model selection. The training API accepts only training and
-validation loaders, and encoder fitting and feature caching follow the same subject-fold assignments.
+The 78 subjects are partitioned into ten subject-disjoint folds. In each evaluation round one fold is
+the test fold, the next fold (modulo 10) is the validation fold and the remainder are training folds.
+Both nights of a subject always share the same role. The same partition is used for every
+configuration, and the test fold never participates in model selection. The training API accepts only
+training and validation loaders, and encoder fitting and feature caching follow the same subject-fold
+assignments.
 
 Training has two stages. The epoch encoder uses class weights calculated from training subjects and
-is selected on validation data: minimum weighted validation loss for each control CNN, maximum
-validation \mf\ for ResNet. Its selected checkpoint is hash-verified and used to cache features
+is selected on validation data: minimum weighted validation loss for each baseline CNN and maximum
+validation \mf\ for ResNet-1D. Its selected checkpoint is hash-verified and used to cache features
 without gradients. The sequence model is fitted on the frozen cache using masked cross-entropy and
-selected by validation \mf. E1 reuses E0 encoder checkpoints but changes the sequence optimiser
+selected by validation \mf. E1 reuses the E0 encoder checkpoints but changes the sequence optimiser
 settings: learning rate 0.01 versus 0.0005, batch size 4 versus 8 recordings, maximum 1{,}000 versus
 300 epochs and patience 10 versus 30 for E0 and E1, respectively. E2 additionally changes encoder
 optimisation and selection alongside the feature/context replacement. Supplementary Methods S1
 provides the complete recipes. The comparisons therefore preserve subject partitions and evaluation,
-not every training choice.
+not every training choice. Every configuration was trained with two fixed seeds, 42 and 123.
 
-\subsection{Statistical analysis and evaluation protocol}
+\subsection{Statistical analysis}
 
-All six configurations completed validation-based selection before the primary seed-42 test predictions
-were evaluated. In
-Sleep-EDF, pooled \mf\ is the descriptive headline metric, but the unit of statistical inference is the
-subject. Paired subject-cluster bootstrap with 10{,}000 resamples estimates percentile confidence intervals for the
-difference in pooled \mf~\cite{efron1994bootstrap}, while a two-sided Wilcoxon signed-rank test~\cite{wilcoxon1945} assesses the
-subject-level distribution of per-subject differences. Holm
-correction~\cite{holm1979} is applied over the four pre-specified comparisons E1\,--\,E0, E2\,--\,E1,
-E3\,--\,E2 and E3\,--\,E6. Pooled \mf\ is computed from the sum of subject confusion matrices;
-subject-mean \mf\ is the arithmetic mean of individual subjects' scores. They are not interchangeable,
-and pooled \mf\ is not a weighted average of individual \mf\ values. The bootstrap interval describes
-the pooled-score difference, whereas Wilcoxon evaluates the paired subject differences through their
-signed ranks. All bootstrap intervals are marginal 95\% intervals, not multiplicity-adjusted simultaneous
-intervals. Supplementary Methods S1 specifies bootstrap seeds and zero-difference handling.
-Metrics use five fixed classes and assign zero when a class-wise denominator is zero.
-In the Sleep-EDF analysis, E3\,--\,E0 is labelled post-hoc throughout.
+All six configurations completed validation-based selection before the seed-42 test predictions were
+evaluated. In Sleep-EDF, pooled \mf\ is the descriptive headline metric, but the unit of statistical
+inference is the subject. A paired subject-cluster bootstrap with 10{,}000 resamples estimates
+percentile confidence intervals for the difference in pooled \mf~\cite{efron1994bootstrap}, while a
+two-sided Wilcoxon signed-rank test~\cite{wilcoxon1945} assesses the per-subject differences. Holm
+correction~\cite{holm1979} is applied over the four pre-specified comparisons E1-E0, E2-E1,
+E3-E2 and E3-E6. Pooled \mf\ is computed from the sum of subject confusion matrices;
+subject-mean \mf\ is the arithmetic mean of individual subjects' scores. The two are not
+interchangeable, and pooled \mf\ is not a weighted average of individual \mf\ values. All bootstrap
+intervals are marginal 95\% intervals, not multiplicity-adjusted simultaneous intervals.
+Supplementary Methods S1 specifies bootstrap seeds and zero-difference handling. Metrics use five
+fixed classes and assign zero when a class-wise denominator is zero. E3-E0 is post-hoc in the
+Sleep-EDF analysis. Win/tie/loss counts, sign dominance $(W-L)/(W+L)$ and an unadjusted exact sign
+test are reported as descriptive robustness checks.
 
-We also report win/tie/loss counts, sign dominance $(W-L)/(W+L)$ and an unadjusted exact sign test as
-descriptive robustness checks; they are not part of the pre-specified inferential family.
+Bootstrap intervals and Wilcoxon tests treat the trained models as fixed and do not include variation
+between training runs. The seed-123 repeat, completed after the seed-42 results were known, provides two
+fixed initialisations per configuration; the two seeds are analysed separately and their $p$-values
+are never pooled.
 
-The completed seed-123 campaign repeated the evaluation with a second fixed training seed on the
-same partition. The two seeds are analysed separately; $p$-values are never pooled,
-and this repeat provides a sensitivity check across the two initialisations. We report it
-separately from the primary campaign. The archived configuration lists
-seeds 42, 123 and 2025; only completed campaigns 42 and 123 contribute results here.
+For SHHS1, each configuration uses all ten Sleep-EDF outer-fold checkpoints. Softmax probabilities are
+averaged in float64 across folds before the final argmax for each epoch. On the first SHHS1 sample, the
+pre-specified primary criterion was subject-mean \mf, with E3-E0 and E3-E6 as the two primary
+comparisons under the same bootstrap and Wilcoxon-Holm treatment applied to the subject-mean
+difference. Comparisons involving E1, E2 and E4 on that sample are secondary or post-hoc, as labelled.
+Reference-label boundary and stable-region analyses are post-hoc offline diagnostics; their masks,
+exclusions and supports are defined in Supplementary Methods S1.
 
-For SHHS, each configuration uses all ten Sleep-EDF outer-fold checkpoints. Softmax probabilities are
-averaged in float64 across folds before the final argmax for each epoch. The prespecified primary criterion
-is subject-mean \mf, with E3\,--\,E0 and E3\,--\,E6 as the two primary comparisons under the same
-subject-cluster bootstrap and Wilcoxon--Holm treatment, now with bootstrap intervals for the
-subject-mean difference. The E1/E2 analysis is secondary evidence on an already-opened sample,
-and E3\,--\,E2 is explicitly post-hoc. The seed-123 E4 extension has its own four-comparison Holm
-family, reported in the supplement. A subsequent E4 seed-42 comparison used the restored historical
-source-selected checkpoints and identical benchmark windows; all ten folds were averaged without
-target-based ranking. Its paired bootstrap intervals are reported separately, without adding a
-new $p$-value to the primary family. Reference-label boundary and stable-region analyses are post-hoc
-offline diagnostics; their exact masks, exclusions and supports are defined in Supplementary Methods S1.
+\subsection{Confirmatory holdout protocol}
 
-\subsection{Additional intervention experiments}
+Before any holdout recording was preprocessed, a protocol fixing the cohort, preprocessing,
+checkpoints, ensemble rule, metrics, hypotheses and decision rule was committed to the project
+repository (commit \texttt{a275617}). The analysis script was committed before it was run (commit
+\texttt{2019b51}). The confirmatory family comprised three seed-42 contrasts of subject-mean \mf, each
+with an expected positive sign: H1, E3-E0; H2, E3-E6; and H3, E3-E2. A hypothesis was
+confirmed if its Holm-adjusted two-sided Wilcoxon $p$-value was below 0.05 and its paired
+subject-cluster bootstrap interval (10{,}000 resamples, seed 2040) lay entirely above zero.
 
-After characterising the SHHS1 errors, we evaluated temperature scaling with EM prior correction,
-class-weighted TCN training, and a harmonised ADAST comparison~\cite{eldele2023adast}. These
-follow-up experiments use the same 180 SHHS1 participants. Calibration uses all
-ten seed-123 E3 folds: each temperature is fitted on source validation, and each EM prior on five
-fixed unlabelled adaptation participants, disjoint from test. Class weighting uses ten matched
-seed-123 pairs, with the corresponding historical E3 encoder frozen in each fold and a newly
-trained unweighted control. Both arms average all ten fold probabilities. Training used CPU
-for folds 0--5 and CUDA for folds 6--9; these timings are excluded from the historical operational
-benchmark. The earlier fold-0 result is retained separately. ADAST uses ten freshly trained matched
-CUDA pairs, seed 123, with a source-only dual-head control in each fold. Both arms use 1,140 updates
-per fold and average all ten fold probabilities; source outer-test results are out-of-fold predictions,
-not ensembles. The earlier CPU single-fold ADAST pilot is retained separately, not pooled into the
-CUDA experiment. All arms infer complete target recordings before the same
-historical scoring mask is applied; calibration therefore uses a rerun full-record E3 control.
-Model selection uses source validation, and adaptation uses unlabelled target data; target test
-labels are used for scoring. Supplementary Methods S2 specifies the fitting, selection and adaptation budgets. Paired
-participant-bootstrap intervals for these experiments are reported separately from the primary tests.
+The protocol also specified secondary analyses without confirmatory status: the seed-123 replication of
+H1-H3 as a separate Holm family; E4-E3 at both seeds, reported together with the differences
+between the two seeds of E0, E3, E4 and E6 as a reference for training variability; ADAST against its
+matched control; N3 recall, precision and N3$\rightarrow$N2 rate; a variant of subject \mf\ averaged over
+the classes present in each participant's reference labels; and the label-free E6 input-scale summary
+reported above. Twelve arms were evaluated: E0, E2, E3, E4 and E6 at both seeds, ADAST and its control.
+All arms used the locked checkpoints and ten-fold probability averaging on CPU, and no metric was
+computed until predictions for every arm existed. Deviations from the protocol, none of which changed
+any prediction, are listed in Supplementary Section S3.
 
-Subsequent development experiments on source fold 0 (seed 123) compared 1,140 with 36,870
-updates per model, followed by a fresh full-source ADAST reference and three single-factor loss
-ablations. All models ran for 30 epochs on T4 CUDA. Checkpoints were selected by maximum
-source-attention source-validation \mf, retaining the first tie; epoch-30 checkpoints were
-reported separately. The five unlabelled adaptation participants were reused, without source
-outer-test or SHHS test access. Both attention paths were evaluated on the same source validation
-set. These development comparisons are separate from the ten-fold transfer evaluation
-(Supplementary Tables~\ref{SM-tab:sup_adast_budget_development} and~\ref{SM-tab:sup_adast_loss_development}).
+\subsection{Post-confirmatory amplitude and adaptation analyses}
+\label{sec:amendment-methods}
 
-A subsequent three-arm check used source fold 1 with the same seed, comparing fresh
-source-only, ADAST-reference and retained-source-loss models. Each model received 35,820
-updates over 30 epochs, covering all 152,825 training epochs per pass. Selection and
-adaptation data were unchanged in role; the source-validation set contained 23,881 epochs.
-Both attention paths were evaluated at the selected and epoch-30 checkpoints
-(Supplementary Tables~\ref{SM-tab:sup_adast_confirmation} and~\ref{SM-tab:sup_adast_confirmation_attention}).
+After the confirmatory analysis, an amendment to the holdout protocol was committed to the repository
+(commit \texttt{ad61aa0}) before any of its inference was run. It specifies two descriptive analyses on
+the same 500 participants for E4 at seed 42, the band-pass-only form of the pipeline; E3 and E4 are
+equivalent runs of one pipeline (Section~\ref{sec:holdout}). In the first analysis, every input sample
+was multiplied by 0.5, 0.75, 1.5 or 2 before the encoder, which remained in evaluation mode with its
+stored batch-normalisation statistics. Because these statistics fix the input scale the model expects,
+the sweep tests how strongly the predicted stage, and N3 in particular, depends on signal amplitude.
+The amendment stated in advance that, if N3 under-detection arises mainly because SHHS1 slow waves reach
+the encoder at a smaller amplitude than the training data, N3 recall should rise and the
+N3$\rightarrow$N2 rate fall for factors above 1, and that a non-monotonic response would argue against
+an amplitude-only explanation. In the second analysis, adaptive batch normalisation
+(AdaBN)~\cite{li2018adabn} replaced the running statistics of all ten batch-normalisation layers of the
+encoder, layer by layer, with the statistics of 20{,}000 unlabelled SHHS1 epochs, 40 from each
+recording; the affine parameters and the TCN, which uses layer normalisation, were unchanged. AdaBN is a
+label-free domain-adaptation baseline that, unlike ADAST, updates no weights. For both cohorts we also
+report the per-recording standard deviation of the band-pass-filtered input.
 
-To test transfer-budget sensitivity, we completed ten matched full-source pairs at seed 123:
-16 new models on source folds 2--9 and four compatible models reused from folds 0--1,
-excluding the loss-intervention arms. Each model received 30 complete source-training passes,
-35,670--37,620 updates depending on fold, with identical initialisation and source order within
-each pair. ADAST reused the same five unlabelled adaptation participants. Full-source training
-also increases target exposure and changes scheduler timing in update units; it is a learning-budget
-comparison, not an isolated source-coverage intervention. The primary comparison uses epoch 30
-in both arms at both budgets. Maximum dual-head logits are softmaxed per fold and probabilities
-are averaged across ten folds; SHHS uses source attention for source-only and target attention
-for ADAST. Sleep-EDF outer-test predictions use the corresponding fold and source attention in
-both arms. We estimate ADAST minus source-only at each budget and the difference between these
-effects, using the same 10,000 participant-bootstrap draws across all four systems. These
-intervals condition on the fitted models and do not include training variability
-(Table~\ref{tab:adast-budget-main}; Supplementary Table~\ref{SM-tab:sup_adast_fullsource_classes}).
-For the secondary full-source evaluation, each model uses the checkpoint with maximum
-source-validation \mf\ through source attention, retaining the first epoch on a tie.
-Attention paths, aggregation and scoring are unchanged; SHHS labels do not enter selection.
+Each condition was compared with unmodified E4 using the paired subject-cluster bootstrap with 10{,}000
+resamples (seed 2042), without hypothesis tests, and no scale factor was to be selected or recommended.
+The conditions were computed on a cloud GPU from a package that contained the signals only, without
+labels or participant identifiers. GPU and CPU probabilities differed by at most $1.4\times10^{-5}$ with
+identical predicted stages; this change of device and the other deviations are reported in
+Supplementary Section S5.
+
+\subsection{Intervention experiments}
+
+After characterising the SHHS1 errors on the first sample, we evaluated temperature scaling with EM
+prior correction, class-weighted TCN training, and ADAST~\cite{eldele2023adast}. Calibration used all
+ten seed-123 E3 folds: each temperature was fitted on source validation data and each EM prior on the
+five unlabelled adaptation participants, who are disjoint from the test participants. Class weighting
+used ten matched seed-123 pairs, with the corresponding E3 encoder frozen in each fold and a newly
+trained unweighted control; folds 0-5 were trained on CPU and folds 6-9 on CUDA. ADAST used ten
+freshly trained matched pairs at seed 123, each with a source-only control of the same dual-head
+architecture. All intervention arms average the ten fold
+probabilities and infer complete target recordings before the same scoring mask is applied. Model
+selection uses source validation data, adaptation uses only unlabelled target recordings, and target
+labels are used only for scoring. Supplementary Methods S2 specifies the fitting, selection and
+adaptation budgets.
+
+ADAST was evaluated at two learning budgets: 1{,}140 updates per model, and 30 complete source-training
+passes (35{,}670-37{,}620 updates, depending on fold), here called full-source training. Full-source
+training also increases target exposure and changes scheduler timing; it is a learning-budget comparison
+rather than an isolated source-coverage intervention. At this budget, the two arms of each pair share
+initialisation and source batch order. The primary budget comparison uses epoch-30
+checkpoints in both arms; checkpoints selected by source-validation \mf\ are a secondary analysis. On
+SHHS1, source-only models use source attention and ADAST models use target attention; Sleep-EDF
+outer-test predictions use source attention in both arms. All four systems share one set of 10{,}000
+participant-bootstrap draws, which also yields an interval for the difference between the two budget
+effects. These intervals condition on the fitted models. Development comparisons of learning budgets and ADAST loss
+components on source folds 0 and 1 are reported in Supplementary Methods S2. On the holdout sample, the
+full-source epoch-30 models were applied without further training, and no holdout recording was used
+for adaptation.
 
 \subsection{Operational evaluation}
 
-Inference timing was measured on identical hardware (Tesla V100) for all configurations and excludes
+Inference timing was measured on identical Tesla V100 hardware for all configurations and excludes
 I/O, preprocessing and training. Each measurement used a batch of one synthetic 100-epoch sequence,
 20 warm-up passes and three rounds of 100 timed forward passes. Configuration order was shuffled in
 each round; we report the median over all 300 passes. This benchmark measures the implemented full
-forward pipeline for one fixed tensor shape, not overnight wall-clock inference or algorithmic
+forward pipeline for one fixed tensor shape, not wall-clock inference on whole-night recordings or algorithmic
 complexity.
-
-The speed--performance figure pairs seed-42 aggregate scores with these measured forward-pass
-speed-ups; its two panels distinguish pooled Sleep-EDF scores from subject-mean SHHS1 scores.
 
 %==============================================================================
 \section{Results}
@@ -562,14 +597,14 @@ E6 & 0.7691 & 0.8230 & 0.7573 & 0.5124 \\
 \end{tabular}
 \end{table}
 
-E3 leads the primary seed-42 campaign on all four metrics (Table~\ref{tab:sleepedf-performance}); the
+E3 leads the primary seed-42 experiment on all four metrics (Table~\ref{tab:sleepedf-performance}); the
 paired results are reported in Table~\ref{tab:paired-sleepedf}.
 
 \begin{table}[htbp]
 \centering
 \caption{Pre-specified paired comparisons on Sleep-EDF \mf\ ($n = 78$ subjects). Holm correction is over
 the four pre-specified rows; sign-test statistics are unadjusted supplementary robustness checks.
-E3\,--\,E0 is post-hoc and is excluded from the Holm family.}
+E3-E0 is post-hoc and is excluded from the Holm family.}
 \label{tab:paired-sleepedf}
 \small
 \resizebox{\textwidth}{!}{%
@@ -577,33 +612,32 @@ E3\,--\,E0 is post-hoc and is excluded from the Holm family.}
 \toprule
 \textbf{Comparison} & $\boldsymbol{\Delta}$\textbf{\mf} & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{W/T/L} & $\boldsymbol{\dsign}$ & $\boldsymbol{p_{\mathrm{sign}}}$ \\
 \midrule
-E1\,--\,E0 & 0.004811 & $[-0.000915, 0.010193]$ & 0.1022 & 51/0/27 & $+0.308$ & 0.0088 \\
-E2\,--\,E1 & 0.003251 & $[-0.002370, 0.008808]$ & 0.1036 & 44/0/34 & $+0.128$ & 0.3082 \\
-E3\,--\,E2 & 0.006962 & $[0.000305, 0.014520]$  & 0.8989 & 37/0/41 & $-0.051$ & 0.7343 \\
-E3\,--\,E6 & \textbf{0.021319} & $\boldsymbol{[0.012179, 0.030698]}$ & \textbf{0.0012} & 49/0/29 & $\boldsymbol{+0.256}$ & \textbf{0.0308} \\
+E1-E0 & 0.004811 & $[-0.000915, 0.010193]$ & 0.1022 & 51/0/27 & $+0.308$ & 0.0088 \\
+E2-E1 & 0.003251 & $[-0.002370, 0.008808]$ & 0.1036 & 44/0/34 & $+0.128$ & 0.3082 \\
+E3-E2 & 0.006962 & $[0.000305, 0.014520]$  & 0.8989 & 37/0/41 & $-0.051$ & 0.7343 \\
+E3-E6 & \textbf{0.021319} & $\boldsymbol{[0.012179, 0.030698]}$ & \textbf{0.0012} & 49/0/29 & $\boldsymbol{+0.256}$ & \textbf{0.0308} \\
 \midrule
-\textit{E3\,--\,E0 (post-hoc)} & 0.015024 & $[0.005746, 0.025871]$ & --- & 49/0/29 & $+0.256$ & 0.0308 \\
+\textit{E3-E0 (post-hoc)} & 0.015024 & $[0.005746, 0.025871]$ & n/a & 49/0/29 & $+0.256$ & 0.0308 \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-Among the pre-specified contrasts, only E3\,--\,E6 has a positive pooled-metric bootstrap interval
-($[0.012179, 0.030698]$) together with a Holm-significant subject-level Wilcoxon result
-($p=0.0012$). The
-E1\,--\,E0 and E2\,--\,E1 intervals include zero. E3\,--\,E2 has a positive pooled interval
-($[0.000305, 0.014520]$) but a non-significant Holm-adjusted Wilcoxon result ($p=0.8989$), with improvement in
-only 37 of 78 subjects ($\dsign=-0.051$; $p_{\mathrm{sign}}=0.734$), supporting a small pooled
-improvement rather than a consistent subject-level advantage. The post-hoc E3\,--\,E0 contrast adds
+Among the pre-specified contrasts, only E3-E6 has a positive pooled-metric bootstrap interval, $[0.012179$, $0.030698]$, together with a
+Holm-significant subject-level Wilcoxon result, $p=0.0012$. The
+E1-E0 and E2-E1 intervals include zero. E3-E2 has a positive pooled interval, $[0.000305$, $0.014520]$, but a non-significant
+Holm-adjusted Wilcoxon result, $p=0.8989$, and improved only 37 of 78 subjects, with
+$\dsign=-0.051$ and $p_{\mathrm{sign}}=0.734$. This supports a small pooled
+improvement rather than a consistent subject-level advantage. The post-hoc E3-E0 contrast adds
 $0.0150$ \mf\ over E0 with interval $[0.005746, 0.025871]$; it represents the combined architecture,
 preprocessing and training configuration.
 
 \subsection{Per-class and seed-sensitivity checks}
 
 Detailed per-class metrics, the Sleep-EDF confusion matrix and both seed-sensitivity tables are provided
-in Supplementary Tables~\ref{SM-tab:sup_edf_perclass}--\ref{SM-tab:sup_edf_seed_contrasts}.
-In domain, N1 is E3's hardest class and the largest E3--E6 F1
-difference is on N3 ($+0.0628$). All four pre-specified differences remain positive under seed 123, but
-only E3\,--\,E6 has a fully positive bootstrap interval in both runs; its Holm-adjusted result is
+in Supplementary Tables~\ref{SM-tab:sup_edf_perclass}-\ref{SM-tab:sup_edf_seed_contrasts}.
+In domain, N1 is E3's hardest class and the largest E3-E6 F1
+difference is on N3, at $+0.0628$. All four pre-specified differences remain positive under seed 123, but
+only E3-E6 has a fully positive bootstrap interval in both runs; its Holm-adjusted result is
 significant for seed 42 only and its magnitude falls from 0.0213 to 0.0102. The direction is therefore
 stable across the two fixed seeds, whereas the inferential strength is not.
 
@@ -630,14 +664,14 @@ E6 & 1{,}085{,}578 & 3.5756 & 27{,}967 & 75.54 & $3.76\times$ \\
 \end{tabular}
 \end{table}
 
-As Table~\ref{tab:complexity} shows, the ResNet-1D--TCN family provides a measured $3.76\times$ speed-up
-over the CNN--BiLSTM control while carrying $4.37\times$ the parameters. Peak allocated memory is
-75.54 MiB versus 58.81 MiB for the control, an absolute increase of 16.73 MiB in this benchmark.
-Figure~\ref{fig:speedup_tradeoff} summarises the measured speed--performance trade-off for the
-primary seed-42 configurations E0, E3 and E6. On the SHHS1 sample, E3 combines the
+As Table~\ref{tab:complexity} shows, the ResNet-1D-TCN family provides a measured $3.76\times$ speed-up
+over the CNN-BiLSTM baseline while carrying $4.37\times$ the parameters. Peak allocated memory is
+75.54 MiB versus 58.81 MiB for the baseline, an absolute increase of 16.73 MiB in this benchmark.
+Figure~\ref{fig:speedup_tradeoff} summarises the measured speed-performance trade-off for the
+primary seed-42 configurations E0, E3 and E6. On the first SHHS1 sample, E3 combines the
 measured forward-pass speed-up with higher aggregate performance than E0 and E6. The implementation is
 therefore faster but not smaller. In the forward benchmark, E1 reuses the same encoder as E0 and changes
-the sequence model, giving a $1.07\times$ speed-up. The larger E2--E0 speed-up accompanies the
+the sequence model, giving a $1.07\times$ speed-up. The larger E2-E0 speed-up accompanies the
 replacement of 15 independently executed CNN branches with one ResNet-1D encoder in the implemented
 pipeline.
 
@@ -646,7 +680,7 @@ pipeline.
     \includegraphics[width=0.9\textwidth]{./figures/gate8_primary_speedup_f1_en.pdf}
     \caption{\textbf{Measured forward speed-up and aggregate \mf\ for the primary seed-42
     configurations.} Only E0, E3 and E6 are shown. The left panel reports pooled Sleep-EDF \mf; the
-    right reports subject-mean \mf\ on the SHHS1 sample. Speed-up is relative to E0 in the fixed
+    right reports subject-mean \mf\ on the first SHHS1 sample ($n=180$). Speed-up is relative to E0 in the fixed
     forward-pass benchmark. The plot was generated from archived aggregate results using an editable
     PGFPlots source; OpenAI Codex assisted with the plotting code.}
     \label{fig:speedup_tradeoff}
@@ -654,8 +688,8 @@ pipeline.
 
 \FloatBarrier
 
-In the sequential seed-123 campaign, complete training and validation for E2 and E3 was observed to be
-12.2$\times$ and 10.2$\times$ faster than E0. E1 reused E0 encoder checkpoints and therefore has no
+In the sequential seed-123 run, complete training and validation for E2 and E3 took
+12.2$\times$ and 10.2$\times$ less time than for E0. E1 reused E0 encoder checkpoints and therefore has no
 end-to-end runtime comparison. Full timings for the specified training and early-stopping recipes are
 reported in Supplementary Table~\ref{SM-tab:sup_seed123_runtime}.
 
@@ -665,16 +699,16 @@ Additional descriptive representation and context-group analyses are reported in
 Supplementary Fig.~\ref{SM-fig:sup_representation_context} and Table~\ref{SM-tab:sup_context};
 they provide complementary evidence on feature geometry and temporal context. In the Sleep-EDF E1
 context ablation, adding the explicit Previous and Next (P/N) groups to the current-epoch features
-produced no detectable boundary-performance gain ($\Delta\mf=0.0010$, \ci\ $[-0.0046,0.0066]$,
-Holm $p=1.000$; 36/78 subjects improved). This result is conditional on the E1 encoding and specified
+produced no detectable boundary-performance gain, with $\Delta\mf=0.0010$,
+\ci\ $[-0.0046,0.0066]$ and Holm $p=1.000$; 36 of 78 subjects improved. This result is conditional on the E1 encoding and specified
 TCN recipe.
 
-\subsection{Cross-cohort evaluation on SHHS1}
+\subsection{Cross-cohort evaluation on the first SHHS1 sample}
 \label{sec:shhs}
 
 \begin{table}[t]
 \centering
-\caption{Cross-cohort performance on 180 SHHS1 participants (seed 42). All model weights were
+\caption{Cross-cohort performance on the first SHHS1 sample ($n=180$, seed 42). All model weights were
 trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics.
 Intervals are subject-cluster bootstrap intervals for subject-mean \mf.}
 \label{tab:shhs-performance}
@@ -690,13 +724,9 @@ E6 & 0.5407 \ $[0.5227, 0.5584]$ & 0.5732 & 0.6742 & 0.5408 \\
 \end{tabular}
 \end{table}
 
-The seed-123 campaign preserves the direction and Holm significance of both SHHS contrasts,
-whereas the in-domain E3\,--\,E6 comparison no longer reaches the Holm threshold. This sensitivity result
-uses the same SHHS sample; its four-comparison extension family is reported separately in the supplement.
-
 \begin{table}[t]
 \centering
-\caption{Primary paired comparisons on SHHS1 subject-mean \mf\ ($n = 180$).}
+\caption{Primary paired comparisons on the first SHHS1 sample (subject-mean \mf, $n = 180$, seed 42).}
 \label{tab:shhs-paired}
 \small
 \resizebox{\textwidth}{!}{%
@@ -704,73 +734,150 @@ uses the same SHHS sample; its four-comparison extension family is reported sepa
 \toprule
 \textbf{Comparison} & \textbf{Role} & $\boldsymbol{\Delta}$ & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{W/T/L} & $\boldsymbol{\dsign}$ \\
 \midrule
-E3\,--\,E0 & primary & 0.0412 & $[0.0314, 0.0512]$ & $2.65\times10^{-13}$ & 138/0/42 & $+0.533$ \\
-E3\,--\,E6 & primary & 0.0274 & $[0.0182, 0.0370]$ & $1.87\times10^{-8}$ & 125/0/55 & $+0.389$ \\
+E3-E0 & primary & 0.0412 & $[0.0314, 0.0512]$ & $2.65\times10^{-13}$ & 138/0/42 & $+0.533$ \\
+E3-E6 & primary & 0.0274 & $[0.0182, 0.0370]$ & $1.87\times10^{-8}$ & 125/0/55 & $+0.389$ \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-Both primary comparisons support E3 (Table~\ref{tab:shhs-paired}), with improvements in 138 and 125 of
-180 subjects, respectively. Sign dominance is $+0.533$ and $+0.389$; the unadjusted exact sign tests
-give $p = 3.8\times10^{-13}$ and $1.9\times10^{-7}$. Supporting metrics move
-together: relative to E0, E3 gains $0.0338$ pooled \mf, $0.0368$ accuracy and $0.0461$ $\kappa$. Within
-$\pm1$ epoch of a reference-label transition, E3's pooled boundary \mf\ exceeds E0 by $0.0366$ and E6 by $0.0183$.
+Both primary comparisons favour E3 (Table~\ref{tab:shhs-paired}), with improvements in 138 and 125 of
+180 participants, respectively; the unadjusted exact sign tests give $p = 3.8\times10^{-13}$ and
+$1.9\times10^{-7}$. Supporting metrics move together: relative to E0, E3 gains $0.0338$ pooled \mf,
+$0.0368$ accuracy and $0.0461$ $\kappa$. Within $\pm1$ epoch of a reference-label transition, E3's pooled
+boundary \mf\ exceeds that of E0 by $0.0366$ and that of E6 by $0.0183$. The seed-123 repeat preserves
+the direction and Holm significance of both contrasts.
 
-The secondary configuration analysis gives a different picture. E1\,--\,E0 remains positive but small
-($+0.0065$ subject-mean \mf). E2\,--\,E1 is \emph{negative} out of domain
-($-0.0128$, interval entirely below zero),
-so the bundled replacement of E1's 75-dimensional C/P/N package by the current-epoch 128-dimensional
-ResNet-1D representation does not generalise better on unprocessed SHHS signals. Because the entire
-feature/context package changes, the reversal cannot be attributed to the encoder alone. The
-post-hoc E3\,--\,E2 contrast is the largest of the configuration differences reported for this
-SHHS1 extension ($+0.0475$, \ci\ $[0.0372,0.0579]$, $\dsign = +0.633$, 147/180 subjects improved).
-E3 and E2 use the same model and specified training recipe with different preprocessing.
-This observed contrast is larger than either the sequence-model/recipe or encoder/context contrast
-on this sample.
+Secondary comparisons on this sample separate the components of the E3-E0 difference.
+E1-E0 is small ($+0.0065$ subject-mean \mf), and E2-E1 is negative ($-0.0128$, interval
+entirely below zero): replacing E1's 75-dimensional C/P/N package by the current-epoch 128-dimensional
+ResNet-1D representation did not improve transfer on unfiltered SHHS signals. Because the entire
+feature/context package changes, this reversal cannot be attributed to the encoder alone. The post-hoc
+E3-E2 contrast, which changes the input filtering (and the constant scale) of the same model
+and recipe, was the largest ($+0.0475$, \ci\ $[0.0372,0.0579]$; 147/180 participants improved).
 
-A seed-123 extension evaluating E4 (band-pass only) provides a more specific secondary contrast. E4
-reached subject-mean \mf\ $0.5732$, pooled \mf\ $0.6147$, accuracy $0.7064$, $\kappa = 0.5869$ and N1
-F1 $0.3492$, exceeding same-seed E2 by $0.0323$ and E3 ($0.5634$) by $0.0098$
-(paired \ci\ $[0.0073,0.0125]$; Holm $p=1.89\times10^{-10}$). The SHHS-specific preprocessing
-audit recorded zero clipped samples across the 200 processed adaptation, validation and test recordings.
-E4 and E3 therefore differ on these inputs by the fixed division by 100; each configuration
-was trained separately on its corresponding source inputs.
-In this extension, band-pass-only preprocessing outperformed both the raw-input and fixed-scale
-configurations under the same seed. These comparisons remain secondary
-because they were conducted after the SHHS sample had been opened. E4 also slightly exceeded E3
-on Sleep-EDF at seed 123 (pooled \mf\ $0.7887$ versus $0.7883$), so this pair does not demonstrate
-a ranking reversal specific to SHHS1. An additional seed-42 evaluation using all ten historical
-source-selected E4 checkpoints reached subject-mean \mf\ $0.5811$, compared with $0.5680$ for E3
-(difference $0.0131$, paired \ci\ $[0.0111,0.0153]$). Both seed-specific comparisons therefore
-favour E4 on the same SHHS cohort (Supplementary Table~\ref{SM-tab:sup_e4_two_seeds}); the two
-seeds are not independent cohorts. The seed-42 comparison uses the original E3 predictions
-and the same scoring procedure.
-In this seed-123 extension, E4's pooled N3 recall was $0.2591$ and N3 F1 was $0.4068$, compared
-with $0.2410$ and $0.3840$ for E3. Thus, the higher aggregate score of band-pass-only E4 did not
-eliminate N3 under-detection. The seed-42 extension showed the same limitation: E4 N3 recall was
-$0.2728$ and N3 F1 was $0.4233$, versus $0.2582$ and $0.4055$ for E3.
+Band-pass-only E4 scored higher than E3 on this sample at both seeds: by 0.0131 at seed 42
+(\ci\ $[0.0111,0.0153]$) and by 0.0098 at seed 123 (\ci\ $[0.0073,0.0125]$). E4 also slightly exceeded
+E3 on Sleep-EDF at seed 123 (pooled \mf\ $0.7887$ versus $0.7883$), so this pair does not show a ranking
+reversal specific to SHHS1. Section~\ref{sec:holdout} compares the size of this difference with the
+variation between training seeds. Further seed-123 and E4 results are given in Supplementary
+Tables~\ref{SM-tab:sup_shhs_seed123}-\ref{SM-tab:sup_e4_two_seeds}.
 
-\FloatBarrier
+\subsection{Confirmatory evaluation on the holdout SHHS1 sample}
+\label{sec:holdout}
+
+\begin{table}[t]
+\centering
+\caption{Holdout SHHS1 sample ($n=500$; 458{,}409 scored epochs): performance of the seed-42
+configurations and the ADAST pair. Intervals are subject-cluster bootstrap intervals for
+subject-mean \mf. Source-only is the matched ADAST control, not E3.}
+\label{tab:holdout-performance}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{ID} & \textbf{Subject-mean \mf\ (\ci)} & \textbf{Pooled \mf} & \textbf{Accuracy} & \textbf{$\kappa$} \\
+\midrule
+E0 & 0.5170 \ $[0.5060, 0.5281]$ & 0.5612 & 0.6506 & 0.5129 \\
+E2 & 0.5122 \ $[0.5001, 0.5241]$ & 0.5533 & 0.6512 & 0.5127 \\
+E3 & 0.5637 \ $[0.5523, 0.5753]$ & 0.6030 & 0.6957 & 0.5710 \\
+E4 & 0.5776 \ $[0.5662, 0.5893]$ & 0.6187 & 0.7103 & 0.5896 \\
+E6 & 0.5344 \ $[0.5231, 0.5460]$ & 0.5711 & 0.6740 & 0.5389 \\
+\midrule
+Source-only (full source) & 0.4986 \ $[0.4901, 0.5072]$ & 0.5416 & 0.6844 & 0.5403 \\
+ADAST (full source) & 0.5415 \ $[0.5310, 0.5521]$ & 0.5852 & 0.6798 & 0.5625 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Confirmatory family on the holdout SHHS1 sample (subject-mean \mf, $n=500$). H1-H3 use seed
+42 and a Holm family of three; seed 123 forms a separate, secondary Holm family. A hypothesis is
+confirmed if $p_{\mathrm{Holm}}<0.05$ and the interval lies above zero. The last column repeats the
+estimate from the first SHHS1 sample.}
+\label{tab:holdout-confirmatory}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrrr}
+\toprule
+& \textbf{Comparison} & $\boldsymbol{\Delta}$ & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{W/T/L} & \textbf{Confirmed} & \textbf{First sample} \\
+\midrule
+H1 & E3-E0 & 0.0467 & $[0.0403, 0.0531]$ & $2.0\times10^{-37}$ & 380/0/120 & yes & 0.0412 \\
+H2 & E3-E6 & 0.0293 & $[0.0231, 0.0354]$ & $2.8\times10^{-22}$ & 342/0/158 & yes & 0.0274 \\
+H3 & E3-E2 & 0.0515 & $[0.0460, 0.0571]$ & $1.2\times10^{-50}$ & 395/1/104 & yes & 0.0475 \\
+\midrule
+\multicolumn{8}{l}{\textit{Seed 123 (secondary)}} \\
+& E3-E0 & 0.0375 & $[0.0307, 0.0444]$ & $1.1\times10^{-22}$ & 345/0/155 & n/a & n/a \\
+& E3-E6 & 0.0129 & $[0.0057, 0.0199]$ & $1.7\times10^{-5}$ & 285/0/215 & n/a & n/a \\
+& E3-E2 & 0.0270 & $[0.0217, 0.0325]$ & $1.8\times10^{-18}$ & 327/1/172 & n/a & n/a \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+All three pre-specified hypotheses were confirmed (Table~\ref{tab:holdout-confirmatory}). The holdout
+estimates lie close to those of the first sample: E3 exceeded E0 by 0.0467, E6 by 0.0293 and E2 by
+0.0515 in subject-mean \mf, with improvements in 380, 342 and 395 of 500 participants. E3 reached a
+subject-mean \mf\ of 0.5637 on the holdout sample, compared with 0.5680 on the first sample
+(Table~\ref{tab:holdout-performance}). The three contrasts remained positive with intervals above zero
+at seed 123, where their sizes were 0.0375, 0.0129 and 0.0270. Results for all twelve arms and the
+secondary analyses are reported in Supplementary
+Tables~\ref{SM-tab:sup_holdout_arms}-\ref{SM-tab:sup_holdout_s5s7}.
+
+Thirty-nine holdout participants lacked at least one reference class, most often N3 (34
+participants). Averaging \mf\ only over the classes present in each participant's reference labels
+changed the three confirmatory estimates to 0.0482, 0.0296 and 0.0535, with the same decisions. Pooling
+the first and holdout samples (680 participants; descriptive only) gave 0.0452, 0.0288 and 0.0504.
+
+The unfiltered ResNet-1D-TCN (E2) scored close to the baseline: subject-mean \mf\ 0.5122 versus 0.5170
+for E0 at seed 42, and 0.5321 versus 0.5216 at seed 123. Most of E3's advantage over E0 therefore
+coincided with the change of input filtering rather than with the change of encoder and sequence model.
+This comparison of E2 with E0 is descriptive and was not part of the confirmatory family.
+
+Training variability was of the same order as some configuration contrasts. Subject-mean \mf\ at seed 42 minus
+that at seed 123 was $+0.0046$ (\ci\ $[0.0026,0.0067]$) for E3, $+0.0094$ ($[0.0076,0.0112]$)
+for E4, $-0.0046$ ($[-0.0063,-0.0029]$) for E0 and $-0.0118$ ($[-0.0151,-0.0085]$) for E6; the
+unfiltered E2, not part of this pre-specified set, differed by $-0.0199$. Each of the four intervals
+excludes zero although the two models share their configuration, which shows that intervals conditioned on
+fitted models do not capture variation between training runs. E4 again scored higher than E3, by
+0.0139 ($[0.0126,0.0153]$) at seed 42 and 0.0091 ($[0.0074,0.0108]$) at seed 123. The pre-specified
+expectation that E4-E3 would not exceed the between-seed differences was met at seed 123 but not
+at seed 42, where E4-E3 was larger than each of the four pre-specified between-seed differences.
+
+The trained weights show why this difference should not be read as an effect of input scale
+(Supplementary Table~\ref{SM-tab:sup_e3e4}). For the same seed and fold, the first-layer kernels of E3
+and E4 had cosine similarity 0.909-0.974, and the median similarity over encoder weight tensors was
+0.696-0.863; two seeds of the same configuration gave values between $-0.112$ and $0.012$. When both
+runs selected the same epoch, the first-layer running variance of E4 was 9{,}208-10{,}666 times that of
+E3, as the factor of 100 predicts, and the stabilising constant amounted to at most 0.023\% of the
+running variance of E3. Early stopping selected different epochs for E3 and E4 in 8 of the 20
+seed-fold pairs. Each E3 model is therefore a numerically drifted copy of the corresponding E4 model,
+and E4-E3 measures how far two nominally equivalent runs diverge. By
+contrast, H1 and H3 exceeded every between-seed difference at both seeds, H3 at seed 123 by the
+smallest margin, whereas H2 at seed 123 (0.0129) was close to the between-seed differences of E4 and
+E6.
+
 \subsection{Cross-model errors and their temporal distribution}
 \label{sec:gap}
 
-E3's pooled \mf\ is $0.7904$ on Sleep-EDF and $0.6099$ on SHHS1, a difference of $0.1805$.
-Because Sleep-EDF uses out-of-fold predictions whereas SHHS uses ten-model ensembles, the $0.1805$
-difference is interpreted descriptively. We examine it by class and confusion channel to
-determine which errors remain despite E3's aggregate transfer advantage. Throughout this analysis,
+E3's pooled \mf\ is $0.7904$ on Sleep-EDF and $0.6099$ on the first SHHS1 sample, a difference of
+$0.1805$. Because Sleep-EDF uses out-of-fold predictions whereas SHHS1 uses ten-model ensembles, this
+difference is interpreted descriptively. We examine it by class and confusion channel to determine
+which errors remain despite E3's aggregate transfer advantage. Throughout this analysis,
 A$\rightarrow$B denotes a reference-labelled A epoch predicted as B; it does not denote a physiological
 stage transition over time.
 
-N3 is the dominant class loss: E3 N3 F1 falls from 0.8085 on Sleep-EDF to 0.4055 on SHHS1, with
-precision 0.9440 but recall 0.2582. E0 shows nearly the same recall (0.2610) and N3$\rightarrow$N2
-rate (72.3\% versus 73.1\% for E3), revealing a shared cross-cohort N3 under-detection pattern across
-both model families despite E3's aggregate transfer advantage (Table~\ref{tab:cross-model-n3}).
-N2$\rightarrow$REM is the second-largest E3 confusion channel.
+N3 is the dominant class loss: E3 N3 F1 falls from 0.8085 on Sleep-EDF to 0.4055 on the first SHHS1
+sample, with precision 0.9440 but recall 0.2582. E0 shows nearly the same recall (0.2610) and
+N3$\rightarrow$N2 rate (72.3\% versus 73.1\% for E3), a shared cross-cohort N3 under-detection pattern
+across both model families (Table~\ref{tab:cross-model-n3}); N2$\rightarrow$REM is the second-largest E3 confusion channel.
+The holdout sample reproduced the N3 pattern:
+N3$\rightarrow$N2 rates were 72.3\% for E0 (\ci\ 70.1-74.4\%), 72.7\% for E3 (70.7-74.7\%), 71.1\% for
+E4 and 77.1\% for E6, with N3 recall of 0.2565, 0.2549, 0.2742 and 0.1987 and N3 precision between 0.85
+and 0.88.
 
 \begin{table}[t]
 \centering\small
-\caption{N3 under-detection across the primary SHHS1 configurations (seed 42). All models share
-22{,}806 reference N3 epochs. The final column is the proportion of those epochs predicted as N2.}
+\caption{N3 under-detection on the first SHHS1 sample (seed 42). All models share 22{,}806 reference
+N3 epochs. The final column is the proportion of those epochs predicted as N2.}
 \label{tab:cross-model-n3}
 \begin{tabular}{lrrrrr}
 \toprule
@@ -783,74 +890,65 @@ E6 & 0.9052 & 0.2005 & 0.3283 & 17{,}764 & 77.9\% \\
 \end{tabular}
 \end{table}
 
-An oracle calculation moves the counts in one selected off-diagonal cell of E3's SHHS confusion
+An oracle calculation moves the counts in one selected off-diagonal cell of E3's SHHS1 confusion
 matrix to the correct diagonal cell, then recomputes \mf. Correcting N3$\rightarrow$N2 raises \mf\
 to 0.7444; correcting N2$\rightarrow$REM raises it to 0.6596. These changes correspond to 74.5\% and
-27.5\% of the observed pooled-score difference. The calculation uses true labels, and its nonlinear
-effects are neither additive nor achievable-performance estimates.
+27.5\% of the observed pooled-score difference. The calculation uses reference labels, and its
+nonlinear effects are neither additive nor estimates of achievable performance.
 
-The reference-label boundary diagnostic adds temporal detail. For E0 and E3, N3 recall near changes
-is 0.6121/0.6326 on Sleep-EDF but only 0.0633/0.0733 on SHHS1. Stable-region SHHS recall remains low
-at 0.4008/0.3900. Thus, N3 under-detection extends beyond the boundary neighbourhoods; it cannot be
-described solely as an error at label changes. The region definitions and supports are provided in
-the supplement, including the epochs omitted from the near-versus-stable comparison.
+The reference-label boundary diagnostic adds temporal detail. For E0 and E3, N3 recall near label
+changes is 0.6121/0.6326 on Sleep-EDF but only 0.0633/0.0733 on the first SHHS1 sample. Stable-region
+SHHS1 recall remains low at 0.4008/0.3900. N3 under-detection therefore extends beyond the boundary
+neighbourhoods. The region definitions and supports are provided in the supplement, including the
+epochs omitted from the near-versus-stable comparison.
 
 E6 provides a label-free but transductive sensitivity check. The separately trained record-wise
-$z$-score configuration has N3 recall 0.2005, compared with 0.2582 for E3;
-boundary-neighbourhood recall is 0.0721 versus 0.0733. N3 under-detection therefore persists
-under the tested normalisation configuration. Detailed
-class-wise, confusion, oracle and transition results are in Supplementary
-Tables~\ref{SM-tab:sup_perclass_transfer}--\ref{SM-tab:sup_boundary}.
-
+$z$-score configuration has N3 recall 0.2005, compared with 0.2582 for E3; boundary-neighbourhood
+recall is 0.0721 versus 0.0733. N3 under-detection therefore persists under the tested normalisation.
+Detailed class-wise, confusion, oracle and transition results are in Supplementary
+Tables~\ref{SM-tab:sup_perclass_transfer}-\ref{SM-tab:sup_boundary}.
 
 %==============================================================================
-\subsection{Additional intervention results}
+\subsection{Intervention results}
 
-In the ten-fold calibration experiment, temperature scaling changed subject-mean \mf\ from
-0.5590 to 0.5595 (difference $0.00049$, \ci\ $[0.00002,0.00097]$). Adding EM prior correction
-reduced it to 0.4899 (difference from temperature-only $-0.0696$, \ci\ $[-0.0793,-0.0600]$).
-All ten EM fits converged but placed N3 near the prior floor; the ensemble predicted no N3 epochs
-(Supplementary Table~\ref{SM-tab:sup_calibration_intervention}). This full-record comparison uses
-the same ten models in all three arms, independently of the historical trimmed-context scores.
+In the ten-fold calibration experiment on the first SHHS1 sample, temperature scaling changed
+subject-mean \mf\ from 0.5590 to 0.5595 (difference $0.00049$, \ci\ $[0.00002,0.00097]$). Adding EM
+prior correction reduced it to 0.4899 (difference from temperature-only $-0.0696$,
+\ci\ $[-0.0793,-0.0600]$). All ten EM fits converged but placed N3 near the prior floor, and the
+ensemble predicted no N3 epochs (Supplementary Table~\ref{SM-tab:sup_calibration_intervention}). This
+full-record comparison uses the same ten models in all three arms.
 
 In the ten-fold matched class-weighting comparison, N3 recall increased from 0.2345 to 0.3225
-(difference $0.0880$, \ci\ $[0.0805,0.0954]$), and N3 F1 increased from 0.3759 to 0.4795.
-However, N2 recall decreased from 0.7260 to 0.6728 and accuracy from 0.6892 to 0.6663.
-Subject-mean \mf\ changed from 0.5530 to 0.5514 (difference $-0.0016$, \ci\
-$[-0.0049,0.0017]$); pooled \mf\ was 0.5930/0.5928 for unweighted/weighted training.
-Class weighting therefore increased N3 recall and F1 while reducing N2 recall and accuracy;
-the subject-mean \mf\ difference interval spans zero
-(Supplementary Table~\ref{SM-tab:sup_weighted_intervention}).
-Within each fold, both arms share the frozen encoder, initialisation and source batch order.
-This is an intervention on the sequence classifier, not end-to-end encoder retraining; the
-single-fold pilot is reported separately in Supplementary Table~\ref{SM-tab:sup_weighted_pilot}.
+(difference $0.0880$, \ci\ $[0.0805,0.0954]$), and N3 F1 increased from 0.3759 to 0.4795. However, N2
+recall decreased from 0.7260 to 0.6728 and accuracy from 0.6892 to 0.6663. Subject-mean \mf\ changed
+from 0.5530 to 0.5514 (difference $-0.0016$, \ci\ $[-0.0049,0.0017]$); pooled \mf\ was 0.5930 and
+0.5928 for unweighted and weighted training. Class weighting therefore increased N3 recall and F1 at the
+cost of N2 recall and accuracy (Supplementary Table~\ref{SM-tab:sup_weighted_intervention}). Within each
+fold, both arms share the frozen encoder, initialisation and source batch order, so this is an
+intervention on the sequence classifier, not end-to-end retraining.
 
-The limited-budget ten-fold harmonised ADAST comparison improved N3 recall from 0.3195 to 0.4269
-(difference $0.1074$, \ci\ $[0.0714,0.1422]$) and N3 F1 from 0.4752 to 0.5837.
-However, subject-mean \mf\ decreased from 0.4949 to 0.4497 (difference $-0.0452$,
-\ci\ $[-0.0558,-0.0347]$); pooled \mf\ decreased from 0.5539 to 0.5072.
-ADAST produced no N1 predictions on SHHS, compared with N1 recall 0.1974 for the control;
-REM recall also decreased from 0.4343 to 0.2938. Source out-of-fold pooled \mf\ fell from
-0.6665 to 0.5276, so the deterioration is not restricted to SHHS. N3 gains therefore coexist
-with substantial other-stage costs and lower aggregate performance. This comparison used seed 123,
-1,140 updates per model and five unlabelled adaptation participants
-(Supplementary Table~\ref{SM-tab:sup_adast_intervention}). The earlier CPU
-single-fold pilot (source-only/ADAST subject-mean \mf\ 0.4755/0.4214) is retained separately
-in Supplementary Table~\ref{SM-tab:sup_adast_pilot}.
+At the limited budget of 1{,}140 updates, ADAST improved N3 recall from 0.3195 to 0.4269
+(difference $0.1074$, \ci\ $[0.0714,0.1422]$) but reduced subject-mean \mf\ from 0.4949 to 0.4497
+(difference $-0.0452$, \ci\ $[-0.0558,-0.0347]$). It produced no N1 predictions on SHHS1, and source
+out-of-fold pooled \mf\ fell from 0.6665 to 0.5276, so the deterioration was not restricted to the
+target cohort (Supplementary Table~\ref{SM-tab:sup_adast_intervention}).
 
-At the full-source budget, ADAST increased SHHS1 subject-mean \mf\ from 0.5010 to 0.5455
-(difference $0.0445$, \ci\ $[0.0352,0.0539]$), reversing the negative effect at the limited
-budget. The difference between the two ADAST-minus-control effects was $0.0897$
-($[0.0767,0.1023]$), based on the same participant draws across all four systems
-(Table~\ref{tab:adast-budget-main}). Pooled \mf\ increased from 0.5478 to 0.5918.
-N3 recall increased from 0.2432 to 0.6111 and N3 F1 from 0.3869 to 0.7221;
-N3$\rightarrow$N2 errors decreased from 0.7526 to 0.3689.
+At the full-source budget, ADAST increased subject-mean \mf\ on the first SHHS1 sample from 0.5010 to
+0.5455 (difference $0.0445$, \ci\ $[0.0352,0.0539]$), reversing the sign of the limited-budget effect;
+the difference between the two budget effects was $0.0897$ ($[0.0767,0.1023]$)
+(Table~\ref{tab:adast-budget-main}). N3 recall increased from 0.2432 to 0.6111 and N3 F1 from 0.3869
+to 0.7221, whereas N1 recall fell from 0.1568 to 0.1057 and N2 recall from 0.7981 to 0.6369. REM recall
+increased from 0.6976 to 0.8360, but REM precision decreased from 0.5631 to 0.4375, lowering REM F1 from
+0.6231 to 0.5744. On source outer-test subjects, subject-mean \mf\ was 0.6613 for source-only training
+and 0.6281 for ADAST (difference $-0.0332$, $[-0.0434,-0.0229]$). Checkpoints selected by source
+validation gave the same pattern (Supplementary
+Tables~\ref{SM-tab:sup_adast_fullsource_best_summary} and~\ref{SM-tab:sup_adast_fullsource_best_classes}).
 
 \begin{table}[htbp]
 \centering\small
-\caption{Learning-budget comparison on 180 SHHS1 participants (169,012 scored epochs).
-All entries use epoch-30 checkpoints and ten-fold probability ensembles.
-Source-only is the matched ADAST control, not E3. Full source means 30 complete training passes.}
+\caption{ADAST learning-budget comparison on the first SHHS1 sample (180 participants; 169{,}012
+scored epochs). All entries use epoch-30 checkpoints and ten-fold probability ensembles. Source-only is
+the matched ADAST control, not E3. Full source means 30 complete training passes.}
 \label{tab:adast-budget-main}
 \begin{tabular}{llrrrr}
 \toprule
@@ -864,196 +962,224 @@ Full source & ADAST & .5455 & .5918 & .6111 & .1057 \\
 \end{tabular}
 \end{table}
 
-The full-source gains retain stage-specific costs: N1 recall fell from 0.1568 to 0.1057,
-and N2 recall from 0.7981 to 0.6369. REM recall increased from 0.6976 to 0.8360, but
-REM precision decreased from 0.5631 to 0.4375, reducing REM F1 from 0.6231 to 0.5744.
-Accuracy was 0.6898/0.6873 for source-only/ADAST (difference $-0.0025$,
-\ci\ $[-0.0140,0.0088]$). Full-source ADAST no longer eliminated N1 predictions, but
-its N1 F1 remained lower than the control. On source outer-test subjects, pooled \mf\ was
-0.7211/0.6831 and subject-mean \mf\ was 0.6613/0.6281; the latter difference was
-$-0.0332$ ($[-0.0434,-0.0229]$). Thus, the positive target class-balanced effect coexists
-with lower source performance. Supplementary Table~\ref{SM-tab:sup_adast_fullsource_classes}
-reports precision, recall and F1 for all five stages on both cohorts.
+The holdout sample reproduced the full-source result. ADAST exceeded its control by 0.0429 in
+subject-mean \mf\ (\ci\ $[0.0374,0.0484]$) and raised N3 recall from 0.2366 to 0.6161, while N1, N2 and
+REM F1 decreased by 0.0190, 0.0445 and 0.0568. In absolute terms, however, ADAST remained below the
+zero-shot band-pass pipelines: its subject-mean \mf\ was 0.0222 lower than that of E3
+($[-0.0284,-0.0160]$) and 0.0361 lower than that of E4 ($[-0.0423,-0.0299]$). Its matched source-only
+control also scored lower than E3 (0.4986; Table~\ref{tab:holdout-performance}).
 
-Selecting checkpoints by source validation retained the positive SHHS1 effect:
-subject-mean \mf\ was 0.5073/0.5396 for source-only/ADAST (difference $0.0322$,
-\ci\ $[0.0234,0.0412]$), and N3 recall was 0.2828/0.6095. N3$\rightarrow$N2
-errors fell from 0.7110 to 0.3635, while N1, N2 and REM F1 decreased and accuracy
-was 0.6818/0.6709. Source outer-test subject-mean \mf\ was 0.6681/0.6368.
-Thus, the N3 benefit and stage/cohort costs were present under both checkpoint rules,
-not only at epoch 30 (Supplementary Tables~\ref{SM-tab:sup_adast_fullsource_best_summary}
-and~\ref{SM-tab:sup_adast_fullsource_best_classes}). This is a secondary analysis
-of the same cohorts and fitted models; epoch 30 remains the primary budget comparison.
+\subsection{Amplitude sensitivity and batch-normalisation adaptation}
+\label{sec:amendment-results}
 
-On source validation, increasing the learning budget raised selected-checkpoint \mf\ from
-0.6585 to 0.7174 for source-only training and from 0.6470 to 0.6934 for ADAST. With the full-source
-budget, retaining source-loss weight 1 in round two increased selected-checkpoint N1 recall
-from 0.2338 to 0.2664, but REM recall decreased from 0.7139 to 0.6490; \mf\ increased only
-to 0.6941. Removing adversarial alignment yielded the highest selected \mf\ among the four
-ADAST ablations (0.6943), with lower N3 recall (0.7115 versus 0.8261). The no-pseudo-label arm
-selected epoch 7, before pseudo-label learning starts in the reference; its N1 recall at that
-checkpoint is not an effect of disabling pseudo-label learning. None of these selected ADAST
-configurations exceeded the matched full-source source-only \mf\ of 0.7174. Supplementary
-Tables~\ref{SM-tab:sup_adast_budget_development} and~\ref{SM-tab:sup_adast_loss_development}
-separate selected and final checkpoints and document the stage-wise trade-offs.
+\begin{table}[t]
+\centering
+\caption{Post-confirmatory amplitude and adaptation analyses of E4 (seed 42) on the holdout SHHS1 sample
+($n=500$). $\Delta$ is the difference in subject-mean \mf\ from unmodified E4 with its subject-cluster
+bootstrap interval; class-wise columns are pooled over epochs. Descriptive analyses without hypothesis
+tests.}
+\label{tab:amendment}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Condition} & \textbf{Subject-mean \mf} & $\boldsymbol{\Delta}$ \textbf{(\ci)} & \textbf{N3 recall} & \textbf{N3$\to$N2} & \textbf{N3 F1} & \textbf{W F1} & \textbf{REM F1} \\
+\midrule
+Input $\times$0.5 & 0.4627 & $-$0.1149 $[$$-$0.1219, $-$0.1081$]$ & 0.0176 & 93.3\% & 0.0343 & 0.8202 & 0.6733 \\
+Input $\times$0.75 & 0.5256 & $-$0.0520 $[$$-$0.0559, $-$0.0482$]$ & 0.1327 & 84.2\% & 0.2294 & 0.8272 & 0.7161 \\
+E4 (input $\times$1) & 0.5776 & n/a & 0.2742 & 71.1\% & 0.4184 & 0.8297 & 0.7436 \\
+Input $\times$1.5 & 0.5765 & $-$0.0011 $[$$-$0.0099, 0.0075$]$ & 0.3559 & 60.0\% & 0.5043 & 0.7960 & 0.7054 \\
+Input $\times$2 & 0.4502 & $-$0.1274 $[$$-$0.1412, $-$0.1137$]$ & 0.2318 & 48.6\% & 0.3614 & 0.6720 & 0.4143 \\
+AdaBN & 0.4570 & $-$0.1206 $[$$-$0.1295, $-$0.1116$]$ & 0.2828 & 54.8\% & 0.4313 & 0.7125 & 0.4590 \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
-The no-adversarial selected checkpoint also performed poorly through target attention on the
-same source validation set (\mf\ 0.5227, N3 recall 0.0773, versus 0.6780/0.8302 for the
-reference). The highest source-attention score among these ablations therefore coincides with
-a pronounced N3 loss through target attention
-(Supplementary Table~\ref{SM-tab:sup_adast_loss_attention}).
+The band-pass-filtered SHHS1 signal was not smaller than the Sleep-EDF signal: its per-recording standard
+deviation had a median of $16.50\,\mu$V, interquartile range 13.72-21.26, on the holdout sample and of
+$14.36\,\mu$V, interquartile range 11.63-16.82, on Sleep-EDF.
 
-On the additional source fold, selected-checkpoint \mf\ was 0.7370 for source-only,
-0.6907 for the ADAST reference and 0.6892 for retained source loss. Retaining source loss
-again increased selected N1 F1 (0.2175 to 0.2302), but reduced REM F1 (0.6852 to 0.6680).
-N3 F1 increased from 0.8096 to 0.8161 through source attention, whereas it decreased from
-0.8003 to 0.7864 through target attention on the same source validation set. Thus, the
-selected-checkpoint N1 benefit recurred alongside lower REM F1 and aggregate \mf.
-At epoch 30, N1 F1 was lower with retained source loss (0.2158 versus 0.2175), showing that
-the selected-checkpoint improvement did not persist to the final epoch
-(Supplementary Tables~\ref{SM-tab:sup_adast_confirmation} and~\ref{SM-tab:sup_adast_confirmation_attention}).
+Input amplitude nevertheless strongly influenced the separation of N2 from N3
+(Table~\ref{tab:amendment}). As the input factor increased from 0.5 to 2, the proportion of reference N3
+epochs predicted as N2 fell monotonically from 93.3\% to 48.6\%. N3 recall, however, rose only up to a
+factor of 1.5, from 0.2742 to 0.3559, a difference of 0.0817 with \ci\ $[0.0665,0.0974]$. At a factor
+of 2 it fell to 0.2318, because 28.2\% of reference N3 epochs were then classified as wake, and REM
+recall dropped from 0.876 to 0.276. At a factor of 1.5, the gain in N3 F1 of 0.0859, \ci\
+$[0.0697,0.1020]$, was offset by lower N1, REM and wake F1, and subject-mean \mf\ was unchanged
+($-0.0011$, \ci\ $[-0.0099,0.0075]$). Factors below 1 reduced N3 recall to 0.1327 and 0.0176. The
+response was thus monotonic for the N3$\rightarrow$N2 rate but not for N3 recall, which by the
+pre-specified criterion argues against an amplitude-only explanation of N3 under-detection.
+
+AdaBN lowered subject-mean \mf\ by 0.1206, \ci\ $[0.1116,0.1295]$, without a detectable change in N3
+recall (difference 0.0086, \ci\ $[-0.0052,0.0222]$). Wake precision fell from 0.853 to 0.589 and REM
+recall from 0.876 to 0.312. AdaBN also scored below ADAST, by 0.0844 with \ci\ $[0.0759,0.0929]$, and
+below the matched source-only control of ADAST, by 0.0416 with \ci\ $[0.0333,0.0498]$. Supplementary
+Section S5 reports all classes and contrasts.
 
 %==============================================================================
 \section{Discussion}
 
 \subsection{What the pipeline comparisons establish}
 
-The primary comparison shows operational and cross-cohort gains for E3 relative to
-the CNN--BiLSTM control. ResNet-1D--TCN
-processes the benchmark input $3.76\times$ faster than the CNN--BiLSTM control,
-despite having more parameters. Its observed training-and-validation time is also shorter,
-although the recipes and stopping rules differ. On the SHHS1 sample, E3 improves subject-mean
-\mf\ over E0 by 0.0412, with a positive interval and gains in 138 of 180 participants. These results
-support E3 as a faster, higher-scoring alternative to that control in this setting.
-For the preprocessing comparison, E4 attained the higher SHHS1 subject-mean score in both seeds.
+The confirmatory evaluation supports three conclusions about the evaluated pipelines. First, the
+ResNet-1D-TCN configuration on band-pass-filtered input transferred better to SHHS1 than the
+CNN-BiLSTM baseline, and this advantage, first observed on 180 participants, was confirmed on 500
+participants who had not informed any analysis. It also required less computation: its forward pass
+was $3.76\times$ faster in the fixed benchmark and its observed training-and-validation time was
+shorter, although the recipes and stopping rules differ. Second, band-pass filtering accounted for most
+of this advantage. The same model on unfiltered input performed close to the baseline on the holdout
+sample, and on the first sample neither the sequence-model replacement (E1-E0) nor the
+feature/context replacement (E2-E1) produced a comparable gain. Signal handling is therefore a material
+part of the evaluated models' transfer behaviour, not a negligible implementation detail. Third,
+preserving calibrated amplitude (E3) transferred better than record-wise $z$-scoring (E6). The E6
+comparison is not a clean test of normalisation as such: its statistics span about 23\,h of mostly
+daytime recording in Sleep-EDF but only the night in SHHS1, so the two cohorts reach the model at
+different relative scales.
 
-The intermediate comparisons explain why that benefit should not be credited simply to a newer
-encoder or sequence model. E1--E0 changes both the sequence model and its training recipe;
-E2--E1 changes the encoder, feature context and encoder training. Neither contrast reaches the
-subject-level Holm threshold on Sleep-EDF, and E2--E1 reverses direction on SHHS1. By contrast,
-the observed post-hoc E3--E2 preprocessing difference is larger on SHHS1. The seed-123 extension
-further shows that E4, which retains band-pass filtering without fixed scaling, outperforms both E2
-and E3 on that sample. Signal handling is therefore a material part of the evaluated model's transfer
-behaviour, rather than a negligible implementation detail. These configuration-level comparisons do
-not isolate the contribution of each preprocessing operation in E3--E2.
+These are comparisons of configurations, including their training recipes. The study did not test
+which frequency band, artefact or recording difference the band-pass filter removes to improve
+transfer, and the three confirmed contrasts do not isolate a mechanism.
 
-The E3--E4 contrast is narrower because clipping was inactive in both cohorts. Multiplication by
-a positive constant preserves waveform shape and relative spectral power; it does not selectively
-remove slow waves. The comparison instead concerns separately trained models at two input scales.
-E4's advantage therefore concerns training and evaluating the model without division by 100,
-rather than recovering slow-wave information removed by that operation. Separating effects on
-optimisation from effects on learned normalisation statistics would require additional controlled
-training comparisons.
+\subsection{Training variability and the E3-E4 contrast}
+
+On the holdout sample, two training seeds of an identical configuration produced subject-mean \mf\
+differences of 0.005 to 0.020 in absolute value, and the intervals of all four pre-specified between-seed
+differences excluded zero. Such intervals describe the
+uncertainty due to the sampled participants for fixed models; they do not describe the uncertainty due
+to training. A contrast between two separately trained models can therefore appear precise and still
+be of the size expected from retraining alone. In our data this applies to the comparison of E4 with
+E3. E4 scored higher at both seeds and on both SHHS1 samples, by 0.009 to 0.014; on the holdout sample
+this difference exceeded the pre-specified between-seed differences at seed 42 but not at seed 123.
+The two configurations are equivalent by construction, because clipping never activated and batch
+normalisation absorbs the constant factor of 100 except through a stabilising constant that was
+negligible in practice. Their trained weights confirm that, for each seed, E3 and E4 are two copies of
+one training run that drifted apart numerically. E4-E3 is therefore itself a measure of training
+variability: runs that would be identical in exact arithmetic, apart from a negligible constant,
+differed by 0.009 to 0.014 in subject-mean \mf\ on SHHS1, and early stopping selected different
+epochs for them in 8 of 20 seed-fold pairs. No physical or
+recording-specific mechanism is needed to explain the difference, and none is implied by our data. The
+same consideration applies to the seed-123 estimate of H2 (0.0129), whereas H1 and H3 exceeded every
+observed between-seed difference. Reporting variation between training runs alongside
+participant-level intervals would make pipeline comparisons more reliable in general.
+
+For practical use, the clipping and scaling steps of E3 are redundant: band-pass filtering alone (E4)
+defines the same pipeline with fewer operations, and we recommend that form. E3 remained the reference
+configuration of the confirmatory analysis only because the protocol fixed it before the holdout data
+were processed. The confirmed contrasts concern the band-pass ResNet-1D-TCN pipeline, of which E3 and
+E4 are two realisations.
 
 \subsection{N3 under-detection persists alongside aggregate improvement}
 
 The class-wise analysis reveals a shared failure mode alongside E3's overall advantage. E0 and E3 both
-misclassify more than 72\% of true N3 as N2, with recall near 0.26 despite precision above 0.90.
-The alternative E6 pipeline has still lower N3 recall. This common failure persists despite the better
-aggregate score. The oracle calculation shows the numerical importance of
-N3$\rightarrow$N2 for E3, while the regional analysis shows that the deficit is present in stable
-N3 as well as around reference-label changes. Together, these observations identify a more specific
-cross-model error pattern than the overall transfer score alone.
+classified more than 72\% of reference N3 epochs as N2 on both SHHS1 samples, with N3 recall near 0.26
+despite precision above 0.85; band-pass-only E4 and record-wise $z$-scored E6 showed the same pattern. The oracle
+calculation shows the numerical importance of N3$\rightarrow$N2 for E3, and the boundary analysis shows
+that the deficit extends beyond the neighbourhoods of reference-label changes into stable N3. The aggregate
+transfer gain of E3 therefore did not resolve the dominant stage-specific error.
 
 The cohorts differ simultaneously in EEG derivation, population, acquisition and scoring conditions.
 Slow-wave spatial structure and amplitude-based N3 scoring criteria motivate examining these
-differences~\cite{massimini2004travelling,davidson2025n3}. The present design measures their combined
-effect rather than separating individual causes. E6 evaluates record-wise $z$-scoring during both
-source training and target inference; its lower N3 recall shows that this particular normalisation
-pipeline further reduces N3 detection.
+differences~\cite{massimini2004travelling,davidson2025n3}. The amplitude sweep examined one of these
+factors directly. The filtered SHHS1 signal was not smaller than the Sleep-EDF signal, yet the
+model's N2/N3 decision depended strongly on input amplitude: enlarging the input moved reference N3
+epochs from N2 towards N3 and, beyond a factor of 1.5, towards wake. This behaviour is consistent with a
+decision boundary that, like the scoring rules, relies on slow-wave amplitude. However, no single factor
+recovered N3 without degrading other stages, and the most favourable factor still left 60\% of N3
+epochs classified as N2. A global amplitude mismatch is therefore not a sufficient explanation; the
+spectral and spatial composition of slow waves recorded at C4-A1 rather than Fpz-Cz, and differences
+between scorers, remain plausible contributors that the present design cannot separate.
 
-The intervention experiments reveal different responses to attempts to increase N3 detection.
-EM converged to priors near zero for N3 and eliminated N3 predictions. Class weighting increased
-N3 recall and F1 but reduced N2 recall and accuracy, with a subject-mean \mf\ difference of
-$-0.0016$ (\ci\ $[-0.0049,0.0017]$). Limited-budget ADAST increased N3 recall but reduced
-aggregate \mf\ and eliminated target N1 predictions. With matched full-source training,
-ADAST instead improved target subject-mean \mf\ by 0.0445, with a 0.3679 increase in N3
-recall; N1, N2 and REM F1 remained lower than their matched controls. The sign change in
-the adaptation effect shows why training budget matters when interpreting a UDA baseline.
-Greater REM recall did not imply better REM F1 because precision fell. Thus, an increase
-in N3 recall should be assessed together with
-precision, other-stage errors and aggregate performance. N2$\rightarrow$REM provides a second
-important error channel for E3.
+The intervention experiments show different responses to attempts to increase N3 detection. EM prior
+correction converged to priors near zero for N3 and eliminated N3 predictions. Class weighting increased
+N3 recall and F1 but reduced N2 recall and accuracy, and the interval for its subject-mean \mf\
+difference included zero.
+Limited-budget ADAST increased N3 recall but reduced aggregate \mf\ and eliminated target N1
+predictions. With full-source training, ADAST improved subject-mean \mf\ over its matched control on
+both SHHS1 samples and more than doubled N3 recall, while lowering N1, N2 and REM F1 and source-cohort
+performance. It nevertheless remained below zero-shot E3 and E4 on the holdout sample. Re-estimating
+the batch-normalisation statistics on unlabelled SHHS1 data with AdaBN left N3 recall unchanged and
+lowered aggregate performance by shifting the wake and REM boundaries, so neither label-free adaptation
+baseline exceeded the zero-shot band-pass pipeline. Cohort-level adaptation therefore either left the
+N3 error unchanged, as with AdaBN, or traded it against other stages, as with ADAST. The sign change
+of the adaptation effect between budgets shows that the learning budget must be reported when an
+unsupervised domain-adaptation baseline is compared, and greater REM recall without greater REM F1
+shows that recall gains need to be read together with precision and other-stage errors.
 
 \subsection{Positioning and limits of generalisation}
 
-This study connects paired pipeline comparisons with computational trade-offs and cross-cohort error
-structure, complementing work on preprocessing, input representations and conventional/deep pipeline
-comparisons~\cite{haghayegh2023sleepinceptionnet,vdd2023traditional}. E0 is a reimplementation of the
-ZleepAnlystNet design under the stated protocol. The primary comparisons evaluate transfer
-without weight updates; the additional ADAST experiment evaluates target-domain weight updates
-against a matched source-only control.
+This study connects paired pipeline comparisons with computational trade-offs, cross-cohort error
+structure and a confirmatory evaluation on held-out participants, complementing work on input
+representations, conventional and deep pipelines, and multi-cohort
+training~\cite{haghayegh2023sleepinceptionnet,vdd2023traditional,perslev2021usleep,olesen2021mixed}.
+E0 is a reimplementation of the ZleepAnlystNet design under the stated protocol. The primary comparisons
+evaluate transfer without weight updates. ADAST evaluates target-domain weight updates against a matched
+source-only control, and AdaBN evaluates target-domain normalisation statistics without weight updates.
 
-The study evaluates transfer from Sleep-EDF to SHHS1, with two training seeds for the principal
-configuration comparisons. Follow-up interventions reuse the same SHHS1 test cohort; adaptation
-uses five separate unlabelled participants. Sleep-EDF uses out-of-fold predictions and SHHS uses
-ten-model ensembles, so their score difference combines cohort and evaluation-procedure differences.
-The models use future context and were evaluated offline; forward-pass timing therefore describes
-offline processing rather than real-time deployment. Class-wise results are pooled across participants,
-without sex- or gender-stratified analysis. Further evaluation across cohorts, montages and subgroups
-would test the consistency of the observed N3 pattern and intervention trade-offs.
+Several limits apply. The study evaluates transfer from one source cohort to one target cohort; the
+holdout sample is new in its participants but comes from the same SHHS1 study, montage and scoring
+procedures, so it confirms the findings within SHHS1 rather than across further cohorts. Each
+configuration was trained with two seeds, which suffices to show that training variability matters but
+not to estimate its distribution. The intervention experiments were designed after the errors of the
+first SHHS1 sample had been examined, and only the full-source ADAST pair was re-evaluated on the
+holdout sample. The amplitude and AdaBN analyses were specified after the confirmatory results and
+examine one configuration at one seed. Sleep-EDF uses out-of-fold predictions and SHHS1 uses ten-model ensembles, so score
+differences between the cohorts combine cohort and evaluation-procedure differences. The models use
+future context and were evaluated offline, so forward-pass timing describes offline processing rather
+than real-time operation. Class-wise results are pooled across participants without sex- or
+age-stratified analysis. Evaluation on further cohorts, montages and subgroups would test whether the
+filtering effect and the N3 pattern generalise.
 
 %==============================================================================
 \section{Conclusion}
 
-The evaluated ResNet-1D--TCN pipeline combined lower computational time with improved aggregate
-performance relative to the CNN--BiLSTM control. E3 achieved pooled Sleep-EDF \mf\ 0.7904 and
-improved subject-mean \mf\ on the 180-person SHHS1 sample by 0.0412 over E0, with Holm-adjusted
-significance. Its forward pass was $3.76\times$ faster in the fixed benchmark, and its seed-123
-training-and-validation time was $10.2\times$ shorter, despite the larger parameter count.
-These are benefits of the evaluated configurations, including their training recipes.
-
-Preprocessing materially affected the observed cross-cohort ranking. The seed-42 E3--E2 post-hoc
-contrast favoured the combined filtering/clip/fixed-scale pipeline over raw inputs, whereas additional
-comparisons at seeds 42 and 123 favoured band-pass-only E4 over same-seed E3.
-E4 is therefore the stronger preprocessing option for SHHS1 among these same-seed comparisons.
-The results support evaluating signal processing jointly with model design.
-
-E0 and E3 both classified more
-than 72\% of SHHS1 N3 epochs as N2, and N3 under-detection persisted in the tested record-wise
-normalisation configuration. EM prior correction did not remedy this deficit. Additional
-ten-fold class-weighted training improved N3 recall at the cost of
-N2 recall and accuracy, with a subject-mean \mf\ difference interval spanning zero. Ten-fold ADAST's
-effect depended on learning budget: the limited-budget comparison reduced class-balanced
-performance and eliminated N1 predictions, whereas full-source training increased subject-mean
-\mf\ by 0.0445 and N3 recall from 0.2432 to 0.6111 relative to its matched source-only control.
-The full-source benefit retained costs in N1, N2 and REM F1 and source outer-test performance.
-Together, these experiments identify N3-to-N2 confusion as a principal transfer error and quantify
-the gains and costs of three intervention strategies. Model and preprocessing selection should
-therefore combine computational measurements with aggregate and stage-specific performance.
+Under a shared protocol, the ResNet-1D-TCN pipeline on band-pass-filtered EEG required less computation
+than the CNN-BiLSTM baseline and transferred better from Sleep-EDF to SHHS1. Its advantage, first observed
+on 180 participants, was confirmed on 500 participants held out from development: subject-mean \mf\
+improved by 0.0467 over the baseline, by 0.0293 over record-wise $z$-scoring and by 0.0515 over the same
+model on unfiltered input. Band-pass filtering accounted for most of the transfer gain. Because
+clipping never activated and batch normalisation absorbs a constant input scale, the band-pass-only and
+scaled variants were two numerically drifted runs of the same model, and band-pass filtering alone
+suffices to define the pipeline. All zero-shot pipelines classified most N3 epochs as N2. This decision
+depended strongly on input amplitude, but none of rescaling, class weighting, batch-normalisation
+adaptation or adversarial domain adaptation removed the error without losses in other stages. Pipeline comparisons for sleep staging
+should therefore report computational cost, stage-specific errors and variation between training runs,
+and should be confirmed on data that did not inform the comparisons.
 
 %------------------------------------------------------------------------------
 \subsection*{Reproducibility and data availability}
 
-Code, protocol snapshots, data partitions and aggregate analyses are retained in the project repository
-at \url{https://github.com/quanuiter/SleepTCN}. The repository does not contain restricted participant-
-level SHHS data, identifiers or predictions.
-Sleep-EDF Expanded is available from PhysioNet
-(\url{https://physionet.org/content/sleep-edfx/1.0.0/}); SHHS access and applicable use conditions are
-managed by NSRR (\url{https://sleepdata.org/datasets/shhs}). Participant-level SHHS records and
-predictions are not included in the manuscript package because access to the source records is controlled
-by the data provider. The historical snapshot
-\texttt{configs/shhs\_zero\_shot\_v1.json} matches the protocol hash in the original SHHS run manifest.
-The primary campaign's 540 ensemble prediction files were checked against their recorded SHA-256 values,
-and their confusion counts reproduce the reported pooled results. The expanded post-run protocol record
-is preserved separately. Further provenance details are given in the supplement and the repository
-artifact index.
+Code, protocols, data partitions and aggregate analyses are available in the project repository at
+\url{https://github.com/quanuiter/SleepTCN}. Sleep-EDF Expanded is available from PhysioNet
+(\url{https://physionet.org/content/sleep-edfx/1.0.0/}); access to SHHS and its conditions of use are
+managed by NSRR (\url{https://sleepdata.org/datasets/shhs}). Because access to the source records is
+controlled by the data provider, the repository and the manuscript package contain no participant-level
+SHHS records or predictions.
 
-An archived repository snapshot is available at Git commit
-\href{https://github.com/quanuiter/SleepTCN/commit/f7c22e76022b8e24ac8d1343a39a990d42a1b3e2}{\texttt{f7c22e7}}.
-Experiment-specific configurations and manifests accompany the retained source history and identify the
-inputs and settings for each analysis.
+The historical snapshot \texttt{configs/shhs\_zero\_shot\_v1.json} matches the protocol hash recorded
+in the run manifest of the first SHHS1 sample. The 540 ensemble prediction files of that sample were
+checked against their recorded SHA-256 values, and their confusion counts reproduce the reported pooled
+results. The confirmatory holdout protocol (\texttt{docs/SHHS\_HOLDOUT\_CONFIRMATORY\_PROTOCOL\_V1.md}
+and \texttt{configs/shhs\_holdout\_confirmatory\_v1.json}) was committed at
+\href{https://github.com/quanuiter/SleepTCN/commit/a275617}{\texttt{a275617}} and the analysis script at
+\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}. The post-confirmatory
+amendment (\texttt{docs/SHHS\_HOLDOUT\_AMENDMENT\_A1.md}) was committed at
+\href{https://github.com/quanuiter/SleepTCN/commit/ad61aa0}{\texttt{ad61aa0}}, and the scripts that
+packaged, ran and imported its GPU computation at
+\href{https://github.com/quanuiter/SleepTCN/commit/e5a255a}{\texttt{e5a255a}}. The holdout participants
+are selected by a deterministic hash ranking that can be reproduced from the NSRR participant list, and
+the inference manifests record the SHA-256 values of the protocol, the preprocessed inputs and the model
+checkpoints. Further provenance details are given in the supplement and the repository artifact index.
 
 \subsection*{Ethics}
 
 This study is a secondary analysis of de-identified repository data; no new participants were recruited.
-The authors confirm that access to SHHS for this analysis was obtained through the National Sleep
-Research Resource and that no ethics approval was required for this secondary analysis of de-identified
+Access to SHHS data was obtained through the National Sleep Research Resource under its data use
+agreement. No additional ethics approval was required for this secondary analysis of de-identified
 repository data.
 
 \subsection*{Funding}
 
-This work received approximately VND 6,000,000 in student support from the University of Information
+This research was supported by the Scientific Research Support Fund of the University of Information
 Technology, Vietnam National University Ho Chi Minh City.
 
 \subsection*{Acknowledgements}
@@ -1068,9 +1194,9 @@ Resource was supported by the National Heart, Lung, and Blood Institute (R24 HL1
 \subsection*{CRediT authorship contribution statement}
 
 Ngo Nhat Quan: Conceptualization, Methodology, Software, Data curation, Formal analysis,
-Investigation, Visualization, Writing -- original draft, Writing -- review and editing. Pham Thai Son:
-Validation, Investigation, Visualization, Writing -- review and editing. Tri Nguyen Ho Duy:
-Supervision, Writing -- review and editing.
+Investigation, Visualization, Writing - original draft, Writing - review and editing. Pham Thai Son:
+Validation, Investigation, Visualization, Writing - review and editing. Tri Nguyen Ho Duy:
+Supervision, Writing - review and editing.
 
 \subsection*{Declaration of competing interests}
 
@@ -1078,13 +1204,16 @@ The authors declare no competing interests.
 
 \subsection*{Declaration of generative AI and AI-assisted technologies}
 
-OpenAI Codex assisted with language editing, manuscript organisation, code and result consistency
-checks, reproducible plotting, and preparation of the vector study-design schematic. It also assisted
-with implementing and executing the additional analysis, inference and training scripts and their
-verification tests. Numerical results were computed by those scripts from recorded datasets and
-model checkpoints, not supplied as synthetic observations by a language model. Historical predictions
-were retained separately from the additional experiments. The authors remain responsible for
-reviewing the implementation, experimental design, results and submitted content, including this disclosure.
+During the preparation of this work the authors used OpenAI Codex and Anthropic Claude. OpenAI Codex
+assisted with language editing, manuscript organisation, code and result consistency checks,
+reproducible plotting, preparation of the vector study-design schematic, and the implementation of
+analysis, inference and training scripts and their verification tests. Anthropic Claude assisted with
+code review, drafting of the confirmatory holdout protocol, implementation of the holdout
+preprocessing, inference and analysis scripts, the amendment analyses and their tests, and language
+editing of the manuscript. All numerical results were computed by these scripts from the recorded datasets and model
+checkpoints; none was supplied by a language model. After using these tools, the authors reviewed and
+edited the implementation, experimental design, results and text as needed and take full
+responsibility for the content of the publication.
 
 %------------------------------------------------------------------------------
 \begingroup

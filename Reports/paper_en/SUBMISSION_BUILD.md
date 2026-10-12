@@ -4,6 +4,19 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 12 October 2026: the manuscript and supplement report the confirmatory evaluation on 500
+held-out SHHS1 participants (protocol commit `a275617`, analysis commit `2019b51`). Abstract,
+introduction, methods, results, discussion, conclusion, declarations and highlights were revised
+accordingly; Supplementary Section S3 contains the holdout tables and protocol deviations. Supplementary Section S4
+(post-hoc) shows from the Sleep-EDF checkpoints that E3 and E4 are numerically drifted copies of one
+training run (`scripts/compare_e3_e4_checkpoints.py`, outputs in `runs/e3_e4_checkpoint_comparison/`). The
+reproducibility statement now cites the protocol and analysis commits instead of snapshot `f7c22e7`.
+Supplementary Section S5 and manuscript Sections 3.7 and 4.8 report the post-confirmatory
+amendment A1 (input-amplitude sweep and AdaBN; amendment commit `ad61aa0`, GPU scripts `e5a255a`).
+The text also incorporates Pham Thai Son's paraphrase commit `08361d2` (style: hyphens instead of
+dashes, "baseline" for E0, revised running header, funding statement).
+`SUBMISSION_MANIFEST.sha256` and the source ZIP predate this revision and must be regenerated.
+
 Revision, 7 October 2026: the abstract and interpretation distinguish the
 primary E3 comparisons from the same-seed E4 extensions at seeds 42 and 123. Additional
 intervention experiments are reported with their own matched controls and ensemble sizes.
@@ -82,7 +95,7 @@ from page ranges. TikZ/PGFPlots is needed only to rebuild the speed-plot source.
 
 - Inspect all pages, table numbers, citations and external supplement references.
 - Check every source change against a fresh build; do not upload a stale PDF.
-- The four bullets in `highlights.txt` are source text; convert to the required editable upload
+- The five bullets in `highlights.txt` are source text; convert to the required editable upload
   format and recheck the journal's character limit.
 - Do not interpret a successful PDF build as author approval, proof of ethics authorisation,
   clinical validation or end-to-end scientific reproducibility.
@@ -97,7 +110,7 @@ does not rerun a model or recalculate experimental statistics.
 - Upload the English manuscript source, figure files and the English supplement. The Vietnamese
   documents are synchronised internal reports, not additional manuscripts for BSPC.
 - Upload `highlights.txt` separately as an editable highlights file, or convert it to an editable
-  format accepted by the portal. It contains four bullets, each under 85 characters.
+  format accepted by the portal. It contains five bullets, each at most 85 characters.
 - Complete Elsevier's declarations tool and upload its resulting `.doc`/`.docx` file even if no
   competing interests are declared. A manuscript sentence does not replace that workflow.
 - Supply a concise caption for the supplementary file, for example: "Supplementary methods,

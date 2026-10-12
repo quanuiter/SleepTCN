@@ -1,6 +1,7 @@
 Highlights
 
-- Paired subject-wise evaluation compared six sleep-staging configurations.
-- E3 forward passes were 3.76-fold faster than CNN--BiLSTM, with more parameters.
-- Band-pass-only E4 exceeded same-seed E3 in two-seed transfer comparisons.
-- Full-source ADAST raised N3 recall, with N1/N2/REM trade-offs.
+- ResNet-1D-TCN forward passes were 3.76-fold faster than a CNN-BiLSTM control.
+- Its cross-cohort gain was confirmed on 500 held-out SHHS1 participants.
+- Band-pass filtering accounted for most of the cross-cohort gain.
+- Retraining with another seed shifted macro-F1 as much as some pipeline contrasts.
+- All zero-shot pipelines scored most N3 (deep-sleep) epochs as N2.
