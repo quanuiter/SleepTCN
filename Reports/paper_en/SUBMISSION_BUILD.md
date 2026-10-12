@@ -15,6 +15,9 @@ Supplementary Section S5 and manuscript Sections 3.7 and 4.8 report the post-con
 amendment A1 (input-amplitude sweep and AdaBN; amendment commit `ad61aa0`, GPU scripts `e5a255a`).
 The text also incorporates Pham Thai Son's paraphrase commit `08361d2` (style: hyphens instead of
 dashes, "baseline" for E0, revised running header, funding statement).
+The main text was condensed to about 5,800 words (excluding tables, captions, references and
+declarations); three first-sample tables and procedural details moved to the supplement without
+removing any reported value.
 `SUBMISSION_MANIFEST.sha256` and the source ZIP predate this revision and must be regenerated.
 
 Revision, 7 October 2026: the abstract and interpretation distinguish the

@@ -210,6 +210,67 @@ interpreted as equivalence between configurations.
 
 \section*{Supplementary results}
 
+\subsection*{First SHHS1 sample: performance, N3 errors and ADAST budgets}
+
+The following three tables accompany Sections 4.4, 4.6 and 4.7 of the main text.
+On this sample, the unadjusted exact sign tests for the two primary comparisons, E3-E0 and E3-E6, gave
+$p = 3.8\times10^{-13}$ and $1.9\times10^{-7}$. Within $\pm1$ epoch of a reference-label transition, the
+pooled boundary \mf\ of E3 exceeded that of E0 by 0.0366 and that of E6 by 0.0183. For E6, N3 recall
+near reference-label changes was 0.0721, compared with 0.0733 for E3.
+
+\begin{table}[H]
+\centering
+\caption{Cross-cohort performance on the first SHHS1 sample ($n=180$, seed 42). All model weights were
+trained on Sleep-EDF. E6 additionally uses complete-record, unlabelled target statistics.
+Intervals are subject-cluster bootstrap intervals for subject-mean \mf.}
+\label{tab:sup_first_performance}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{ID} & \textbf{Subject-mean \mf\ (\ci)} & \textbf{Pooled \mf} & \textbf{Accuracy} & \textbf{$\kappa$} \\
+\midrule
+E0 & 0.5268 \ $[0.5101, 0.5431]$ & 0.5761 & 0.6648 & 0.5339 \\
+E3 & \textbf{0.5680} \ $\boldsymbol{[0.5503, 0.5850]}$ & \textbf{0.6099} & \textbf{0.7016} & \textbf{0.5801} \\
+E6 & 0.5407 \ $[0.5227, 0.5584]$ & 0.5732 & 0.6742 & 0.5408 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{N3 under-detection on the first SHHS1 sample (seed 42). All models share 22{,}806 reference
+N3 epochs. The final column is the proportion of those epochs predicted as N2.}
+\label{tab:sup_first_n3}
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{ID} & \textbf{N3 precision} & \textbf{N3 recall} & \textbf{N3 F1} & \textbf{N3$\to$N2 count} & \textbf{Rate} \\
+\midrule
+E0 & 0.9007 & 0.2610 & 0.4048 & 16{,}480 & 72.3\% \\
+E3 & 0.9440 & 0.2582 & 0.4055 & 16{,}674 & 73.1\% \\
+E6 & 0.9052 & 0.2005 & 0.3283 & 17{,}764 & 77.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{ADAST learning-budget comparison on the first SHHS1 sample (180 participants; 169{,}012
+scored epochs). All entries use epoch-30 checkpoints and ten-fold probability ensembles. Source-only is
+the matched ADAST control, not E3. Full source means 30 complete training passes.}
+\label{tab:sup_adast_budget_first}
+\begin{tabular}{llrrrr}
+\toprule
+Budget & Arm & Subject-mean \mf & Pooled \mf & N3 recall & N1 recall \\
+\midrule
+1,140 updates & Source-only & .4949 & .5539 & .3195 & .1974 \\
+1,140 updates & ADAST & .4497 & .5072 & .4269 & .0000 \\
+Full source & Source-only & .5010 & .5478 & .2432 & .1568 \\
+Full source & ADAST & .5455 & .5918 & .6111 & .1057 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 \begin{table}[H]
 \centering\small
 \caption{Per-class Sleep-EDF metrics for E3 and E6 (seed 42). Differences are calculated before rounding.}
@@ -1582,18 +1643,15 @@ for the N3$\to$N2 rate, which decreased monotonically over all factors, but not 
 peaked at a factor of 1.5. At a factor of 2, 28.2\% of reference N3 epochs were classified as wake,
 compared with 0.9\% for unmodified E4.
 
-\textbf{Deviations from the amendment.} First, all 50 condition-by-fold units were computed on a cloud
-GPU (Tesla T4, PyTorch 2.11.0, deterministic algorithms) instead of the local CPU named in the
-amendment, to shorten computation time. The GPU code reproduces the amendment's prediction and AdaBN
+\textbf{Deviations from the amendment.} First, all 50 condition-by-fold units were computed on a GPU
+(Tesla T4, PyTorch 2.11.0, deterministic algorithms) instead of the CPU named in the amendment, to
+shorten computation time. The GPU code reproduces the amendment's prediction and AdaBN
 functions; before the run it reproduced the stored CPU probabilities of the confirmatory E4 run for two
 recordings at folds 0 and 9 within $1.6\times10^{-6}$, inside the locked tolerance of $10^{-5}$, with
-identical predicted stages. Second, the package sent to the GPU contained only the band-pass-filtered
-signals and the AdaBN sample, renamed by index, without labels, record keys or participant identifiers;
-the mapping to participants remained on the local computer, where all labels were read. Third, a local
-CPU run of the same conditions stopped without an error message after 833 fold files; these files were
+identical predicted stages. Second, a CPU run of the same conditions stopped without an error message after 833 fold files; these files were
 kept separately and used only to compare devices. Over these 833 files (764{,}196 epochs), CPU and GPU
 probabilities differed by at most $1.4\times10^{-5}$, with identical predicted stages, and the fold-0
-AdaBN running variances differed by at most $1.0\times10^{-6}$ in relative terms. Fourth, the ensemble
+AdaBN running variances differed by at most $1.0\times10^{-6}$ in relative terms. Third, the ensemble
 metadata field for the device retains the script default (CPU), whereas the fold-level metadata record
 the GPU. None of these deviations changed a condition or the analysis.
 
