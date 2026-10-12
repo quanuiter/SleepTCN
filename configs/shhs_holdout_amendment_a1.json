@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "amendment": "A1",
+  "status": "locked_before_amendment_inference",
+  "protocol_document": "docs/SHHS_HOLDOUT_AMENDMENT_A1.md",
+  "parent_protocol": {
+    "config": "configs/shhs_holdout_confirmatory_v1.json",
+    "config_sha256": "b6653adaaf27f0e487289d61181fd714a3c390f1192aab27da783cf54fad1e0d",
+    "analysis_commit": "2019b51",
+    "analysis_report_sha_note": "runs/holdout_analysis_v1/analysis.json is unchanged by this amendment"
+  },
+  "purpose": "Post-confirmatory, descriptive analyses on the same 500 holdout participants: (A) a second unsupervised domain-adaptation baseline (AdaBN) and (B) a test-time input-amplitude sweep probing whether N3 under-detection depends on signal amplitude. Neither analysis changes or re-tests H1-H3.",
+  "status_of_holdout": "Holdout labels were used once by the parent analysis. The model (E4 seed 42) was chosen after that analysis because the manuscript recommends the band-pass-only form of the pipeline, of which E3 and E4 are equivalent runs (post-hoc checkpoint comparison, runs/e3_e4_checkpoint_comparison). No scale factor, threshold or adaptation setting depends on holdout results; every condition below is fixed before any amendment inference.",
+  "cohort": {
+    "participants": 500,
+    "preprocess_manifest_sha256": "f0be16e6693dbbde8253bf07a6f76c2acd783f04fe1bb07dbaab65cdc9f13649",
+    "exclusions_allowed": false
+  },
+  "model": {
+    "arm": "E4_s42",
+    "experiment": "E4",
+    "seed": 42,
+    "data_variant": "bandpass_v2",
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "checkpoints": "the gate-verified E4 seed-42 checkpoints of the parent run (runs/holdout_ckpt_restore_20261010)",
+    "ensembling": "arithmetic mean of the ten fold softmax probabilities (float64 accumulator, float32 storage), argmax"
+  },
+  "reference_condition": {
+    "name": "E4_s42",
+    "source": "existing parent ensembles in runs/holdout_inference_v1/ensemble/E4_s42 (equivalent to input scale 1.0)",
+    "reproduction_check": "before inference, the amendment code path must reproduce the stored parent fold probabilities of E4_s42 for two records at folds 0 and 9 (max |difference| <= 1e-5, identical argmax)"
+  },
+  "conditions": {
+    "scale_0.50": {
+      "type": "input_scale",
+      "factor": 0.5
+    },
+    "scale_0.75": {
+      "type": "input_scale",
+      "factor": 0.75
+    },
+    "scale_1.50": {
+      "type": "input_scale",
+      "factor": 1.5
+    },
+    "scale_2.00": {
+      "type": "input_scale",
+      "factor": 2.0
+    },
+    "adabn": {
+      "type": "adabn",
+      "factor": 1.0
+    }
+  },
+  "input_scale": "every sample of every bandpass_v2 epoch is multiplied by the factor before the encoder; the encoder runs in evaluation mode with its stored batch-normalisation statistics; the TCN is unchanged",
+  "adabn": {
+    "reference": "Li et al., Revisiting batch normalization for practical domain adaptation (AdaBN)",
+    "layers": "all ten BatchNorm1d layers of the ResNet-1D encoder; affine parameters unchanged; the TCN (LayerNorm only) is unchanged",
+    "sample": {
+      "epochs_per_record": 40,
+      "selection": "uniform without replacement over all epochs stored for each record (the evaluation window), using numpy default_rng([2041, int(subject_id)]); labels are not read",
+      "total_epochs": 20000
+    },
+    "estimation": "layer by layer in forward-execution order; each layer's running mean and running variance are replaced by the per-channel mean and population variance of its input over all positions of the 20,000 sampled epochs, computed after all earlier layers have been adapted; one adapted encoder per fold",
+    "label_free": true,
+    "transductive_scope": "cohort level (statistics pooled over the 500 holdout recordings)"
+  },
+  "amplitude_descriptive": {
+    "statistic": "per-record standard deviation (population) of the bandpass_v2 input over all stored epochs, in microvolts; labels not read",
+    "cohorts": [
+      "Sleep-EDF SC (153 recordings, data/processed/bandpass_v2/SC*.npz)",
+      "SHHS1 holdout (500 recordings)"
+    ],
+    "summary": "median and interquartile range per cohort, and the ratio of the SHHS1 median to the Sleep-EDF median"
+  },
+  "statistics": {
+    "bootstrap": {
+      "type": "paired_subject_cluster_percentile",
+      "resamples": 10000,
+      "seed": 2042
+    },
+    "hypothesis_tests": "none",
+    "metric_definitions": "as in the parent protocol: subject-mean macro-F1 over five fixed classes with F1 = 0 for absent classes; pooled metrics from summed confusion matrices"
+  },
+  "outputs": {
+    "per_condition": [
+      "subject-mean macro-F1 with 95% CI",
+      "pooled macro-F1, accuracy, Cohen kappa",
+      "per-class precision, recall and F1",
+      "N3 recall with 95% CI",
+      "N3-to-N2 rate with 95% CI"
+    ],
+    "contrasts_vs_E4_s42": [
+      "subject-mean macro-F1",
+      "pooled N3 recall",
+      "pooled N3-to-N2 rate",
+      "pooled N1, N2, N3 and REM F1"
+    ],
+    "contrasts_adabn": [
+      "adabn - ADAST_full_e30: subject-mean macro-F1 and pooled N3 recall",
+      "adabn - SourceOnly_full_e30: subject-mean macro-F1"
+    ]
+  },
+  "pre_specified_expectation": "If N3 under-detection arises mainly because SHHS1 slow waves reach the encoder at a smaller amplitude than the Sleep-EDF training data, N3 recall should increase and the N3-to-N2 rate decrease with factors above 1, and change in the opposite direction with factors below 1. A flat or non-monotonic response is evidence against an amplitude-only explanation.",
+  "interpretation_rules": [
+    "All results are descriptive and post-confirmatory; they do not alter the H1-H3 decisions.",
+    "No scale factor is selected, recommended or reported as an improved pipeline.",
+    "AdaBN is reported as a label-free domain-adaptation baseline; a difference is described as a gain or loss only when its 95% interval excludes zero.",
+    "Results are reported in full regardless of direction."
+  ],
+  "prohibited": [
+    "adding, removing or changing conditions after amendment inference has started",
+    "reading reference labels before all amendment ensembles exist",
+    "excluding participants",
+    "using any amendment result to choose a model for the confirmatory claims"
+  ],
+  "execution": {
+    "device": "cpu",
+    "deterministic_algorithms": true,
+    "inference_root": "runs/holdout_amendment_a1",
+    "analysis_root": "runs/holdout_amendment_a1/analysis",
+    "analysis_runs": "once; write-once report"
+  }
+}
