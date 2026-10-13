@@ -459,8 +459,9 @@ các so sánh liên quan E1, E2 và E4 là thứ cấp hoặc hậu nghiệm, v�
 \subsection{Giao thức xác nhận trên mẫu giữ lại}
 
 Trước khi tiền xử lý bất kỳ bản ghi giữ lại nào, một giao thức cố định đoàn hệ, tiền xử lý, checkpoint, quy
-tắc tổ hợp, chỉ số, giả thuyết và quy tắc quyết định đã được commit vào kho dự án (commit
-\texttt{a275617}). Chương trình phân tích được commit trước khi chạy (commit \texttt{2019b51}). Họ xác nhận
+tắc tổ hợp, chỉ số, giả thuyết và quy tắc quyết định đã được công bố trên kho dự án công khai ngày
+10-10-2026, và chương trình phân tích được công bố ở đó trước khi chạy; các phiên bản chính xác được nêu
+trong mục khả năng tái lập. Họ xác nhận
 gồm ba đối chiếu seed 42 trên \mf\ trung bình theo đối tượng, mỗi đối chiếu có dấu kỳ vọng dương: H1,
 E3-E0; H2, E3-E6; và H3, E3-E2. Một giả thuyết được xác nhận nếu giá trị $p$ Wilcoxon hai phía sau hiệu
 chỉnh Holm nhỏ hơn 0.05 và khoảng bootstrap cụm theo đối tượng bắt cặp (10{,}000 lần lấy mẫu lại, seed
@@ -476,8 +477,7 @@ làm thay đổi dự đoán, được liệt kê ở Mục bổ sung S3.
 \subsection{Phân tích biên độ và thích nghi sau xác nhận}
 \label{sec:amendment-methods}
 
-Sau phân tích xác nhận, một bản sửa đổi được commit trước lượt suy luận của nó (commit \texttt{ad61aa0})
-xác định hai phân tích mô tả trên E4 seed 42, dạng chỉ lọc thông dải của quy trình
+Sau phân tích xác nhận, một bản sửa đổi được công bố trên kho dự án trước lượt suy luận của nó xác định hai phân tích mô tả trên E4 seed 42, dạng chỉ lọc thông dải của quy trình
 (Mục~\ref{sec:holdout}), trên cùng 500 người tham gia. Thứ nhất, đầu vào được nhân với 0.5, 0.75, 1.5 hoặc 2
 trong khi bộ mã hóa giữ nguyên thống kê chuẩn hóa theo lô đã lưu, nhằm kiểm tra giai đoạn dự đoán phụ thuộc
 vào biên độ tín hiệu mạnh đến đâu. Bản sửa đổi nêu rằng, nếu bỏ sót N3 chủ yếu do sóng chậm SHHS1 đến bộ
@@ -919,7 +919,9 @@ thống kê chuẩn hóa trên miền đích không cập nhật trọng số.
 
 Có một số giới hạn. Nghiên cứu đánh giá việc chuyển từ một đoàn hệ nguồn sang một đoàn hệ đích; mẫu giữ lại
 mới về người tham gia nhưng đến từ cùng nghiên cứu SHHS1, cùng cấu hình điện cực và quy trình chấm điểm, nên
-nó xác nhận các phát hiện trong SHHS1 chứ không qua các đoàn hệ khác. Mỗi cấu hình được huấn luyện với hai seed,
+nó xác nhận các phát hiện trong SHHS1 chứ không qua các đoàn hệ khác. Giao thức xác nhận được lưu trên kho
+công khai của tác giả thay vì một registry nghiên cứu độc lập, nên chỉ việc nó tồn tại trước phân tích, chứ
+không phải việc chưa truy cập dữ liệu trước đó, được đóng dấu thời gian từ bên ngoài. Mỗi cấu hình được huấn luyện với hai seed,
 đủ để cho thấy biến thiên huấn luyện quan trọng nhưng không đủ để ước lượng phân phối của nó. Các thí nghiệm
 can thiệp được thiết kế sau khi đã khảo sát lỗi của mẫu SHHS1 thứ nhất, và chỉ cặp ADAST toàn nguồn được đánh
 giá lại trên mẫu giữ lại. Phân tích biên độ và AdaBN được xác định sau kết quả xác nhận và khảo sát một cấu
@@ -961,7 +963,10 @@ của mẫu SHHS1 thứ nhất. 540 tệp dự đoán tổ hợp của mẫu đ�
 (\texttt{docs/SHHS\_HOLDOUT\_CONFIRMATORY\_PROTOCOL\_V1.md} và
 \texttt{configs/shhs\_holdout\_confirmatory\_v1.json}) được commit tại
 \href{https://github.com/quanuiter/SleepTCN/commit/a275617}{\texttt{a275617}} và chương trình phân tích tại
-\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}. Bản sửa đổi sau xác nhận
+\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}; một lượt kiểm thử tự động
+trên commit giao thức, được máy chủ GitHub ghi lúc 11:18 UTC ngày 10-10-2026
+(\href{https://github.com/quanuiter/SleepTCN/actions/runs/38047923110}{run 38047923110}), cung cấp dấu thời
+gian độc lập với siêu dữ liệu commit của tác giả. Bản sửa đổi sau xác nhận
 (\texttt{docs/SHHS\_HOLDOUT\_AMENDMENT\_A1.md}) được commit tại
 \href{https://github.com/quanuiter/SleepTCN/commit/ad61aa0}{\texttt{ad61aa0}}, và các chương trình đóng gói,
 chạy và nhập kết quả tính toán GPU của nó tại

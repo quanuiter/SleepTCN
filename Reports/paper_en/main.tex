@@ -465,9 +465,9 @@ involving E1, E2 and E4 are secondary or post-hoc, and boundary analyses are pos
 \subsection{Confirmatory holdout protocol}
 
 Before any holdout recording was preprocessed, a protocol fixing the cohort, preprocessing,
-checkpoints, ensemble rule, metrics, hypotheses and decision rule was committed to the project
-repository (commit \texttt{a275617}). The analysis script was committed before it was run (commit
-\texttt{2019b51}). The confirmatory family comprised three seed-42 contrasts of subject-mean \mf, each
+checkpoints, ensemble rule, metrics, hypotheses and decision rule was published in the public project
+repository on 10 October 2026, and the analysis script was published there before it was run; the
+exact versions are identified in the reproducibility statement. The confirmatory family comprised three seed-42 contrasts of subject-mean \mf, each
 with an expected positive sign: H1, E3-E0; H2, E3-E6; and H3, E3-E2. A hypothesis was
 confirmed if its Holm-adjusted two-sided Wilcoxon $p$-value was below 0.05 and its paired
 subject-cluster bootstrap interval (10{,}000 resamples, seed 2040) lay entirely above zero.
@@ -482,8 +482,8 @@ changed a prediction, are listed in Supplementary Section S3.
 \subsection{Post-confirmatory amplitude and adaptation analyses}
 \label{sec:amendment-methods}
 
-After the confirmatory analysis, an amendment committed before its inference (commit
-\texttt{ad61aa0}) specified two descriptive analyses of E4 at seed 42, the band-pass-only form of the
+After the confirmatory analysis, an amendment published in the repository before its inference
+specified two descriptive analyses of E4 at seed 42, the band-pass-only form of the
 pipeline (Section~\ref{sec:holdout}), on the same 500 participants. First, the input was multiplied by
 0.5, 0.75, 1.5 or 2 while the encoder kept its stored batch-normalisation statistics, which tests how
 strongly the predicted stage depends on signal amplitude. The amendment stated that, if N3
@@ -945,7 +945,10 @@ source-only control, and AdaBN evaluates target-domain normalisation statistics 
 
 Several limits apply. The study evaluates transfer from one source cohort to one target cohort; the
 holdout sample is new in its participants but comes from the same SHHS1 study, montage and scoring
-procedures, so it confirms the findings within SHHS1 rather than across further cohorts. Each
+procedures, so it confirms the findings within SHHS1 rather than across further cohorts. The
+confirmatory protocol was archived in the authors' public repository rather than in an independent
+study registry, so only its existence before the analysis, not the absence of earlier data access, is
+externally timestamped. Each
 configuration was trained with two seeds, which suffices to show that training variability matters but
 not to estimate its distribution. The intervention experiments were designed after the errors of the
 first SHHS1 sample had been examined, and only the full-source ADAST pair was re-evaluated on the
@@ -989,7 +992,10 @@ checked against their recorded SHA-256 values, and their confusion counts reprod
 results. The confirmatory holdout protocol (\texttt{docs/SHHS\_HOLDOUT\_CONFIRMATORY\_PROTOCOL\_V1.md}
 and \texttt{configs/shhs\_holdout\_confirmatory\_v1.json}) was committed at
 \href{https://github.com/quanuiter/SleepTCN/commit/a275617}{\texttt{a275617}} and the analysis script at
-\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}. The post-confirmatory
+\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}; an automated test run
+on the protocol commit, recorded by the GitHub server at 11:18 UTC on 10 October 2026
+(\href{https://github.com/quanuiter/SleepTCN/actions/runs/38047923110}{run 38047923110}), provides a
+timestamp independent of the authors' commit metadata. The post-confirmatory
 amendment (\texttt{docs/SHHS\_HOLDOUT\_AMENDMENT\_A1.md}) was committed at
 \href{https://github.com/quanuiter/SleepTCN/commit/ad61aa0}{\texttt{ad61aa0}}, and the scripts that
 packaged, ran and imported its GPU computation at
