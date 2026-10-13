@@ -4,6 +4,11 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 13 October 2026: Methods, Discussion and new Supplementary Table `tab:sup_e0_original`
+compare E0 with the published ZleepAnlystNet Sleep-EDF-18 Fpz-Cz results (macro-F1 0.7754 versus
+0.7826) and list the implementation differences; the original study's SHHS N3 F1 is cited as
+corroborating context. The Vietnamese translation was fully resynchronised with this manuscript.
+
 Revision, 12 October 2026: the manuscript and supplement report the confirmatory evaluation on 500
 held-out SHHS1 participants (protocol commit `a275617`, analysis commit `2019b51`). Abstract,
 introduction, methods, results, discussion, conclusion, declarations and highlights were revised

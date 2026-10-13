@@ -115,6 +115,45 @@ Gradient-norm clipping & None & 1.0 & None & 1.0 \\
 \end{tabularx}
 \end{table}
 
+\subsection*{Relation of E0 to the original ZleepAnlystNet}
+
+E0 follows the published ZleepAnlystNet design (Jirakittayakorn et al., Scientific Reports 14:9859, 2024):
+the 15 C/P/N class-specific CNNs, their layer sizes and the loss weights $0.5/p_i$, edge replication of
+the shifted P and N inputs, the 128-unit BiLSTM over 75 softmax features, and the optimiser, learning
+rates, batch sizes, patience and epoch limits of both stages. The original study was implemented in
+MATLAB without released code or seeds. The present reimplementation differs in five respects. (i) It
+uses PyTorch with bias-free convolutions and, for the BiLSTM, gradient-norm clipping at 1.0. (ii)
+Validation data are a held-out subject fold, whereas the original drew a random epoch-wise 70/30 split
+(CNNs) or 90/10 split (BiLSTM) from the training data. (iii) Validation runs at the end of every epoch
+instead of every 150 (CNN) or 10 (BiLSTM) iterations, and checkpoints are chosen by the rules in
+Table~\ref{tab:sup_training}. (iv) Movement and unknown epochs are masked from the BiLSTM loss rather
+than relabelled as W. (v) Each rotation uses eight training folds, one validation fold and one test
+fold. The original headline results (accuracy 0.8702, \mf\ 0.8209) refer to Sleep-EDF-13 and are not
+comparable; its Sleep-EDF-18 Fpz-Cz results, obtained with ten-fold subject-wise cross-validation on
+nearly the same scored epochs, are compared with E0 in Table~\ref{tab:sup_e0_original}.
+
+\begin{table}[H]
+\centering\small
+\caption{E0 (seed 42, pooled out-of-fold) versus the published ZleepAnlystNet results on Sleep-EDF-18
+Fpz-Cz (Fig.~3C of the original article). Values are proportions; differences are E0 minus published.}
+\label{tab:sup_e0_original}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+ & Epochs & \mf & Accuracy & $\kappa$ & F1 W & F1 N1 & F1 N2 & F1 N3 & F1 REM \\
+\midrule
+Published & 195{,}479 & .7826 & .8409 & .7790 & .9311 & .4831 & .8586 & .8116 & .8285 \\
+E0 & 195{,}469 & .7754 & .8262 & .7614 & .9236 & .5009 & .8476 & .7921 & .8129 \\
+Difference & $-10$ & $-.0072$ & $-.0147$ & $-.0176$ & $-.0075$ & $+.0178$ & $-.0110$ & $-.0195$ & $-.0156$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The original study also applied its Sleep-EDF-18 Fpz-Cz models, without retraining, to 200 SHHS
+recordings scored from the C3-A2 channel and reported \mf\ 0.5344, $\kappa$ 0.4859 and N3 F1 0.4286. The
+best-performing fold, selected on these SHHS recordings and applied to all 6{,}441 SHHS1 recordings,
+reached \mf\ 0.5735 and N3 F1 0.4580. These values are not directly comparable
+with the C4-A1 ensembles evaluated here, but they show a similar N3 deficit.
+
 Whole retained recordings are the sequence units for training and inference. Batch padding and
 unknown/movement labels are excluded from the loss and metrics; unknown epochs retain their
 positions in the signal sequence. The TCN masks padded positions after the input projection and

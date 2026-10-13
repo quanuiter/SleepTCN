@@ -435,7 +435,11 @@ ResNet-1D; its checkpoint then caches features without gradients. The sequence m
 frozen cache with masked cross-entropy and selected by validation \mf. E1 reuses the E0 encoder but
 changes the sequence-optimiser recipe, and E2 also changes encoder optimisation and selection
 (Supplementary Methods S1), so the comparisons fix partitions and evaluation, not every training choice.
-Every configuration was trained with seeds 42 and 123.
+Every configuration was trained with seeds 42 and 123. On the same Sleep-EDF Fpz-Cz recordings, E0 at seed
+42 reached a pooled \mf\ of 0.7754 and an accuracy of 0.8262, against 0.7826 and 0.8409 reported for
+ZleepAnlystNet under ten-fold subject-wise cross-validation~\cite{jadhav2024zleepanlystnet}, although
+E0 was selected on held-out validation subjects rather than on a random epoch-wise split of the
+training data (Supplementary Table~\ref{SM-tab:sup_e0_original}).
 
 \subsection{Statistical analysis}
 
@@ -900,6 +904,9 @@ classified more than 72\% of reference N3 epochs as N2 on both SHHS1 samples, wi
 despite precision above 0.85; band-pass-only E4 and record-wise $z$-scored E6 showed the same pattern. The oracle
 calculation shows the numerical importance of N3$\rightarrow$N2 for E3, and the boundary analysis shows
 that the deficit extends beyond the neighbourhoods of reference-label changes into stable N3. E3's better aggregate transfer therefore left the largest stage-specific error in place.
+The deficit is not specific to the present implementation: the original ZleepAnlystNet models trained
+on Sleep-EDF Fpz-Cz reached an N3 F1 of only 0.43 on 200 SHHS recordings from the C3-A2 channel, a
+different derivation from the one used here~\cite{jadhav2024zleepanlystnet}.
 
 The cohorts differ simultaneously in EEG derivation, population, acquisition and scoring conditions.
 Slow-wave spatial structure and amplitude-based N3 scoring criteria motivate examining these
@@ -929,7 +936,8 @@ recall without greater REM F1 shows that recall gains must be read together with
 This study combines paired pipeline comparisons, computational cost, an analysis of cross-cohort errors
 and a confirmatory evaluation on held-out participants. It complements work on input representations,
 conventional and deep pipelines, and multi-cohort training~\cite{haghayegh2023sleepinceptionnet,vdd2023traditional,perslev2021usleep,olesen2021mixed}.
-E0 is a reimplementation of the ZleepAnlystNet design under the stated protocol. The primary comparisons
+E0 is a reimplementation of the ZleepAnlystNet design under the stated protocol and scored 0.0072 below
+the published Sleep-EDF \mf\ of that design. The primary comparisons
 evaluate transfer without weight updates. ADAST evaluates target-domain weight updates against a matched
 source-only control, and AdaBN evaluates target-domain normalisation statistics without weight updates.
 

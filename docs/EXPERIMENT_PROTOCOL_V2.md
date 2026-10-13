@@ -106,3 +106,7 @@ công bố code/seed, validation cadence khác và kết quả headline 87,02%/8
 Sleep-EDF-13, trong khi chiến dịch này dùng Sleep-EDF-18 SC 153 bản ghi với validation theo đối
 tượng chặt hơn. Vì vậy không dùng con số headline của paper làm ngưỡng bắt buộc cho E0. E1--E6
 là ablation mới của dự án, không phải experiment được paper công bố.
+
+Bổ sung 13-10-2026: paper có báo cáo Sleep-EDF-18 Fpz-Cz 10-fold theo đối tượng (Fig. 3C: macro-F1
+0,7826, accuracy 0,8409, κ 0,7790, 195.479 epoch), so trực tiếp được với E0 seed 42 (0,7754; 0,8262;
+0,7614; 195.469 epoch). Đối chiếu đầy đủ ở Supplementary Table `tab:sup_e0_original`.

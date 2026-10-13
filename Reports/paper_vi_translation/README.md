@@ -1,5 +1,11 @@
 # Bản dịch tiếng Việt của bài chính nộp BSPC
 
+> **Cập nhật 13-10-2026:** dịch lại toàn bộ theo `../paper_en/main.tex` hiện hành: đánh giá xác nhận
+> trên 500 người SHHS1 giữ lại (H1-H3), tương đương E3/E4, bản sửa đổi A1 (quét biên độ, AdaBN), đối
+> chiếu E0 với ZleepAnlystNet gốc và các mục khai báo mới. 9 bảng, 2 hình, 17 trang; trình tự số liệu,
+> trích dẫn, tham chiếu và nhãn được kiểm tra khớp bản Anh (`translation_audit.json`, mục
+> `revision_20261013`). Các ghi chú bên dưới là lịch sử.
+
 Bản dịch để đọc đối chiếu, ngày 30-09-2026; cập nhật đồng bộ câu hỏi nghiên cứu
 và phần đóng góp, tài liệu tham khảo, Figure 1 với bản tiếng Anh ngày 01-10-2026. Nguồn là `../paper_en/main.tex`
 hiện hành, không phải bản thảo tiếng Việt cũ trong `../paper`.
