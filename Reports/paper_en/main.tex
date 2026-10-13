@@ -374,8 +374,9 @@ uses no target labels but does use all samples of the target recording, removes 
 differences between recordings and is transductive at the recording level.
 \end{itemize}
 
-No notch filter is applied: 50\,Hz lies outside the 0.5-30\,Hz pass-band and at the Nyquist frequency
-of the 100\,Hz signal.
+No notch filter is applied: 50\,Hz mains interference in Sleep-EDF lies at the Nyquist frequency of the
+100\,Hz signal, and 60\,Hz interference in the 125\,Hz SHHS recordings is attenuated by the
+anti-aliasing filter of the resampling step; both lie outside the 0.5-30\,Hz pass-band.
 
 The $\pm800\,\mu$V clip never activated: band-pass-filtered Sleep-EDF values did not exceed
 $246\,\mu$V, every holdout SHHS1 EEG channel has a physical range of $\pm125\,\mu$V, and the
@@ -847,7 +848,7 @@ $[0.0697,0.1020]$, was offset by lower N1, REM and wake F1, and subject-mean \mf
 response was thus monotonic for the N3$\rightarrow$N2 rate but not for N3 recall, which by the
 pre-specified criterion argues against an amplitude-only explanation of N3 under-detection.
 
-AdaBN lowered subject-mean \mf\ by 0.1206, \ci\ $[0.1116,0.1295]$, without a detectable change in N3
+AdaBN changed subject-mean \mf\ by $-0.1206$, \ci\ $[-0.1295,-0.1116]$, without a detectable change in N3
 recall (difference 0.0086, \ci\ $[-0.0052,0.0222]$). Wake precision fell from 0.853 to 0.589 and REM
 recall from 0.876 to 0.312. AdaBN also scored below ADAST, by 0.0844 with \ci\ $[0.0759,0.0929]$, and
 below the matched source-only control of ADAST, by 0.0416 with \ci\ $[0.0333,0.0498]$. Supplementary
@@ -1022,7 +1023,7 @@ Resource was supported by the National Heart, Lung, and Blood Institute (R24 HL1
 Ngo Nhat Quan: Conceptualization, Methodology, Software, Data curation, Formal analysis,
 Investigation, Visualization, Writing - original draft, Writing - review and editing. Pham Thai Son:
 Validation, Investigation, Visualization, Writing - review and editing. Tri Nguyen Ho Duy:
-Supervision, Writing - review and editing.
+Supervision, Writing - review and editing. Tri Nguyen: Supervision, Writing - review and editing.
 
 \subsection*{Declaration of competing interests}
 

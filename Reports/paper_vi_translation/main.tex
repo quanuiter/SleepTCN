@@ -371,8 +371,9 @@ lệch chuẩn tính trên toàn bộ bản ghi đã lọc và cắt. Cách này
 bản ghi đích, loại bỏ khác biệt biên độ tuyệt đối giữa các bản ghi và có tính transductive ở cấp bản ghi.
 \end{itemize}
 
-Không áp dụng bộ lọc notch: 50\,Hz nằm ngoài dải thông 0.5-30\,Hz và tại tần số Nyquist của tín hiệu
-100\,Hz.
+Không áp dụng bộ lọc notch: nhiễu điện lưới 50\,Hz trong Sleep-EDF nằm tại tần số Nyquist của tín hiệu
+100\,Hz, còn nhiễu 60\,Hz trong các bản ghi SHHS 125\,Hz được bộ lọc chống chồng phổ của bước lấy mẫu
+lại làm suy giảm; cả hai đều nằm ngoài dải thông 0.5-30\,Hz.
 
 Bước cắt $\pm800\,\mu$V không bao giờ kích hoạt: giá trị Sleep-EDF sau lọc thông dải không vượt
 $246\,\mu$V, mọi kênh EEG của mẫu SHHS1 giữ lại có dải vật lý $\pm125\,\mu$V, và kiểm tra tiền xử lý của mẫu
@@ -663,7 +664,7 @@ là đối chứng tương ứng của ADAST, không phải E3.}
 \small
 \begin{tabular}{lrrrr}
 \toprule
-\textbf{Mã} & \textbf{\mf\ trung bình theo đối tượng (\ci)} & \textbf{\mf\ gộp} & \textbf{Độ chính xác} & \textbf{$\kappa$} \\
+\textbf{Mã} & \textbf{\mf\ theo đối tượng (\ci)} & \textbf{\mf\ gộp} & \textbf{Độ chính xác} & \textbf{$\kappa$} \\
 \midrule
 E0 & 0.5170 \ $[0.5060, 0.5281]$ & 0.5612 & 0.6506 & 0.5129 \\
 E2 & 0.5122 \ $[0.5001, 0.5241]$ & 0.5533 & 0.6512 & 0.5127 \\
@@ -826,7 +827,7 @@ $[-0.0099,0.0075]$). Các hệ số nhỏ hơn 1 làm độ thu hồi N3 giảm 
 với tỷ lệ N3$\rightarrow$N2 nhưng không đơn điệu với độ thu hồi N3; theo tiêu chí xác định trước, điều này
 phản bác cách giải thích bỏ sót N3 chỉ bằng biên độ.
 
-AdaBN làm giảm \mf\ trung bình theo đối tượng 0.1206, \ci\ $[0.1116,0.1295]$, mà không thay đổi độ thu hồi
+AdaBN làm \mf\ trung bình theo đối tượng thay đổi $-0.1206$, \ci\ $[-0.1295,-0.1116]$, mà không thay đổi độ thu hồi
 N3 một cách phát hiện được (chênh lệch 0.0086, \ci\ $[-0.0052,0.0222]$). Precision lớp thức giảm từ 0.853
 xuống 0.589 và độ thu hồi REM từ 0.876 xuống 0.312. AdaBN cũng thấp hơn ADAST 0.0844 với \ci\
 $[0.0759,0.0929]$, và thấp hơn đối chứng chỉ học nguồn tương ứng của ADAST 0.0416 với \ci\ $[0.0333,0.0498]$.
@@ -992,7 +993,7 @@ Institute (R24 HL114473, 75N92019R002).
 Ngô Nhật Quân: Hình thành ý tưởng, Phương pháp luận, Phần mềm, Quản lý dữ liệu, Phân tích chính thức, Thực hiện
 nghiên cứu, Trực quan hóa, Viết bản thảo đầu tiên, Rà soát và biên tập bản thảo. Phạm Thái Sơn: Kiểm chứng,
 Thực hiện nghiên cứu, Trực quan hóa, Rà soát và biên tập bản thảo. Tri Nguyen Ho Duy: Hướng dẫn nghiên cứu, Rà
-soát và biên tập bản thảo.
+soát và biên tập bản thảo. Tri Nguyen: Hướng dẫn nghiên cứu, Rà soát và biên tập bản thảo.
 
 \subsection*{Tuyên bố xung đột lợi ích}
 
