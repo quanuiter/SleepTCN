@@ -1,5 +1,10 @@
 # Bàn giao bản sửa chuẩn bị nộp BSPC
 
+> **Bổ sung 13-10-2026:** CRediT của Tri Nguyen đã được ghi theo chỉ định của tác giả liên hệ
+> (Supervision; Writing - review and editing), giống Tri Nguyen Ho Duy; vẫn cần thầy duyệt bản cuối.
+> E0 được đối chiếu với kết quả Sleep-EDF-18 công bố của ZleepAnlystNet (Bảng bổ sung S3); bản dịch
+> Việt đã đồng bộ với bản Anh hiện hành.
+
 > **Bổ sung 07-10-2026:** đã kiểm chứng đánh giá ADAST toàn nguồn mười fold
 > và đối chiếu ngân sách bắt cặp. Macro-F1 trung bình SHHS tăng 0,0445; N3
 > cải thiện nhưng F1 N1/N2/REM và outer test nguồn giảm. Bản Anh/Việt và phụ
