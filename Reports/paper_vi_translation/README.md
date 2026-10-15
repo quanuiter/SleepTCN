@@ -5,7 +5,8 @@
 > Hình 5 và Bảng bổ sung S45-S46. Mã nguồn hình: `../paper_en/figure_sources/results_figures.py`. Bảng
 > và hình được đặt cố định (`[H]`) để không chen giữa đoạn văn. Mã commit trong mục khả năng tái lập được
 > chuyển sang Mục bổ sung S3/S5. Rà soát câu chữ tiếng Việt; dấu phân cách hàng nghìn đổi thành khoảng
-> trắng hẹp để không nhầm với dấu thập phân. 8 bảng, 5 hình, 19 trang. Bản Anh nhận cùng các thay đổi
+> trắng hẹp để không nhầm với dấu thập phân. Thời gian huấn luyện (E3 nhanh hơn E0 10.2 lần trên mười fold)
+> được đưa vào Tóm tắt, đóng góp, Bảng 6 mới ở Mục 4.3, Thảo luận và Kết luận. 9 bảng, 5 hình, 20 trang. Bản Anh nhận cùng các thay đổi
 > nội dung (hình, bảng, mục tái lập) nhưng giữ cách đặt float kiểu tạp chí.
 
 > **Cập nhật 13-10-2026:** dịch lại toàn bộ theo `../paper_en/main.tex` hiện hành: đánh giá xác nhận

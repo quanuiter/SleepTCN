@@ -136,8 +136,8 @@ tham gia SHHS1 khác theo một giao thức đã cam kết trước khi xử lý
 
 \noindent
 \textbf{Kết quả.} Mạng dư một chiều kết hợp mạng tích chập thời gian (ResNet-1D-TCN) trên đầu vào lọc
-thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF. Lượt truyền xuôi của E3 nhanh hơn $3.76\times$ so với
-đối chứng CNN-BiLSTM (E0), dù số tham số gấp $4.37\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
+thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF. Dù có số tham số gấp $4.37\times$ đối chứng CNN-BiLSTM
+(E0), E3 huấn luyện đủ mười fold nhanh hơn $10.2\times$ và có lượt truyền xuôi nhanh hơn $3.76\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
 bình theo đối tượng so với E0 thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi
 (E6) thêm 0.0293 (0.0231-0.0354) và so với cùng mô hình trên đầu vào không lọc (E2) thêm 0.0515
 (0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Cấu hình chỉ lọc thông dải (E4) về
@@ -204,8 +204,8 @@ gây tổn thất ở các giai đoạn khác hay không?
 Các đóng góp của chúng tôi tương ứng với các câu hỏi này.
 
 \begin{enumerate}[label=(\arabic*)]
-\item Chúng tôi cho thấy quy trình ResNet-1D-TCN đã triển khai cần ít tính toán hơn đối chứng CNN-BiLSTM
-dù có nhiều tham số hơn, và trong các thay đổi được đánh giá, lọc thông dải, chứ không phải bộ mã hóa
+\item Chúng tôi cho thấy quy trình ResNet-1D-TCN đã triển khai huấn luyện nhanh hơn khoảng mười lần và chạy
+nhanh hơn gần bốn lần so với đối chứng CNN-BiLSTM dù có nhiều tham số hơn, và trong các thay đổi được đánh giá, lọc thông dải, chứ không phải bộ mã hóa
 hay mô hình chuỗi, đóng góp phần lớn lợi thế khi chuyển quần thể: không lọc, cùng mô hình đạt kết quả
 gần đối chứng.
 \item Chúng tôi xác nhận lợi thế này trên 500 người tham gia SHHS1 giữ lại theo giao thức cố định trước khi
@@ -516,7 +516,10 @@ pháp bổ sung S2 nêu cách khớp, chọn mô hình, ngân sách và các th�
 Thời gian suy luận được đo trên một GPU Tesla V100 cho mọi cấu hình, không tính I/O, tiền xử lý và huấn
 luyện: một lô gồm một chuỗi tổng hợp 100 epoch, 20 lượt khởi động và ba vòng 100 lượt đo theo thứ tự cấu hình
 xáo trộn, tóm tắt bằng trung vị của toàn bộ 300 lượt. Benchmark đo quy trình truyền xuôi đã triển khai với
-một hình dạng tensor, không phải thời gian suy luận cả đêm hay độ phức tạp thuật toán.
+một hình dạng tensor, không phải thời gian suy luận cả đêm hay độ phức tạp thuật toán. Chi phí huấn luyện
+được ghi bằng thời gian thực (wall-clock) của huấn luyện và xác thực trên cả mười fold trong lượt chạy seed
+123, trong đó mọi cấu hình được huấn luyện tuần tự trên cùng một GPU Tesla V100 với công thức huấn luyện và
+quy tắc dừng riêng (Phương pháp bổ sung S1).
 
 %==============================================================================
 \section{Kết quả}
@@ -625,8 +628,37 @@ Hình~\ref{fig:speedup_tradeoff} liên hệ tốc độ với hiệu năng tổn
 
 \FloatBarrier
 
-Trong lượt chạy tuần tự seed 123, huấn luyện và xác thực của E2 và E3 mất ít thời gian hơn E0 lần lượt
-12.2$\times$ và 10.2$\times$ (Bảng bổ sung~\ref{SM-tab:sup_seed123_runtime}). Các phân tích biểu diễn và
+Khác biệt về chi phí huấn luyện còn lớn hơn nhiều so với khác biệt khi suy luận. Trong lượt chạy seed 123,
+huấn luyện và xác thực đủ mười fold mất 33\,giờ\,36\,phút với E0 nhưng chỉ 3\,giờ\,17\,phút với E3 và
+2\,giờ\,45\,phút với E2, tức nhanh hơn lần lượt $10.2\times$ và $12.2\times$ (Bảng~\ref{tab:training-time}).
+Như vậy, một vòng đánh giá chéo đầy đủ của quy trình đề xuất hoàn tất trong một buổi làm việc thay vì kéo
+dài hơn một ngày, giúp rút ngắn mọi vòng phát triển và kiểm tra. E0 phải huấn luyện 15 nhánh CNN, mỗi nhánh
+tối đa 1\,000 epoch, trước khi huấn luyện BiLSTM, trong khi bộ mã hóa ResNet-1D là một mạng duy nhất được huấn
+luyện tối đa 40 epoch; riêng giai đoạn mô hình chuỗi TCN, như khi chạy cho E1, chỉ mất 14\,phút. Mức giảm vì vậy
+đến từ cả thiết kế bộ mã hóa lẫn công thức huấn luyện ngắn hơn của nó, và không nên quy toàn bộ cho TCN.
+
+\begin{table}[H]
+\centering
+\caption{Thời gian thực (wall-clock) của huấn luyện và xác thực trên mười fold (seed 123; mọi cấu hình được
+huấn luyện tuần tự trên cùng một GPU Tesla V100). Tỷ số bằng thời gian của E0 chia cho thời gian của cấu
+hình. E1 dùng lại bộ mã hóa và đặc trưng đã lưu của E0, nên thời gian của nó chỉ gồm huấn luyện mô hình chuỗi.}
+\label{tab:training-time}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Mã} & \textbf{Mười fold} & \textbf{Trung bình mỗi fold} & \textbf{Nhanh hơn E0} \\
+\midrule
+E0 & 33 giờ 35 phút & 3 giờ 22 phút & $1.0\times$ \\
+E1 (chỉ mô hình chuỗi) & 14 phút & 1 phút 26 giây & n/a \\
+E2 & 2 giờ 45 phút & 16 phút 30 giây & $12.2\times$ \\
+E3 & 3 giờ 17 phút & 19 phút 40 giây & $10.2\times$ \\
+E4 & 2 giờ 56 phút & 17 phút 36 giây & $11.5\times$ \\
+E6 & 2 giờ 25 phút & 14 phút 28 giây & $13.9\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Các phân tích biểu diễn và
 ngữ cảnh, gồm một thí nghiệm loại bỏ ngữ cảnh trên Sleep-EDF trong đó các nhóm đặc trưng epoch liền trước
 và liền sau không cho lợi ích phát hiện được ($\Delta\mf=0.0010$, \ci\ $[-0.0046,0.0066]$), được trình bày
 ở Hình bổ sung~\ref{SM-fig:sup_representation_context} và Bảng~\ref{SM-tab:sup_context}.
@@ -877,8 +909,11 @@ Mục bổ sung S5 trình bày mọi lớp và đối chiếu.
 Đánh giá xác nhận ủng hộ ba kết luận về các quy trình được đánh giá. Thứ nhất, cấu hình ResNet-1D-TCN trên
 đầu vào lọc thông dải chuyển sang SHHS1 tốt hơn đối chứng CNN-BiLSTM, và lợi thế này, quan sát lần đầu trên
 180 người tham gia, đã được xác nhận trên 500 người tham gia mà dữ liệu chưa ảnh hưởng đến bất kỳ phân tích
-nào. Nó cũng cần ít tính toán hơn: lượt truyền xuôi nhanh hơn $3.76\times$ trong benchmark cố định và thời
-gian huấn luyện và xác thực quan sát được ngắn hơn, dù thiết lập huấn luyện và quy tắc dừng khác nhau. Thứ
+nào. Nó cũng rẻ hơn nhiều khi phát triển và khi sử dụng: huấn luyện và xác thực mười fold chỉ mất khoảng
+3.3\,giờ thay vì 33.6\,giờ trên cùng một GPU, và lượt truyền xuôi nhanh hơn $3.76\times$. Với một quy trình
+phải huấn luyện lại cho mỗi biến thể tiền xử lý, mỗi seed và mỗi fold, việc giảm thời gian huấn luyện khoảng
+mười lần là một ưu điểm thực tế riêng, dù một phần mức giảm đến từ công thức huấn luyện ngắn hơn của bộ mã
+hóa ResNet-1D. Thứ
 hai, lọc thông dải đóng góp phần lớn lợi thế này. Cùng mô hình trên đầu vào không lọc đạt kết quả gần đối
 chứng trên mẫu giữ lại, và trên mẫu thứ nhất, cả việc thay mô hình chuỗi (E1-E0) lẫn thay đặc trưng/ngữ cảnh
 (E2-E1) đều không tạo lợi ích tương đương. Cách lọc tín hiệu vì vậy là một phần đáng kể quyết định khả năng
@@ -973,8 +1008,8 @@ N3 có tổng quát hóa hay không.
 %==============================================================================
 \section{Kết luận}
 
-Theo một giao thức chung, quy trình ResNet-1D-TCN trên EEG lọc thông dải cần ít tính toán hơn đối chứng
-CNN-BiLSTM và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
+Theo một giao thức chung, quy trình ResNet-1D-TCN trên EEG lọc thông dải huấn luyện nhanh hơn khoảng mười lần,
+chạy nhanh hơn gần bốn lần so với đối chứng CNN-BiLSTM, và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
 gia, đã được xác nhận trên 500 người tham gia giữ lại ngoài quá trình phát triển: \mf\ trung bình theo đối
 tượng cải thiện 0.0467 so với đối chứng, 0.0293 so với $z$-score theo bản ghi và 0.0515 so với cùng mô hình
 trên đầu vào không lọc. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể. Vì bước cắt không bao
