@@ -1347,7 +1347,7 @@ reuse the same cohorts and related fitted models, not independent replication sa
 The protocol was committed to the project repository before any holdout recording was preprocessed.
 Commit timestamps are recorded by the authors' machine; as an independent record, the GitHub server
 logged an automated test run on the protocol commit \texttt{a275617} at 11:18:09 UTC on 10 October 2026
-(GitHub Actions run 38047923110), two days before the analysis script was committed. It consists of the document \nolinkurl{docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md} and the
+(GitHub Actions run 38047923110), two days before the analysis script was committed at \texttt{2019b51}. It consists of the document \nolinkurl{docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md} and the
 configuration file \nolinkurl{configs/shhs_holdout_confirmatory_v1.json}. Participants ranked 221-720 in the SHA-256 ranking used for the first SHHS1 sample
 formed the holdout sample; ranks 1-220 reproduced the roles of the first selection exactly. One
 ranked participant (rank 490) had no recording available from NSRR and was replaced, before any
@@ -1615,7 +1615,8 @@ training run that drifted apart numerically.
 
 \textbf{Design.} The amendment (\nolinkurl{docs/SHHS_HOLDOUT_AMENDMENT_A1.md} and
 \nolinkurl{configs/shhs_holdout_amendment_a1.json}) was committed at \texttt{ad61aa0} after the
-confirmatory analysis and before any of its inference. It evaluates E4 at seed 42 on the 500 holdout
+confirmatory analysis and before any of its inference; the scripts that package, run and import its GPU
+computation were committed at \texttt{e5a255a}. It evaluates E4 at seed 42 on the 500 holdout
 participants under five conditions: the band-pass-filtered input multiplied by 0.5, 0.75, 1.5 or 2,
 with the encoder in evaluation mode and its stored batch-normalisation statistics, and AdaBN. For AdaBN,
 40 epochs were drawn without replacement from each recording (random generator seeded with 2041 and the

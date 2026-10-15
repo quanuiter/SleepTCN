@@ -22,6 +22,8 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage[section]{placeins}
+\usepackage{float}
+\usepackage{adjustbox}               % chỉ thu nhỏ bảng khi rộng hơn lề, không phóng to                 % [H]: bảng/hình nằm đúng chỗ, không chen giữa đoạn văn
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{xurl}
@@ -138,16 +140,17 @@ thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF. Lượt truyền xu�
 đối chứng CNN-BiLSTM (E0), dù số tham số gấp $4.37\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
 bình theo đối tượng so với E0 thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi
 (E6) thêm 0.0293 (0.0231-0.0354) và so với cùng mô hình trên đầu vào không lọc (E2) thêm 0.0515
-(0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Đầu vào chỉ lọc thông dải (E4), tương
-đương E3 khi có chuẩn hóa theo lô, đạt điểm cao hơn 0.009-0.014, tương đương chênh lệch giữa hai seed
-huấn luyện (0.005-0.020). E0 và E3 phân loại hơn 72\% epoch N3 (ngủ sâu) thành N2. Quyết định N2/N3 phụ
-thuộc vào biên độ đầu vào, nhưng đổi thang biên độ, thích nghi chuẩn hóa theo lô và thích nghi đối kháng
-đều không loại bỏ được lỗi này mà không gây tổn thất ở giai đoạn khác.
+(0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Cấu hình chỉ lọc thông dải (E4) về
+bản chất là cùng một mô hình với E3, vì chuẩn hóa theo lô triệt tiêu hệ số đổi thang; E4 đạt điểm cao hơn E3
+0.009-0.014, cùng cỡ với chênh lệch giữa hai seed huấn luyện của cùng một cấu hình (0.005-0.020). E0 và E3
+phân loại hơn 72\% epoch N3 (ngủ sâu) thành N2. Quyết định giữa N2 và N3 phụ thuộc vào biên độ đầu vào,
+nhưng đổi thang biên độ, thích nghi chuẩn hóa theo lô và thích nghi đối kháng đều không giảm được lỗi này
+mà không làm giảm hiệu năng ở các giai đoạn khác.
 
 \noindent
-\textbf{Kết luận.} Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể, và nhầm N3 thành N2 tồn
-tại ở mọi quy trình zero-shot. So sánh quy trình nên báo cáo biến thiên giữa các lần huấn luyện và được
-xác nhận trên dữ liệu giữ lại ngoài quá trình phát triển.
+\textbf{Kết luận.} Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể, còn lỗi nhầm N3 thành N2
+xuất hiện ở mọi quy trình zero-shot. Khi so sánh các quy trình, cần báo cáo biến thiên giữa các lần huấn
+luyện và xác nhận kết quả trên dữ liệu giữ lại, nằm ngoài quá trình phát triển.
 \end{abstract}
 
 \vspace{0.3em}
@@ -207,14 +210,15 @@ hay mô hình chuỗi, đóng góp phần lớn lợi thế khi chuyển quần 
 gần đối chứng.
 \item Chúng tôi xác nhận lợi thế này trên 500 người tham gia SHHS1 giữ lại theo giao thức cố định trước khi
 xử lý dữ liệu của họ. Chúng tôi cũng cho thấy hai seed huấn luyện của cùng một cấu hình có thể chênh
-nhau ngang một số đối chiếu cấu hình, và biến thể chỉ lọc thông dải với biến thể đổi thang đầu vào là
-hai lần chạy tương đương của cùng một quy trình, chênh lệch điểm phản ánh sai lệch số học trong huấn
-luyện; do đó khoảng tin cậy tính cho mô hình cố định đánh giá thấp độ bất định của so sánh quy trình.
-\item Chúng tôi xác định nhầm N3 thành N2 là lỗi chuyển quần thể chung, lặp lại ở mọi quy trình zero-shot
-và trên mẫu giữ lại. Khảo sát quét biên độ đầu vào cho thấy lỗi này phụ thuộc vào biên độ tín hiệu
-nhưng không được giải thích bởi biên độ. Trong các thí nghiệm có đối chứng tương ứng, hiệu chỉnh tiên
-nghiệm, trọng số lớp, thích nghi chuẩn hóa theo lô và thích nghi miền đối kháng đều không giảm được lỗi
-này mà không gây tổn thất ở giai đoạn khác.
+nhau ngang một số đối chiếu giữa các cấu hình. Biến thể chỉ lọc thông dải và biến thể có đổi thang đầu vào
+thực chất là hai lần chạy của cùng một quy trình, và chênh lệch điểm giữa chúng chỉ đến từ sai số số học
+tích lũy trong huấn luyện. Vì vậy, khoảng tin cậy tính với mô hình cố định đánh giá thấp độ bất định khi
+so sánh các quy trình.
+\item Chúng tôi xác định nhầm N3 thành N2 là lỗi chung khi chuyển quần thể, lặp lại ở mọi quy trình
+zero-shot và trên mẫu giữ lại. Khảo sát quét biên độ đầu vào cho thấy lỗi này phụ thuộc vào biên độ tín
+hiệu nhưng biên độ không giải thích được toàn bộ lỗi. Trong các thí nghiệm có đối chứng tương ứng, hiệu
+chỉnh tiên nghiệm, trọng số lớp, thích nghi chuẩn hóa theo lô và thích nghi miền đối kháng đều không giảm
+được lỗi này mà không làm giảm hiệu năng ở các giai đoạn khác.
 \end{enumerate}
 
 %==============================================================================
@@ -270,10 +274,10 @@ quyết những vấn đề liên quan nhưng khác nhau~\cite{saerens2002adjust
 \subsection{Dữ liệu và nhãn}
 
 Tập con Sleep Cassette của Sleep-EDF Expanded được dùng ở đây gồm 153 bản ghi của 78 đối tượng; chúng
-tôi dùng chuyển đạo Fpz-Cz ở 100\,Hz với epoch 30\,giây (3{,}000 mẫu mỗi epoch). Nhãn được ánh xạ thành
+tôi dùng chuyển đạo Fpz-Cz ở 100\,Hz với epoch 30\,giây (3\,000 mẫu mỗi epoch). Nhãn được ánh xạ thành
 W, N1, N2, N3 và REM, gộp giai đoạn 3 và 4 ban đầu thành N3; các epoch Movement và Unknown giữ vị trí theo
-thời gian nhưng bị loại khỏi hàm mất mát và mọi chỉ số. Sau khi lấy cửa sổ, còn 195{,}767 epoch, trong đó
-195{,}469 epoch có nhãn được đánh giá và 298 epoch là Movement/Unknown.
+thời gian nhưng bị loại khỏi hàm mất mát và mọi chỉ số. Sau khi lấy cửa sổ, còn 195\,767 epoch, trong đó
+195\,469 epoch có nhãn được đánh giá và 298 epoch là Movement/Unknown.
 
 Cửa sổ đánh giá, áp dụng giống nhau cho cả hai đoàn hệ, kéo dài từ 30\,phút trước epoch đầu tiên đến
 30\,phút sau epoch cuối cùng có nhãn N1, N2, N3 hoặc REM. Vì cửa sổ này ảnh hưởng mạnh đến tỷ lệ thức và
@@ -281,7 +285,7 @@ mọi chỉ số tổng hợp, và vì các mốc của nó dùng nhãn tham chi
 phải quy tắc suy luận có thể triển khai.
 
 Việc chọn SHHS Visit-1 chấp nhận các giá trị 3-7 của trường chất lượng \texttt{overall\_shhs1}; cả
-5{,}804 người tham gia trong bản phát hành dữ liệu đều đáp ứng. Mã định danh người tham gia được xếp hạng
+5\,804 người tham gia trong bản phát hành dữ liệu đều đáp ứng. Mã định danh người tham gia được xếp hạng
 bằng SHA-256 với seed chọn mẫu 42, và 220 người đầu tiên được phân vai trò: 5 người thích nghi, 15 người
 xác thực, 180 người kiểm tra và 20 người dự phòng. Nhóm xác thực đóng vai trò cổng kỹ thuật: toàn bộ lượt
 suy luận phải chạy xong không lỗi trên nhóm này trước khi xử lý những người kiểm tra, và không mô hình
@@ -302,7 +306,7 @@ lý bản ghi chứ không bởi tính toán lực thống kê; các khoảng ti
 được ánh xạ $0\rightarrow$W, $1\rightarrow$N1, $2\rightarrow$N2, $\{3,4\}\rightarrow$N3, $5\rightarrow$REM,
 $\{6,9\}\rightarrow$loại bỏ. Bảng~\ref{tab:class-distribution} trình bày phân bố nhãn của ba mẫu.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Phân bố nhãn được đánh giá trong ba mẫu đánh giá. Tỷ số so sánh tỷ trọng trong mẫu SHHS1 giữ lại
 với tỷ trọng trong Sleep-EDF.}
@@ -313,13 +317,13 @@ với tỷ trọng trong Sleep-EDF.}
 & \multicolumn{2}{c|}{\textbf{Sleep-EDF}} & \multicolumn{2}{c|}{\textbf{SHHS1 thứ nhất ($n=180$)}} & \multicolumn{3}{c}{\textbf{SHHS1 giữ lại ($n=500$)}} \\
 \textbf{Giai đoạn} & \textbf{Epoch} & \textbf{Tỷ trọng} & \textbf{Epoch} & \textbf{Tỷ trọng} & \textbf{Epoch} & \textbf{Tỷ trọng} & \textbf{Tỷ số} \\
 \midrule
-W   & 65{,}941 & 33.73\% & 36{,}983 & 21.88\% & 99{,}674  & 21.74\% & 0.64 \\
-N1  & 21{,}522 & 11.01\% & 7{,}002  & 4.14\%  & 18{,}930  & 4.13\%  & 0.38 \\
-N2  & 69{,}132 & 35.37\% & 76{,}287 & 45.14\% & 207{,}848 & 45.34\% & 1.28 \\
-N3  & 13{,}039 & 6.67\%  & 22{,}806 & 13.49\% & 61{,}523  & 13.42\% & 2.01 \\
-REM & 25{,}835 & 13.22\% & 25{,}934 & 15.34\% & 70{,}434  & 15.36\% & 1.16 \\
+W   & 65\,941 & 33.73\% & 36\,983 & 21.88\% & 99\,674  & 21.74\% & 0.64 \\
+N1  & 21\,522 & 11.01\% & 7\,002  & 4.14\%  & 18\,930  & 4.13\%  & 0.38 \\
+N2  & 69\,132 & 35.37\% & 76\,287 & 45.14\% & 207\,848 & 45.34\% & 1.28 \\
+N3  & 13\,039 & 6.67\%  & 22\,806 & 13.49\% & 61\,523  & 13.42\% & 2.01 \\
+REM & 25\,835 & 13.22\% & 25\,934 & 15.34\% & 70\,434  & 15.36\% & 1.16 \\
 \midrule
-\textbf{Tổng} & \textbf{195{,}469} & \textbf{100\%} & \textbf{169{,}012} & \textbf{100\%} & \textbf{458{,}409} & \textbf{100\%} & \\
+\textbf{Tổng} & \textbf{195\,469} & \textbf{100\%} & \textbf{169\,012} & \textbf{100\%} & \textbf{458\,409} & \textbf{100\%} & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -334,7 +338,7 @@ Hình~\ref{fig:pipeline} tóm tắt các cấu hình kiến trúc, ngữ cảnh 
 trình đánh giá chung. EEG đã hiệu chuẩn được xử lý liên tục trước khi chia epoch; các epoch thu được được
 mã hóa bằng bộ mã hóa 15-CNN hoặc ResNet-1D, rồi được mô hình hóa theo chuỗi bằng BiLSTM hoặc TCN.
 
-\begin{figure}[!t]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/study_design_vi.pdf}
     \caption{\textbf{Các cấu hình mô hình và quy trình đánh giá.} (a) E0 và E1 dùng chung bộ mã hóa
@@ -354,21 +358,22 @@ mã hóa bằng bộ mã hóa 15-CNN hoặc ResNet-1D, rồi được mô hình 
 \end{figure}
 
 Mọi điều kiện tác động lên tín hiệu liên tục đã hiệu chuẩn theo microvolt trước khi chia epoch. Bốn điều
-kiện tín hiệu hoạt động được đưa vào phân tích hiệu năng, và một điều kiện chỉ để kiểm tra (E5) ghi nhận
-một thí nghiệm loại bỏ bước cắt biên độ đã dự kiến:
+kiện tín hiệu được dùng trong phân tích hiệu năng; điều kiện thứ năm (E5) chỉ dùng để kiểm tra, ghi nhận một
+thí nghiệm loại bỏ bước cắt biên độ đã lên kế hoạch:
 
 \begin{itemize}
 \item \textbf{Thô} (E0-E2): không lọc, không cắt, không đổi thang; giữ nguyên đơn vị $\mu$V.
 \item \textbf{Chỉ lọc thông dải} (E4): bộ lọc Butterworth thông dải không lệch pha, bậc 4, 0.5-30\,Hz,
 triển khai bằng các tầng bậc hai với phép lọc tiến-lùi.
 \item \textbf{Lọc thông dải và cắt biên độ} (E5; chỉ kiểm tra): tín hiệu E4 tiếp tục được cắt cứng tại
-$\pm800\,\mu$V. Đầu vào E5 và E4 giống nhau từng bit trên cả 153 bản ghi Sleep-EDF, nên E5 bị hủy sau fold 0,
-trước khi xem bất kỳ điểm số nào.
+$\pm800\,\mu$V. Đầu vào E5 và E4 giống nhau từng bit trên cả 153 bản ghi Sleep-EDF, nên E5 được dừng sau
+fold 0, trước khi xem bất kỳ điểm số nào.
 \item \textbf{Lọc thông dải, cắt biên độ và chia cho 100} (E3): cùng phép lọc thông dải, tiếp theo cắt cứng
 tại $\pm800\,\mu$V và chia cho hằng số 100. Không ước lượng thống kê nào ở cấp bản ghi hay đoàn hệ.
 \item \textbf{$z$-score theo bản ghi} (E6): cùng phép lọc và cắt, tiếp theo trừ trung bình và chia cho độ
 lệch chuẩn tính trên toàn bộ bản ghi đã lọc và cắt. Cách này không dùng nhãn đích nhưng dùng mọi mẫu của
-bản ghi đích, loại bỏ khác biệt biên độ tuyệt đối giữa các bản ghi và có tính transductive ở cấp bản ghi.
+bản ghi đích, loại bỏ khác biệt biên độ tuyệt đối giữa các bản ghi và mang tính chuyển nạp (transductive)
+ở cấp bản ghi.
 \end{itemize}
 
 Không áp dụng bộ lọc notch: nhiễu điện lưới 50\,Hz trong Sleep-EDF nằm tại tần số Nyquist của tín hiệu
@@ -377,22 +382,22 @@ lại làm suy giảm; cả hai đều nằm ngoài dải thông 0.5-30\,Hz.
 
 Bước cắt $\pm800\,\mu$V không bao giờ kích hoạt: giá trị Sleep-EDF sau lọc thông dải không vượt
 $246\,\mu$V, mọi kênh EEG của mẫu SHHS1 giữ lại có dải vật lý $\pm125\,\mu$V, và kiểm tra tiền xử lý của mẫu
-SHHS1 thứ nhất không ghi nhận mẫu tín hiệu nào bị cắt. Vì vậy E3 chỉ khác E4 ở hệ số 100. Do lớp tích chập
-đầu tiên của ResNet-1D không có bias và được theo sau bởi chuẩn hóa theo lô, hệ số này bị hấp thụ, trừ qua
-hằng số ổn định $\varepsilon$, và gradient cũng không đổi, nên E3 và E4 chỉ khác nhau qua sai lệch số học
-trong huấn luyện (Mục bổ sung S4). Do đó E3-E2 ước lượng tác động của lọc thông dải cùng với biến thiên
-giữa các lần huấn luyện.
+SHHS1 thứ nhất không ghi nhận mẫu tín hiệu nào bị cắt. Vì vậy E3 chỉ khác E4 ở hệ số 100. Lớp tích chập
+đầu tiên của ResNet-1D không có bias và đứng ngay trước một lớp chuẩn hóa theo lô, nên hệ số này bị triệt
+tiêu (chỉ còn ảnh hưởng không đáng kể qua hằng số ổn định $\varepsilon$) và gradient cũng không đổi. Do đó
+E3 và E4 chỉ khác nhau ở sai số số học tích lũy trong huấn luyện (Mục bổ sung S4), và E3-E2 ước lượng tác
+động của lọc thông dải cộng với biến thiên giữa các lần huấn luyện.
 
-Thống kê theo bản ghi của E6 được tính trên những khoảng rất khác nhau ở hai đoàn hệ. Bản ghi Sleep-EDF dài
-17-24\,giờ (trung vị 23\,giờ) và gồm các đoạn ban ngày dài nằm ngoài cửa sổ đánh giá, trong khi bản ghi
-SHHS1 chỉ bao phủ đêm trên giường. Trong cửa sổ đánh giá, trung vị độ lệch chuẩn của đầu vào E6 là 0.77 ở
+Thống kê theo bản ghi của E6 được tính trên những khoảng thời gian rất khác nhau ở hai đoàn hệ. Bản ghi
+Sleep-EDF dài 17-24\,giờ (trung vị 23\,giờ), gồm cả những đoạn ban ngày dài nằm ngoài cửa sổ đánh giá,
+trong khi bản ghi SHHS1 chỉ bao phủ khoảng thời gian nằm trên giường ban đêm. Trong cửa sổ đánh giá, trung vị độ lệch chuẩn của đầu vào E6 là 0.77 ở
 Sleep-EDF nhưng 0.99 ở mẫu SHHS1 giữ lại (khoảng tứ phân vị 0.85-1.00). Như vậy, E6 đưa tín hiệu SHHS1 vào
 mô hình ở thang tương đối khoảng 1.3 lần so với lúc huấn luyện, ngoài việc loại bỏ khác biệt biên độ giữa
 các bản ghi.
 
 \subsection{Cấu hình mô hình}
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Mã cấu hình thực nghiệm. Các mã biểu thị tổ hợp tín hiệu-mô hình, không phải thứ hạng hiệu năng
 hay chuỗi phiên bản mô hình.}
@@ -417,7 +422,7 @@ Sáu cấu hình E0-E4 và E6 được đưa vào phân tích hiệu năng. Bộ
 của 15 nhánh CNN trải trên epoch hiện tại, liền trước và liền sau (C/P/N), cho 75 đặc trưng mỗi epoch;
 ResNet-1D tạo 128 đặc trưng chỉ từ epoch hiện tại. TCN sáu khối không nhân quả có trường tiếp nhận 253
 epoch, còn BiLSTM đối chứng có 128 đơn vị ẩn mỗi chiều. Mọi mô hình đều chạy ngoại tuyến: mô hình chuỗi
-dùng ngữ cảnh tương lai, còn lọc không lệch pha và chuẩn hóa E6 dùng các mẫu tương lai. Kích thước lớp và
+dùng ngữ cảnh của các epoch phía sau, còn lọc không lệch pha và chuẩn hóa E6 dùng các mẫu tín hiệu phía sau. Kích thước lớp và
 siêu tham số được nêu trong Phương pháp bổ sung S1.
 
 \subsection{Huấn luyện hai giai đoạn và đánh giá chéo theo đối tượng}
@@ -427,8 +432,9 @@ tra, fold kế tiếp làm fold xác thực và các fold còn lại làm fold h
 người luôn cùng vai trò và fold kiểm tra không bao giờ tham gia chọn mô hình; mọi cấu hình dùng cùng
 phân hoạch. Huấn luyện có hai giai đoạn. Bộ mã hóa epoch dùng trọng số lớp tính từ các đối tượng huấn
 luyện và được chọn trên dữ liệu xác thực, theo hàm mất mát có trọng số nhỏ nhất với mỗi CNN đối chứng và
-\mf\ lớn nhất với ResNet-1D; checkpoint được chọn sau đó lưu đặc trưng mà không tính gradient. Mô hình
-chuỗi được khớp trên bộ đặc trưng đóng băng với cross-entropy có mặt nạ và được chọn theo \mf\ xác thực.
+\mf\ lớn nhất với ResNet-1D; checkpoint được chọn dùng để trích đặc trưng (không tính gradient). Sau đó, mô
+hình chuỗi được huấn luyện trên các đặc trưng cố định này với hàm cross-entropy có mặt nạ và được chọn theo
+\mf\ xác thực.
 E1 dùng lại bộ mã hóa E0 nhưng thay thiết lập tối ưu mô hình chuỗi, còn E2 thay cả cách tối ưu và chọn bộ
 mã hóa (Phương pháp bổ sung S1), nên các so sánh cố định phân hoạch và cách đánh giá chứ không cố định mọi
 lựa chọn huấn luyện. Mọi cấu hình được huấn luyện với seed 42 và 123. Trên cùng các bản ghi Sleep-EDF
@@ -441,66 +447,68 @@ luyện (Bảng bổ sung~\ref{SM-tab:sup_e0_original}).
 
 Mọi cấu hình đã hoàn tất chọn mô hình dựa trên xác thực trước khi đánh giá dự đoán kiểm tra seed 42. Trên
 Sleep-EDF, \mf\ gộp là chỉ số chính, nhưng đơn vị suy luận là đối tượng. Bootstrap cụm theo đối tượng bắt
-cặp với 10{,}000 lần lấy mẫu lại cho khoảng phân vị của các chênh lệch~\cite{efron1994bootstrap}, kiểm định
+cặp với 10\,000 lần lấy mẫu lại cho khoảng phân vị của các chênh lệch~\cite{efron1994bootstrap}, kiểm định
 hạng có dấu Wilcoxon hai phía~\cite{wilcoxon1945} đánh giá chênh lệch theo đối tượng, và hiệu chỉnh
 Holm~\cite{holm1979} được áp dụng cho bốn so sánh xác định trước E1-E0, E2-E1, E3-E2 và E3-E6; E3-E0 là
 hậu nghiệm. \mf\ gộp được tính từ tổng ma trận nhầm lẫn, còn \mf\ trung bình theo đối tượng lấy trung bình
 điểm của từng người; chỉ số dùng năm lớp cố định và gán giá trị không khi mẫu số rỗng. Số thắng/hòa/thua,
-mức trội dấu $(W-L)/(W+L)$ và kiểm định dấu chính xác mang tính mô tả. Mọi khoảng là khoảng 95\% biên
-duyên coi các mô hình đã huấn luyện là cố định, nên không bao gồm biến thiên giữa các lần huấn luyện. Lần
+mức trội dấu $(W-L)/(W+L)$ và kiểm định dấu chính xác mang tính mô tả. Mọi khoảng là khoảng tin cậy 95\%
+cho từng so sánh riêng lẻ, tính với các mô hình đã huấn luyện được giữ cố định, nên không bao gồm biến thiên
+giữa các lần huấn luyện. Lần
 lặp seed 123, hoàn thành sau khi đã biết kết quả seed 42, được phân tích riêng.
 
-Trên SHHS1, mỗi cấu hình được áp dụng không cập nhật trọng số (zero-shot): xác suất softmax của mười mô hình
-fold Sleep-EDF được lấy trung bình ở float64 trước argmax. Trên mẫu SHHS1 thứ nhất, tiêu chí chính xác
+Trên SHHS1, mỗi cấu hình được áp dụng mà không cập nhật trọng số (zero-shot): xác suất softmax của mười mô
+hình fold Sleep-EDF được lấy trung bình (ở độ chính xác float64) rồi mới chọn lớp có xác suất lớn nhất. Trên mẫu SHHS1 thứ nhất, tiêu chí chính xác
 định trước là \mf\ trung bình theo đối tượng, với E3-E0 và E3-E6 là các so sánh chính theo cùng quy trình;
 các so sánh liên quan E1, E2 và E4 là thứ cấp hoặc hậu nghiệm, và các phân tích vùng ranh giới là chẩn
 đoán hậu nghiệm (Phương pháp bổ sung S1).
 
 \subsection{Giao thức xác nhận trên mẫu giữ lại}
 
-Trước khi tiền xử lý bất kỳ bản ghi giữ lại nào, một giao thức cố định đoàn hệ, tiền xử lý, checkpoint, quy
-tắc tổ hợp, chỉ số, giả thuyết và quy tắc quyết định đã được công bố trên kho dự án công khai ngày
-10-10-2026, và chương trình phân tích được công bố ở đó trước khi chạy; các phiên bản chính xác được nêu
-trong mục khả năng tái lập. Họ xác nhận
-gồm ba đối chiếu seed 42 trên \mf\ trung bình theo đối tượng, mỗi đối chiếu có dấu kỳ vọng dương: H1,
-E3-E0; H2, E3-E6; và H3, E3-E2. Một giả thuyết được xác nhận nếu giá trị $p$ Wilcoxon hai phía sau hiệu
-chỉnh Holm nhỏ hơn 0.05 và khoảng bootstrap cụm theo đối tượng bắt cặp (10{,}000 lần lấy mẫu lại, seed
+Trước khi tiền xử lý bất kỳ bản ghi giữ lại nào, chúng tôi công bố trên kho dự án công khai (ngày
+10-10-2026) một giao thức cố định đoàn hệ, tiền xử lý, checkpoint, quy tắc tổ hợp, chỉ số, giả thuyết và quy
+tắc quyết định; chương trình phân tích cũng được công bố ở đó trước khi chạy (mã commit và dấu thời gian ở
+Mục bổ sung S3). Họ xác nhận gồm ba đối chiếu seed 42 trên \mf\ trung bình theo đối tượng, đều kỳ vọng
+dương: H1, E3-E0; H2, E3-E6; và H3, E3-E2. Một giả thuyết được xác nhận nếu giá trị $p$ Wilcoxon hai phía sau hiệu
+chỉnh Holm nhỏ hơn 0.05 và khoảng bootstrap cụm theo đối tượng bắt cặp (10\,000 lần lấy mẫu lại, seed
 2040) nằm hoàn toàn trên không.
 
 Giao thức cũng xác định các phân tích thứ cấp: lặp lại H1-H3 ở seed 123, E4-E3 cùng chênh lệch giữa hai
 seed của E0, E3, E4 và E6, ADAST so với đối chứng tương ứng, độ thu hồi N3 và tỷ lệ N3$\rightarrow$N2, một
-biến thể \mf\ theo đối tượng chỉ tính các lớp hiện diện, và tóm tắt thang đầu vào của E6. Mười hai nhánh
-được đánh giá, gồm E0, E2, E3, E4 và E6 ở cả hai seed cùng ADAST và đối chứng của nó, với các checkpoint đã
-khóa trên CPU, và không chỉ số nào được tính trước khi có đủ mọi dự đoán. Các sai lệch, không sai lệch nào
-làm thay đổi dự đoán, được liệt kê ở Mục bổ sung S3.
+biến thể \mf\ theo đối tượng chỉ tính các lớp hiện diện, và tóm tắt thang đầu vào của E6. Mười hai mô hình
+tổ hợp được đánh giá trên CPU với các checkpoint đã khóa: E0, E2, E3, E4 và E6 ở cả hai seed, cùng ADAST và
+đối chứng của nó; không chỉ số nào được tính trước khi có đủ mọi dự đoán. Các điểm lệch khỏi giao thức được
+liệt kê ở Mục bổ sung S3; không điểm nào làm thay đổi dự đoán.
 
 \subsection{Phân tích biên độ và thích nghi sau xác nhận}
 \label{sec:amendment-methods}
 
-Sau phân tích xác nhận, một bản sửa đổi được công bố trên kho dự án trước lượt suy luận của nó xác định hai phân tích mô tả trên E4 seed 42, dạng chỉ lọc thông dải của quy trình
-(Mục~\ref{sec:holdout}), trên cùng 500 người tham gia. Thứ nhất, đầu vào được nhân với 0.5, 0.75, 1.5 hoặc 2
+Sau phân tích xác nhận, một bản sửa đổi giao thức được công bố trên kho dự án trước khi chạy suy luận. Bản
+sửa đổi này xác định hai phân tích mô tả trên cùng 500 người tham gia, dùng E4 seed 42, tức dạng chỉ lọc
+thông dải của quy trình (Mục~\ref{sec:holdout}). Thứ nhất, đầu vào được nhân với 0.5, 0.75, 1.5 hoặc 2
 trong khi bộ mã hóa giữ nguyên thống kê chuẩn hóa theo lô đã lưu, nhằm kiểm tra giai đoạn dự đoán phụ thuộc
-vào biên độ tín hiệu mạnh đến đâu. Bản sửa đổi nêu rằng, nếu bỏ sót N3 chủ yếu do sóng chậm SHHS1 đến bộ
-mã hóa với biên độ nhỏ hơn dữ liệu huấn luyện, độ thu hồi N3 sẽ tăng và tỷ lệ N3$\rightarrow$N2 sẽ giảm
-với hệ số lớn hơn 1, và một đáp ứng không đơn điệu sẽ phản bác cách giải thích chỉ dựa trên biên độ. Thứ
+vào biên độ tín hiệu mạnh đến đâu. Bản sửa đổi nêu trước rằng nếu bỏ sót N3 chủ yếu là do sóng chậm của SHHS1
+đi vào bộ mã hóa với biên độ nhỏ hơn dữ liệu huấn luyện, thì với hệ số lớn hơn 1, độ thu hồi N3 sẽ tăng và tỷ
+lệ N3$\rightarrow$N2 sẽ giảm; một đáp ứng không đơn điệu sẽ bác bỏ cách giải thích chỉ dựa trên biên độ. Thứ
 hai, chuẩn hóa theo lô thích nghi (AdaBN)~\cite{li2018adabn} thay thống kê chạy của mười lớp chuẩn hóa theo
-lô trong bộ mã hóa, lần lượt từng lớp, bằng thống kê của 20{,}000 epoch SHHS1 không nhãn; đây là một phương
+lô trong bộ mã hóa, lần lượt từng lớp, bằng thống kê của 20\,000 epoch SHHS1 không nhãn; đây là một phương
 pháp thích nghi không nhãn cơ sở, không cập nhật trọng số. Chúng tôi cũng báo cáo độ lệch chuẩn theo bản
 ghi của đầu vào đã lọc ở cả hai đoàn hệ. Các điều kiện được so với E4 không sửa đổi bằng bootstrap cụm theo
-đối tượng bắt cặp (10{,}000 lần lấy mẫu lại, seed 2042), không kiểm định giả thuyết. Chúng được tính trên GPU
-thay vì CPU như nêu trong bản sửa đổi; xác suất GPU và CPU chênh tối đa $1.4\times10^{-5}$ với giai đoạn dự
-đoán giống hệt (Mục bổ sung S5).
+đối tượng bắt cặp (10\,000 lần lấy mẫu lại, seed 2042), không kiểm định giả thuyết. Các điều kiện này được
+tính trên GPU thay vì CPU như bản sửa đổi ghi; xác suất trên GPU và CPU chênh nhau tối đa $1.4\times10^{-5}$
+và giai đoạn dự đoán giống hệt nhau (Mục bổ sung S5).
 
 \subsection{Các thí nghiệm can thiệp}
 
-Sau khi mô tả các lỗi trên mẫu SHHS1 thứ nhất, chúng tôi đánh giá ba can thiệp trên mẫu đó, mỗi can thiệp
-so với đối chứng tương ứng và lấy trung bình xác suất mười fold: hiệu chuẩn nhiệt độ kèm hiệu chỉnh tiên
+Sau khi phân tích các lỗi trên mẫu SHHS1 thứ nhất, chúng tôi đánh giá ba can thiệp trên chính mẫu đó; mỗi can
+thiệp được so với đối chứng tương ứng và đều lấy trung bình xác suất của mười mô hình fold: hiệu chuẩn nhiệt độ kèm hiệu chỉnh tiên
 nghiệm EM cho mười mô hình E3 seed 123, với tiên nghiệm ước lượng trên năm bản ghi thích nghi không nhãn;
 huấn luyện TCN có trọng số lớp trên bộ mã hóa E3 seed 123 đóng băng; và ADAST~\cite{eldele2023adast}, thích
 nghi với các bản ghi đích không nhãn, so với một mô hình chỉ học nguồn cùng kiến trúc. ADAST được huấn luyện
-ở hai ngân sách học, 1{,}140 lượt cập nhật mỗi mô hình và 30 lượt duyệt trọn dữ liệu huấn luyện nguồn (huấn
-luyện toàn nguồn), và được đánh giá ở epoch 30. Việc chọn mô hình dùng dữ liệu xác thực nguồn, và nhãn đích
-chỉ được dùng để chấm điểm. Cặp toàn nguồn cũng được áp dụng, không huấn luyện thêm, lên mẫu giữ lại. Phương
+ở hai ngân sách học, 1\,140 lượt cập nhật mỗi mô hình và 30 lượt duyệt trọn dữ liệu huấn luyện nguồn (huấn
+luyện toàn nguồn), và được đánh giá ở epoch 30. Việc chọn mô hình chỉ dùng dữ liệu xác thực của nguồn; nhãn
+đích chỉ được dùng để chấm điểm. Cặp mô hình toàn nguồn cũng được áp dụng nguyên trạng, không huấn luyện thêm,
+lên mẫu giữ lại. Phương
 pháp bổ sung S2 nêu cách khớp, chọn mô hình, ngân sách và các thí nghiệm phát triển.
 
 \subsection{Đánh giá vận hành}
@@ -515,7 +523,7 @@ một hình dạng tensor, không phải thời gian suy luận cả đêm hay �
 
 \subsection{Hiệu năng ngoài fold trên Sleep-EDF}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Hiệu năng kiểm tra ngoài fold trên Sleep-EDF (seed 42, gộp trên mọi fold).}
 \label{tab:sleepedf-performance}
@@ -537,14 +545,14 @@ E6 & 0.7691 & 0.8230 & 0.7573 & 0.5124 \\
 E3 đạt điểm cao nhất ở cả bốn chỉ số tại seed 42 (Bảng~\ref{tab:sleepedf-performance}); các so sánh bắt cặp
 được trình bày ở Bảng~\ref{tab:paired-sleepedf}.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{So sánh bắt cặp xác định trước trên \mf\ Sleep-EDF ($n = 78$ đối tượng). Hiệu chỉnh Holm áp dụng
 cho bốn dòng xác định trước; thống kê kiểm định dấu là kiểm tra độ vững bổ sung chưa hiệu chỉnh. E3-E0 là
 hậu nghiệm và nằm ngoài họ Holm.}
 \label{tab:paired-sleepedf}
 \small
-\resizebox{\textwidth}{!}{%
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrrr}
 \toprule
 \textbf{So sánh} & $\boldsymbol{\Delta}$\textbf{\mf} & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{T/H/B} & $\boldsymbol{\dsign}$ & $\boldsymbol{p_{\mathrm{sign}}}$ \\
@@ -556,7 +564,8 @@ E3-E6 & \textbf{0.021319} & $\boldsymbol{[0.012179, 0.030698]}$ & \textbf{0.0012
 \midrule
 \textit{E3-E0 (hậu nghiệm)} & 0.015024 & $[0.005746, 0.025871]$ & n/a & 49/0/29 & $+0.256$ & 0.0308 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}
 
 Trong các đối chiếu xác định trước, chỉ E3-E6 có khoảng bootstrap gộp nằm trên không cùng kết quả Wilcoxon
@@ -577,7 +586,7 @@ seed, nhưng mức hỗ trợ thống kê thì không.
 \FloatBarrier
 \subsection{Độ phức tạp, độ trễ và chi phí huấn luyện}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Benchmark truyền xuôi toàn quy trình trên Tesla V100 (fold 0, seed 42; lô 1, độ dài chuỗi 100).
 Thông lượng tính bằng epoch\,s$^{-1}$ và bộ nhớ cấp phát cực đại tính bằng MiB; không tính I/O và tiền xử
@@ -588,11 +597,11 @@ lý.}
 \toprule
 \textbf{Mã} & \textbf{Tham số} & \textbf{Trung vị (ms)} & \textbf{Thông lượng} & \textbf{Bộ nhớ cực đại} & \textbf{Tăng tốc} \\
 \midrule
-E0 & 248{,}630 & 13.4315 & 7{,}445 & 58.81 & $1.00\times$ \\
-E1 & 640{,}950 & 12.5111 & 7{,}993 & 60.31 & $1.07\times$ \\
-E2 & 1{,}085{,}578 & 3.5750 & 27{,}972 & 75.54 & $3.76\times$ \\
-E3 & 1{,}085{,}578 & 3.5687 & 28{,}021 & 75.54 & $3.76\times$ \\
-E6 & 1{,}085{,}578 & 3.5756 & 27{,}967 & 75.54 & $3.76\times$ \\
+E0 & 248\,630 & 13.4315 & 7\,445 & 58.81 & $1.00\times$ \\
+E1 & 640\,950 & 12.5111 & 7\,993 & 60.31 & $1.07\times$ \\
+E2 & 1\,085\,578 & 3.5750 & 27\,972 & 75.54 & $3.76\times$ \\
+E3 & 1\,085\,578 & 3.5687 & 28\,021 & 75.54 & $3.76\times$ \\
+E6 & 1\,085\,578 & 3.5756 & 27\,967 & 75.54 & $3.76\times$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -603,7 +612,7 @@ cách triển khai này nhanh hơn nhưng không nhỏ hơn. E1, vẫn giữ b�
 tăng lớn hơn đi cùng việc thay 15 nhánh CNN thực thi riêng rẽ bằng một bộ mã hóa ResNet-1D.
 Hình~\ref{fig:speedup_tradeoff} liên hệ tốc độ với hiệu năng tổng hợp của E0, E3 và E6.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.94\textwidth]{figures/speedup_vi.pdf}
     \caption{\textbf{Hệ số tăng tốc truyền xuôi đo được và \mf\ tổng hợp của các cấu hình chính seed 42.}
@@ -625,12 +634,12 @@ và liền sau không cho lợi ích phát hiện được ($\Delta\mf=0.0010$, 
 \subsection{Đánh giá chuyển quần thể trên mẫu SHHS1 thứ nhất}
 \label{sec:shhs}
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{So sánh bắt cặp chính trên mẫu SHHS1 thứ nhất (\mf\ trung bình theo đối tượng, $n = 180$, seed 42).}
 \label{tab:shhs-paired}
 \small
-\resizebox{\textwidth}{!}{%
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrrr}
 \toprule
 \textbf{So sánh} & \textbf{Vai trò} & $\boldsymbol{\Delta}$ & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{T/H/B} & $\boldsymbol{\dsign}$ \\
@@ -638,26 +647,31 @@ và liền sau không cho lợi ích phát hiện được ($\Delta\mf=0.0010$, 
 E3-E0 & chính & 0.0412 & $[0.0314, 0.0512]$ & $2.65\times10^{-13}$ & 138/0/42 & $+0.533$ \\
 E3-E6 & chính & 0.0274 & $[0.0182, 0.0370]$ & $1.87\times10^{-8}$ & 125/0/55 & $+0.389$ \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}
 
 Trên mẫu SHHS1 thứ nhất, cả hai so sánh chính đều nghiêng về E3 (Bảng~\ref{tab:shhs-paired}; hiệu năng mô tả
-ở Bảng bổ sung~\ref{SM-tab:sup_first_performance}), với cải thiện ở 138 và 125 trên 180 người tham gia, và
-lần lặp seed 123 giữ nguyên chiều cùng ý nghĩa sau Holm. So với E0, E3 còn tăng 0.0338 \mf\ gộp, 0.0368 độ
+ở Bảng bổ sung~\ref{SM-tab:sup_first_performance}): E3 tốt hơn ở 138 và 125 trên 180 người tham gia, và lần
+lặp với seed 123 giữ nguyên chiều hiệu ứng cũng như ý nghĩa sau hiệu chỉnh Holm. So với E0, E3 còn tăng 0.0338 \mf\ gộp, 0.0368 độ
 chính xác và 0.0461 $\kappa$. Trong các so sánh thứ cấp, E1-E0 nhỏ ($+0.0065$) và E2-E1 âm ($-0.0128$,
-khoảng nằm dưới không), nên thay đặc trưng C/P/N bằng đặc trưng ResNet-1D epoch hiện tại không cải thiện
-khả năng chuyển quần thể trên tín hiệu không lọc. Đối chiếu hậu nghiệm E3-E2, chỉ thay đổi phép lọc đầu
-vào và thang hằng số, là lớn nhất ($+0.0475$, \ci\ $[0.0372,0.0579]$; 147 trên 180 người tham gia cải
-thiện). E4 chỉ lọc thông dải đạt điểm cao hơn E3 ở cả hai seed, lần lượt 0.0131 (\ci\ $[0.0111,0.0153]$)
+khoảng nằm dưới không), nên thay đặc trưng C/P/N bằng đặc trưng ResNet-1D của epoch hiện tại không cải thiện
+khả năng chuyển quần thể khi tín hiệu không được lọc. Đối chiếu hậu nghiệm E3-E2, trong đó chỉ phép lọc đầu
+vào và hệ số đổi thang thay đổi, cho chênh lệch lớn nhất ($+0.0475$, \ci\ $[0.0372,0.0579]$; E3 tốt hơn ở
+147 trên 180 người tham gia). E4 (chỉ lọc thông dải) đạt điểm cao hơn E3 ở cả hai seed, lần lượt 0.0131 (\ci\ $[0.0111,0.0153]$)
 và 0.0098 (\ci\ $[0.0073,0.0125]$); Mục~\ref{sec:holdout} liên hệ chênh lệch này với biến thiên huấn luyện
 (Bảng bổ sung~\ref{SM-tab:sup_shhs_seed123}-\ref{SM-tab:sup_e4_two_seeds}).
 
 \subsection{Đánh giá xác nhận trên mẫu SHHS1 giữ lại}
 \label{sec:holdout}
 
-\begin{table}[t]
+Bảng~\ref{tab:holdout-performance} trình bày hiệu năng của các cấu hình trên mẫu giữ lại và
+Bảng~\ref{tab:holdout-confirmatory} trình bày họ xác nhận; Hình~\ref{fig:holdout} đặt các đối chiếu này cạnh
+mức chênh lệch giữa hai lần huấn luyện của cùng một cấu hình.
+
+\begin{table}[H]
 \centering
-\caption{Mẫu SHHS1 giữ lại ($n=500$; 458{,}409 epoch được đánh giá): hiệu năng của các cấu hình seed 42 và
+\caption{Mẫu SHHS1 giữ lại ($n=500$; 458\,409 epoch được đánh giá): hiệu năng của các cấu hình seed 42 và
 cặp ADAST. Khoảng là khoảng bootstrap cụm theo đối tượng cho \mf\ trung bình theo đối tượng. Chỉ học nguồn
 là đối chứng tương ứng của ADAST, không phải E3.}
 \label{tab:holdout-performance}
@@ -678,14 +692,14 @@ ADAST (toàn nguồn) & 0.5415 \ $[0.5310, 0.5521]$ & 0.5852 & 0.6798 & 0.5625 \
 \end{tabular}
 \end{table}
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Họ xác nhận trên mẫu SHHS1 giữ lại (\mf\ trung bình theo đối tượng, $n=500$). H1-H3 dùng seed 42 và
 họ Holm gồm ba kiểm định; seed 123 tạo một họ Holm thứ cấp riêng. Một giả thuyết được xác nhận nếu
 $p_{\mathrm{Holm}}<0.05$ và khoảng nằm trên không. Cột cuối nhắc lại ước lượng trên mẫu SHHS1 thứ nhất.}
 \label{tab:holdout-confirmatory}
 \small
-\resizebox{\textwidth}{!}{%
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrrrr}
 \toprule
 & \textbf{So sánh} & $\boldsymbol{\Delta}$ & \textbf{\ci} & $\boldsymbol{p_{\mathrm{Holm}}}$ & \textbf{T/H/B} & \textbf{Xác nhận} & \textbf{Mẫu thứ nhất} \\
@@ -699,63 +713,91 @@ H3 & E3-E2 & 0.0515 & $[0.0460, 0.0571]$ & $1.2\times10^{-50}$ & 395/1/104 & có
 & E3-E6 & 0.0129 & $[0.0057, 0.0199]$ & $1.7\times10^{-5}$ & 285/0/215 & n/a & n/a \\
 & E3-E2 & 0.0270 & $[0.0217, 0.0325]$ & $1.8\times10^{-18}$ & 327/1/172 & n/a & n/a \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}
 
-Cả ba giả thuyết xác định trước đều được xác nhận (Bảng~\ref{tab:holdout-confirmatory}). Ước lượng trên mẫu
-giữ lại gần với ước lượng của mẫu thứ nhất: E3 vượt E0 0.0467, vượt E6 0.0293 và vượt E2 0.0515 về \mf\
-trung bình theo đối tượng, với cải thiện ở 380, 342 và 395 trên 500 người tham gia. E3 đạt \mf\ trung bình
-theo đối tượng 0.5637 trên mẫu giữ lại, so với 0.5680 trên mẫu thứ nhất (Bảng~\ref{tab:holdout-performance}).
-Ba đối chiếu vẫn dương với khoảng nằm trên không ở seed 123, với ước lượng 0.0375, 0.0129 và 0.0270. Kết quả
-của cả mười hai nhánh và các phân tích thứ cấp được trình bày ở các Bảng
+Cả ba giả thuyết xác định trước đều được xác nhận (Bảng~\ref{tab:holdout-confirmatory},
+Hình~\ref{fig:holdout}a), và ước lượng trên mẫu giữ lại gần với ước lượng của mẫu thứ nhất. E3 tốt hơn ở 380,
+342 và 395 trên 500 người tham gia; \mf\ trung bình theo đối tượng của E3 là 0.5637 trên mẫu giữ lại, so với
+0.5680 trên mẫu thứ nhất. Ở seed 123, cả ba đối chiếu vẫn dương với khoảng nằm hoàn toàn trên không. Kết quả
+của cả mười hai mô hình tổ hợp và các phân tích thứ cấp được trình bày ở các Bảng
 bổ sung~\ref{SM-tab:sup_holdout_arms}-\ref{SM-tab:sup_holdout_s5s7}.
 
-Ba mươi chín người tham gia giữ lại thiếu ít nhất một lớp tham chiếu, thường gặp nhất là N3 (34 người).
-Khi chỉ lấy trung bình \mf\ trên các lớp có mặt trong nhãn tham chiếu của từng người, ba ước lượng xác nhận
-thành 0.0482, 0.0296 và 0.0535, với cùng quyết định. Gộp mẫu thứ nhất và mẫu giữ lại (680 người tham gia; chỉ
+Trong mẫu giữ lại, 39 người có ít nhất một giai đoạn không xuất hiện trong nhãn tham chiếu, thường gặp nhất
+là N3 (34 người). Khi chỉ lấy trung bình \mf\ trên các giai đoạn có mặt trong nhãn tham chiếu của từng người,
+ba ước lượng xác nhận là 0.0482, 0.0296 và 0.0535, và quyết định không đổi. Gộp mẫu thứ nhất và mẫu giữ lại (680 người tham gia; chỉ
 mang tính mô tả) cho 0.0452, 0.0288 và 0.0504.
 
-ResNet-1D-TCN không lọc (E2) đạt điểm gần đối chứng: \mf\ trung bình theo đối tượng 0.5122 so với 0.5170 của
-E0 ở seed 42, và 0.5321 so với 0.5216 ở seed 123. Vì vậy phần lớn lợi thế của E3 so với E0 trùng với thay
-đổi phép lọc đầu vào chứ không với thay đổi bộ mã hóa và mô hình chuỗi. So sánh E2 với E0 này mang tính mô tả
+ResNet-1D-TCN trên tín hiệu không lọc (E2) đạt điểm gần đối chứng: \mf\ trung bình theo đối tượng 0.5122 so
+với 0.5170 của E0 ở seed 42, và 0.5321 so với 0.5216 ở seed 123. Vì vậy phần lớn lợi thế của E3 so với E0
+gắn với thay đổi phép lọc đầu vào, không phải với thay đổi bộ mã hóa và mô hình chuỗi. So sánh E2 với E0 này mang tính mô tả
 và không thuộc họ xác nhận.
 
-Biến thiên huấn luyện có cùng bậc độ lớn với một số đối chiếu cấu hình. \mf\ trung bình theo đối tượng ở seed
-42 trừ seed 123 là $+0.0046$ (\ci\ $[0.0026,0.0067]$) với E3, $+0.0094$ ($[0.0076,0.0112]$) với E4, $-0.0046$
+Biến thiên giữa các lần huấn luyện có cùng bậc độ lớn với một số đối chiếu giữa các cấu hình
+(Hình~\ref{fig:holdout}b). Hiệu \mf\ trung bình theo đối tượng giữa seed 42 và seed 123 là $+0.0046$ (\ci\ $[0.0026,0.0067]$) với E3, $+0.0094$ ($[0.0076,0.0112]$) với E4, $-0.0046$
 ($[-0.0063,-0.0029]$) với E0 và $-0.0118$ ($[-0.0151,-0.0085]$) với E6; E2 không lọc, không thuộc nhóm xác
-định trước này, chênh $-0.0199$. Cả bốn khoảng đều không chứa không dù mỗi cặp dùng chung cấu hình: khoảng
-tính cho mô hình cố định không phản ánh biến thiên giữa các lần huấn luyện. E4 lại cao hơn E3, 0.0139
-($[0.0126,0.0153]$) ở seed 42 và 0.0091 ($[0.0074,0.0108]$) ở seed 123. Kỳ vọng xác định trước rằng E4-E3
-sẽ không vượt các chênh lệch giữa hai seed được đáp ứng ở seed 123 nhưng không ở seed 42, nơi E4-E3 lớn hơn
-từng chênh lệch trong bốn chênh lệch giữa seed xác định trước.
+định trước này, chênh $-0.0199$. Cả bốn khoảng đều không chứa giá trị không, dù hai mô hình trong mỗi cặp
+có cùng cấu hình: khoảng tính với mô hình cố định không phản ánh biến thiên giữa các lần huấn luyện. E4 cao
+hơn E3 0.0139 ($[0.0126,0.0153]$) ở seed 42 và 0.0091 ($[0.0074,0.0108]$) ở seed 123. Giao thức kỳ vọng
+E4-E3 không vượt các chênh lệch giữa hai seed; kỳ vọng này đúng ở seed 123 nhưng không đúng ở seed 42, nơi
+E4-E3 lớn hơn cả bốn chênh lệch giữa seed xác định trước.
 
-Trọng số đã huấn luyện cho thấy vì sao không nên đọc chênh lệch này như tác động của thang đầu vào (Bảng
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/holdout_vi.pdf}
+    \caption{\textbf{Các đối chiếu xác nhận so với biến thiên giữa các lần huấn luyện.} (a) Chênh lệch \mf\
+    trung bình theo đối tượng của H1-H3 trên mẫu SHHS1 thứ nhất ($n=180$, seed 42) và trên mẫu giữ lại
+    ($n=500$, seed 42 và 123). (b) Chênh lệch giữa hai seed huấn luyện của cùng một cấu hình (seed 42 trừ
+    seed 123) và E4-E3 ở từng seed trên mẫu giữ lại; E2 không có khoảng tin cậy xác định trước nên chỉ vẽ
+    điểm ước lượng (vòng tròn rỗng). Thanh ngang là khoảng bootstrap cụm theo đối tượng 95\%; hai ô dùng cùng
+    trục hoành. Số liệu lấy từ Bảng~\ref{tab:holdout-confirmatory}, Bảng~\ref{tab:shhs-paired} và các Bảng
+    bổ sung~\ref{SM-tab:sup_shhs_secondary_paired} và~\ref{SM-tab:sup_holdout_s2}. Biểu đồ được tạo bằng mã
+    PGFPlots có thể chỉnh sửa; Anthropic Claude hỗ trợ viết mã vẽ.}
+    \label{fig:holdout}
+\end{figure}
+
+Trọng số đã huấn luyện cho thấy vì sao không nên hiểu chênh lệch này là tác động của thang đầu vào (Bảng
 bổ sung~\ref{SM-tab:sup_e3e4}). Với cùng seed và fold, kernel lớp đầu của E3 và E4 có độ tương tự cosine
 0.909-0.974 và trung vị độ tương tự trên các tensor trọng số bộ mã hóa là 0.696-0.863, so với các giá trị
-từ $-0.112$ đến $0.012$ giữa hai seed của cùng cấu hình. Phương sai chạy ở lớp đầu của E4 khoảng $10^4$ lần
-của E3, đúng như hệ số 100 dự đoán, và dừng sớm chọn epoch khác nhau cho E3 và E4 ở 8 trên 20 cặp seed-fold.
-Vì vậy mỗi mô hình E3 là một bản sao đã trôi số học của mô hình E4 tương ứng, và E4-E3 đo mức hai lần chạy
-về danh nghĩa tương đương phân kỳ đến đâu. Ngược lại, H1 và H3 vượt mọi chênh lệch giữa seed ở cả hai seed,
-còn H2 ở seed 123 (0.0129) gần với chênh lệch giữa seed của E4 và E6.
+từ $-0.112$ đến $0.012$ giữa hai seed của cùng cấu hình. Phương sai tích lũy (running variance)
+ở lớp chuẩn hóa đầu tiên của E4 lớn hơn của E3 khoảng $10^4$ lần, đúng như hệ số 100 dự đoán, và quy tắc
+dừng sớm chọn epoch khác nhau cho E3 và E4 ở 8 trên 20 cặp seed-fold. Vì vậy, mỗi mô hình E3 là một lần chạy
+lặp lại của mô hình E4 tương ứng, chỉ lệch đi do sai số số học tích lũy, và E4-E3 đo mức hai lần chạy về lý
+thuyết là tương đương lại cho kết quả khác nhau đến đâu. Ngược lại, H1 và H3 lớn hơn mọi chênh lệch giữa seed
+ở cả hai seed, còn H2 ở seed 123 (0.0129) gần với chênh lệch giữa seed của E4 và E6.
 
-\subsection{Sai số giữa các mô hình và phân bố theo thời gian}
+\subsection{Lỗi chung của các mô hình và vị trí của lỗi theo thời gian}
 \label{sec:gap}
 
-\mf\ gộp của E3 giảm từ 0.7904 trên Sleep-EDF xuống 0.6099 trên mẫu SHHS1 thứ nhất, chênh 0.1805. Vì hai
-đoàn hệ được đánh giá khác nhau, bằng dự đoán ngoài fold và bằng tổ hợp mười mô hình, chúng tôi khảo sát
-chênh lệch này theo lớp ở mức mô tả; A$\rightarrow$B ký hiệu một epoch có nhãn tham chiếu A được dự đoán là
-B. N3 chiếm phần lớn tổn thất: F1 N3 của E3 giảm từ 0.8085 xuống 0.4055, với precision 0.9440 nhưng độ thu
-hồi 0.2582, và E0 có độ thu hồi gần như giống hệt (0.2610) và tỷ lệ N3$\rightarrow$N2 tương tự (72.3\% so
-với 73.1\%; Bảng bổ sung~\ref{SM-tab:sup_first_n3}). Mẫu giữ lại tái hiện mô hình này: tỷ lệ
-N3$\rightarrow$N2 là 72.3\% với E0 (\ci\ 70.1-74.4\%), 72.7\% với E3 (70.7-74.7\%), 71.1\% với E4 và 77.1\%
-với E6, với độ thu hồi N3 0.2565, 0.2549, 0.2742 và 0.1987 và precision N3 từ 0.85 đến 0.88.
+\mf\ gộp của E3 giảm từ 0.7904 trên Sleep-EDF xuống 0.6099 trên mẫu SHHS1 thứ nhất, tức giảm 0.1805. Vì hai
+đoàn hệ được đánh giá theo cách khác nhau (dự đoán ngoài fold so với tổ hợp mười mô hình), chúng tôi chỉ phân
+tích chênh lệch này theo lớp ở mức mô tả; A$\rightarrow$B ký hiệu một epoch có nhãn tham chiếu A bị dự đoán
+là B. N3 chiếm phần lớn tổn thất (Hình~\ref{fig:confusion}): F1 N3 của E3 giảm từ 0.8085 xuống 0.4055, với
+precision (tỷ lệ dự đoán N3 là đúng) 0.9440 nhưng độ thu hồi chỉ 0.2582. E0 có độ thu hồi gần như giống hệt
+(0.2610) và tỷ lệ N3$\rightarrow$N2 tương tự (72.3\% so với 73.1\%; Bảng bổ sung~\ref{SM-tab:sup_first_n3}).
 
-Trong một phép tính oracle trên ma trận nhầm lẫn của E3 ở mẫu thứ nhất, sửa ô N3$\rightarrow$N2 sẽ nâng
-\mf\ gộp lên 0.7444, tức 74.5\% chênh lệch chuyển quần thể, so với 0.6596 (27.5\%) cho N2$\rightarrow$REM,
-kênh lỗi lớn thứ hai; các con số dựa trên nhãn tham chiếu này không cộng dồn được và không đạt được trong
-thực tế. Độ thu hồi N3 thấp không chỉ gần các điểm đổi nhãn tham chiếu (0.0633 với E0 và 0.0733 với E3, so
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figures/confusion_vi.pdf}
+    \caption{\textbf{Ma trận nhầm lẫn của E3 (seed 42) trước và sau khi chuyển quần thể.} Mỗi ô là phần trăm
+    epoch của một giai đoạn tham chiếu (hàng) được dự đoán thành từng giai đoạn (cột); mỗi hàng cộng lại bằng
+    100\%. Ô viền cam là lỗi N3$\rightarrow$N2, tăng từ 18.2\% trên Sleep-EDF lên 73.1\% trên mẫu SHHS1 thứ
+    nhất. Số đếm lấy từ các Bảng bổ sung~\ref{SM-tab:sup_edf_confusion} và~\ref{SM-tab:sup_shhs_confusion}.
+    Biểu đồ được tạo bằng mã PGFPlots/TikZ có thể chỉnh sửa; Anthropic Claude hỗ trợ viết mã vẽ.}
+    \label{fig:confusion}
+\end{figure} Mẫu giữ lại lặp lại đúng
+kiểu lỗi này: tỷ lệ N3$\rightarrow$N2 là 72.3\% với E0 (\ci\ 70.1-74.4\%), 72.7\% với E3 (70.7-74.7\%),
+71.1\% với E4 và 77.1\% với E6; độ thu hồi N3 lần lượt là 0.2565, 0.2549, 0.2742 và 0.1987, còn precision N3
+nằm trong khoảng 0.85-0.88.
+
+Trong một phép tính giả định (oracle) trên ma trận nhầm lẫn của E3 ở mẫu thứ nhất, nếu sửa đúng toàn bộ ô
+N3$\rightarrow$N2 thì \mf\ gộp sẽ tăng lên 0.7444, bù được 74.5\% mức sụt giảm khi chuyển quần thể; con số
+tương ứng cho N2$\rightarrow$REM, nhóm lỗi lớn thứ hai, là 0.6596 (27.5\%). Các con số này dựa trên nhãn tham
+chiếu, không cộng dồn được và không thể đạt được trong thực tế. Độ thu hồi N3 thấp không chỉ xảy ra gần các
+điểm đổi nhãn tham chiếu (0.0633 với E0 và 0.0733 với E3, so
 với 0.6121 và 0.6326 trên Sleep-EDF) mà cả ở vùng ổn định (0.4008 và 0.3900), và $z$-score theo bản ghi
-không xóa được thiếu hụt này (độ thu hồi N3 của E6 là 0.2005). Định nghĩa vùng và mọi kết quả theo lớp được
+cũng không khắc phục được thiếu hụt này (độ thu hồi N3 của E6 là 0.2005). Định nghĩa vùng và mọi kết quả theo lớp được
 trình bày ở các Bảng bổ sung~\ref{SM-tab:sup_perclass_transfer}-\ref{SM-tab:sup_boundary}.
 
 %==============================================================================
@@ -766,22 +808,22 @@ lên 0.5595), trong khi thêm hiệu chỉnh tiên nghiệm EM làm giảm còn 
 $[-0.0793,-0.0600]$): tiên nghiệm khớp được đặt N3 gần ngưỡng sàn và tổ hợp không dự đoán epoch N3 nào (Bảng
 bổ sung~\ref{SM-tab:sup_calibration_intervention}). Trọng số lớp nâng độ thu hồi N3 từ 0.2345 lên 0.3225
 (chênh lệch 0.0880, \ci\ $[0.0805,0.0954]$) và F1 N3 từ 0.3759 lên 0.4795, nhưng giảm độ thu hồi N2 từ 0.7260
-xuống 0.6728 và độ chính xác từ 0.6892 xuống 0.6663, để \mf\ trung bình theo đối tượng không đổi (chênh lệch
-$-0.0016$, \ci\ $[-0.0049,0.0017]$); can thiệp này chỉ tác động lên bộ phân loại chuỗi (Bảng
+xuống 0.6728 và độ chính xác từ 0.6892 xuống 0.6663, để \mf\ trung bình theo đối tượng gần như không đổi (chênh
+lệch $-0.0016$, \ci\ $[-0.0049,0.0017]$); can thiệp này chỉ tác động lên bộ phân loại chuỗi (Bảng
 bổ sung~\ref{SM-tab:sup_weighted_intervention}).
 
 Ở ngân sách nhỏ, ADAST nâng độ thu hồi N3 từ 0.3195 lên 0.4269 nhưng giảm \mf\ trung bình theo đối tượng từ
 0.4949 xuống 0.4497 (chênh lệch $-0.0452$, \ci\ $[-0.0558,-0.0347]$), không đưa ra dự đoán N1 nào và cũng làm
 giảm hiệu năng nguồn. Ở ngân sách toàn nguồn, hiệu ứng đảo chiều: \mf\ trung bình theo đối tượng tăng từ
 0.5010 lên 0.5455 (chênh lệch 0.0445, \ci\ $[0.0352,0.0539]$; chênh lệch giữa hai hiệu ứng ngân sách 0.0897,
-\ci\ $[0.0767,0.1023]$) và độ thu hồi N3 từ 0.2432 lên 0.6111, trong khi độ thu hồi N1 và N2 giảm, còn độ thu
-hồi REM cao hơn đi cùng precision REM thấp hơn, làm F1 REM giảm từ 0.6231 xuống 0.5744. \mf\ trung bình theo
-đối tượng trên tập kiểm tra ngoài của nguồn giảm từ 0.6613 xuống 0.6281. Mọi lớp, quy tắc checkpoint và ngân
+\ci\ $[0.0767,0.1023]$) và độ thu hồi N3 tăng từ 0.2432 lên 0.6111, trong khi độ thu hồi N1 và N2 giảm; độ thu
+hồi REM tăng nhưng precision REM giảm, nên F1 REM giảm từ 0.6231 xuống 0.5744. Trên dữ liệu kiểm tra ngoài fold
+của nguồn, \mf\ trung bình theo đối tượng giảm từ 0.6613 xuống 0.6281. Mọi lớp, quy tắc checkpoint và ngân
 sách được trình bày ở các Bảng bổ sung~\ref{SM-tab:sup_adast_budget_first},
 \ref{SM-tab:sup_adast_intervention}, \ref{SM-tab:sup_adast_fullsource_best_summary}
 và~\ref{SM-tab:sup_adast_fullsource_best_classes}.
 
-Mẫu giữ lại tái hiện kết quả toàn nguồn. ADAST vượt đối chứng 0.0429 về \mf\ trung bình theo đối tượng
+Mẫu giữ lại lặp lại kết quả của ngân sách toàn nguồn. ADAST vượt đối chứng 0.0429 về \mf\ trung bình theo đối tượng
 (\ci\ $[0.0374,0.0484]$) và nâng độ thu hồi N3 từ 0.2366 lên 0.6161, trong khi F1 N1, N2 và REM giảm 0.0190,
 0.0445 và 0.0568. Tuy nhiên, xét giá trị tuyệt đối, ADAST vẫn thấp hơn các quy trình lọc thông dải zero-shot:
 \mf\ trung bình theo đối tượng của nó thấp hơn E3 0.0222 ($[-0.0284,-0.0160]$) và thấp hơn E4 0.0361
@@ -791,33 +833,12 @@ Bảng~\ref{tab:holdout-performance}).
 \subsection{Độ nhạy theo biên độ và thích nghi chuẩn hóa theo lô}
 \label{sec:amendment-results}
 
-\begin{table}[t]
-\centering
-\caption{Phân tích biên độ và thích nghi sau xác nhận của E4 (seed 42) trên mẫu SHHS1 giữ lại ($n=500$).
-$\Delta$ là chênh lệch \mf\ trung bình theo đối tượng so với E4 không sửa đổi, kèm khoảng bootstrap cụm theo
-đối tượng; các cột theo lớp được gộp trên epoch. Phân tích mô tả, không kiểm định giả thuyết.}
-\label{tab:amendment}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrrrr}
-\toprule
-\textbf{Điều kiện} & \textbf{\mf\ theo người} & $\boldsymbol{\Delta}$ \textbf{(\ci)} & \textbf{Thu hồi N3} & \textbf{N3$\to$N2} & \textbf{F1 N3} & \textbf{F1 W} & \textbf{F1 REM} \\
-\midrule
-Đầu vào $\times$0.5 & 0.4627 & $-$0.1149 $[$$-$0.1219, $-$0.1081$]$ & 0.0176 & 93.3\% & 0.0343 & 0.8202 & 0.6733 \\
-Đầu vào $\times$0.75 & 0.5256 & $-$0.0520 $[$$-$0.0559, $-$0.0482$]$ & 0.1327 & 84.2\% & 0.2294 & 0.8272 & 0.7161 \\
-E4 (đầu vào $\times$1) & 0.5776 & n/a & 0.2742 & 71.1\% & 0.4184 & 0.8297 & 0.7436 \\
-Đầu vào $\times$1.5 & 0.5765 & $-$0.0011 $[$$-$0.0099, 0.0075$]$ & 0.3559 & 60.0\% & 0.5043 & 0.7960 & 0.7054 \\
-Đầu vào $\times$2 & 0.4502 & $-$0.1274 $[$$-$0.1412, $-$0.1137$]$ & 0.2318 & 48.6\% & 0.3614 & 0.6720 & 0.4143 \\
-AdaBN & 0.4570 & $-$0.1206 $[$$-$0.1295, $-$0.1116$]$ & 0.2828 & 54.8\% & 0.4313 & 0.7125 & 0.4590 \\
-\bottomrule
-\end{tabular}}
-\end{table}
-
 Tín hiệu SHHS1 sau lọc thông dải không nhỏ hơn tín hiệu Sleep-EDF: độ lệch chuẩn theo bản ghi có trung vị
 $16.50\,\mu$V, khoảng tứ phân vị 13.72-21.26, trên mẫu giữ lại và $14.36\,\mu$V, khoảng tứ phân vị
 11.63-16.82, trên Sleep-EDF.
 
-Dù vậy, biên độ đầu vào ảnh hưởng mạnh đến việc phân tách N2 với N3 (Bảng~\ref{tab:amendment}). Khi hệ số
+Dù vậy, biên độ đầu vào ảnh hưởng mạnh đến việc phân tách N2 với N3 (Hình~\ref{fig:amplitude}; số liệu
+đầy đủ ở các Bảng bổ sung~\ref{SM-tab:sup_amendment_arms} và~\ref{SM-tab:sup_amendment_contrasts}). Khi hệ số
 đầu vào tăng từ 0.5 lên 2, tỷ lệ epoch N3 tham chiếu bị dự đoán thành N2 giảm đơn điệu từ 93.3\% xuống
 48.6\%. Tuy nhiên, độ thu hồi N3 chỉ tăng đến hệ số 1.5, từ 0.2742 lên 0.3559, chênh 0.0817 với \ci\
 $[0.0665,0.0974]$. Ở hệ số 2, nó giảm còn 0.2318 vì khi đó 28.2\% epoch N3 tham chiếu bị phân loại thành thức,
@@ -825,7 +846,22 @@ và độ thu hồi REM giảm từ 0.876 xuống 0.276. Ở hệ số 1.5, mứ
 bù trừ bởi F1 N1, REM và thức thấp hơn, và \mf\ trung bình theo đối tượng không đổi ($-0.0011$, \ci\
 $[-0.0099,0.0075]$). Các hệ số nhỏ hơn 1 làm độ thu hồi N3 giảm còn 0.1327 và 0.0176. Đáp ứng vì vậy đơn điệu
 với tỷ lệ N3$\rightarrow$N2 nhưng không đơn điệu với độ thu hồi N3; theo tiêu chí xác định trước, điều này
-phản bác cách giải thích bỏ sót N3 chỉ bằng biên độ.
+bác bỏ cách giải thích bỏ sót N3 chỉ bằng biên độ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/amplitude_vi.pdf}
+    \caption{\textbf{Độ nhạy theo biên độ và AdaBN của E4 (seed 42) trên mẫu SHHS1 giữ lại ($n=500$).} Đầu
+    vào đã lọc được nhân với 0.5-2 trong khi bộ mã hóa giữ nguyên thống kê chuẩn hóa theo lô đã lưu;
+    $\times$1 (đường chấm) là E4 không sửa đổi. AdaBN thay thống kê chuẩn hóa theo lô bằng thống kê của
+    SHHS1 không nhãn và được vẽ tách riêng bên phải đường gạch. (a) Tỷ lệ N3$\rightarrow$N2 giảm đơn điệu khi
+    tăng biên độ, nhưng độ thu hồi N3 chỉ tăng đến $\times$1.5. (b) Macro-F1 trung bình theo đối tượng không
+    cao hơn E4 ở bất kỳ hệ số nào, và F1 của thức và REM giảm mạnh ở $\times$2 và với AdaBN. Các chỉ số theo
+    lớp được gộp trên epoch; phân tích mô tả, không kiểm định giả thuyết. Số liệu lấy từ Bảng
+    bổ sung~\ref{SM-tab:sup_amendment_arms}. Biểu đồ được tạo bằng mã PGFPlots có thể chỉnh sửa; Anthropic
+    Claude hỗ trợ viết mã vẽ.}
+    \label{fig:amplitude}
+\end{figure}
 
 AdaBN làm \mf\ trung bình theo đối tượng thay đổi $-0.1206$, \ci\ $[-0.1295,-0.1116]$, mà không thay đổi độ thu hồi
 N3 một cách phát hiện được (chênh lệch 0.0086, \ci\ $[-0.0052,0.0222]$). Precision lớp thức giảm từ 0.853
@@ -858,58 +894,59 @@ thông dải loại bỏ dải tần, nhiễu hay khác biệt ghi đo nào, nê
 
 Trên mẫu giữ lại, hai seed huấn luyện của cùng một cấu hình chênh nhau 0.005 đến 0.012 về \mf\ trung bình
 theo đối tượng ở bốn cấu hình xác định trước và 0.020 ở E2, và cả bốn khoảng giữa seed xác định trước đều
-không chứa không. Các khoảng như vậy mô tả độ
-bất định do mẫu người tham gia với mô hình cố định, không phải độ bất định do huấn luyện, nên đối chiếu giữa
-hai mô hình huấn luyện riêng có thể trông chính xác mà vẫn chỉ có độ lớn như khi huấn luyện lại. E4-E3 là một
-ví dụ. Hai cấu hình tương đương theo cấu tạo, và trọng số đã huấn luyện cho thấy với mỗi seed chúng là hai
-bản sao của một lần huấn luyện đã trôi số học khỏi nhau; các lần chạy lẽ ra giống hệt trong số học chính xác
-vẫn chênh 0.009 đến 0.014 về \mf\ trung bình theo đối tượng trên SHHS1. Không cần cơ chế vật lý hay đặc thù
-ghi đo nào để giải thích chênh lệch này, và dữ liệu của chúng tôi không hàm ý cơ chế nào như vậy. Điều tương
-tự áp dụng cho ước lượng H2 ở seed 123, còn H1 và H3 vượt mọi chênh lệch giữa seed quan sát được. Báo cáo
-biến thiên giữa các lần huấn luyện cùng với khoảng theo người tham gia sẽ làm so sánh quy trình đáng tin cậy
-hơn nói chung.
+không chứa giá trị không. Các khoảng này chỉ phản ánh độ bất định do việc lấy mẫu người tham gia khi mô hình
+được giữ cố định, không phản ánh độ bất định do huấn luyện. Vì vậy, một đối chiếu giữa hai mô hình huấn luyện
+riêng có thể có khoảng tin cậy hẹp nhưng độ lớn chỉ ngang mức chênh lệch khi huấn luyện lại. E4-E3 là một ví
+dụ. Hai cấu hình này tương đương về mặt cấu tạo, và trọng số đã huấn luyện cho thấy ở mỗi seed chúng là hai
+lần chạy của cùng một quá trình huấn luyện, chỉ tách xa nhau dần do sai số số học. Nếu tính toán chính xác
+tuyệt đối, hai lần chạy này lẽ ra giống hệt nhau, nhưng trên SHHS1 chúng vẫn chênh 0.009 đến 0.014 về \mf\
+trung bình theo đối tượng. Không cần đến cơ chế sinh lý hay đặc điểm ghi đo nào để giải thích chênh lệch này,
+và dữ liệu của chúng tôi cũng không gợi ý cơ chế nào như vậy. Nhận xét tương tự áp dụng cho ước lượng H2 ở seed
+123, còn H1 và H3 lớn hơn mọi chênh lệch giữa seed quan sát được. Nói chung, báo cáo biến thiên giữa các lần
+huấn luyện bên cạnh khoảng tin cậy theo người tham gia sẽ làm so sánh giữa các quy trình đáng tin cậy hơn.
 
-Trong sử dụng thực tế, các bước cắt và đổi thang của E3 là thừa: chỉ lọc thông dải (E4) định nghĩa cùng quy
-trình với ít thao tác hơn, và chúng tôi khuyến nghị dạng đó. E3 vẫn là cấu hình tham chiếu của phân tích xác
-nhận chỉ vì giao thức đã cố định nó trước khi xử lý dữ liệu giữ lại. Các đối chiếu đã xác nhận liên quan đến
-quy trình ResNet-1D-TCN lọc thông dải, mà E3 và E4 là hai hiện thực.
+Trong sử dụng thực tế, các bước cắt và đổi thang của E3 là không cần thiết: chỉ lọc thông dải (E4) cho cùng
+một quy trình với ít thao tác hơn, và chúng tôi khuyến nghị dùng dạng này. E3 vẫn là cấu hình tham chiếu trong
+phân tích xác nhận chỉ vì giao thức đã cố định nó trước khi xử lý dữ liệu giữ lại. Các đối chiếu đã xác nhận
+áp dụng cho quy trình ResNet-1D-TCN có lọc thông dải, mà E3 và E4 là hai cách hiện thực.
 
 \subsection{Bỏ sót N3 vẫn tồn tại bên cạnh cải thiện tổng hợp}
 
 Dù E3 có lợi thế tổng thể, phân tích theo lớp cho thấy một lỗi chung của mọi mô hình. Cả E0 và E3 đều phân
-loại hơn 72\% epoch N3 tham chiếu thành N2 trên cả hai mẫu SHHS1, với độ thu hồi N3 gần 0.26 dù precision trên
-0.85; E4 chỉ lọc thông dải và E6 $z$-score theo bản ghi cũng có cùng mô hình lỗi. Phép tính oracle cho thấy
-tầm quan trọng về số của N3$\rightarrow$N2 với E3, và phân tích vùng ranh giới cho thấy thiếu hụt vượt ra
-ngoài lân cận các điểm đổi nhãn tham chiếu, vào cả vùng N3 ổn định. Khả năng chuyển quần thể tổng hợp tốt
-hơn của E3 vì vậy vẫn để nguyên lỗi lớn nhất theo giai đoạn. Thiếu hụt này không đặc thù cho cách triển khai
+loại hơn 72\% epoch N3 tham chiếu thành N2 trên cả hai mẫu SHHS1, với độ thu hồi N3 khoảng 0.26 dù precision trên
+0.85; E4 (chỉ lọc thông dải) và E6 ($z$-score theo bản ghi) cũng mắc cùng kiểu lỗi. Phép tính oracle cho thấy
+N3$\rightarrow$N2 là nguồn tổn thất lớn nhất của E3, và phân tích vùng ranh giới cho thấy thiếu hụt này không
+chỉ nằm gần các điểm đổi nhãn tham chiếu mà còn xuất hiện cả trong các vùng N3 ổn định. Như vậy, dù chuyển quần
+thể tốt hơn về tổng thể, E3 vẫn giữ nguyên lỗi lớn nhất ở cấp giai đoạn. Thiếu hụt này không đặc thù cho cách triển khai
 hiện tại: các mô hình ZleepAnlystNet gốc huấn luyện trên Sleep-EDF Fpz-Cz chỉ đạt F1 N3 0.43 trên 200 bản ghi
 SHHS từ kênh C3-A2, một chuyển đạo khác với chuyển đạo dùng ở đây~\cite{jadhav2024zleepanlystnet}.
 
-Hai đoàn hệ đồng thời khác nhau về chuyển đạo EEG, quần thể, điều kiện ghi đo và chấm điểm. Cấu trúc không
+Hai đoàn hệ khác nhau cùng lúc về chuyển đạo EEG, quần thể, điều kiện ghi đo và cách chấm điểm. Cấu trúc không
 gian của sóng chậm và tiêu chí chấm N3 dựa trên biên độ là lý do để khảo sát các khác
 biệt này~\cite{massimini2004travelling,davidson2025n3}. Khảo sát quét biên độ kiểm tra trực tiếp một trong
-các yếu tố đó. Tín hiệu SHHS1 đã lọc không nhỏ hơn tín hiệu Sleep-EDF, nhưng quyết định N2/N3 của mô hình phụ
-thuộc mạnh vào biên độ đầu vào: phóng to đầu vào đẩy các epoch N3 tham chiếu từ N2 về N3 và, vượt hệ số 1.5,
-về thức. Hành vi này phù hợp với một ranh giới quyết định, giống các quy tắc chấm điểm, dựa vào biên độ sóng
-chậm. Tuy nhiên, không hệ số đơn lẻ nào khôi phục được N3 mà không làm suy giảm các giai đoạn khác, và hệ số
+các yếu tố đó. Tín hiệu SHHS1 đã lọc không nhỏ hơn tín hiệu Sleep-EDF, nhưng quyết định giữa N2 và N3 của mô hình phụ
+thuộc mạnh vào biên độ đầu vào: khuếch đại đầu vào chuyển các epoch N3 tham chiếu từ dự đoán N2 sang N3 và,
+khi vượt hệ số 1.5, sang thức. Hành vi này phù hợp với một ranh giới quyết định dựa vào biên độ sóng chậm,
+tương tự các quy tắc chấm điểm. Tuy nhiên, không hệ số đơn lẻ nào khôi phục được N3 mà không làm suy giảm các giai đoạn khác, và hệ số
 thuận lợi nhất vẫn để 60\% epoch N3 bị phân loại thành N2. Một khác biệt biên độ toàn cục vì vậy không đủ để
 giải thích; thành phần phổ và không gian của sóng chậm ghi ở C4-A1 thay vì Fpz-Cz, và khác biệt giữa những
 người chấm, vẫn là các yếu tố khả dĩ mà thiết kế hiện tại không tách được.
 
-Các can thiệp thay đổi lỗi N3 theo những cách khác nhau. Hiệu chỉnh tiên nghiệm EM xóa bỏ dự đoán N3, còn
-trọng số lớp nâng độ thu hồi N3 bằng cách đánh đổi độ thu hồi N2 và độ chính xác. ADAST đổi dấu giữa hai ngân
-sách học; với huấn luyện toàn nguồn, nó tăng độ thu hồi N3 hơn gấp đôi và vượt đối chứng tương ứng trên cả hai
+Các can thiệp tác động lên lỗi N3 theo những cách khác nhau. Hiệu chỉnh tiên nghiệm EM làm mất hẳn dự đoán N3,
+còn trọng số lớp nâng độ thu hồi N3 nhưng phải đánh đổi độ thu hồi N2 và độ chính xác. Hiệu ứng của ADAST
+đổi dấu giữa hai ngân sách học; với huấn luyện toàn nguồn, nó tăng độ thu hồi N3 hơn gấp đôi và vượt đối chứng tương ứng trên cả hai
 mẫu SHHS1, nhưng làm giảm F1 N1, N2 và REM cùng hiệu năng trên đoàn hệ nguồn, và vẫn thấp hơn E3 và E4
-zero-shot. AdaBN để nguyên độ thu hồi N3 và làm giảm hiệu năng tổng hợp do dịch chuyển ranh giới của thức và
-REM. Thích nghi ở cấp đoàn hệ vì vậy hoặc để nguyên lỗi N3, hoặc đánh đổi nó với các giai đoạn khác, và không
-phương pháp thích nghi không nhãn cơ sở nào vượt quy trình lọc thông dải zero-shot. Sự đổi dấu giữa hai ngân
-sách cũng cho thấy cần báo cáo ngân sách học khi so sánh với một phương pháp thích nghi miền không giám sát,
-và độ thu hồi REM cao hơn mà F1 REM không cao hơn cho thấy lợi ích về độ thu hồi phải được đọc cùng precision.
+zero-shot. AdaBN không cải thiện độ thu hồi N3 và làm giảm hiệu năng tổng hợp do dịch chuyển ranh giới của thức và
+REM. Như vậy, thích nghi ở cấp đoàn hệ hoặc không tác động đến lỗi N3, hoặc chỉ giảm được nó bằng cách hy sinh
+các giai đoạn khác, và không phương pháp thích nghi không nhãn cơ sở nào vượt quy trình lọc thông dải
+zero-shot. Việc hiệu ứng đổi dấu giữa hai ngân sách cũng cho thấy cần báo cáo ngân sách học khi so sánh với
+một phương pháp thích nghi miền không giám sát; còn việc độ thu hồi REM tăng mà F1 REM không tăng cho thấy mọi
+cải thiện về độ thu hồi cần được xem cùng với precision.
 
 \subsection{Vị trí của nghiên cứu và giới hạn tổng quát hóa}
 
-Nghiên cứu này kết hợp các so sánh quy trình bắt cặp, chi phí tính toán, phân tích sai số khi chuyển quần thể
-và một đánh giá xác nhận trên người tham gia giữ lại. Nó bổ sung cho các công trình về biểu diễn đầu vào, quy
+Nghiên cứu này kết hợp các so sánh bắt cặp giữa các quy trình, chi phí tính toán, phân tích lỗi khi chuyển quần
+thể và một đánh giá xác nhận trên những người tham gia giữ lại. Nó bổ sung cho các công trình về biểu diễn đầu vào, quy
 trình truyền thống và học sâu, và huấn luyện đa đoàn
 hệ~\cite{haghayegh2023sleepinceptionnet,vdd2023traditional,perslev2021usleep,olesen2021mixed}. E0 là bản tái
 triển khai thiết kế ZleepAnlystNet theo giao thức đã nêu và đạt điểm thấp hơn 0.0072 so với \mf\ Sleep-EDF
@@ -917,12 +954,13 @@ triển khai thiết kế ZleepAnlystNet theo giao thức đã nêu và đạt �
 đánh giá cập nhật trọng số trên miền đích so với một đối chứng chỉ học nguồn tương ứng, còn AdaBN đánh giá
 thống kê chuẩn hóa trên miền đích không cập nhật trọng số.
 
-Có một số giới hạn. Nghiên cứu đánh giá việc chuyển từ một đoàn hệ nguồn sang một đoàn hệ đích; mẫu giữ lại
-mới về người tham gia nhưng đến từ cùng nghiên cứu SHHS1, cùng cấu hình điện cực và quy trình chấm điểm, nên
-nó xác nhận các phát hiện trong SHHS1 chứ không qua các đoàn hệ khác. Giao thức xác nhận được lưu trên kho
-công khai của tác giả thay vì một registry nghiên cứu độc lập, nên chỉ việc nó tồn tại trước phân tích, chứ
-không phải việc chưa truy cập dữ liệu trước đó, được đóng dấu thời gian từ bên ngoài. Mỗi cấu hình được huấn luyện với hai seed,
-đủ để cho thấy biến thiên huấn luyện quan trọng nhưng không đủ để ước lượng phân phối của nó. Các thí nghiệm
+Nghiên cứu có một số giới hạn. Nghiên cứu chỉ đánh giá việc chuyển từ một đoàn hệ nguồn sang một đoàn hệ đích;
+mẫu giữ lại gồm những người tham gia mới nhưng vẫn thuộc nghiên cứu SHHS1, cùng cấu hình điện cực và quy trình
+chấm điểm, nên nó xác nhận các phát hiện trong phạm vi SHHS1 chứ không xác nhận cho các đoàn hệ khác. Giao thức
+xác nhận được lưu trên kho mã công khai của tác giả thay vì một hệ thống đăng ký nghiên cứu độc lập; dấu thời
+gian bên ngoài vì vậy chỉ chứng minh giao thức có trước phân tích, không chứng minh dữ liệu chưa được truy cập
+trước đó. Mỗi cấu hình được huấn luyện với hai seed, đủ để cho thấy biến thiên huấn luyện là đáng kể nhưng
+chưa đủ để ước lượng phân phối của nó. Các thí nghiệm
 can thiệp được thiết kế sau khi đã khảo sát lỗi của mẫu SHHS1 thứ nhất, và chỉ cặp ADAST toàn nguồn được đánh
 giá lại trên mẫu giữ lại. Phân tích biên độ và AdaBN được xác định sau kết quả xác nhận và khảo sát một cấu
 hình ở một seed. Sleep-EDF dùng dự đoán ngoài fold còn SHHS1 dùng tổ hợp mười mô hình, nên chênh lệch điểm
@@ -940,13 +978,14 @@ CNN-BiLSTM và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của 
 gia, đã được xác nhận trên 500 người tham gia giữ lại ngoài quá trình phát triển: \mf\ trung bình theo đối
 tượng cải thiện 0.0467 so với đối chứng, 0.0293 so với $z$-score theo bản ghi và 0.0515 so với cùng mô hình
 trên đầu vào không lọc. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể. Vì bước cắt không bao
-giờ kích hoạt và chuẩn hóa theo lô hấp thụ một thang đầu vào hằng số, biến thể chỉ lọc thông dải và biến thể
-đổi thang là hai lần chạy đã trôi số học của cùng một mô hình, và chỉ lọc thông dải là đủ để định nghĩa quy
-trình. Mọi quy trình zero-shot đều phân loại phần lớn epoch N3 thành N2. Quyết định này phụ thuộc mạnh vào
-biên độ đầu vào, nhưng không biện pháp nào trong đổi thang, hiệu chỉnh tiên nghiệm, trọng số lớp, thích nghi
-chuẩn hóa theo lô hay thích nghi miền đối kháng loại bỏ được lỗi này mà không gây tổn thất ở giai đoạn khác.
-Vì vậy, so sánh quy trình phân giai đoạn giấc ngủ nên báo cáo chi phí tính toán, lỗi theo giai đoạn và biến
-thiên giữa các lần huấn luyện, và nên được xác nhận trên dữ liệu không ảnh hưởng đến các so sánh đó.
+giờ kích hoạt và chuẩn hóa theo lô triệt tiêu một hệ số đổi thang hằng số, biến thể chỉ lọc thông dải và biến
+thể có đổi thang là hai lần chạy của cùng một mô hình, chỉ khác nhau do sai số số học, và chỉ cần lọc thông dải
+là đủ để định nghĩa quy trình. Mọi quy trình zero-shot đều phân loại phần lớn epoch N3 thành N2. Quyết định này
+phụ thuộc mạnh vào biên độ đầu vào, nhưng không biện pháp nào trong số đổi thang, hiệu chỉnh tiên nghiệm, trọng
+số lớp, thích nghi chuẩn hóa theo lô và thích nghi miền đối kháng giảm được lỗi này mà không làm giảm hiệu năng
+ở các giai đoạn khác. Vì vậy, khi so sánh các quy trình phân giai đoạn giấc ngủ, cần báo cáo chi phí tính toán,
+lỗi theo từng giai đoạn và biến thiên giữa các lần huấn luyện, đồng thời xác nhận kết quả trên dữ liệu không
+tham gia vào quá trình đưa ra các so sánh đó.
 
 %------------------------------------------------------------------------------
 \subsection*{Khả năng tái lập và truy cập dữ liệu}
@@ -957,23 +996,12 @@ Mã nguồn, giao thức, phân hoạch dữ liệu và các phân tích tổng 
 quản lý (\url{https://sleepdata.org/datasets/shhs}). Vì quyền truy cập bản ghi nguồn do nhà cung cấp dữ liệu
 kiểm soát, kho mã và gói bản thảo không chứa bản ghi hay dự đoán SHHS cấp người tham gia.
 
-Bản chụp lịch sử \texttt{configs/shhs\_zero\_shot\_v1.json} khớp mã băm giao thức ghi trong bản kê lần chạy
-của mẫu SHHS1 thứ nhất. 540 tệp dự đoán tổ hợp của mẫu đó đã được đối chiếu với giá trị SHA-256 đã ghi, và số
-đếm nhầm lẫn của chúng tái tạo được các kết quả gộp đã báo cáo. Giao thức xác nhận trên mẫu giữ lại
-(\texttt{docs/SHHS\_HOLDOUT\_CONFIRMATORY\_PROTOCOL\_V1.md} và
-\texttt{configs/shhs\_holdout\_confirmatory\_v1.json}) được commit tại
-\href{https://github.com/quanuiter/SleepTCN/commit/a275617}{\texttt{a275617}} và chương trình phân tích tại
-\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}; một lượt kiểm thử tự động
-trên commit giao thức, được máy chủ GitHub ghi lúc 11:18 UTC ngày 10-10-2026
-(\href{https://github.com/quanuiter/SleepTCN/actions/runs/38047923110}{run 38047923110}), cung cấp dấu thời
-gian độc lập với siêu dữ liệu commit của tác giả. Bản sửa đổi sau xác nhận
-(\texttt{docs/SHHS\_HOLDOUT\_AMENDMENT\_A1.md}) được commit tại
-\href{https://github.com/quanuiter/SleepTCN/commit/ad61aa0}{\texttt{ad61aa0}}, và các chương trình đóng gói,
-chạy và nhập kết quả tính toán GPU của nó tại
-\href{https://github.com/quanuiter/SleepTCN/commit/e5a255a}{\texttt{e5a255a}}. Người tham gia giữ lại được
-chọn bằng một phép xếp hạng băm xác định có thể tái tạo từ danh sách người tham gia NSRR, và các bản kê suy luận
-ghi giá trị SHA-256 của giao thức, đầu vào đã tiền xử lý và checkpoint mô hình. Chi tiết nguồn gốc bổ sung có
-trong tài liệu bổ sung và danh mục hiện vật của kho mã.
+Giao thức xác nhận, chương trình phân tích và bản sửa đổi A1 đều được commit lên kho mã trước khi chạy; mã
+commit và một dấu thời gian do máy chủ GitHub ghi, độc lập với siêu dữ liệu commit của tác giả, được liệt kê ở
+Mục bổ sung S3. Người tham gia giữ lại được chọn bằng một phép xếp hạng băm có thể tái tạo từ danh sách người
+tham gia NSRR, và các bản kê suy luận ghi giá trị SHA-256 của giao thức, đầu vào đã tiền xử lý và checkpoint
+mô hình. Chi tiết đối chiếu nguồn gốc của mẫu SHHS1 thứ nhất có trong tài liệu bổ sung và danh mục hiện vật của
+kho mã.
 
 \subsection*{Đạo đức nghiên cứu}
 
@@ -1012,7 +1040,7 @@ hỗ trợ biên tập ngôn ngữ, tổ chức bản thảo, kiểm tra tính n
 thể tái lập, chuẩn bị sơ đồ thiết kế nghiên cứu dạng vector, và triển khai các chương trình phân tích, suy luận
 và huấn luyện cùng các kiểm thử xác minh. Anthropic Claude hỗ trợ rà soát mã, soạn giao thức xác nhận trên mẫu
 giữ lại, triển khai các chương trình tiền xử lý, suy luận và phân tích cho mẫu giữ lại, các phân tích của bản
-sửa đổi cùng kiểm thử, và biên tập ngôn ngữ bản thảo. Mọi kết quả số được các chương trình này tính từ bộ dữ
+sửa đổi cùng kiểm thử, viết mã vẽ Hình~\ref{fig:holdout}-\ref{fig:amplitude} từ số liệu đã khóa, và biên tập ngôn ngữ bản thảo. Mọi kết quả số được các chương trình này tính từ bộ dữ
 liệu đã ghi và checkpoint mô hình; không kết quả nào do mô hình ngôn ngữ cung cấp. Sau khi dùng các công cụ
 này, các tác giả đã rà soát và chỉnh sửa phần triển khai, thiết kế thực nghiệm, kết quả và văn bản khi cần và
 chịu hoàn toàn trách nhiệm về nội dung công bố.

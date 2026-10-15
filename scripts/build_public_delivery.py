@@ -21,11 +21,18 @@ EN_ENTRIES = (
     'figures/study_design_en.pdf', 'figures/study_design_en.svg',
     'figures/gate8_primary_speedup_f1_en.pdf', 'figures/gate8_feature_silhouette_en.pdf',
     'figures/gate8_context_ablation_effects_en.pdf',
+    'figures/results_holdout_en.pdf', 'figures/results_confusion_en.pdf',
+    'figures/results_amplitude_en.pdf',
     'figure_sources/gate8_primary_speedup_f1_en.tex', 'figure_sources/study_design.py',
+    'figure_sources/results_figures.py', 'figure_sources/holdout_en.tex',
+    'figure_sources/confusion_en.tex', 'figure_sources/amplitude_en.tex',
     'SUBMISSION_BUILD.md',
 )
 VI_ENTRIES = ('main.tex', 'figures/study_design_vi.pdf', 'figures/study_design_vi.svg',
-              'figures/speedup_vi.pdf', 'figures/speedup_vi.tex')
+              'figures/speedup_vi.pdf', 'figures/speedup_vi.tex',
+              'figures/holdout_vi.pdf', 'figures/holdout_vi.tex',
+              'figures/confusion_vi.pdf', 'figures/confusion_vi.tex',
+              'figures/amplitude_vi.pdf', 'figures/amplitude_vi.tex')
 INPUTS = tuple(EN + p for p in EN_ENTRIES) + tuple(VI + p for p in VI_ENTRIES)
 PDFS = {
     EN + 'main.pdf': 'Reports/output/pdf/SleepTCN_Scientific_Article_EN.pdf',

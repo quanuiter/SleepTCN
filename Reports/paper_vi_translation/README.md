@@ -1,5 +1,13 @@
 # Bản dịch tiếng Việt của bài chính nộp BSPC
 
+> **Cập nhật 15-10-2026:** thêm Hình 3-5 (đối chiếu xác nhận so với biến thiên giữa hai seed, ma trận
+> nhầm lẫn E3 trước/sau chuyển quần thể, quét biên độ và AdaBN) và bỏ Bảng 9 vì số liệu đã có trong
+> Hình 5 và Bảng bổ sung S45-S46. Mã nguồn hình: `../paper_en/figure_sources/results_figures.py`. Bảng
+> và hình được đặt cố định (`[H]`) để không chen giữa đoạn văn. Mã commit trong mục khả năng tái lập được
+> chuyển sang Mục bổ sung S3/S5. Rà soát câu chữ tiếng Việt; dấu phân cách hàng nghìn đổi thành khoảng
+> trắng hẹp để không nhầm với dấu thập phân. 8 bảng, 5 hình, 19 trang. Bản Anh nhận cùng các thay đổi
+> nội dung (hình, bảng, mục tái lập) nhưng giữ cách đặt float kiểu tạp chí.
+
 > **Cập nhật 13-10-2026:** dịch lại toàn bộ theo `../paper_en/main.tex` hiện hành: đánh giá xác nhận
 > trên 500 người SHHS1 giữ lại (H1-H3), tương đương E3/E4, bản sửa đổi A1 (quét biên độ, AdaBN), đối
 > chiếu E0 với ZleepAnlystNet gốc và các mục khai báo mới. 9 bảng, 2 hình, 17 trang; trình tự số liệu,

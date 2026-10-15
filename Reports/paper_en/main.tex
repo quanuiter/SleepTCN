@@ -466,8 +466,8 @@ involving E1, E2 and E4 are secondary or post-hoc, and boundary analyses are pos
 
 Before any holdout recording was preprocessed, a protocol fixing the cohort, preprocessing,
 checkpoints, ensemble rule, metrics, hypotheses and decision rule was published in the public project
-repository on 10 October 2026, and the analysis script was published there before it was run; the
-exact versions are identified in the reproducibility statement. The confirmatory family comprised three seed-42 contrasts of subject-mean \mf, each
+repository on 10 October 2026, and the analysis script was published there before it was run (commit
+identifiers and timestamps in Supplementary Section S3). The confirmatory family comprised three seed-42 contrasts of subject-mean \mf, each
 with an expected positive sign: H1, E3-E0; H2, E3-E6; and H3, E3-E2. A hypothesis was
 confirmed if its Holm-adjusted two-sided Wilcoxon $p$-value was below 0.05 and its paired
 subject-cluster bootstrap interval (10{,}000 resamples, seed 2040) lay entirely above zero.
@@ -670,6 +670,10 @@ Tables~\ref{SM-tab:sup_shhs_seed123}-\ref{SM-tab:sup_e4_two_seeds}).
 \subsection{Confirmatory evaluation on the holdout SHHS1 sample}
 \label{sec:holdout}
 
+Table~\ref{tab:holdout-performance} reports the performance of each configuration on the holdout sample
+and Table~\ref{tab:holdout-confirmatory} the confirmatory family; Fig.~\ref{fig:holdout} sets these
+contrasts against the difference between two training runs of the same configuration.
+
 \begin{table}[t]
 \centering
 \caption{Holdout SHHS1 sample ($n=500$; 458{,}409 scored epochs): performance of the seed-42
@@ -718,12 +722,11 @@ H3 & E3-E2 & 0.0515 & $[0.0460, 0.0571]$ & $1.2\times10^{-50}$ & 395/1/104 & yes
 \end{tabular}}
 \end{table}
 
-All three pre-specified hypotheses were confirmed (Table~\ref{tab:holdout-confirmatory}). The holdout
-estimates lie close to those of the first sample: E3 exceeded E0 by 0.0467, E6 by 0.0293 and E2 by
-0.0515 in subject-mean \mf, with improvements in 380, 342 and 395 of 500 participants. E3 reached a
-subject-mean \mf\ of 0.5637 on the holdout sample, compared with 0.5680 on the first sample
-(Table~\ref{tab:holdout-performance}). The three contrasts remained positive with intervals above zero
-at seed 123, with estimates of 0.0375, 0.0129 and 0.0270. Results for all twelve arms and the
+All three pre-specified hypotheses were confirmed (Table~\ref{tab:holdout-confirmatory},
+Fig.~\ref{fig:holdout}a), and the holdout estimates lie close to those of the first sample. E3 improved
+on the comparator in 380, 342 and 395 of 500 participants; its subject-mean \mf\ was 0.5637 on the
+holdout sample, compared with 0.5680 on the first sample. At seed 123, all three contrasts remained
+positive with intervals above zero. Results for all twelve arms and the
 secondary analyses are reported in Supplementary
 Tables~\ref{SM-tab:sup_holdout_arms}-\ref{SM-tab:sup_holdout_s5s7}.
 
@@ -737,8 +740,8 @@ for E0 at seed 42, and 0.5321 versus 0.5216 at seed 123. Most of E3's advantage 
 coincided with the change of input filtering rather than with the change of encoder and sequence model.
 This comparison of E2 with E0 is descriptive and was not part of the confirmatory family.
 
-Training variability was of the same order as some configuration contrasts. Subject-mean \mf\ at seed 42 minus
-that at seed 123 was $+0.0046$ (\ci\ $[0.0026,0.0067]$) for E3, $+0.0094$ ($[0.0076,0.0112]$)
+Training variability was of the same order as some configuration contrasts (Fig.~\ref{fig:holdout}b).
+Subject-mean \mf\ at seed 42 minus that at seed 123 was $+0.0046$ (\ci\ $[0.0026,0.0067]$) for E3, $+0.0094$ ($[0.0076,0.0112]$)
 for E4, $-0.0046$ ($[-0.0063,-0.0029]$) for E0 and $-0.0118$ ($[-0.0151,-0.0085]$) for E6; the
 unfiltered E2, not part of this pre-specified set, differed by $-0.0199$. All four intervals exclude zero even though each pair shares its configuration: intervals computed
 for fixed models do not capture variation between training runs. E4 again scored higher than E3, by
@@ -746,14 +749,29 @@ for fixed models do not capture variation between training runs. E4 again scored
 expectation that E4-E3 would not exceed the between-seed differences was met at seed 123 but not
 at seed 42, where E4-E3 was larger than each of the four pre-specified between-seed differences.
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{./figures/results_holdout_en.pdf}
+    \caption{\textbf{Confirmatory contrasts against training variability.} (a) Differences in
+    subject-mean \mf\ for H1-H3 on the first SHHS1 sample ($n=180$, seed 42) and on the holdout sample
+    ($n=500$, seeds 42 and 123). (b) Differences between two training seeds of the same configuration
+    (seed 42 minus seed 123) and E4-E3 at each seed on the holdout sample; E2 has no pre-specified
+    interval and is shown as a point estimate (open circle). Bars are 95\% subject-cluster bootstrap
+    intervals; both panels share the horizontal axis. Values are taken from
+    Tables~\ref{tab:holdout-confirmatory} and~\ref{tab:shhs-paired} and Supplementary
+    Tables~\ref{SM-tab:sup_shhs_secondary_paired} and~\ref{SM-tab:sup_holdout_s2}. The chart was generated
+    with editable PGFPlots code; Anthropic Claude assisted with the plotting code.}
+    \label{fig:holdout}
+\end{figure}
+
 The trained weights show why this difference should not be read as an effect of input scale
 (Supplementary Table~\ref{SM-tab:sup_e3e4}). For the same seed and fold, the first-layer kernels of E3
 and E4 had cosine similarity 0.909-0.974 and the median similarity over encoder weight tensors was
 0.696-0.863, against values between $-0.112$ and $0.012$ for two seeds of the same configuration. The
 first-layer running variance of E4 was about $10^4$ times that of E3, as the factor of 100 predicts, and
 early stopping selected different epochs for E3 and E4 in 8 of the 20 seed-fold pairs. Each E3 model is
-therefore a numerically drifted copy of the corresponding E4 model, and E4-E3 measures how far two
-nominally equivalent runs diverge. By contrast, H1 and H3 exceeded every between-seed difference at
+therefore a repeat run of the corresponding E4 model that differs only through accumulated numerical
+error, and E4-E3 measures how far two nominally equivalent runs diverge. By contrast, H1 and H3 exceeded every between-seed difference at
 both seeds, whereas H2 at seed 123 (0.0129) was close to the between-seed differences of E4 and E6.
 
 \subsection{Cross-model errors and their temporal distribution}
@@ -762,10 +780,23 @@ both seeds, whereas H2 at seed 123 (0.0129) was close to the between-seed differ
 E3's pooled \mf\ fell from 0.7904 on Sleep-EDF to 0.6099 on the first SHHS1 sample, a difference of
 0.1805. Because the two cohorts are evaluated differently, by out-of-fold predictions and by ten-model
 ensembles, we examine this difference descriptively by class; A$\rightarrow$B denotes a
-reference-labelled A epoch predicted as B. N3 accounts for most of the loss: E3 N3 F1 fell from 0.8085 to
+reference-labelled A epoch predicted as B. N3 accounts for most of the loss (Fig.~\ref{fig:confusion}): E3 N3 F1 fell from 0.8085 to
 0.4055, with precision 0.9440 but recall 0.2582, and E0 showed nearly the same recall (0.2610) and
-N3$\rightarrow$N2 rate (72.3\% versus 73.1\%; Supplementary Table~\ref{SM-tab:sup_first_n3}). The holdout
-sample reproduced this pattern: N3$\rightarrow$N2 rates were 72.3\% for E0 (\ci\ 70.1-74.4\%), 72.7\%
+N3$\rightarrow$N2 rate (72.3\% versus 73.1\%; Supplementary Table~\ref{SM-tab:sup_first_n3}).
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\textwidth]{./figures/results_confusion_en.pdf}
+    \caption{\textbf{E3 confusion matrices (seed 42) before and after cross-cohort transfer.} Each cell is
+    the percentage of epochs of a reference stage (row) predicted as each stage (column); rows sum to
+    100\%. The orange outline marks N3$\rightarrow$N2, which rises from 18.2\% on Sleep-EDF to 73.1\% on
+    the first SHHS1 sample. Counts are taken from Supplementary Tables~\ref{SM-tab:sup_edf_confusion}
+    and~\ref{SM-tab:sup_shhs_confusion}. The chart was generated with editable PGFPlots/TikZ code;
+    Anthropic Claude assisted with the plotting code.}
+    \label{fig:confusion}
+\end{figure}
+
+The holdout sample reproduced this pattern: N3$\rightarrow$N2 rates were 72.3\% for E0 (\ci\ 70.1-74.4\%), 72.7\%
 for E3 (70.7-74.7\%), 71.1\% for E4 and 77.1\% for E6, with N3 recall of 0.2565, 0.2549, 0.2742 and
 0.1987 and N3 precision between 0.85 and 0.88.
 
@@ -810,35 +841,13 @@ control also scored lower than E3 (0.4986; Table~\ref{tab:holdout-performance}).
 \subsection{Amplitude sensitivity and batch-normalisation adaptation}
 \label{sec:amendment-results}
 
-\begin{table}[t]
-\centering
-\caption{Post-confirmatory amplitude and adaptation analyses of E4 (seed 42) on the holdout SHHS1 sample
-($n=500$). $\Delta$ is the difference in subject-mean \mf\ from unmodified E4 with its subject-cluster
-bootstrap interval; class-wise columns are pooled over epochs. Descriptive analyses without hypothesis
-tests.}
-\label{tab:amendment}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrrrr}
-\toprule
-\textbf{Condition} & \textbf{Subject-mean \mf} & $\boldsymbol{\Delta}$ \textbf{(\ci)} & \textbf{N3 recall} & \textbf{N3$\to$N2} & \textbf{N3 F1} & \textbf{W F1} & \textbf{REM F1} \\
-\midrule
-Input $\times$0.5 & 0.4627 & $-$0.1149 $[$$-$0.1219, $-$0.1081$]$ & 0.0176 & 93.3\% & 0.0343 & 0.8202 & 0.6733 \\
-Input $\times$0.75 & 0.5256 & $-$0.0520 $[$$-$0.0559, $-$0.0482$]$ & 0.1327 & 84.2\% & 0.2294 & 0.8272 & 0.7161 \\
-E4 (input $\times$1) & 0.5776 & n/a & 0.2742 & 71.1\% & 0.4184 & 0.8297 & 0.7436 \\
-Input $\times$1.5 & 0.5765 & $-$0.0011 $[$$-$0.0099, 0.0075$]$ & 0.3559 & 60.0\% & 0.5043 & 0.7960 & 0.7054 \\
-Input $\times$2 & 0.4502 & $-$0.1274 $[$$-$0.1412, $-$0.1137$]$ & 0.2318 & 48.6\% & 0.3614 & 0.6720 & 0.4143 \\
-AdaBN & 0.4570 & $-$0.1206 $[$$-$0.1295, $-$0.1116$]$ & 0.2828 & 54.8\% & 0.4313 & 0.7125 & 0.4590 \\
-\bottomrule
-\end{tabular}}
-\end{table}
-
 The band-pass-filtered SHHS1 signal was not smaller than the Sleep-EDF signal: its per-recording standard
 deviation had a median of $16.50\,\mu$V, interquartile range 13.72-21.26, on the holdout sample and of
 $14.36\,\mu$V, interquartile range 11.63-16.82, on Sleep-EDF.
 
 Input amplitude nevertheless strongly influenced the separation of N2 from N3
-(Table~\ref{tab:amendment}). As the input factor increased from 0.5 to 2, the proportion of reference N3
+(Fig.~\ref{fig:amplitude}; full values in Supplementary Tables~\ref{SM-tab:sup_amendment_arms}
+and~\ref{SM-tab:sup_amendment_contrasts}). As the input factor increased from 0.5 to 2, the proportion of reference N3
 epochs predicted as N2 fell monotonically from 93.3\% to 48.6\%. N3 recall, however, rose only up to a
 factor of 1.5, from 0.2742 to 0.3559, a difference of 0.0817 with \ci\ $[0.0665,0.0974]$. At a factor
 of 2 it fell to 0.2318, because 28.2\% of reference N3 epochs were then classified as wake, and REM
@@ -847,6 +856,22 @@ $[0.0697,0.1020]$, was offset by lower N1, REM and wake F1, and subject-mean \mf
 ($-0.0011$, \ci\ $[-0.0099,0.0075]$). Factors below 1 reduced N3 recall to 0.1327 and 0.0176. The
 response was thus monotonic for the N3$\rightarrow$N2 rate but not for N3 recall, which by the
 pre-specified criterion argues against an amplitude-only explanation of N3 under-detection.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{./figures/results_amplitude_en.pdf}
+    \caption{\textbf{Amplitude sensitivity and AdaBN for E4 (seed 42) on the holdout SHHS1 sample
+    ($n=500$).} The filtered input was multiplied by 0.5-2 while the encoder kept its stored
+    batch-normalisation statistics; $\times$1 (dotted line) is unmodified E4. AdaBN replaces the
+    batch-normalisation statistics with those of unlabelled SHHS1 epochs and is shown separately, right of
+    the dashed line. (a) The N3$\rightarrow$N2 rate falls monotonically as amplitude increases, but N3
+    recall rises only up to $\times$1.5. (b) Subject-mean macro-F1 does not exceed that of E4 at any
+    factor, and wake and REM F1 drop sharply at $\times$2 and with AdaBN. Class-wise metrics are pooled
+    over epochs; descriptive analysis without hypothesis tests. Values are taken from Supplementary
+    Table~\ref{SM-tab:sup_amendment_arms}. The chart was generated with editable PGFPlots code; Anthropic
+    Claude assisted with the plotting code.}
+    \label{fig:amplitude}
+\end{figure}
 
 AdaBN changed subject-mean \mf\ by $-0.1206$, \ci\ $[-0.1295,-0.1116]$, without a detectable change in N3
 recall (difference 0.0086, \ci\ $[-0.0052,0.0222]$). Wake precision fell from 0.853 to 0.589 and REM
@@ -986,23 +1011,13 @@ managed by NSRR (\url{https://sleepdata.org/datasets/shhs}). Because access to t
 controlled by the data provider, the repository and the manuscript package contain no participant-level
 SHHS records or predictions.
 
-The historical snapshot \texttt{configs/shhs\_zero\_shot\_v1.json} matches the protocol hash recorded
-in the run manifest of the first SHHS1 sample. The 540 ensemble prediction files of that sample were
-checked against their recorded SHA-256 values, and their confusion counts reproduce the reported pooled
-results. The confirmatory holdout protocol (\texttt{docs/SHHS\_HOLDOUT\_CONFIRMATORY\_PROTOCOL\_V1.md}
-and \texttt{configs/shhs\_holdout\_confirmatory\_v1.json}) was committed at
-\href{https://github.com/quanuiter/SleepTCN/commit/a275617}{\texttt{a275617}} and the analysis script at
-\href{https://github.com/quanuiter/SleepTCN/commit/2019b51}{\texttt{2019b51}}; an automated test run
-on the protocol commit, recorded by the GitHub server at 11:18 UTC on 10 October 2026
-(\href{https://github.com/quanuiter/SleepTCN/actions/runs/38047923110}{run 38047923110}), provides a
-timestamp independent of the authors' commit metadata. The post-confirmatory
-amendment (\texttt{docs/SHHS\_HOLDOUT\_AMENDMENT\_A1.md}) was committed at
-\href{https://github.com/quanuiter/SleepTCN/commit/ad61aa0}{\texttt{ad61aa0}}, and the scripts that
-packaged, ran and imported its GPU computation at
-\href{https://github.com/quanuiter/SleepTCN/commit/e5a255a}{\texttt{e5a255a}}. The holdout participants
-are selected by a deterministic hash ranking that can be reproduced from the NSRR participant list, and
-the inference manifests record the SHA-256 values of the protocol, the preprocessed inputs and the model
-checkpoints. Further provenance details are given in the supplement and the repository artifact index.
+The confirmatory protocol, its analysis script and amendment A1 were each committed to the repository
+before they were run; their commit identifiers, and a timestamp recorded by the GitHub server
+independently of the authors' commit metadata, are listed in Supplementary Section S3. The holdout
+participants are selected by a deterministic hash ranking that can be reproduced from the NSRR
+participant list, and the inference manifests record the SHA-256 values of the protocol, the preprocessed
+inputs and the model checkpoints. Provenance checks for the first SHHS1 sample are given in the
+supplement and the repository artifact index.
 
 \subsection*{Ethics}
 
@@ -1043,8 +1058,8 @@ assisted with language editing, manuscript organisation, code and result consist
 reproducible plotting, preparation of the vector study-design schematic, and the implementation of
 analysis, inference and training scripts and their verification tests. Anthropic Claude assisted with
 code review, drafting of the confirmatory holdout protocol, implementation of the holdout
-preprocessing, inference and analysis scripts, the amendment analyses and their tests, and language
-editing of the manuscript. All numerical results were computed by these scripts from the recorded datasets and model
+preprocessing, inference and analysis scripts, the amendment analyses and their tests, the plotting code for
+Figs.~\ref{fig:holdout}-\ref{fig:amplitude} from the locked values, and language editing of the manuscript. All numerical results were computed by these scripts from the recorded datasets and model
 checkpoints; none was supplied by a language model. After using these tools, the authors reviewed and
 edited the implementation, experimental design, results and text as needed and take full
 responsibility for the content of the publication.
