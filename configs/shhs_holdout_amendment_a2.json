@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "amendment": "A2",
-  "status": "draft",
+  "status": "locked_before_a2_training",
   "status_rule": "Scripts refuse to preprocess, train, infer or analyse A2 data until status is 'locked_before_a2_training' and this file is committed and pushed. When locking, change only the status field.",
   "protocol_document": "docs/SHHS_HOLDOUT_AMENDMENT_A2.md",
   "runbook": "docs/AMENDMENT_A2_RUNBOOK_VI.md",
