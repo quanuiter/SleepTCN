@@ -155,8 +155,12 @@ def cmd_status(args: argparse.Namespace) -> int:
 PARENT_RESTORE = ROOT / "runs" / "holdout_ckpt_restore_20261010"
 PARENT_PREDICTIONS = ROOT / "runs" / "holdout_inference_v1" / "fold_predictions"
 # Inside runs/a2 (ignored by Git): a file at the repository root would block the clean-tree runner.
-BUNDLE_MANIFEST = (A2_ROOT / "inputs_bundle_manifest.json").as_posix()
+BUNDLE_PARTS = ("sleepedf", "holdout")
 PARENT_MANIFEST_COPY = A2_ROOT / "manifests" / "parent_preprocess_holdout_v1.json"
+
+
+def bundle_manifest_path(part: str) -> str:
+    return (A2_ROOT / f"inputs_bundle_{part}.json").as_posix()
 
 
 def cmd_prepare_sleepedf(args: argparse.Namespace) -> int:
@@ -185,27 +189,32 @@ def cmd_prepare_shhs(args: argparse.Namespace) -> int:
 
 
 def _bundle_files(args: argparse.Namespace) -> list[tuple[Path, str]]:
-    """(source file, path inside the bundle relative to the repository root)."""
+    """(source file, path inside the bundle relative to the repository root) for one bundle part.
+
+    ``sleepedf`` is all that training, the reproduction check and the Sleep-EDF test need;
+    ``holdout`` adds the holdout inputs and the parent E4_s42 files of the device check, and can be
+    uploaded while training runs.
+    """
     from sleeptcn.amendment_a2_data import SHHS_MANIFEST, SHHS_PROCESSED, SLEEPEDF_MANIFEST, VARIANT
 
-    files = [(ROOT / SLEEPEDF_MANIFEST, SLEEPEDF_MANIFEST.as_posix())]
-    for variant in ("bandpass_v2", VARIANT):
-        files += [(p, f"data/processed/{variant}/{p.name}")
-                  for p in sorted((ROOT / "data" / "processed" / variant).glob("SC*.npz"))]
-    if not args.with_holdout:
+    if args.part == "sleepedf":
+        files = [(ROOT / SLEEPEDF_MANIFEST, SLEEPEDF_MANIFEST.as_posix())]
+        for variant in ("bandpass_v2", VARIANT):
+            files += [(p, f"data/processed/{variant}/{p.name}")
+                      for p in sorted((ROOT / "data" / "processed" / variant).glob("SC*.npz"))]
         return files
-    files.append((args.parent_manifest, PARENT_MANIFEST_COPY.as_posix()))
-    files.append((ROOT / SHHS_MANIFEST, SHHS_MANIFEST.as_posix()))
+    files = [(ROOT / PARENT_MANIFEST_COPY, PARENT_MANIFEST_COPY.as_posix()),
+             (ROOT / SHHS_MANIFEST, SHHS_MANIFEST.as_posix())]
     files += [(p, f"data/processed/shhs_holdout_v1/bandpass_v2/{p.name}")
               for p in sorted((args.parent_processed_root / "bandpass_v2").glob("shhs1-*.npz"))]
     files += [(p, f"{SHHS_PROCESSED.as_posix()}/{VARIANT}/{p.name}")
               for p in sorted((ROOT / SHHS_PROCESSED / VARIANT).glob("shhs1-*.npz"))]
     restore = [PARENT_RESTORE / "configs" / "experiments_v2.json",
                PARENT_RESTORE / "data" / "splits" / "sleepedf_sc_10fold_seed42_v2.json"]
+    keys = sorted(p.stem for p in (args.parent_processed_root / "bandpass_v2").glob("shhs1-*.npz"))[:2]
     for fold in (0, 9):
         restore += sorted(p for p in (PARENT_RESTORE / "runs/v2/full/E4" / f"fold_{fold:02d}" / "seed_42").rglob("*")
                           if p.is_file())
-        keys = sorted(p.stem for p in (args.parent_processed_root / "bandpass_v2").glob("shhs1-*.npz"))[:2]
         restore += [PARENT_PREDICTIONS / "E4_s42" / f"fold_{fold:02d}" / f"{key}.npz" for key in keys]
     files += [(p, p.relative_to(ROOT).as_posix()) for p in restore]
     return files
@@ -219,14 +228,14 @@ def cmd_bundle(args: argparse.Namespace) -> int:
     missing = [str(src) for src, _ in files if not src.is_file()]
     if missing:
         raise SystemExit(f"{len(missing)} bundle inputs missing, e.g. {missing[:3]}")
-    manifest = {"schema_version": 1, "amendment": "A2", "with_holdout": bool(args.with_holdout),
+    manifest = {"schema_version": 1, "amendment": "A2", "part": args.part,
                 "files": [{"path": arc, "sha256": sha256_file(src)} for src, arc in files]}
-    destination = Path(args.output).resolve()
+    destination = Path(args.output or ROOT.parent / f"a2_inputs_{args.part}.tar").resolve()
     with tarfile.open(destination, "w") as archive:
         for src, arc in files:
             archive.add(src, arcname=arc)
         payload = json.dumps(manifest, indent=1).encode("utf-8")
-        info = tarfile.TarInfo(BUNDLE_MANIFEST)
+        info = tarfile.TarInfo(bundle_manifest_path(args.part))
         info.size = len(payload)
         archive.addfile(info, io.BytesIO(payload))
     print(f"BUNDLE {destination} ({destination.stat().st_size / 1e9:.2f} GB, {len(files)} files)")
@@ -236,12 +245,15 @@ def cmd_bundle(args: argparse.Namespace) -> int:
 def cmd_verify_bundle(args: argparse.Namespace) -> int:
     from sleeptcn.io.hashing import sha256_file
 
-    manifest = json.loads((ROOT / BUNDLE_MANIFEST).read_text(encoding="utf-8"))
+    manifest_path = ROOT / bundle_manifest_path(args.part)
+    if not manifest_path.is_file():
+        raise SystemExit(f"{manifest_path} not found; unpack the {args.part} bundle at the repository root")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     bad = [f["path"] for f in manifest["files"] if not (ROOT / f["path"]).is_file()
            or sha256_file(ROOT / f["path"]) != f["sha256"]]
     if bad:
         raise SystemExit(f"{len(bad)} bundle files missing or changed, e.g. {bad[:3]}")
-    print(f"BUNDLE VERIFIED: {len(manifest['files'])} files")
+    print(f"BUNDLE VERIFIED ({args.part}): {len(manifest['files'])} files")
     return 0
 
 
@@ -374,8 +386,8 @@ def main() -> int:
         p.add_argument("--parent-manifest", type=Path, default=holdout_defaults["parent_manifest"])
         p.add_argument("--parent-processed-root", type=Path, default=holdout_defaults["parent_processed_root"])
         if name == "bundle":
-            p.add_argument("--output", default=str(ROOT.parent / "a2_inputs.tar"))
-            p.add_argument("--with-holdout", action="store_true", help="also pack the holdout inputs")
+            p.add_argument("--part", choices=BUNDLE_PARTS, default="sleepedf")
+            p.add_argument("--output", default=None, help="default: ../a2_inputs_<part>.tar")
             continue
         p.add_argument("--device", default="cpu")
         p.add_argument("--threads", type=int, default=2, help="torch CPU threads per process")
@@ -388,7 +400,8 @@ def main() -> int:
         if name == "holdout-worker":
             p.add_argument("--index", type=int, required=True)
             p.add_argument("--count", type=int, required=True)
-    sub.add_parser("verify-bundle")
+    p = sub.add_parser("verify-bundle")
+    p.add_argument("--part", choices=BUNDLE_PARTS, default="sleepedf")
     p = sub.add_parser("step-benchmark")
     p.add_argument("--device", default="cuda")
 

@@ -133,6 +133,45 @@ def test_finalize_averages_fold_probabilities(tmp_path, monkeypatch):
         np.testing.assert_array_equal(z["prediction"], expected.argmax(1))
 
 
+# --------------------------------------------------------------------------- input bundles
+def test_bundle_round_trip_and_tamper_detection(tmp_path, monkeypatch):
+    import argparse
+    import tarfile
+
+    import run_amendment_a2 as run
+
+    source = tmp_path / "source"
+    config = _config()
+    config["status"] = a2.LOCKED_STATUS
+    (source / a2.A2_CONFIG).parent.mkdir(parents=True)
+    (source / a2.A2_CONFIG).write_text(json.dumps(config), encoding="utf-8")
+    from sleeptcn.amendment_a2_data import SLEEPEDF_MANIFEST
+
+    (source / SLEEPEDF_MANIFEST).parent.mkdir(parents=True)
+    (source / SLEEPEDF_MANIFEST).write_text("{}", encoding="utf-8")
+    for variant in ("bandpass_v2", VARIANT):
+        for key in ("SC4001E", "SC4002E"):
+            _npz(source / "data/processed" / variant / f"{key}.npz", x=np.arange(3) + len(variant))
+    monkeypatch.setattr(run, "ROOT", source)
+    out = tmp_path / "bundle.tar"
+    run.cmd_bundle(argparse.Namespace(part="sleepedf", output=str(out), parent_manifest=None,
+                                      parent_processed_root=None))
+    target = tmp_path / "gpu"
+    with tarfile.open(out) as archive:
+        names = archive.getnames()
+        archive.extractall(target)
+    assert run.bundle_manifest_path("sleepedf") in names and len(names) == 6
+    assert all(not name.startswith("/") and ".." not in name for name in names)
+    monkeypatch.setattr(run, "ROOT", target)
+    assert run.cmd_verify_bundle(argparse.Namespace(part="sleepedf")) == 0
+    tampered = target / "data/processed/bandpass_v2/SC4001E.npz"
+    data = bytearray(tampered.read_bytes())
+    data[len(data) // 2] ^= 0x01
+    tampered.write_bytes(bytes(data))
+    with pytest.raises(SystemExit, match="missing or changed"):
+        run.cmd_verify_bundle(argparse.Namespace(part="sleepedf"))
+
+
 # --------------------------------------------------------------------------- analyses
 class FakeHoldout:
     def __init__(self, n_records: int = 12, epochs: int = 40, seed: int = 0) -> None:
