@@ -137,7 +137,8 @@ tham gia SHHS1 khác theo một giao thức đã cam kết trước khi xử lý
 \noindent
 \textbf{Kết quả.} Mạng dư một chiều kết hợp mạng tích chập thời gian (ResNet-1D-TCN) trên đầu vào lọc
 thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF. Dù có số tham số gấp $4.37\times$ đối chứng CNN-BiLSTM
-(E0), E3 huấn luyện đủ mười fold nhanh hơn $10.2\times$ và có lượt truyền xuôi nhanh hơn $3.76\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
+(E0), lượt truyền xuôi của E3 nhanh hơn $3.76\times$, và huấn luyện đủ mười fold theo công thức huấn luyện
+riêng của từng quy trình mất ít thời gian hơn $10.2\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
 bình theo đối tượng so với E0 thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi
 (E6) thêm 0.0293 (0.0231-0.0354) và so với cùng mô hình trên đầu vào không lọc (E2) thêm 0.0515
 (0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Cấu hình chỉ lọc thông dải (E4) về
@@ -204,8 +205,9 @@ gây tổn thất ở các giai đoạn khác hay không?
 Các đóng góp của chúng tôi tương ứng với các câu hỏi này.
 
 \begin{enumerate}[label=(\arabic*)]
-\item Chúng tôi cho thấy quy trình ResNet-1D-TCN đã triển khai huấn luyện nhanh hơn khoảng mười lần và chạy
-nhanh hơn gần bốn lần so với đối chứng CNN-BiLSTM dù có nhiều tham số hơn, và trong các thay đổi được đánh giá, lọc thông dải, chứ không phải bộ mã hóa
+\item Chúng tôi cho thấy quy trình ResNet-1D-TCN đã triển khai chạy nhanh hơn gần bốn lần so với đối chứng
+CNN-BiLSTM dù có nhiều tham số hơn, và huấn luyện nhanh hơn khoảng mười lần theo công thức huấn luyện riêng
+của mỗi quy trình, và trong các thay đổi được đánh giá, lọc thông dải, chứ không phải bộ mã hóa
 hay mô hình chuỗi, đóng góp phần lớn lợi thế khi chuyển quần thể: không lọc, cùng mô hình đạt kết quả
 gần đối chứng.
 \item Chúng tôi xác nhận lợi thế này trên 500 người tham gia SHHS1 giữ lại theo giao thức cố định trước khi
@@ -859,8 +861,10 @@ Mẫu giữ lại lặp lại kết quả của ngân sách toàn nguồn. ADAST
 (\ci\ $[0.0374,0.0484]$) và nâng độ thu hồi N3 từ 0.2366 lên 0.6161, trong khi F1 N1, N2 và REM giảm 0.0190,
 0.0445 và 0.0568. Tuy nhiên, xét giá trị tuyệt đối, ADAST vẫn thấp hơn các quy trình lọc thông dải zero-shot:
 \mf\ trung bình theo đối tượng của nó thấp hơn E3 0.0222 ($[-0.0284,-0.0160]$) và thấp hơn E4 0.0361
-($[-0.0423,-0.0299]$). Đối chứng chỉ học nguồn tương ứng cũng có điểm thấp hơn E3 (0.4986;
-Bảng~\ref{tab:holdout-performance}).
+($[-0.0423,-0.0299]$). Cả hai nhánh ADAST đều dùng đầu vào của E3, nên khoảng cách này chủ yếu phản ánh kiến
+trúc nền của ADAST và cách huấn luyện nó, chứ không phải bản thân việc thích nghi: khi chưa thích nghi, cùng
+kiến trúc nền đó (đối chứng chỉ học nguồn tương ứng) đạt 0.4986, thấp hơn E3 0.0651
+(Bảng~\ref{tab:holdout-performance}), và việc thích nghi bù lại được 0.0429 trong khoảng chênh đó.
 
 \subsection{Độ nhạy theo biên độ và thích nghi chuẩn hóa theo lô}
 \label{sec:amendment-results}
@@ -911,9 +915,10 @@ Mục bổ sung S5 trình bày mọi lớp và đối chiếu.
 180 người tham gia, đã được xác nhận trên 500 người tham gia mà dữ liệu chưa ảnh hưởng đến bất kỳ phân tích
 nào. Nó cũng rẻ hơn nhiều khi phát triển và khi sử dụng: huấn luyện và xác thực mười fold chỉ mất khoảng
 3.3\,giờ thay vì 33.6\,giờ trên cùng một GPU, và lượt truyền xuôi nhanh hơn $3.76\times$. Với một quy trình
-phải huấn luyện lại cho mỗi biến thể tiền xử lý, mỗi seed và mỗi fold, việc giảm thời gian huấn luyện khoảng
-mười lần là một ưu điểm thực tế riêng, dù một phần mức giảm đến từ công thức huấn luyện ngắn hơn của bộ mã
-hóa ResNet-1D. Thứ
+phải huấn luyện lại cho mỗi biến thể tiền xử lý, mỗi seed và mỗi fold, việc giảm thời gian huấn luyện là một
+ưu điểm thực tế, nhưng nó được đo với công thức huấn luyện riêng của từng quy trình: mỗi CNN trong 15 CNN đối
+chứng có thể huấn luyện tới 1\,000 epoch, còn bộ mã hóa ResNet-1D tối đa 40 epoch, nên tỷ số này mô tả hai quy
+trình như đã định nghĩa chứ không phải hiệu quả tính toán của riêng kiến trúc. Thứ
 hai, lọc thông dải đóng góp phần lớn lợi thế này. Cùng mô hình trên đầu vào không lọc đạt kết quả gần đối
 chứng trên mẫu giữ lại, và trên mẫu thứ nhất, cả việc thay mô hình chuỗi (E1-E0) lẫn thay đặc trưng/ngữ cảnh
 (E2-E1) đều không tạo lợi ích tương đương. Cách lọc tín hiệu vì vậy là một phần đáng kể quyết định khả năng
@@ -970,11 +975,12 @@ người chấm, vẫn là các yếu tố khả dĩ mà thiết kế hiện t�
 Các can thiệp tác động lên lỗi N3 theo những cách khác nhau. Hiệu chỉnh tiên nghiệm EM làm mất hẳn dự đoán N3,
 còn trọng số lớp nâng độ thu hồi N3 nhưng phải đánh đổi độ thu hồi N2 và độ chính xác. Hiệu ứng của ADAST
 đổi dấu giữa hai ngân sách học; với huấn luyện toàn nguồn, nó tăng độ thu hồi N3 hơn gấp đôi và vượt đối chứng tương ứng trên cả hai
-mẫu SHHS1, nhưng làm giảm F1 N1, N2 và REM cùng hiệu năng trên đoàn hệ nguồn, và vẫn thấp hơn E3 và E4
-zero-shot. AdaBN không cải thiện độ thu hồi N3 và làm giảm hiệu năng tổng hợp do dịch chuyển ranh giới của thức và
-REM. Như vậy, thích nghi ở cấp đoàn hệ hoặc không tác động đến lỗi N3, hoặc chỉ giảm được nó bằng cách hy sinh
-các giai đoạn khác, và không phương pháp thích nghi không nhãn cơ sở nào vượt quy trình lọc thông dải
-zero-shot. Việc hiệu ứng đổi dấu giữa hai ngân sách cũng cho thấy cần báo cáo ngân sách học khi so sánh với
+mẫu SHHS1, nhưng làm giảm F1 N1, N2 và REM cùng hiệu năng trên đoàn hệ nguồn. ADAST vẫn thấp hơn E3 và E4
+zero-shot, nhưng vì kiến trúc nền của nó khi chưa thích nghi đã thấp hơn E3 đáng kể, phép so sánh này trộn lẫn
+tác động của việc thích nghi với tác động của kiến trúc nền và không cho thấy thích nghi đối kháng sẽ thất bại
+trên quy trình ResNet-1D-TCN, vốn chưa được thử. AdaBN, áp dụng trực tiếp lên các mô hình E4, không cải thiện
+độ thu hồi N3 và làm giảm hiệu năng tổng hợp do dịch chuyển ranh giới của thức và REM. Như vậy, thích nghi ở
+cấp đoàn hệ hoặc không tác động đến lỗi N3, hoặc chỉ giảm được nó bằng cách hy sinh các giai đoạn khác. Việc hiệu ứng đổi dấu giữa hai ngân sách cũng cho thấy cần báo cáo ngân sách học khi so sánh với
 một phương pháp thích nghi miền không giám sát; còn việc độ thu hồi REM tăng mà F1 REM không tăng cho thấy mọi
 cải thiện về độ thu hồi cần được xem cùng với precision.
 
@@ -997,7 +1003,7 @@ gian bên ngoài vì vậy chỉ chứng minh giao thức có trước phân tí
 trước đó. Mỗi cấu hình được huấn luyện với hai seed, đủ để cho thấy biến thiên huấn luyện là đáng kể nhưng
 chưa đủ để ước lượng phân phối của nó. Các thí nghiệm
 can thiệp được thiết kế sau khi đã khảo sát lỗi của mẫu SHHS1 thứ nhất, và chỉ cặp ADAST toàn nguồn được đánh
-giá lại trên mẫu giữ lại. Phân tích biên độ và AdaBN được xác định sau kết quả xác nhận và khảo sát một cấu
+giá lại trên mẫu giữ lại; ADAST chạy với kiến trúc nền của chính nó chứ không trên quy trình ResNet-1D-TCN. Phân tích biên độ và AdaBN được xác định sau kết quả xác nhận và khảo sát một cấu
 hình ở một seed. Sleep-EDF dùng dự đoán ngoài fold còn SHHS1 dùng tổ hợp mười mô hình, nên chênh lệch điểm
 giữa hai đoàn hệ kết hợp khác biệt về đoàn hệ và về quy trình đánh giá. Các mô hình dùng ngữ cảnh tương lai
 và được đánh giá ngoại tuyến, nên thời gian truyền xuôi mô tả xử lý ngoại tuyến chứ không phải vận hành thời
@@ -1008,8 +1014,8 @@ N3 có tổng quát hóa hay không.
 %==============================================================================
 \section{Kết luận}
 
-Theo một giao thức chung, quy trình ResNet-1D-TCN trên EEG lọc thông dải huấn luyện nhanh hơn khoảng mười lần,
-chạy nhanh hơn gần bốn lần so với đối chứng CNN-BiLSTM, và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
+Theo một giao thức chung, quy trình ResNet-1D-TCN trên EEG lọc thông dải chạy nhanh hơn gần bốn lần so với đối
+chứng CNN-BiLSTM, huấn luyện nhanh hơn khoảng mười lần theo công thức huấn luyện riêng của nó, và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
 gia, đã được xác nhận trên 500 người tham gia giữ lại ngoài quá trình phát triển: \mf\ trung bình theo đối
 tượng cải thiện 0.0467 so với đối chứng, 0.0293 so với $z$-score theo bản ghi và 0.0515 so với cùng mô hình
 trên đầu vào không lọc. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể. Vì bước cắt không bao

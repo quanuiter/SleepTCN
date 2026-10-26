@@ -134,8 +134,8 @@ under a protocol committed before these data were processed.
 \noindent
 \textbf{Results.} A one-dimensional residual network with a temporal convolutional network
 (ResNet-1D-TCN) on band-pass-filtered input (E3) reached a pooled Sleep-EDF \mf\ of 0.7904. Despite
-$4.37\times$ more parameters than a CNN-BiLSTM baseline (E0), it completed ten-fold training $10.2\times$
-faster with a $3.76\times$ faster forward pass. On the 500-participant sample, E3 improved subject-mean \mf\ over E0 by 0.0467
+$4.37\times$ more parameters than a CNN-BiLSTM baseline (E0), its forward pass was $3.76\times$ faster,
+and ten-fold training under each pipeline's own recipe took $10.2\times$ less time. On the 500-participant sample, E3 improved subject-mean \mf\ over E0 by 0.0467
 (\ci\ 0.0403-0.0531), over record-wise $z$-scoring (E6) by 0.0293 (0.0231-0.0354) and over the
 same model on unfiltered input (E2) by 0.0515 (0.0460-0.0571); all three pre-specified hypotheses
 were confirmed. Band-pass-only input (E4), equivalent to E3 under batch normalisation, scored 0.009-0.014 higher,
@@ -199,8 +199,9 @@ prior correction, class weighting or domain adaptation reduce them without losse
 Our contributions follow these questions.
 
 \begin{enumerate}[label=(\arabic*)]
-\item We show that the implemented ResNet-1D-TCN pipeline is about ten times faster to train and
-almost four times faster to run than the CNN-BiLSTM baseline despite having more parameters, and that, among the evaluated changes, band-pass
+\item We show that the implemented ResNet-1D-TCN pipeline runs almost four times faster than the
+CNN-BiLSTM baseline despite having more parameters, and trains about ten times faster under the two
+pipelines' respective recipes, and that, among the evaluated changes, band-pass
 filtering rather than the encoder or sequence model accounts for most of its cross-cohort advantage:
 without filtering, the same model performed close to the baseline.
 \item We confirm this advantage on 500 held-out SHHS1 participants under a protocol fixed before their
@@ -866,8 +867,11 @@ The holdout sample reproduced the full-source result. ADAST exceeded its control
 subject-mean \mf\ (\ci\ $[0.0374,0.0484]$) and raised N3 recall from 0.2366 to 0.6161, while N1, N2 and
 REM F1 decreased by 0.0190, 0.0445 and 0.0568. In absolute terms, however, ADAST remained below the
 zero-shot band-pass pipelines: its subject-mean \mf\ was 0.0222 lower than that of E3
-($[-0.0284,-0.0160]$) and 0.0361 lower than that of E4 ($[-0.0423,-0.0299]$). Its matched source-only
-control also scored lower than E3 (0.4986; Table~\ref{tab:holdout-performance}).
+($[-0.0284,-0.0160]$) and 0.0361 lower than that of E4 ($[-0.0423,-0.0299]$). Both ADAST arms
+used the E3 input, so this gap mainly reflects the ADAST backbone and its training rather than the
+adaptation: without adaptation, the same backbone (the matched source-only control) scored 0.4986,
+0.0651 below E3 (Table~\ref{tab:holdout-performance}), and adaptation recovered 0.0429 of that
+difference.
 
 \subsection{Amplitude sensitivity and batch-normalisation adaptation}
 \label{sec:amendment-results}
@@ -920,8 +924,10 @@ ResNet-1D-TCN configuration on band-pass-filtered input transferred better to SH
 CNN-BiLSTM baseline, and this advantage, first observed on 180 participants, was confirmed on 500 participants whose data had not informed any analysis. It was also much cheaper to develop and use:
 ten-fold training and validation took about 3.3\,h instead of 33.6\,h on the same GPU, and its forward
 pass was $3.76\times$ faster. For a pipeline that must be retrained for every preprocessing variant, seed
-and fold, this tenfold reduction in training time is a practical advantage in its own right, although
-part of it comes from the shorter training recipe of the ResNet-1D encoder. Second, band-pass filtering accounted for most
+and fold, this reduction in training time is a practical advantage, but it was measured with each
+pipeline's own recipe: the 15 baseline CNNs may each train for up to 1{,}000 epochs, the ResNet-1D
+encoder for at most 40, so the ratio describes the two pipelines as specified rather than the
+computational efficiency of the architectures alone. Second, band-pass filtering accounted for most
 of this advantage. The same model on unfiltered input performed close to the baseline on the holdout
 sample, and on the first sample neither the sequence-model replacement (E1-E0) nor the
 feature/context replacement (E2-E1) produced a comparable gain. How the signal is filtered is therefore a substantial part of how these models transfer, not an
@@ -984,10 +990,12 @@ The interventions changed the N3 error in different ways. EM prior correction el
 predictions, and class weighting raised N3 recall at the expense of N2 recall and accuracy. ADAST
 changed sign between learning budgets; with full-source training it more than doubled N3 recall and
 improved on its matched control on both SHHS1 samples, but lowered N1, N2 and REM F1 and source-cohort
-performance and remained below zero-shot E3 and E4. AdaBN left N3 recall unchanged and lowered aggregate
-performance by shifting the wake and REM boundaries. Cohort-level adaptation therefore either left the
-N3 error unchanged or traded it against other stages, and neither label-free adaptation baseline
-exceeded the zero-shot band-pass pipeline. The sign change between budgets also shows that the learning
+performance. It remained below zero-shot E3 and E4, but because its backbone without adaptation scored
+well below E3, this comparison mixes the effect of adaptation with that of the backbone and does not show
+that adversarial adaptation would fail on the ResNet-1D-TCN pipeline, which was not tested. AdaBN, applied
+to the E4 models themselves, left N3 recall unchanged and lowered aggregate performance by shifting the
+wake and REM boundaries. Cohort-level adaptation therefore either left the N3 error unchanged or traded
+it against other stages. The sign change between budgets also shows that the learning
 budget must be reported when an unsupervised domain-adaptation baseline is compared, and greater REM
 recall without greater REM F1 shows that recall gains must be read together with precision.
 
@@ -1010,7 +1018,7 @@ externally timestamped. Each
 configuration was trained with two seeds, which suffices to show that training variability matters but
 not to estimate its distribution. The intervention experiments were designed after the errors of the
 first SHHS1 sample had been examined, and only the full-source ADAST pair was re-evaluated on the
-holdout sample. The amplitude and AdaBN analyses were specified after the confirmatory results and
+holdout sample; ADAST was run with its own backbone rather than with the ResNet-1D-TCN pipeline. The amplitude and AdaBN analyses were specified after the confirmatory results and
 examine one configuration at one seed. Sleep-EDF uses out-of-fold predictions and SHHS1 uses ten-model ensembles, so score
 differences between the cohorts combine cohort and evaluation-procedure differences. The models use
 future context and were evaluated offline, so forward-pass timing describes offline processing rather
@@ -1021,9 +1029,9 @@ filtering effect and the N3 pattern generalise.
 %==============================================================================
 \section{Conclusion}
 
-Under a shared protocol, the ResNet-1D-TCN pipeline on band-pass-filtered EEG trained about ten times
-faster and ran almost four times faster than the CNN-BiLSTM baseline, and transferred better from
-Sleep-EDF to SHHS1. Its advantage, first observed
+Under a shared protocol, the ResNet-1D-TCN pipeline on band-pass-filtered EEG ran almost four times
+faster than the CNN-BiLSTM baseline, trained about ten times faster under its own recipe, and
+transferred better from Sleep-EDF to SHHS1. Its advantage, first observed
 on 180 participants, was confirmed on 500 participants held out from development: subject-mean \mf\
 improved by 0.0467 over the baseline, by 0.0293 over record-wise $z$-scoring and by 0.0515 over the same
 model on unfiltered input. Band-pass filtering accounted for most of the transfer gain. Because
