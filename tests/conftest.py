@@ -24,6 +24,7 @@ OPTIMIZER_TESTS = {
     'test_no_alignment_never_forwards_or_steps_discriminator_and_loss_reconstructs',
     'test_tiny_ablations_save_best_final_and_effective_coefficients',
     'test_tiny_three_arms_save_selection_final_rng_and_losses',
+    'test_step_benchmark_runs_the_training_loop_on_cpu',
 }
 
 PRIVATE_TESTS = {

@@ -58,7 +58,7 @@
     "new_variant_preprocessing": "same EDF/XML inputs, channel, resampling, label mapping and evaluation window as the parent manifest; written to a separate A2 manifest under data/processed/shhs_holdout_a2",
     "existing_variants": "E4 arms reuse the hash-verified bandpass_v2 holdout inputs of the parent manifest",
     "ensembling": "arithmetic mean of the ten fold softmax probabilities (float64 accumulator, float32 storage), argmax; every fold artifact is kept",
-    "device": "CPU, or CUDA if the A2 inference code first reproduces the stored CPU fold probabilities of E4_s42 for two records at folds 0 and 9 within 1e-5 with identical argmax",
+    "device": "CPU or CUDA; on the device used, the A2 inference code must first reproduce the stored parent CPU fold probabilities of E4_s42 for two records at folds 0 and 9 within 1e-5 with identical argmax, and holdout inference starts only after the A2 Sleep-EDF test campaign is complete",
     "first_sample": "not used by A2 except that analysis D reuses the archived EM fits estimated on the five first-sample adaptation recordings"
   },
   "analyses": {
@@ -99,9 +99,9 @@
       "interpretation_rule": "If the priors estimated from the AdaBN sample and from all 500 recordings still lie far below the observed N3 share (less than half of it) and reduce N3 recall below that of the temperature-scaled ensemble without prior adjustment, the collapse is attributed to the label-shift assumption failing under feature shift, not to the five-recording sample. If they approach the observed share and do not reduce N3 recall, the collapse is attributed to the small adaptation sample."
     },
     "E_training_cost": {
-      "steps": "completed epochs and optimiser steps of every training stage of every fold of the archived seed-123 campaign for E0, E2, E3, E4 and E6, read from the checkpoint progress records at commit 8af1d12; steps per epoch from the training-set size and batch size of each stage",
-      "step_time": "median forward+backward+optimiser time per step for the 15-branch CNN (batch 64), ResNet-1D (batch 64), BiLSTM (batch 4 sequences) and TCN (batch 8 sequences) with synthetic inputs of the training shapes, 20 warm-up and 200 timed steps, run alone on the rented GPU",
-      "outcome": "per configuration: total optimiser steps, steps x median step time, and the remainder of the observed wall-clock time (validation passes, data loading, checkpointing); because the rented GPU may differ from the original V100, configurations are compared by ratios",
+      "steps": "completed epochs, validation events and optimiser steps (progress.global_steps) of every training stage of every fold of the archived seed-123 campaign for E0, E2, E3, E4 and E6, read from the latest.pt checkpoints at commit 8af1d12",
+      "step_time": "time per optimiser step through the training code path (engine.run_loader with the recipe's optimiser, loss and gradient clipping) for one baseline CNN branch (batch 64 epochs), ResNet-1D (batch 64 epochs), BiLSTM (batches of 4 recordings) and TCN (batches of 8 recordings) with synthetic values; sequence batches use the real fold-0 training record lengths grouped in shuffled order (generator seed 2045), so padding matches training; pre-built batches exclude data loading; per model 20 warm-up steps, then three rounds of 200 timed steps through one run_loader call each (as in a training epoch), run alone on the rented GPU; the mean time per step of each round and the range over rounds are reported, and totals use the mean over rounds",
+      "outcome": "per configuration: total optimiser steps, steps x mean step time, and the remainder of the observed wall-clock time (validation passes, data loading, checkpointing); because the rented GPU may differ from the original V100, configurations are compared by ratios",
       "interpretation_rule": "The manuscript states how much of the E0/E3 training-time ratio is due to the number of optimiser steps and how much to the time per step, and no longer presents the ratio as an architectural property."
     }
   }

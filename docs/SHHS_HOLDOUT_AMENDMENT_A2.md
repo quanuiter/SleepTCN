@@ -70,8 +70,9 @@ lựa chọn nào phụ thuộc vào kết quả A2.
 - **Biến thể có sẵn:** các arm E4 dùng lại đầu vào `bandpass_v2` đã kiểm tra hash của manifest gốc.
 - **Ensemble:** trung bình số học xác suất softmax của mười fold (cộng dồn float64, lưu float32), rồi
   argmax; giữ mọi tệp fold.
-- **Thiết bị:** CPU, hoặc CUDA nếu trước đó code suy luận A2 tái tạo xác suất fold CPU đã lưu của
-  E4_s42 cho hai bản ghi ở fold 0 và 9 trong sai số 1e-5 với argmax giống hệt.
+- **Thiết bị:** CPU hoặc CUDA. Trên thiết bị được dùng, code suy luận A2 phải tái tạo trước xác suất fold CPU
+  đã lưu của E4_s42 cho hai bản ghi ở fold 0 và 9 trong sai số 1e-5 với argmax giống hệt. Suy luận holdout chỉ
+  bắt đầu sau khi chiến dịch test Sleep-EDF của A2 hoàn tất.
 
 ## 5. Phân tích (khóa)
 
@@ -137,15 +138,20 @@ Bootstrap: 10 000 lần lấy mẫu lại theo người, bắt cặp, seed 2043.
 
 ### E. Chi phí huấn luyện
 
-- **Số bước:** số epoch hoàn thành và số bước tối ưu của mọi giai đoạn huấn luyện ở mọi fold trong chiến
-  dịch seed 123 lưu trữ (E0, E2, E3, E4, E6), đọc từ bản ghi tiến trình trong checkpoint ở commit
-  `8af1d12`; số bước mỗi epoch tính từ kích thước tập huấn luyện và batch size của giai đoạn đó.
-- **Thời gian mỗi bước:** trung vị thời gian forward + backward + optimizer cho CNN 15 nhánh (batch 64),
-  ResNet-1D (batch 64), BiLSTM (batch 4 chuỗi) và TCN (batch 8 chuỗi), đầu vào tổng hợp đúng kích thước
-  huấn luyện, 20 lượt khởi động và 200 lượt đo, chạy một mình trên GPU thuê.
-- **Kết quả:** với mỗi cấu hình: tổng số bước, số bước × thời gian mỗi bước, và phần còn lại của thời gian
-  thực đo (xác thực, nạp dữ liệu, lưu checkpoint). Vì GPU thuê có thể khác V100 gốc, các cấu hình được so
-  bằng tỷ số.
+- **Số bước:** số epoch hoàn thành, số lần xác thực và số bước tối ưu (`progress.global_steps`) của mọi giai
+  đoạn huấn luyện ở mọi fold trong chiến dịch seed 123 lưu trữ (E0, E2, E3, E4, E6), đọc từ `latest.pt` ở
+  commit `8af1d12`.
+- **Thời gian thực đo:** đọc lại từ bản ghi `runs/v2/monitoring/fold_XX_seed123_time.txt` ở cùng commit.
+- **Thời gian mỗi bước:** đo qua chính vòng lặp huấn luyện (`engine.run_loader`) với optimizer, hàm mất mát,
+  batch size và cắt gradient của từng giai đoạn: một nhánh CNN đối chứng (batch 64 epoch), ResNet-1D (batch 64
+  epoch), BiLSTM (batch 4 bản ghi), TCN (batch 8 bản ghi). Giá trị tổng hợp; batch chuỗi dùng độ dài thật của
+  các bản ghi huấn luyện fold 0, xếp ngẫu nhiên (seed 2045) để phần đệm giống khi huấn luyện; batch dựng sẵn
+  nên không tính thời gian nạp dữ liệu. Mỗi mô hình: 20 bước khởi động, rồi 3 vòng × 200 bước, mỗi vòng một
+  lần gọi `run_loader` như một epoch. Báo cáo thời gian trung bình mỗi bước của từng vòng và khoảng giữa các
+  vòng; tổng thời gian dùng trung bình qua các vòng. Chạy một mình trên GPU thuê.
+- **Kết quả:** với mỗi cấu hình: tổng số bước, số bước × thời gian trung bình mỗi bước, và (nếu GPU đo là V100)
+  phần còn lại của thời gian thực đo (xác thực, trích đặc trưng, nạp dữ liệu, lưu checkpoint). Các cấu hình
+  được so bằng tỷ số với E0: tỷ số thời gian thực đo, tỷ số số bước và tỷ số thời gian trung bình mỗi bước.
 - **Quy tắc diễn giải:** bản thảo nói rõ bao nhiêu phần của tỷ số thời gian E0/E3 đến từ số bước tối ưu và
   bao nhiêu từ thời gian mỗi bước, và không còn trình bày tỷ số đó như một thuộc tính của kiến trúc.
 
@@ -169,8 +175,11 @@ Bootstrap: 10 000 lần lấy mẫu lại theo người, bắt cặp, seed 2043.
 
 1. Khóa `configs/shhs_holdout_amendment_a2.json` (chỉ đổi trường `status` thành
    `locked_before_a2_training`), commit và push.
-2. Tiền xử lý Sleep-EDF và SHHS1 holdout cho biến thể `filtered_zscore_rolling90_v3`.
-3. Phân tích C (phần các arm gốc), D và đọc số bước cho E; không cần GPU.
+2. Tiền xử lý Sleep-EDF và SHHS1 holdout cho biến thể `filtered_zscore_rolling90_v3`, kèm các kiểm tra đồng
+   nhất với biến thể tham chiếu.
+3. Phân tích D (không cần GPU).
 4. Trên GPU thuê: kiểm tra tái lập, 50 lần train, mở tập test Sleep-EDF một lần, đo thời gian mỗi bước.
-5. Suy luận holdout cho năm cặp arm–seed mới.
-6. Phân tích A, B, phần còn lại của C và E; cập nhật bản thảo theo các quy tắc diễn giải ở mục 5.
+5. Kiểm tra thiết bị, rồi suy luận holdout cho năm cặp arm–seed mới.
+6. Phân tích C, A, B và E; cập nhật bản thảo theo các quy tắc diễn giải ở mục 5.
+
+Các lệnh cụ thể nằm trong `docs/AMENDMENT_A2_RUNBOOK_VI.md`.
