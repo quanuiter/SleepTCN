@@ -25,6 +25,12 @@ REQUIRED_FIELDS = {
     "trim_anchor_policy",
 }
 
+# Amendment A2 variants, defined after the subject split was frozen. They are built from
+# the same 153 records and evaluation windows as ``filtered_v2`` (the A2 preprocessing
+# check compares labels and epoch indices record by record), so the frozen split applies
+# unchanged; the split file itself is never edited because runs record its hash.
+POST_SPLIT_VARIANTS = frozenset({"filtered_zscore_window_v3", "filtered_zscore_rolling90_v3"})
+
 
 @dataclass(frozen=True)
 class RecordInfo:
@@ -179,7 +185,8 @@ def paths_for_role(
 ) -> list[Path]:
     if role not in {"train", "validation", "test"}:
         raise ValueError(f"Invalid role: {role}")
-    if expected_variant not in split_manifest["compatible_variants"]:
+    if (expected_variant not in split_manifest["compatible_variants"]
+            and expected_variant not in POST_SPLIT_VARIANTS):
         raise ValueError(f"Variant not permitted by split manifest: {expected_variant}")
     runs = {
         int(run["outer_fold"]): run for run in split_manifest["outer_runs"]

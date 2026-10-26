@@ -59,17 +59,19 @@ def arm_spec(config: dict[str, Any], arm: str) -> dict[str, Any]:
 
 
 def training_targets(config: dict[str, Any]) -> list[A2Target]:
-    """All A2 runs in the locked order: E6W/E6R seed by seed, then E3/E4 seed by seed."""
+    """All A2 runs in the locked ``run_order``: each (arm, seed) pair with all its folds.
+
+    ``run_order`` must list every (arm, seed) of ``arms`` exactly once.
+    """
     arms = config["training"]["arms"]
     folds = [int(f) for f in config["training"]["folds"]]
-    targets: list[A2Target] = []
-    for group in (("E6W", "E6R"), ("E3", "E4")):
-        seed_lists = [arms[a]["seeds"] for a in group]
-        for position in range(max(len(s) for s in seed_lists)):
-            for arm, seeds in zip(group, seed_lists, strict=True):
-                if position < len(seeds):
-                    targets += [A2Target(arm, int(seeds[position]), f) for f in folds]
-    return targets
+    order = [(str(arm), int(seed)) for arm, seed in config["training"]["run_order"]]
+    declared = {(arm, int(seed)) for arm, spec in arms.items() for seed in spec["seeds"]}
+    if len(order) != len(set(order)) or set(order) != declared:
+        raise ValueError("run_order must list every (arm, seed) of the A2 arms exactly once")
+    if REPRO_ARM in arms:
+        raise ValueError(f"{REPRO_ARM} is reserved for the reproduction check")
+    return [A2Target(arm, seed, fold) for arm, seed in order for fold in folds]
 
 
 def repro_target() -> A2Target:

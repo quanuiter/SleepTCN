@@ -1,9 +1,10 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "amendment": "A2",
-  "status": "draft_pending_author_approval",
-  "status_rule": "Scripts refuse to train, preprocess or infer until status is 'locked_before_a2_training' and this file is committed. Change only the status field when locking.",
+  "status": "draft",
+  "status_rule": "Scripts refuse to preprocess, train, infer or analyse A2 data until status is 'locked_before_a2_training' and this file is committed and pushed. When locking, change only the status field.",
   "protocol_document": "docs/SHHS_HOLDOUT_AMENDMENT_A2.md",
+  "runbook": "docs/AMENDMENT_A2_RUNBOOK_VI.md",
   "parent_protocol": {
     "config": "configs/shhs_holdout_confirmatory_v1.json",
     "config_sha256": "b6653adaaf27f0e487289d61181fd714a3c390f1192aab27da783cf54fad1e0d",
@@ -12,95 +13,96 @@
     "unchanged": "H1-H3, the parent analysis report and the A1 report are not changed, re-tested or re-interpreted"
   },
   "purpose": {
-    "A_normalisation_scope": "Test whether the E6 deficit reflects z-scoring itself or its full-record scope (about 23 h, mostly daytime, in Sleep-EDF versus the in-bed period in SHHS1), by retraining E6 with scope-matched statistics.",
-    "B_training_seeds": "Characterise between-seed variability of E3 and E4 with five training seeds instead of two.",
+    "A_normalisation_scope": "Test whether the E6 deficit reflects z-scoring itself or its full-record scope (about 23 h, mostly daytime, in Sleep-EDF versus the night in SHHS1), by retraining E6 with a label-free normalisation whose scope is the same in both cohorts.",
+    "B_training_seeds": "Characterise between-seed variability of the recommended band-pass pipeline (E4) with five training seeds instead of two, and compare it with the configuration contrasts.",
     "C_ensemble_asymmetry": "Quantify how much the ten-model ensemble used on SHHS1 changes scores relative to single fold models, the unit used on Sleep-EDF.",
-    "D_em_sample_size": "Test whether the collapse of EM prior correction is due to estimating the prior from five recordings or to the label-shift assumption failing under feature shift.",
-    "E_training_cost": "Decompose the training-time difference between E0 and the ResNet-1D-TCN pipelines into number of optimiser steps and time per step.",
+    "D_em_sample_size": "Test whether the collapse of EM prior correction is due to estimating the prior from five recordings or to the label-shift assumption failing, by repeating the original procedure with only the prior-estimation data changed.",
+    "E_training_cost": "Decompose the training-time difference between E0 and the ResNet-1D-TCN pipelines into optimiser steps, time per step and the remainder.",
     "text_only": "The ADAST backbone difference and the absence of a shared EEG derivation are handled in the manuscript text; no experiment is added for them."
   },
-  "status_of_holdout": "Holdout labels were used by the parent analysis and by A1. A2 is post-confirmatory and descriptive. No arm, seed, window length, subset size or threshold below depends on holdout results; all are fixed before any A2 training.",
+  "status_of_holdout": "Holdout labels were used by the parent analysis and by A1. A2 is post-confirmatory and descriptive. No arm, seed, window length, subset size, draw count or interpretation rule below depends on A2 results; all are fixed before any A2 preprocessing, training, inference or analysis.",
   "training": {
     "source": "Sleep-EDF SC, the locked ten-fold subject split data/splits/sleepedf_sc_10fold_seed42_v2.json, validation fold = next fold",
-    "runner": "the current scripts/run_experiment.py code path (src/sleeptcn/experiment.run_experiment) with the unchanged configs/experiments_v2.json (SHA-256 1d812bbf...); this runner was refactored after the seed-123 campaign (runner hash 12245ec0... at commit 88a5d2c), so its equivalence is checked first",
+    "runner": "the current scripts/run_experiment.py code path (src/sleeptcn/experiment.run_experiment) with the unchanged configs/experiments_v2.json; this runner was refactored after the seed-123 campaign (commit 88a5d2c), so its equivalence is checked first",
+    "split_compatibility": "the frozen split file is not edited (runs record its hash); src/sleeptcn/dataset.POST_SPLIT_VARIANTS admits the A2 variant, and the A2 preprocessing check requires every new Sleep-EDF record to have the same record key, labels and original epoch indices as its filtered_v2 counterpart",
     "reproduction_check": {
       "run": "E4, fold 0, seed 123, trained with the A2 runner on the rented GPU before any A2 run, under runs/a2/full/REPRO_E4/fold_00/seed_123",
-      "reference": "archived seed-123 E4 fold-0 run at commit 8af1d12 (validation metrics, completed epochs and best epoch of each stage)",
-      "outcome": "reported as identical or, if not, the size of the difference in validation macro-F1 and best epoch; A2 proceeds either way and the result is disclosed, because GPU and library versions also differ from the original campaign"
+      "reference": "archived seed-123 E4 fold-0 run at commit 8af1d12 (completed epochs, best epoch and best validation macro-F1 of each stage; validation predictions)",
+      "outcome": "reported as identical or, if not, the size of the difference in validation macro-F1, best epoch and predicted-label agreement; A2 proceeds either way and the result is disclosed, because GPU and library versions differ from the original campaign"
     },
     "run_root": "runs/a2/full/<arm>/fold_<k>/seed_<s>",
     "arms": {
-      "E6W": {
-        "experiment": "E6",
-        "data_variant": "filtered_zscore_window_v3",
-        "normalisation": "band-pass 0.5-30 Hz, clip +-800 uV, z-score with mean and standard deviation of the filtered, clipped signal inside the evaluation window (30 min before the first to 30 min after the last N1/N2/N3/REM epoch)",
-        "note": "diagnostic: the window bounds use reference labels, exactly as the evaluation window itself does; not a deployable rule",
-        "seeds": [42, 123]
-      },
       "E6R": {
         "experiment": "E6",
         "data_variant": "filtered_zscore_rolling90_v3",
-        "normalisation": "band-pass 0.5-30 Hz, clip +-800 uV, centred moving-window z-score over 90 min (truncated at record edges), standard-deviation floor 1 uV",
-        "note": "label-free; 90 min is about one sleep cycle, so each window normally contains both light and deep sleep",
+        "normalisation": "band-pass 0.5-30 Hz, clip +-800 uV, centred moving-window z-score over 90 min (window truncated at record edges), standard-deviation floor 1 uV; statistics from the filtered, clipped signal only, no labels",
+        "rationale": "the statistics come from the same 90-min local scope in both cohorts, so the input scale no longer depends on recording length; 90 min is about one sleep cycle",
         "seeds": [42, 123]
       },
-      "E3": {"experiment": "E3", "data_variant": "filtered_v2", "seeds": [2025, 2027, 2029]},
-      "E4": {"experiment": "E4", "data_variant": "bandpass_v2", "seeds": [2025, 2027, 2029]}
+      "E4": {
+        "experiment": "E4",
+        "data_variant": "bandpass_v2",
+        "seeds": [2025, 2027, 2029]
+      }
     },
-    "seed_note": "2025 is the third confirmatory training seed already listed in configs/experiments_v2.json; 2027 and 2029 are fixed here. With seeds 42 and 123 this gives five seeds for E3 and E4.",
+    "seed_note": "2025 is listed in configs/experiments_v2.json as the third confirmatory training seed but was never trained; 2027 and 2029 are fixed here. With the archived seeds 42 and 123 this gives five E4 seeds. E6R uses the two seeds of the archived E6 runs so that E6R and E6 are compared seed by seed.",
     "folds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    "order": "E6W s42, E6R s42, E6W s123, E6R s123, then E3/E4 by seed; within a seed all ten folds",
+    "run_order": [["E6R", 42], ["E6R", 123], ["E4", 2025], ["E4", 2027], ["E4", 2029]],
     "parallelism": "several training processes may share one GPU; each run is independent and deterministic settings are unchanged",
     "sleep_edf_test": "after every A2 run has completed validation-only training and passed run validation, the locked Sleep-EDF test folds are evaluated once with the pre-locked best checkpoints (out-of-fold predictions)"
   },
   "shhs": {
     "cohort": "the 500 holdout participants of the parent analysis",
     "parent_preprocess_manifest_sha256": "f0be16e6693dbbde8253bf07a6f76c2acd783f04fe1bb07dbaab65cdc9f13649",
-    "new_variants": ["filtered_zscore_window_v3", "filtered_zscore_rolling90_v3"],
-    "new_variant_preprocessing": "same EDF/XML inputs, resampling, label mapping and evaluation window as the parent manifest; written to a separate A2 manifest",
-    "existing_variants": "E3 and E4 arms reuse the hash-verified filtered_v2 and bandpass_v2 holdout inputs of the parent manifest",
+    "new_variants": ["filtered_zscore_rolling90_v3"],
+    "new_variant_preprocessing": "same EDF/XML inputs, channel, resampling, label mapping and evaluation window as the parent manifest; written to a separate A2 manifest under data/processed/shhs_holdout_a2",
+    "existing_variants": "E4 arms reuse the hash-verified bandpass_v2 holdout inputs of the parent manifest",
     "ensembling": "arithmetic mean of the ten fold softmax probabilities (float64 accumulator, float32 storage), argmax; every fold artifact is kept",
-    "device": "CPU, or CUDA if the A2 code reproduces stored CPU fold probabilities of E4_s42 for two records at folds 0 and 9 within 1e-5 with identical argmax",
-    "first_sample": "not used by A2"
+    "device": "CPU, or CUDA if the A2 inference code first reproduces the stored CPU fold probabilities of E4_s42 for two records at folds 0 and 9 within 1e-5 with identical argmax",
+    "first_sample": "not used by A2 except that analysis D reuses the archived EM fits estimated on the five first-sample adaptation recordings"
   },
   "analyses": {
     "bootstrap": {"resamples": 10000, "seed": 2043, "unit": "participant, paired"},
     "hypothesis_tests": "none; all A2 results are descriptive",
     "A_normalisation_scope": {
-      "contrasts_per_seed": ["E4 - E6W", "E4 - E6R", "E3 - E6W", "E3 - E6R", "E6W - E6", "E6R - E6"],
+      "contrasts_per_seed": ["E4 - E6R", "E3 - E6R", "E6R - E6"],
       "seeds": [42, 123],
       "metrics": ["subject-mean macro-F1", "pooled macro-F1", "N3 recall", "N3->N2 rate"],
-      "input_scale": "median and IQR of the within-window standard deviation of the E6, E6W and E6R inputs on Sleep-EDF and on the holdout sample",
-      "sleep_edf": "pooled out-of-fold macro-F1 of E6W and E6R against E3, E4 and E6 at the same seed",
-      "interpretation_rule": "The manuscript keeps the statement that preserving calibrated amplitude transferred better than z-scoring only if E4 - E6W and E4 - E6R both have intervals above zero at both seeds. Otherwise the statement is restricted to full-record z-scoring as implemented, and the scope-matched result is reported."
+      "input_scale": "median and IQR of the within-evaluation-window standard deviation of the E6 and E6R inputs on Sleep-EDF and on the holdout sample",
+      "sleep_edf": "pooled out-of-fold macro-F1 of E6R against E3, E4 and E6 at the same seed",
+      "interpretation_rule": "The manuscript keeps the statement that preserving calibrated amplitude transferred better than z-scoring only if E4 - E6R has a bootstrap interval above zero at both seeds. Otherwise the statement is restricted to full-record z-scoring as implemented, and the E6R result is reported as showing that the E6 deficit depended on the normalisation scope."
     },
     "B_training_seeds": {
-      "arms": ["E3", "E4"],
+      "arm": "E4",
       "seeds": [42, 123, 2025, 2027, 2029],
-      "metrics": "holdout subject-mean macro-F1 and Sleep-EDF pooled macro-F1 per seed; mean, standard deviation and range over seeds; all ten pairwise between-seed differences per configuration; E4 - E3 at each seed with its interval",
-      "interpretation_rule": "The manuscript replaces the two-seed range of between-seed differences with the five-seed summary and compares it descriptively with the H1-H3 estimates; no new test is made."
+      "metrics": "holdout subject-mean macro-F1 and Sleep-EDF pooled out-of-fold macro-F1 per seed; mean, sample standard deviation and range over the five seeds; all ten pairwise between-seed differences of holdout subject-mean macro-F1 with paired bootstrap intervals",
+      "configuration_contrast": "E4 at each of the five seeds minus E0 at seeds 42 and 123 (ten pairs), and E4 at each seed minus E2 at seeds 42 and 123, in holdout subject-mean macro-F1 with paired bootstrap intervals; reported against the range of the ten between-seed differences",
+      "interpretation_rule": "The manuscript replaces the two-seed range of between-seed differences with the five-seed summary. The pipeline contrasts are described as exceeding training variability only if every E4 - E0 and E4 - E2 pair exceeds the largest absolute between-seed difference of E4; no new test is made."
     },
     "C_ensemble_asymmetry": {
       "arms": "all parent zero-shot holdout arms (E0, E2, E3, E4, E6 at seeds 42 and 123) and all A2 arms",
-      "metrics": "for each fold model alone: subject-mean macro-F1, N3 recall, N3->N2 rate; mean and range over the ten fold models; ensemble minus mean single-model value with a paired interval"
+      "metrics": "for each fold model alone on the holdout sample: subject-mean macro-F1, pooled macro-F1, N3 recall, N3->N2 rate; mean and range over the ten fold models; ensemble minus mean single-model subject-mean macro-F1 with a paired bootstrap interval",
+      "cross_cohort_drop": "for E3 and E4 at seeds 42 and 123, the Sleep-EDF pooled out-of-fold macro-F1 minus the mean single-model pooled macro-F1 on the holdout sample, reported beside the drop computed with the ensemble"
     },
     "D_em_sample_size": {
-      "models": ["E4_s42", "E3_s42"],
-      "probabilities": "stored holdout ensemble probabilities, no temperature scaling",
-      "source_prior": "Sleep-EDF scored-epoch class frequencies of the 78 subjects (label counts only)",
-      "em": "estimate_target_prior in src/sleeptcn/calibration.py (tolerance 1e-8, at most 1000 iterations, floor 1e-12)",
+      "models": "the ten seed-123 E3 fold models used in the original calibration experiment",
+      "procedure": "exactly the original one: per fold, holdout fold probabilities are temperature-scaled with the archived fold temperature (runs/teacher_revision_cpu_20261003/calibration_10fold_seed123/fits), the target prior is estimated by estimate_target_prior in src/sleeptcn/calibration.py (initialised at and relative to the archived fold source prior; tolerance 1e-8, at most 1000 iterations, floor 1e-12), each fold's calibrated probabilities are adjusted by adjust_prior, and the ten adjusted folds are averaged before argmax. Only the data used to estimate the target prior changes.",
+      "holdout_probabilities": "stored per-fold holdout probabilities of arm E3_s123 (runs/holdout_inference_v1/fold_predictions/E3_s123), evaluation-window epochs",
       "prior_data": {
-        "subsets": "unlabelled epochs of n randomly drawn holdout recordings, n in [5, 20, 100], 1000 draws each (generator seed 2044)",
+        "original_five": "the archived fold target priors estimated on the five unlabelled first-sample adaptation recordings, applied unchanged",
+        "random_subsets": "unlabelled epochs of n holdout recordings drawn without replacement, n in [5, 20, 100], 200 draws each, numpy default_rng(2044)",
+        "adabn_sample": "the 20,000 unlabelled epochs of the A1 AdaBN sample (40 per holdout recording; runs/holdout_amendment_a1 adabn_sample.npz, matched by record key and original epoch index)",
         "all": "unlabelled epochs of all 500 holdout recordings",
         "per_record": "each recording's own unlabelled epochs, applied to that recording only"
       },
-      "outcomes": "estimated N3 prior against the observed holdout N3 share; after prior adjustment of all 500 recordings: N3 recall, N3 predictions, subject-mean macro-F1",
-      "interpretation_rule": "If the prior estimated from all 500 recordings still lies far below the observed N3 share and suppresses N3 predictions, the collapse is attributed to the label-shift assumption failing, not to the five-recording sample."
+      "outcomes": "fold-mean estimated N3 prior against the observed holdout N3 share; after adjustment of all 500 recordings: share of epochs predicted N3, pooled N3 recall, pooled macro-F1 and subject-mean macro-F1; for random subsets the median and 2.5th-97.5th percentiles over draws",
+      "interpretation_rule": "If the priors estimated from the AdaBN sample and from all 500 recordings still lie far below the observed N3 share (less than half of it) and reduce N3 recall below that of the temperature-scaled ensemble without prior adjustment, the collapse is attributed to the label-shift assumption failing under feature shift, not to the five-recording sample. If they approach the observed share and do not reduce N3 recall, the collapse is attributed to the small adaptation sample."
     },
     "E_training_cost": {
-      "steps": "completed epochs and optimiser steps of every stage of the archived seed-123 campaign, read from its checkpoints (commit 8af1d12)",
-      "step_time": "median forward+backward+optimiser time per step on the rented V100 for SleepCNN (batch 64), ResNet-1D (batch 64), BiLSTM (batch 4 sequences) and TCN (batch 8 sequences) with synthetic inputs, 20 warm-up and 200 timed steps, run alone on the GPU",
-      "outcome": "steps x time per step per stage, compared with the observed wall-clock time of each configuration"
+      "steps": "completed epochs and optimiser steps of every training stage of every fold of the archived seed-123 campaign for E0, E2, E3, E4 and E6, read from the checkpoint progress records at commit 8af1d12; steps per epoch from the training-set size and batch size of each stage",
+      "step_time": "median forward+backward+optimiser time per step for the 15-branch CNN (batch 64), ResNet-1D (batch 64), BiLSTM (batch 4 sequences) and TCN (batch 8 sequences) with synthetic inputs of the training shapes, 20 warm-up and 200 timed steps, run alone on the rented GPU",
+      "outcome": "per configuration: total optimiser steps, steps x median step time, and the remainder of the observed wall-clock time (validation passes, data loading, checkpointing); because the rented GPU may differ from the original V100, configurations are compared by ratios",
+      "interpretation_rule": "The manuscript states how much of the E0/E3 training-time ratio is due to the number of optimiser steps and how much to the time per step, and no longer presents the ratio as an architectural property."
     }
   }
 }

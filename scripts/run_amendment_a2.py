@@ -174,7 +174,8 @@ def main() -> int:
         if name == "test":
             p.add_argument("--confirm", default="")
     p = sub.add_parser("export")
-    p.add_argument("--output", default="a2_results.tar.gz")
+    # Outside the repository: a file in the worktree would block the clean-tree test campaign.
+    p.add_argument("--output", default=str(ROOT.parent / "a2_results.tar.gz"))
     args = parser.parse_args()
     handler = {"plan": cmd_plan, "repro": cmd_repro, "train": cmd_train, "train-worker": cmd_train_worker,
                "test": cmd_test, "status": cmd_status, "export": cmd_export}[args.command]
