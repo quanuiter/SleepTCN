@@ -35,7 +35,15 @@ VALID_VARIANTS = {
     "bandpass_clip_v2",
     "filtered_v2",
     "filtered_zscore_v2",
+    "filtered_zscore_window_v3",
+    "filtered_zscore_rolling90_v3",
 }
+# Amendment A2 variants (post-confirmatory). The window variant takes its z-score
+# statistics from the label-defined evaluation window, a diagnostic that matches
+# the normalisation scope across cohorts; the rolling variant is label-free.
+WINDOW_SCOPED_VARIANTS = {"filtered_zscore_window_v3"}
+ROLLING_ZSCORE_MINUTES = 90.0
+ROLLING_ZSCORE_STD_FLOOR_UV = 1.0
 
 
 @dataclass(frozen=True)
@@ -167,13 +175,44 @@ def trim_sleep_window(
     )
 
 
+def rolling_zscore(
+    signal: np.ndarray, window_samples: int, std_floor: float
+) -> tuple[np.ndarray, float, float]:
+    """Centred moving-window z-score; windows are truncated at the record edges.
+
+    Returns the normalised signal and the median moving mean and standard deviation.
+    Cumulative sums are float64; the variance is clamped at zero before the floor.
+    """
+    if window_samples < 2 or window_samples % 2:
+        raise ValueError("rolling window must be an even number of samples >= 2")
+    values = signal.astype(np.float64, copy=False)
+    n = values.size
+    first = np.concatenate(([0.0], np.cumsum(values)))
+    second = np.concatenate(([0.0], np.cumsum(values * values)))
+    index = np.arange(n)
+    half = window_samples // 2
+    lo = np.clip(index - half, 0, n)
+    hi = np.clip(index + half, 0, n)
+    count = (hi - lo).astype(np.float64)
+    mean = (first[hi] - first[lo]) / count
+    variance = np.maximum((second[hi] - second[lo]) / count - mean * mean, 0.0)
+    std = np.maximum(np.sqrt(variance), std_floor)
+    return (values - mean) / std, float(np.median(mean)), float(np.median(std))
+
+
 def preprocess_signal_variant(
-    signal: np.ndarray, variant: str, config: PreprocessConfig
+    signal: np.ndarray,
+    variant: str,
+    config: PreprocessConfig,
+    window_epochs: tuple[int, int] | None = None,
 ) -> tuple[np.ndarray, float, dict[str, Any]]:
     """Apply one auditable preprocessing ablation to a continuous EEG record.
 
-    Z-score statistics are computed from the full record after filtering and
-    clipping. They never use labels or train/validation/test population data.
+    ``filtered_zscore_v2`` takes its statistics from the full record after filtering
+    and clipping. ``filtered_zscore_window_v3`` takes them from ``window_epochs``
+    (the evaluation window, whose bounds depend on reference labels), and
+    ``filtered_zscore_rolling90_v3`` from a centred 90-minute moving window. None
+    uses labels inside the window or train/validation/test population data.
     """
     if signal.ndim != 1:
         raise ValueError("continuous signal must be one-dimensional")
@@ -205,6 +244,43 @@ def preprocess_signal_variant(
             output = clipped / config.scale_factor
             normalization = (
                 f"clip_{config.clip_uv}uV_then_divide_{config.scale_factor}"
+            )
+        elif variant == "filtered_zscore_window_v3":
+            if window_epochs is None:
+                raise ValueError("window z-score requires the evaluation window bounds")
+            start, stop = window_epochs
+            spe = config.samples_per_epoch
+            if not 0 <= start < stop or stop * spe > clipped.size:
+                raise ValueError("evaluation window lies outside the record")
+            scope = clipped[start * spe:stop * spe]
+            mean = float(scope.mean(dtype=np.float64))
+            std = float(scope.std(dtype=np.float64))
+            if not np.isfinite(std) or std <= 0.0:
+                raise ValueError("Cannot z-score a window with zero/nonfinite std")
+            output = (clipped - mean) / std
+            normalization = f"clip_{config.clip_uv}uV_then_window_zscore"
+            metadata.update(
+                {
+                    "normalization_scope": "evaluation_window_after_filter_clip",
+                    "normalization_mean": mean,
+                    "normalization_std": std,
+                }
+            )
+        elif variant == "filtered_zscore_rolling90_v3":
+            window = int(round(ROLLING_ZSCORE_MINUTES * 60 * config.sampling_rate_hz))
+            output, mean, std = rolling_zscore(
+                clipped, window, ROLLING_ZSCORE_STD_FLOOR_UV
+            )
+            normalization = (
+                f"clip_{config.clip_uv}uV_then_centred_rolling_zscore_"
+                f"{ROLLING_ZSCORE_MINUTES:g}min_floor{ROLLING_ZSCORE_STD_FLOOR_UV:g}uV"
+            )
+            metadata.update(
+                {
+                    "normalization_scope": "centred_rolling_window_after_filter_clip",
+                    "normalization_mean": mean,
+                    "normalization_std": std,
+                }
             )
         elif variant == "filtered_zscore_v2":
             mean = float(clipped.mean(dtype=np.float64))
@@ -342,7 +418,9 @@ def process_record(
                 }
             elif variant in VALID_VARIANTS - {"paper_raw_v1"}:
                 processed, clip_fraction, processing_metadata = (
-                    preprocess_signal_variant(continuous_raw, variant, config)
+                    preprocess_signal_variant(
+                        continuous_raw, variant, config, window_epochs=(start, stop)
+                    )
                 )
                 x = processed.reshape(signal_epoch_count, config.samples_per_epoch)[start:stop]
                 variant_metadata = {

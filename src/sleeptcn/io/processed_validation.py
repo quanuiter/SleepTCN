@@ -124,6 +124,17 @@ def validate_file(
                 errors.append("bandpass_clip_bound")
             if "clip_800.0uV" not in scalar_text(npz, "normalization"):
                 errors.append("bandpass_clip_metadata")
+        elif variant in ("filtered_zscore_window_v3", "filtered_zscore_rolling90_v3"):
+            expected_scope = {
+                "filtered_zscore_window_v3": "evaluation_window_after_filter_clip",
+                "filtered_zscore_rolling90_v3": "centred_rolling_window_after_filter_clip",
+            }[variant]
+            if scalar_text(npz, "normalization_scope") != expected_scope:
+                errors.append("zscore_scope_metadata")
+            if not np.isfinite(float(npz["normalization_std"])) or float(
+                npz["normalization_std"]
+            ) <= 0:
+                errors.append("zscore_std_metadata")
         elif variant == "filtered_zscore_v2":
             if "record_zscore" not in scalar_text(npz, "normalization"):
                 errors.append("zscore_normalization_metadata")

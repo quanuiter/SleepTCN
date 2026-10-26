@@ -246,7 +246,7 @@ def _variant_arrays(
             output[variant] = (x, None, metadata)
         else:
             processed, clip_fraction, metadata = preprocess_signal_variant(
-                resampled, variant, sleepedf_config
+                resampled, variant, sleepedf_config, window_epochs=(start, stop)
             )
             metadata = {
                 **metadata,

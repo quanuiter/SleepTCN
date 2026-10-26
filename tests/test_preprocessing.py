@@ -103,6 +103,57 @@ class FilterTests(unittest.TestCase):
             float(outputs["filtered_zscore_v2"].std()), 1.0, places=5
         )
 
+    def test_window_zscore_uses_only_the_evaluation_window(self) -> None:
+        config = PreprocessConfig()
+        rng = np.random.default_rng(0)
+        signal = rng.normal(0.0, 20.0, 10 * 3000)
+        signal[:3000] *= 5.0  # loud first epoch outside the window
+        output, _, metadata = preprocess_signal_variant(
+            signal, "filtered_zscore_window_v3", config, window_epochs=(2, 8)
+        )
+        window = output[2 * 3000:8 * 3000].astype(np.float64)
+        self.assertAlmostEqual(float(window.mean()), 0.0, places=4)
+        self.assertAlmostEqual(float(window.std()), 1.0, places=4)
+        self.assertEqual(
+            metadata["normalization_scope"], "evaluation_window_after_filter_clip"
+        )
+        with self.assertRaises(ValueError):
+            preprocess_signal_variant(signal, "filtered_zscore_window_v3", config)
+
+    def test_rolling_zscore_matches_brute_force_and_floor(self) -> None:
+        from sleeptcn.preprocessing import rolling_zscore
+
+        rng = np.random.default_rng(1)
+        values = rng.normal(5.0, 3.0, 101)
+        output, _, _ = rolling_zscore(values, 10, 1e-9)
+        for i in (0, 4, 50, 97, 100):
+            part = values[max(0, i - 5):min(101, i + 5)]
+            expected = (values[i] - part.mean()) / part.std()
+            self.assertAlmostEqual(float(output[i]), float(expected), places=8)
+        flat, _, std = rolling_zscore(np.zeros(50), 10, 1.0)
+        self.assertTrue(np.all(flat == 0.0))
+        self.assertEqual(std, 1.0)
+        with self.assertRaises(ValueError):
+            rolling_zscore(values, 9, 1.0)
+
+    def test_rolling90_variant_is_finite_and_locally_standardised(self) -> None:
+        config = PreprocessConfig()
+        rng = np.random.default_rng(2)
+        # 4 h record whose amplitude doubles halfway: a full-record z-score keeps
+        # the step, the 90-minute rolling z-score removes most of it.
+        signal = rng.normal(0.0, 10.0, 4 * 3600 * 100)
+        signal[2 * 3600 * 100:] *= 2.0
+        output, _, metadata = preprocess_signal_variant(
+            signal, "filtered_zscore_rolling90_v3", config
+        )
+        self.assertTrue(np.isfinite(output).all())
+        first = float(output[: 3600 * 100].std())
+        last = float(output[-3600 * 100:].std())
+        self.assertAlmostEqual(first, last, delta=0.1)
+        self.assertEqual(
+            metadata["normalization_scope"], "centred_rolling_window_after_filter_clip"
+        )
+
 
 class SerializationTests(unittest.TestCase):
     def test_npz_serialization_is_byte_stable(self) -> None:
