@@ -68,6 +68,8 @@ Ghi lại hai mã SHA-256.
 
 ## II. GPU thuê
 
+Máy thuê chạy **Windows**: dùng `docs/AMENDMENT_A2_RUNBOOK_WINDOWS_VI.md` thay cho chặng II dưới đây.
+
 ### II.1. Máy
 
 Linux, Python 3.11, GPU NVIDIA; ưu tiên Tesla V100 để so được với chiến dịch gốc (phân tích E vẫn so bằng tỷ số
@@ -75,13 +77,15 @@ nếu GPU khác). Ổ trống tối thiểu 60 GB. Ít nhất 8 lõi CPU.
 
 ### II.2. Mã nguồn
 
-Cần **toàn bộ lịch sử Git** (không dùng `--depth`): kiểm tra tái lập đọc checkpoint ở commit `8af1d12`.
+Cần **toàn bộ lịch sử Git** (không dùng `--depth`): kiểm tra tái lập đọc checkpoint ở commit `8af1d12`. Tag
+`a2-gpu-run` trỏ tới commit công cụ cho máy GPU; `env-check` (II.4) xác nhận config A2 trùng với commit khóa
+`38eb6dc` ("Lock Amendment A2").
 
 ```bash
 cd /workspace
 git clone https://github.com/quanuiter/SleepTCN.git SleepTCN
 cd /workspace/SleepTCN
-git checkout <mã commit khóa A2>
+git checkout a2-gpu-run
 git status --short          # phải trống
 git cat-file -t 8af1d12     # phải in "commit"
 ```
@@ -97,11 +101,7 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements/lock-cu121.txt
 python -m pip install -e . --no-deps
-mkdir -p runs/a2/monitoring
-python scripts/check_environment.py --workspace . --require-gpu --output runs/a2/monitoring/environment_check.json
 python -c "import torch; print(torch.__version__, torch.cuda.is_available(), torch.cuda.get_device_name(0))"
-nvidia-smi > runs/a2/monitoring/gpu_info.txt
-python -m pip freeze > runs/a2/monitoring/pip_freeze.txt
 ```
 
 Phải thấy `2.5.1+cu121` và `True`.
@@ -113,6 +113,15 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 ```
 
 Phải export trong **mọi** terminal trước bất kỳ lệnh nào chạy trên CUDA.
+
+```bash
+python scripts/run_amendment_a2.py env-check --device cuda
+nvidia-smi > runs/a2/monitoring/gpu_info.txt
+python -m pip freeze > runs/a2/monitoring/pip_freeze.txt
+```
+
+`env-check` phải in `ENVIRONMENT OK`: Python 3.10/3.11, torch 2.5.1 với CUDA 12.1, hash file split khớp sidecar,
+config A2 đã khóa và trùng commit khóa, worktree sạch, có commit `8af1d12`.
 
 ### II.5. Dữ liệu Sleep-EDF
 

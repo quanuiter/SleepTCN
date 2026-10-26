@@ -2,6 +2,7 @@
 
 Commands (run from the repository root, see docs/AMENDMENT_A2_RUNBOOK_VI.md):
   plan                      list A2 runs and their state (works before the config is locked)
+  env-check                 check interpreter, locked torch/CUDA, hashes, lock, clean Git and history
   prepare-sleepedf          write and check the A2 Sleep-EDF variant (local)
   prepare-shhs              write and check the A2 holdout variant (local)
   bundle / verify-bundle    pack the inputs for the GPU machine / check them after unpacking
@@ -161,6 +162,74 @@ PARENT_MANIFEST_COPY = A2_ROOT / "manifests" / "parent_preprocess_holdout_v1.jso
 
 def bundle_manifest_path(part: str) -> str:
     return (A2_ROOT / f"inputs_bundle_{part}.json").as_posix()
+
+
+EXPECTED_TORCH = "2.5.1"
+EXPECTED_CUDA = "12.1"
+LOCK_SUBJECT = "Lock Amendment A2"
+
+
+def environment_report(device: str) -> dict:
+    """What an A2 machine needs: interpreter, locked torch/CUDA, inputs' hashes, lock, clean Git, history."""
+    import platform
+
+    import torch
+
+    from sleeptcn.io.hashing import sha256_file
+
+    errors = []
+    if not (3, 10) <= sys.version_info[:2] < (3, 12):
+        errors.append("python_must_be_3.10_or_3.11")
+    if torch.__version__.split("+")[0] != EXPECTED_TORCH:
+        errors.append(f"torch_{torch.__version__}_expected_{EXPECTED_TORCH}")
+    cuda = torch.cuda.is_available()
+    if device.startswith("cuda"):
+        if not cuda:
+            errors.append("cuda_unavailable")
+        elif torch.version.cuda != EXPECTED_CUDA:
+            errors.append(f"cuda_{torch.version.cuda}_expected_{EXPECTED_CUDA}")
+    split = ROOT / "data/splits/sleepedf_sc_10fold_seed42_v2.json"
+    sidecar = split.with_name(split.name + ".sha256").read_text(encoding="ascii").split()[0]
+    if sha256_file(split) != sidecar:
+        errors.append("split_sha256_differs_from_sidecar")
+    try:
+        load_a2_config(ROOT)
+    except ValueError:
+        errors.append("a2_config_not_locked")
+
+    def git(*command: str) -> subprocess.CompletedProcess:
+        return subprocess.run(["git", "-C", str(ROOT), *command], capture_output=True, text=True)
+
+    if git("status", "--porcelain").stdout.strip():
+        errors.append("git_worktree_not_clean")
+    if git("cat-file", "-t", "8af1d12").stdout.strip() != "commit":
+        errors.append("git_history_without_8af1d12_use_a_full_clone")
+    # Tooling may change after the lock; the locked config itself may not.
+    config_path = "configs/shhs_holdout_amendment_a2.json"
+    lock_commit, lock_subject = (git("log", "-1", "--format=%H%x00%s", "--", config_path).stdout.strip().split("\x00")
+                                 + [""])[:2]
+    if lock_subject != LOCK_SUBJECT:
+        errors.append("last_commit_touching_a2_config_is_not_the_lock_commit")
+    elif git("diff", "--quiet", lock_commit, "--", config_path).returncode != 0:
+        errors.append("a2_config_differs_from_lock_commit")
+    return {"schema_version": 1, "amendment": "A2", "passed": not errors, "errors": errors,
+            "python": sys.version, "platform": platform.platform(), "torch": torch.__version__,
+            "cuda_available": cuda, "cuda_version": torch.version.cuda,
+            "gpu": torch.cuda.get_device_name(0) if cuda else None,
+            "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
+            "git_commit": git("rev-parse", "HEAD").stdout.strip(), "a2_lock_commit": lock_commit,
+            "experiments_config_sha256": sha256_file(ROOT / "configs/experiments_v2.json"),
+            "split_sha256": sha256_file(split)}
+
+
+def cmd_env_check(args: argparse.Namespace) -> int:
+    report = environment_report(args.device)
+    path = ROOT / A2_ROOT / "monitoring" / "environment_check.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    atomic_write_json(path, report)
+    print(json.dumps(report, indent=2))
+    print("ENVIRONMENT OK" if report["passed"] else "ENVIRONMENT NOT READY")
+    return 0 if report["passed"] else 1
 
 
 def cmd_prepare_sleepedf(args: argparse.Namespace) -> int:
@@ -402,6 +471,8 @@ def main() -> int:
             p.add_argument("--count", type=int, required=True)
     p = sub.add_parser("verify-bundle")
     p.add_argument("--part", choices=BUNDLE_PARTS, default="sleepedf")
+    p = sub.add_parser("env-check")
+    p.add_argument("--device", default="cuda")
     p = sub.add_parser("step-benchmark")
     p.add_argument("--device", default="cuda")
 
@@ -409,7 +480,7 @@ def main() -> int:
     handler = {"plan": cmd_plan, "repro": cmd_repro, "train": cmd_train, "train-worker": cmd_train_worker,
                "test": cmd_test, "status": cmd_status, "export": cmd_export,
                "prepare-sleepedf": cmd_prepare_sleepedf, "prepare-shhs": cmd_prepare_shhs, "bundle": cmd_bundle,
-               "verify-bundle": cmd_verify_bundle, "step-benchmark": cmd_step_benchmark,
+               "verify-bundle": cmd_verify_bundle, "env-check": cmd_env_check, "step-benchmark": cmd_step_benchmark,
                "holdout-check": cmd_holdout_check, "holdout": cmd_holdout,
                "holdout-worker": cmd_holdout_worker}[args.command]
     return handler(args)

@@ -1,0 +1,43 @@
+# Windows/Python 3.11 counterpart of requirements/lock-cu121.txt for Amendment A2 GPU runs.
+# Same pins as environment/pip-freeze.txt for every runtime package, including
+# torch==2.5.1+cu121. Omitted: Linux-only CUDA runtime wheels (nvidia-*, triton; the Windows
+# torch wheel bundles CUDA 12.1) and the Jupyter tooling, which no A2 command imports.
+# matplotlib follows the repository's Windows pin (requirements/base.txt). colorama is a
+# Windows-only pytest dependency.
+--index-url https://pypi.org/simple
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
+torchaudio==2.5.1+cu121
+numpy==1.26.4
+scipy==1.13.1
+pandas==2.2.2
+scikit-learn==1.5.1
+pyEDFlib==0.1.38
+PyYAML==6.0.1
+pytest==8.3.2
+matplotlib==3.9.2
+filelock==3.29.0
+fsspec==2026.4.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+mpmath==1.3.0
+networkx==3.4.2
+sympy==1.13.1
+typing_extensions==4.15.0
+joblib==1.5.3
+threadpoolctl==3.6.0
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+tzdata==2026.3
+six==1.17.0
+contourpy==1.3.2
+cycler==0.12.1
+fonttools==4.63.0
+kiwisolver==1.5.0
+packaging==26.3
+pillow==12.2.0
+pyparsing==3.3.2
+iniconfig==2.3.0
+pluggy==1.6.0
+colorama
