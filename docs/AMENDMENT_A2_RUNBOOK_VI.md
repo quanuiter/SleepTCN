@@ -147,9 +147,12 @@ và `D:\a2_inputs_holdout.tar` lên Google Drive, đặt chia sẻ "Bất kỳ a
 ```bash
 cd /workspace
 python -m pip install --quiet gdown
-gdown --fuzzy "<link Google Drive của a2_inputs_sleepedf.tar>" -O /workspace/a2_inputs_sleepedf.tar
+gdown <ID của a2_inputs_sleepedf.tar> -O /workspace/a2_inputs_sleepedf.tar
 sha256sum /workspace/a2_inputs_sleepedf.tar
 ```
+
+ID của tệp là đoạn giữa `/d/` và `/view` trong link chia sẻ (ví dụ `https://drive.google.com/file/d/ABC123/view`
+có ID `ABC123`); bản `gdown` mới không còn tùy chọn `--fuzzy` nên truyền ID trực tiếp.
 
 Mã phải bằng `2d74180cc118ed3d5bcc631653b042f34dee5ecac2919a8394f3662ee8e42107`. Nếu khác, tệp bị hỏng khi chuyển:
 tải lại. Nếu `gdown` báo vượt hạn mức tải của Google Drive, đợi vài phút rồi thử lại, hoặc dùng chức năng tải tệp của
@@ -201,7 +204,7 @@ python scripts/run_amendment_a2.py status
 2. Trên máy GPU, ở terminal khác (sau II.3): tải tệp holdout như II.4, kiểm tra, giải nén:
 
    ```bash
-   gdown --fuzzy "<link Google Drive của a2_inputs_holdout.tar>" -O /workspace/a2_inputs_holdout.tar
+   gdown <ID của a2_inputs_holdout.tar> -O /workspace/a2_inputs_holdout.tar
    sha256sum /workspace/a2_inputs_holdout.tar
    tar -xf /workspace/a2_inputs_holdout.tar -C /workspace/SleepTCN
    python scripts/run_amendment_a2.py verify-bundle --part holdout
