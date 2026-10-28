@@ -73,6 +73,13 @@ gốc). Máy thuê chạy **Windows**: dùng `docs/AMENDMENT_A2_RUNBOOK_WINDOWS_
 
 Đường dẫn làm việc: `/workspace`. Không dừng hoặc xóa container trước khi đã tải `a2_results.tar.gz` về (II.11).
 
+Sau II.1–II.3, các bước còn lại có thể chạy bằng notebook `notebooks/a2_gpu_run.ipynb` (ô 4 chạy toàn bộ phần còn
+lại và dừng khi có lỗi). Tải notebook ra **ngoài repo**, không `git pull` trong repo khi chiến dịch đang chạy:
+
+```bash
+wget -O /workspace/a2_gpu_run.ipynb https://raw.githubusercontent.com/quanuiter/SleepTCN/main/notebooks/a2_gpu_run.ipynb
+```
+
 ### II.1. Mã nguồn
 
 Cần **toàn bộ lịch sử Git** (không dùng `--depth`): kiểm tra tái lập đọc checkpoint ở commit `8af1d12`. Tag

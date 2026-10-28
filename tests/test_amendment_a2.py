@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+from types import SimpleNamespace
 import json
 import shutil
 from pathlib import Path
@@ -122,3 +123,29 @@ def test_frozen_split_accepts_a2_variants_but_no_other_new_variant(tmp_path):
 def test_test_campaign_requires_confirmation_phrase(tmp_path):
     with pytest.raises(ValueError, match="confirmation"):
         a2.execute_test(tmp_path, _config(), [], device="cpu", num_workers=0, confirmation="yes")
+
+
+def test_gpu_notebook_cells_compile_and_detect_training_processes(monkeypatch):
+    import ast
+    import subprocess
+
+    notebook = json.loads((ROOT / "notebooks" / "a2_gpu_run.ipynb").read_text(encoding="utf-8"))
+    code = ["".join(c["source"]) for c in notebook["cells"] if c["cell_type"] == "code"]
+    for source in code:
+        ast.parse(source)
+    setup = code[0].split("assert Path(PY).is_file()")[0]
+    namespace: dict = {}
+    exec(setup, namespace)
+    for name in ("states", "start_training", "wait_for_training", "test_campaign", "holdout", "step_benchmark",
+                 "export"):
+        assert callable(namespace[name]), name
+    listings = {
+        True: "/workspace/SleepTCN/.venv/bin/python scripts/run_amendment_a2.py train --device cuda --workers 3\n",
+        False: "/workspace/SleepTCN/.venv/bin/python scripts/run_amendment_a2.py status\npython -m ipykernel\n",
+    }
+    for expected, listing in listings.items():
+        monkeypatch.setattr(subprocess, "run", lambda *a, _l=listing, **k: SimpleNamespace(stdout=_l))
+        assert namespace["training_running"]() is expected
+    worker = "/x/python scripts/run_amendment_a2.py train-worker --index 0 --count 3 --device cuda\n"
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: SimpleNamespace(stdout=worker))
+    assert namespace["training_running"]() is True
