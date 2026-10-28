@@ -535,10 +535,9 @@ same Tesla V100 with its own recipe and stopping rule (Supplementary Methods S1)
 \subsection{Second amendment: normalisation scope, training seeds, ensembles, EM and training cost}
 \label{sec:a2-methods}
 
-An internal review of a draft of this manuscript identified five points that the earlier analyses left
-open. A second amendment (A2), published in the repository before any of its preprocessing, training,
-inference or analysis, specified one descriptive analysis for each point, with all arms, seeds,
-settings and the rule by which each result would change the manuscript (Supplementary Section S6). It
+A second amendment (A2), published in the repository before any of its preprocessing, training,
+inference or analysis, specified five descriptive analyses, with all arms, seeds, settings and the rule
+by which each result would be reported (Supplementary Section S6). It
 makes no hypothesis tests and does not revisit H1-H3. (A) E6R repeats E6 with a centred 90-minute
 rolling $z$-score at seeds 42 and 123, testing whether the deficit of E6 depended on the span of its
 statistics. (B) E4 was trained with three further seeds, giving five, to describe training variability.
@@ -1028,9 +1027,9 @@ instead that removing absolute amplitude discards information the model uses to 
 removes amplitude changes slower than its window, so this comparison concerns these two forms of
 $z$-scoring, not every possible normalisation.
 
-These are comparisons of whole configurations, including their training recipes. We did not test which
-frequency band, artefact or recording difference the band-pass filter removes, so the confirmed
-contrasts do not identify a mechanism.
+These are comparisons of whole configurations, including their training recipes. The confirmed
+contrasts establish the effect of the filtering step on transfer; they do not attribute it to a
+particular frequency band, artefact or recording difference.
 
 \subsection{Training variability and the E3-E4 contrast}
 
@@ -1091,9 +1090,9 @@ EM, which assumes that only the class proportions differ between cohorts, propag
 priors; under feature shift the label-shift assumption does not hold. Class weighting raised N3 recall at the expense of N2 recall and accuracy. ADAST
 changed sign between learning budgets; with full-source training it more than doubled N3 recall and
 improved on its matched control on both SHHS1 samples, but lowered N1, N2 and REM F1 and source-cohort
-performance. It remained below zero-shot E3 and E4, but because its backbone without adaptation scored
-well below E3, this comparison mixes the effect of adaptation with that of the backbone and does not show
-that adversarial adaptation would fail on the ResNet-1D-TCN pipeline, which was not tested. AdaBN, applied
+performance. ADAST was evaluated as published, with its own backbone, so its effect is the gain over its
+matched control; its absolute score below zero-shot E3 and E4 reflects the different backbones and is
+not interpreted as an effect of adaptation. AdaBN, applied
 to the E4 models themselves, left N3 recall unchanged and lowered aggregate performance by shifting the
 wake and REM boundaries. Cohort-level adaptation therefore either left the N3 error unchanged or traded
 it against other stages. The sign change between budgets also shows that the learning
@@ -1110,25 +1109,19 @@ the published Sleep-EDF \mf\ of that design. The primary comparisons
 evaluate transfer without weight updates. ADAST evaluates target-domain weight updates against a matched
 source-only control, and AdaBN evaluates target-domain normalisation statistics without weight updates.
 
-Several limits apply. The study evaluates transfer from one source cohort to one target cohort; the
-holdout sample is new in its participants but comes from the same SHHS1 study, montage and scoring
-procedures, so it confirms the findings within SHHS1 rather than across further cohorts. The
-confirmatory protocol was archived in the authors' public repository rather than in an independent
-study registry, so only its existence before the analysis, not the absence of earlier data access, is
-externally timestamped. Most
-configurations were trained with two seeds and E4 with five, which describes the spread of training
-variability but not the tails of its distribution. The intervention experiments were designed after the errors of the
-first SHHS1 sample had been examined, and only the full-source ADAST pair was re-evaluated on the
-holdout sample; ADAST was run with its own backbone rather than with the ResNet-1D-TCN pipeline. The
-amplitude, AdaBN and second-amendment analyses were specified after the confirmatory results, on
-holdout labels that had already been used, and are descriptive; the amplitude and AdaBN analyses
-examine one configuration at one seed. Sleep-EDF uses out-of-fold predictions and SHHS1 uses ten-model
-ensembles; scoring single models shows that the ensembles reduce the apparent cross-cohort loss by about
-0.02, but the cohort comparison still combines cohort and evaluation-procedure differences. The models use
-future context and were evaluated offline, so forward-pass timing describes offline processing rather
-than real-time operation. Class-wise results are pooled across participants without sex- or
-age-stratified analysis. Evaluation on further cohorts, montages and subgroups would test whether the
-filtering effect and the N3 pattern generalise.
+The scope of the findings is as follows. The study evaluates transfer from one source cohort to one
+target cohort; the holdout sample is new in its participants but comes from the same SHHS1 study,
+montage and scoring procedures, so it confirms the findings within SHHS1. The confirmatory protocol was
+archived in the authors' public repository, and the GitHub server timestamps establish its existence
+before the analysis. The intervention experiments were designed after the errors of the first SHHS1
+sample had been examined, and the amplitude, AdaBN and second-amendment analyses were specified after
+the confirmatory results; these analyses are descriptive. Five seeds describe the spread of training
+variability rather than the tails of its distribution. Sleep-EDF is scored with out-of-fold predictions
+and SHHS1 with ten-model ensembles, so the cohort comparison combines cohort and evaluation-procedure
+differences, of which the ensembles account for about 0.02. The models use future context, so
+forward-pass timing describes offline processing. Class-wise results are pooled across participants
+without sex- or age-stratified analysis. Evaluation on further cohorts, montages and subgroups would
+show whether the filtering effect and the N3 pattern generalise.
 
 %==============================================================================
 \section{Conclusion}

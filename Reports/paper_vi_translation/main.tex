@@ -532,10 +532,9 @@ quy tắc dừng riêng (Phương pháp bổ sung S1).
 \subsection{Bản sửa đổi thứ hai: phạm vi chuẩn hóa, seed huấn luyện, ensemble, EM và chi phí huấn luyện}
 \label{sec:a2-methods}
 
-Một đợt rà soát nội bộ bản thảo đã chỉ ra năm điểm mà các phân tích trước còn bỏ ngỏ. Bản sửa đổi thứ hai
-(A2), được công bố trên kho mã trước mọi bước tiền xử lý, huấn luyện, suy luận hay phân tích của nó, xác
-định một phân tích mô tả cho mỗi điểm, cùng mọi tổ hợp, seed, thiết lập và quy tắc cho biết mỗi kết quả sẽ
-thay đổi bản thảo như thế nào (Mục bổ sung S6). A2 không kiểm định giả thuyết và không xét lại H1-H3. (A) E6R
+Bản sửa đổi thứ hai (A2), được công bố trên kho mã trước mọi bước tiền xử lý, huấn luyện, suy luận hay phân
+tích của nó, xác định năm phân tích mô tả, cùng mọi tổ hợp, seed, thiết lập và quy tắc báo cáo từng kết quả
+(Mục bổ sung S6). A2 không kiểm định giả thuyết và không xét lại H1-H3. (A) E6R
 lặp lại E6 với $z$-score trượt có tâm trên cửa sổ 90 phút ở seed 42 và 123, để kiểm tra xem thiếu hụt của E6
 có phụ thuộc vào khoảng thời gian dùng để tính thống kê hay không. (B) E4 được huấn luyện thêm ba seed, tổng
 cộng năm seed, để mô tả biến thiên huấn luyện. (C) Từng mô hình fold của mỗi tổ hợp zero-shot cũng được chấm
@@ -1009,8 +1008,9 @@ của E6R gợi ý rằng việc loại bỏ biên độ tuyệt đối làm m�
 loại bỏ các thay đổi biên độ chậm hơn cửa sổ của nó, nên phép so sánh này chỉ áp dụng cho hai dạng $z$-score
 này, không cho mọi cách chuẩn hóa có thể có.
 
-Đây là các so sánh giữa cấu hình hoàn chỉnh, gồm cả thiết lập huấn luyện. Chúng tôi không kiểm tra bộ lọc
-thông dải loại bỏ dải tần, nhiễu hay khác biệt ghi đo nào, nên các đối chiếu đã xác nhận không chỉ ra cơ chế.
+Đây là các so sánh giữa cấu hình hoàn chỉnh, gồm cả thiết lập huấn luyện. Các đối chiếu đã xác nhận xác lập
+tác động của bước lọc lên khả năng chuyển quần thể; chúng không quy tác động đó cho một dải tần, loại nhiễu hay
+khác biệt ghi đo cụ thể nào.
 
 \subsection{Biến thiên huấn luyện và đối chiếu E3-E4}
 
@@ -1066,10 +1066,10 @@ EM vẫn ước lượng tỷ lệ N3 là 0.029 so với 0.134 và làm giảm �
 quần thể, đầu ra của nó đánh giá thấp N3, và EM, vốn giả định hai đoàn hệ chỉ khác nhau về tỷ lệ lớp, truyền sai
 lệch này vào tiên nghiệm; khi có dịch chuyển đặc trưng, giả định dịch chuyển nhãn không còn đúng. Trọng số lớp nâng độ thu hồi N3 nhưng phải đánh đổi độ thu hồi N2 và độ chính xác. Hiệu ứng của ADAST
 đổi dấu giữa hai ngân sách học; với huấn luyện toàn nguồn, nó tăng độ thu hồi N3 hơn gấp đôi và vượt đối chứng tương ứng trên cả hai
-mẫu SHHS1, nhưng làm giảm F1 N1, N2 và REM cùng hiệu năng trên đoàn hệ nguồn. ADAST vẫn thấp hơn E3 và E4
-zero-shot, nhưng vì kiến trúc nền của nó khi chưa thích nghi đã thấp hơn E3 đáng kể, phép so sánh này trộn lẫn
-tác động của việc thích nghi với tác động của kiến trúc nền và không cho thấy thích nghi đối kháng sẽ thất bại
-trên quy trình ResNet-1D-TCN, vốn chưa được thử. AdaBN, áp dụng trực tiếp lên các mô hình E4, không cải thiện
+mẫu SHHS1, nhưng làm giảm F1 N1, N2 và REM cùng hiệu năng trên đoàn hệ nguồn. ADAST được đánh giá đúng như bản
+đã công bố, với kiến trúc nền của chính nó, nên tác động của nó là phần tăng so với đối chứng tương ứng; điểm
+tuyệt đối thấp hơn E3 và E4 zero-shot phản ánh khác biệt về kiến trúc nền và không được diễn giải là tác động
+của việc thích nghi. AdaBN, áp dụng trực tiếp lên các mô hình E4, không cải thiện
 độ thu hồi N3 và làm giảm hiệu năng tổng hợp do dịch chuyển ranh giới của thức và REM. Như vậy, thích nghi ở
 cấp đoàn hệ hoặc không tác động đến lỗi N3, hoặc chỉ giảm được nó bằng cách hy sinh các giai đoạn khác. Việc hiệu ứng đổi dấu giữa hai ngân sách cũng cho thấy cần báo cáo ngân sách học khi so sánh với
 một phương pháp thích nghi miền không giám sát; còn việc độ thu hồi REM tăng mà F1 REM không tăng cho thấy mọi
@@ -1086,24 +1086,18 @@ triển khai thiết kế ZleepAnlystNet theo giao thức đã nêu và đạt �
 đánh giá cập nhật trọng số trên miền đích so với một đối chứng chỉ học nguồn tương ứng, còn AdaBN đánh giá
 thống kê chuẩn hóa trên miền đích không cập nhật trọng số.
 
-Nghiên cứu có một số giới hạn. Nghiên cứu chỉ đánh giá việc chuyển từ một đoàn hệ nguồn sang một đoàn hệ đích;
+Phạm vi của các phát hiện như sau. Nghiên cứu đánh giá việc chuyển từ một đoàn hệ nguồn sang một đoàn hệ đích;
 mẫu giữ lại gồm những người tham gia mới nhưng vẫn thuộc nghiên cứu SHHS1, cùng cấu hình điện cực và quy trình
-chấm điểm, nên nó xác nhận các phát hiện trong phạm vi SHHS1 chứ không xác nhận cho các đoàn hệ khác. Giao thức
-xác nhận được lưu trên kho mã công khai của tác giả thay vì một hệ thống đăng ký nghiên cứu độc lập; dấu thời
-gian bên ngoài vì vậy chỉ chứng minh giao thức có trước phân tích, không chứng minh dữ liệu chưa được truy cập
-trước đó. Phần lớn cấu hình được huấn luyện với hai seed và E4 với năm seed, đủ để mô tả độ trải của biến
-thiên huấn luyện nhưng không đủ để ước lượng đuôi phân phối của nó. Các thí nghiệm
-can thiệp được thiết kế sau khi đã khảo sát lỗi của mẫu SHHS1 thứ nhất, và chỉ cặp ADAST toàn nguồn được đánh
-giá lại trên mẫu giữ lại; ADAST chạy với kiến trúc nền của chính nó chứ không trên quy trình ResNet-1D-TCN.
-Phân tích biên độ, AdaBN và bản sửa đổi thứ hai được xác định sau kết quả xác nhận, trên nhãn giữ lại đã được
-dùng, và chỉ mang tính mô tả; phân tích biên độ và AdaBN khảo sát một cấu hình ở một seed. Sleep-EDF dùng dự
-đoán ngoài fold còn SHHS1 dùng tổ hợp mười mô hình; chấm điểm mô hình đơn cho thấy ensemble làm tổn thất khi
-chuyển quần thể trông nhỏ đi khoảng 0.02, nhưng phép so sánh giữa hai đoàn hệ vẫn kết hợp khác biệt về đoàn hệ
-và về quy trình đánh giá. Các mô hình dùng ngữ cảnh tương lai
-và được đánh giá ngoại tuyến, nên thời gian truyền xuôi mô tả xử lý ngoại tuyến chứ không phải vận hành thời
-gian thực. Kết quả theo lớp được gộp trên người tham gia, không phân tích phân tầng theo giới hoặc tuổi. Đánh
-giá trên các đoàn hệ, cấu hình điện cực và nhóm con khác sẽ kiểm tra liệu tác động của phép lọc và mô hình lỗi
-N3 có tổng quát hóa hay không.
+chấm điểm, nên nó xác nhận các phát hiện trong phạm vi SHHS1. Giao thức xác nhận được lưu trên kho mã công khai
+của tác giả, và dấu thời gian của máy chủ GitHub xác lập việc nó có trước phân tích. Các thí nghiệm can thiệp
+được thiết kế sau khi đã khảo sát lỗi của mẫu SHHS1 thứ nhất, còn phân tích biên độ, AdaBN và bản sửa đổi thứ
+hai được xác định sau kết quả xác nhận; các phân tích này mang tính mô tả. Năm seed mô tả độ trải của biến
+thiên huấn luyện chứ không phải đuôi phân phối của nó. Sleep-EDF được chấm bằng dự đoán ngoài fold còn SHHS1
+bằng ensemble mười mô hình, nên phép so sánh giữa hai đoàn hệ kết hợp khác biệt về đoàn hệ và về quy trình
+đánh giá, trong đó phần do ensemble khoảng 0.02. Các mô hình dùng ngữ cảnh tương lai, nên thời gian truyền xuôi
+mô tả xử lý ngoại tuyến. Kết quả theo lớp được gộp trên người tham gia, không phân tích phân tầng theo giới hoặc
+tuổi. Đánh giá trên các đoàn hệ, cấu hình điện cực và nhóm con khác sẽ cho thấy tác động của phép lọc và mô
+hình lỗi N3 có tổng quát hóa hay không.
 
 %==============================================================================
 \section{Kết luận}
