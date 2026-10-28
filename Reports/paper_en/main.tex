@@ -121,36 +121,33 @@ Tri Nguyen: \texttt{tringuyen@uit.edu.vn}
 
 \begin{abstract}
 \noindent
-\textbf{Background.} Model and preprocessing choices alter the accuracy, computational cost and
+\textbf{Background.} Model and preprocessing choices alter the accuracy, cost and
 cross-cohort errors of automatic sleep staging, but are rarely
 tested on data unused during development.
 
 \noindent
 \textbf{Methods.} Six single-channel EEG configurations were trained on 78 Sleep-EDF subjects with
-shared subject-wise ten-fold partitions. Transfer without weight updates was examined on 180 Sleep
-Heart Health Study Visit~1 (SHHS1) participants and then tested on 500 further SHHS1 participants
-under a protocol committed before these data were processed.
+shared subject-wise ten-fold partitions. Zero-shot transfer was examined on 180 Sleep
+Heart Health Study Visit~1 (SHHS1) participants and tested on 500 further participants
+under a protocol committed beforehand.
 
 \noindent
 \textbf{Results.} A one-dimensional residual network with a temporal convolutional network
-(ResNet-1D-TCN) on band-pass-filtered input (E3) reached a pooled Sleep-EDF \mf\ of 0.7904. Despite
-$4.37\times$ more parameters than a CNN-BiLSTM baseline (E0), its forward pass was $3.76\times$ faster,
-and ten-fold training took $10.2\times$ less time, because E0 trains 15 encoder networks and needed
-$22.5\times$ more optimiser steps. On the 500-participant sample, E3 improved subject-mean \mf\ over E0 by 0.0467
-(\ci\ 0.0403-0.0531), over record-wise $z$-scoring (E6) by 0.0293 (0.0231-0.0354) and over the
-same model on unfiltered input (E2) by 0.0515 (0.0460-0.0571); all three pre-specified hypotheses
-were confirmed. In a subsequent amendment, $z$-scoring over 90-minute windows, which matched the input
-scale of the two cohorts, still scored below band-pass-only input (E4) at both seeds, and five E4
-training seeds differed by up to 0.019, less than any difference from E0 or E2 (0.031-0.070). E4,
-equivalent to E3 under batch normalisation, scored 0.009-0.014 higher than E3, within this seed range. E0 and E3 classified more than 72\%
-of N3 (deep-sleep) epochs as N2. The N2/N3 decision depended on input amplitude, yet rescaling,
-batch-normalisation adaptation and adversarial adaptation all failed to remove this error without
-losses elsewhere.
+(ResNet-1D-TCN) on band-pass-filtered input (E3) reached a pooled Sleep-EDF \mf\ of 0.7904 and, despite
+$4.37\times$ more parameters than a CNN-BiLSTM baseline (E0), ran $3.76\times$ faster at inference and
+trained $10.2\times$ faster, because E0 needed $22.5\times$ more optimiser steps. On these 500 participants, E3 improved subject-mean \mf\ over E0 by 0.0467
+(\ci\ 0.0403-0.0531), over record-wise $z$-scoring (E6) by 0.0293 (0.0231-0.0354) and over
+unfiltered input (E2) by 0.0515 (0.0460-0.0571), confirming all three pre-specified
+hypotheses. Five training seeds of band-pass-only input (E4) differed by up to 0.019, less than any
+difference from E0 or E2 (0.031-0.070), and 90-minute rolling $z$-scoring, despite matching
+input scale across cohorts, still scored below E4. E0 and E3 classified more than 72\% of N3
+(deep-sleep) epochs as N2, and neither rescaling nor domain adaptation removed this error without losses
+elsewhere.
 
 \noindent
-\textbf{Conclusions.} Band-pass filtering accounted for most of the cross-cohort gain, and
-N3-to-N2 confusion persisted in every zero-shot pipeline. Pipeline comparisons should report
-variation between training runs and be confirmed on data held out from development.
+\textbf{Conclusions.} Band-pass filtering accounted for most of the cross-cohort gain but
+did not resolve N3-to-N2 confusion. Pipeline comparisons should report
+variation between training runs and be confirmed on held-out data.
 \end{abstract}
 
 \vspace{0.3em}

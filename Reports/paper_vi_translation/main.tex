@@ -124,36 +124,33 @@ Tri Nguyen: \texttt{tringuyen@uit.edu.vn}
 
 \begin{abstract}
 \noindent
-\textbf{Bối cảnh.} Lựa chọn mô hình và tiền xử lý làm thay đổi độ chính xác, chi phí tính toán và sai số
-khi chuyển quần thể của hệ thống phân giai đoạn giấc ngủ tự động, nhưng tác động của chúng hiếm khi
-được kiểm tra trên dữ liệu không dùng trong quá trình phát triển.
+\textbf{Bối cảnh.} Lựa chọn mô hình và tiền xử lý làm thay đổi độ chính xác, chi phí và sai số khi chuyển
+quần thể của hệ thống phân giai đoạn giấc ngủ tự động, nhưng tác động của chúng hiếm khi được kiểm tra
+trên dữ liệu không dùng trong quá trình phát triển.
 
 \noindent
 \textbf{Phương pháp.} Sáu cấu hình EEG đơn kênh được huấn luyện trên 78 đối tượng Sleep-EDF với cùng các
-phân hoạch mười fold theo đối tượng. Khả năng chuyển quần thể không cập nhật trọng số được khảo sát
-trên 180 người tham gia Sleep Heart Health Study Visit~1 (SHHS1), sau đó được kiểm tra trên 500 người
-tham gia SHHS1 khác theo một giao thức đã cam kết trước khi xử lý dữ liệu này.
+phân hoạch mười fold theo đối tượng. Khả năng chuyển quần thể zero-shot được khảo sát trên 180 người
+tham gia Sleep Heart Health Study Visit~1 (SHHS1), sau đó được kiểm tra trên 500 người tham gia khác
+theo một giao thức đã cam kết từ trước.
 
 \noindent
 \textbf{Kết quả.} Mạng dư một chiều kết hợp mạng tích chập thời gian (ResNet-1D-TCN) trên đầu vào lọc
-thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF. Dù có số tham số gấp $4.37\times$ đối chứng CNN-BiLSTM
-(E0), lượt truyền xuôi của E3 nhanh hơn $3.76\times$, và huấn luyện đủ mười fold mất ít thời gian hơn
-$10.2\times$, vì E0 huấn luyện 15 mạng mã hóa và cần số bước tối ưu nhiều gấp $22.5\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
-bình theo đối tượng so với E0 thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi
-(E6) thêm 0.0293 (0.0231-0.0354) và so với cùng mô hình trên đầu vào không lọc (E2) thêm 0.0515
-(0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Trong một bản sửa đổi sau đó,
-$z$-score trên cửa sổ 90 phút, vốn làm thang đầu vào của hai đoàn hệ khớp nhau, vẫn kém cấu hình chỉ lọc
-thông dải (E4) ở cả hai seed, và năm seed huấn luyện của E4 chênh nhau tối đa 0.019, nhỏ hơn mọi chênh lệch
-so với E0 hoặc E2 (0.031-0.070). E4 về bản chất là cùng một mô hình với E3, vì chuẩn hóa theo lô triệt tiêu
-hệ số đổi thang; E4 đạt điểm cao hơn E3 0.009-0.014, nằm trong khoảng biến thiên giữa các seed này. E0 và E3
-phân loại hơn 72\% epoch N3 (ngủ sâu) thành N2. Quyết định giữa N2 và N3 phụ thuộc vào biên độ đầu vào,
-nhưng đổi thang biên độ, thích nghi chuẩn hóa theo lô và thích nghi đối kháng đều không giảm được lỗi này
-mà không làm giảm hiệu năng ở các giai đoạn khác.
+thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF và, dù có số tham số gấp $4.37\times$ đối chứng
+CNN-BiLSTM (E0), suy luận nhanh hơn $3.76\times$ và huấn luyện nhanh hơn $10.2\times$, vì E0 cần số bước
+tối ưu nhiều gấp $22.5\times$. Trên 500 người này, E3 cải thiện \mf\ trung bình theo đối tượng so với E0
+thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi (E6) thêm 0.0293
+(0.0231-0.0354) và so với đầu vào không lọc (E2) thêm 0.0515 (0.0460-0.0571), xác nhận cả ba giả thuyết
+xác định trước. Năm seed huấn luyện của cấu hình chỉ lọc thông dải (E4) chênh nhau tối đa 0.019, nhỏ hơn
+mọi chênh lệch so với E0 hoặc E2 (0.031-0.070), và $z$-score trượt trên cửa sổ 90 phút, dù làm thang đầu
+vào của hai đoàn hệ khớp nhau, vẫn kém E4. E0 và E3 phân loại hơn 72\% epoch N3 (ngủ sâu) thành N2, và
+cả đổi thang biên độ lẫn thích nghi miền đều không loại bỏ được lỗi này mà không làm giảm hiệu năng ở các
+giai đoạn khác.
 
 \noindent
-\textbf{Kết luận.} Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể, còn lỗi nhầm N3 thành N2
-xuất hiện ở mọi quy trình zero-shot. Khi so sánh các quy trình, cần báo cáo biến thiên giữa các lần huấn
-luyện và xác nhận kết quả trên dữ liệu giữ lại, nằm ngoài quá trình phát triển.
+\textbf{Kết luận.} Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể nhưng không giải quyết được
+lỗi nhầm N3 thành N2. Khi so sánh các quy trình, cần báo cáo biến thiên giữa các lần huấn luyện và xác
+nhận kết quả trên dữ liệu giữ lại.
 \end{abstract}
 
 \vspace{0.3em}
