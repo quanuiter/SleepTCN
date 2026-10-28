@@ -135,11 +135,14 @@ under a protocol committed before these data were processed.
 \textbf{Results.} A one-dimensional residual network with a temporal convolutional network
 (ResNet-1D-TCN) on band-pass-filtered input (E3) reached a pooled Sleep-EDF \mf\ of 0.7904. Despite
 $4.37\times$ more parameters than a CNN-BiLSTM baseline (E0), its forward pass was $3.76\times$ faster,
-and ten-fold training under each pipeline's own recipe took $10.2\times$ less time. On the 500-participant sample, E3 improved subject-mean \mf\ over E0 by 0.0467
+and ten-fold training took $10.2\times$ less time, because E0 trains 15 encoder networks and needed
+$22.5\times$ more optimiser steps. On the 500-participant sample, E3 improved subject-mean \mf\ over E0 by 0.0467
 (\ci\ 0.0403-0.0531), over record-wise $z$-scoring (E6) by 0.0293 (0.0231-0.0354) and over the
 same model on unfiltered input (E2) by 0.0515 (0.0460-0.0571); all three pre-specified hypotheses
-were confirmed. Band-pass-only input (E4), equivalent to E3 under batch normalisation, scored 0.009-0.014 higher,
-comparable to differences between two training seeds (0.005-0.020). E0 and E3 classified more than 72\%
+were confirmed. In a subsequent amendment, $z$-scoring over 90-minute windows, which matched the input
+scale of the two cohorts, still scored below band-pass-only input (E4) at both seeds, and five E4
+training seeds differed by up to 0.019, less than any difference from E0 or E2 (0.031-0.070). E4,
+equivalent to E3 under batch normalisation, scored 0.009-0.014 higher than E3, within this seed range. E0 and E3 classified more than 72\%
 of N3 (deep-sleep) epochs as N2. The N2/N3 decision depended on input amplitude, yet rescaling,
 batch-normalisation adaptation and adversarial adaptation all failed to remove this error without
 losses elsewhere.
@@ -200,20 +203,21 @@ Our contributions follow these questions.
 
 \begin{enumerate}[label=(\arabic*)]
 \item We show that the implemented ResNet-1D-TCN pipeline runs almost four times faster than the
-CNN-BiLSTM baseline despite having more parameters, and trains about ten times faster under the two
-pipelines' respective recipes, and that, among the evaluated changes, band-pass
+CNN-BiLSTM baseline despite having more parameters, and needs about ten times less training time
+because it trains two networks per fold instead of sixteen, and that, among the evaluated changes, band-pass
 filtering rather than the encoder or sequence model accounts for most of its cross-cohort advantage:
 without filtering, the same model performed close to the baseline.
 \item We confirm this advantage on 500 held-out SHHS1 participants under a protocol fixed before their
-data were processed. We also show that two training seeds of one configuration can differ by as much as
-some configuration contrasts, and that the band-pass-only and scaled-input variants are equivalent runs
-of one pipeline whose score difference reflects numerical divergence during training; confidence
-intervals computed for fixed models therefore understate the uncertainty of pipeline comparisons.
+data were processed. With five training seeds, we show that the confirmed contrasts with the baseline
+and the unfiltered model exceed the variation between training runs, whereas the band-pass-only and
+scaled-input variants are equivalent runs of one pipeline whose score difference lies within that
+variation; confidence intervals computed for fixed models therefore understate the uncertainty of
+pipeline comparisons.
 \item We identify N3-to-N2 confusion as a shared cross-cohort error that recurs in every zero-shot
 pipeline and in the held-out sample. An input-amplitude sweep shows that this error depends on, but is
 not explained by, signal amplitude. In matched experiments, none of prior correction, class weighting,
 batch-normalisation adaptation or adversarial domain adaptation reduced this error without losses in
-other stages.
+other stages; the failure of prior correction persisted with priors estimated from 500 recordings.
 \end{enumerate}
 
 %==============================================================================
@@ -394,7 +398,9 @@ recordings last 17-24\,h (median 23\,h) and include long daytime segments outsid
 window, whereas SHHS1 recordings cover the night in bed. Within the evaluation window, the median
 standard deviation of E6 inputs was 0.77 in Sleep-EDF but 0.99 in the holdout SHHS1 sample
 (interquartile range 0.85-1.00). E6 thus presents SHHS1 signals to the model at about 1.3 times the
-relative scale seen in training, in addition to removing between-recording amplitude differences.
+relative scale seen in training, in addition to removing between-recording amplitude differences. A
+later amendment therefore added E6R, which computes the $z$-score over a centred 90-minute window so
+that both cohorts reach the model at the same relative scale (Section~\ref{sec:a2-methods}).
 
 \subsection{Model configurations}
 
@@ -415,11 +421,13 @@ E3 & Band-pass + clip + $\div100$ & ResNet-1D & TCN; band-pass configuration \\
 E4 & Band-pass only & ResNet-1D & TCN; band-pass configuration without scaling \\
 E5 & Band-pass + clip & ResNet-1D & TCN; audit only, identical input to E4 \\
 E6 & Band-pass + clip + $z$-score & ResNet-1D & TCN; record-wise normalisation \\
+E6R & Band-pass + clip + 90-min $z$-score & ResNet-1D & TCN; windowed normalisation (amendment A2) \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Six configurations, E0-E4 and E6, enter the performance analysis. The baseline encoder concatenates
+Six configurations, E0-E4 and E6, enter the main performance analysis, and E6R enters the second
+amendment. The baseline encoder concatenates
 five-class softmax outputs from 15 CNN branches spanning the current, previous and next epochs (C/P/N),
 giving 75 features per epoch; ResNet-1D produces 128 features from the current epoch only. The
 non-causal six-block TCN has a 253-epoch receptive field, and the BiLSTM baseline has 128 hidden units per
@@ -438,7 +446,8 @@ ResNet-1D; its checkpoint then caches features without gradients. The sequence m
 frozen cache with masked cross-entropy and selected by validation \mf. E1 reuses the E0 encoder but
 changes the sequence-optimiser recipe, and E2 also changes encoder optimisation and selection
 (Supplementary Methods S1), so the comparisons fix partitions and evaluation, not every training choice.
-Every configuration was trained with seeds 42 and 123. On the same Sleep-EDF Fpz-Cz recordings, E0 at seed
+Every configuration was trained with seeds 42 and 123, and E4 additionally with seeds 2025, 2027 and
+2029 in the second amendment. On the same Sleep-EDF Fpz-Cz recordings, E0 at seed
 42 reached a pooled \mf\ of 0.7754 and an accuracy of 0.8262, against 0.7826 and 0.8409 reported for
 ZleepAnlystNet under ten-fold subject-wise cross-validation~\cite{jadhav2024zleepanlystnet}, although
 E0 was selected on held-out validation subjects rather than on a random epoch-wise split of the
@@ -522,6 +531,26 @@ measures the implemented forward pipeline for one tensor shape, not whole-night 
 algorithmic complexity. Training cost was recorded as the wall-clock time of training and validation
 across all ten folds in the seed-123 run, in which every configuration was trained sequentially on the
 same Tesla V100 with its own recipe and stopping rule (Supplementary Methods S1).
+
+\subsection{Second amendment: normalisation scope, training seeds, ensembles, EM and training cost}
+\label{sec:a2-methods}
+
+An internal review of a draft of this manuscript identified five points that the earlier analyses left
+open. A second amendment (A2), published in the repository before any of its preprocessing, training,
+inference or analysis, specified one descriptive analysis for each point, with all arms, seeds,
+settings and the rule by which each result would change the manuscript (Supplementary Section S6). It
+makes no hypothesis tests and does not revisit H1-H3. (A) E6R repeats E6 with a centred 90-minute
+rolling $z$-score at seeds 42 and 123, testing whether the deficit of E6 depended on the span of its
+statistics. (B) E4 was trained with three further seeds, giving five, to describe training variability.
+(C) Every fold model of each zero-shot arm was also scored alone on the holdout sample, because
+Sleep-EDF is evaluated with one model per subject but SHHS1 with ten-model ensembles. (D) The EM prior
+correction was repeated on the holdout sample with the same ten seed-123 E3 models and temperatures,
+changing only the data from which the target priors were estimated: random subsets of 5, 20 and 100
+recordings (200 draws each), the 20{,}000 unlabelled epochs of the AdaBN sample, all 500 recordings, and
+each recording separately. (E) The training time of the seed-123 run was decomposed into the number of
+optimiser steps, the time per step measured on a Tesla V100, and the remainder. The 50 new Sleep-EDF runs
+used the locked split, runner and recipes, and their test folds were opened once, after all runs had
+finished. Intervals are paired subject-cluster bootstrap intervals (10{,}000 resamples, seed 2043).
 
 %==============================================================================
 \section{Results}
@@ -635,28 +664,36 @@ The difference in training cost is larger than that in inference. In the seed-12
 validating all ten folds took 33\,h\,36\,min for E0 but 3\,h\,17\,min for E3 and 2\,h\,45\,min for E2, a
 reduction of $10.2\times$ and $12.2\times$ (Table~\ref{tab:training-time}). A full cross-validation of
 the proposed pipeline thus fits within a working session instead of taking more than a day, which
-shortens every development and verification cycle. E0 fits 15 CNN branches, each for up to 1{,}000
-epochs, before its BiLSTM, whereas the ResNet-1D encoder is a single network trained for at most 40
-epochs; the TCN sequence stage alone, as run for E1, took 14\,min. The reduction therefore reflects
-both the encoder design and its shorter training recipe, and should not be attributed to the TCN alone.
+shortens every development and verification cycle. The decomposition of amendment A2 shows where this
+difference arises. E0 trains 16 networks per fold, 15 CNN branches and a BiLSTM, whereas E3 trains a
+ResNet-1D encoder and a TCN. No CNN branch came close to its limit of 1{,}000 epochs: early stopping
+ended them after 29.1 epochs on average, against 19.0 epochs for the ResNet-1D encoders of E3 (limit
+40). E0 therefore ran $22.5\times$ as many optimiser steps as E3, while each of its steps took on average
+only 0.41 times as long, because one baseline CNN step (6.7\,ms) is cheaper than one ResNet-1D step
+(16.1\,ms). Steps multiplied by the measured time per step account for 59.5\% of the wall-clock time of
+E0 and 66.1\% of that of E3; the remainder covers validation, feature extraction, data loading and
+checkpointing (Supplementary Table~\ref{SM-tab:sup_a2_cost}). The ratio thus reflects how many networks
+each pipeline trains, not faster computation per step, and should not be attributed to the TCN or to a
+per-step efficiency of the ResNet-1D encoder.
 
 \begin{table}[htbp]
 \centering
 \caption{Training-and-validation wall-clock time over ten folds (seed 123; all configurations trained
 sequentially on the same Tesla V100). Ratios are E0 time divided by configuration time. E1 reuses the
-E0 encoder and cached features, so its time covers sequence-model training only.}
+E0 encoder and cached features, so its time covers sequence-model training only. Optimiser steps are
+summed over all training stages and folds (amendment A2).}
 \label{tab:training-time}
 \small
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrr}
 \toprule
-\textbf{ID} & \textbf{Ten folds} & \textbf{Mean per fold} & \textbf{Faster than E0} \\
+\textbf{ID} & \textbf{Ten folds} & \textbf{Mean per fold} & \textbf{Optimiser steps} & \textbf{Faster than E0} \\
 \midrule
-E0 & 33 h 35 min & 3 h 22 min & $1.0\times$ \\
-E1 (sequence only) & 14 min & 1 min 26 s & n/a \\
-E2 & 2 h 45 min & 16 min 30 s & $12.2\times$ \\
-E3 & 3 h 17 min & 19 min 40 s & $10.2\times$ \\
-E4 & 2 h 56 min & 17 min 36 s & $11.5\times$ \\
-E6 & 2 h 25 min & 14 min 28 s & $13.9\times$ \\
+E0 & 33 h 35 min & 3 h 22 min & 10{,}692{,}557 & $1.0\times$ \\
+E1 (sequence only) & 14 min & 1 min 26 s & n/a & n/a \\
+E2 & 2 h 45 min & 16 min 30 s & 401{,}776 & $12.2\times$ \\
+E3 & 3 h 17 min & 19 min 40 s & 474{,}809 & $10.2\times$ \\
+E4 & 2 h 56 min & 17 min 36 s & 425{,}612 & $11.5\times$ \\
+E6 & 2 h 25 min & 14 min 28 s & 344{,}928 & $13.9\times$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -779,7 +816,9 @@ unfiltered E2, not part of this pre-specified set, differed by $-0.0199$. All fo
 for fixed models do not capture variation between training runs. E4 again scored higher than E3, by
 0.0139 ($[0.0126,0.0153]$) at seed 42 and 0.0091 ($[0.0074,0.0108]$) at seed 123. The pre-specified
 expectation that E4-E3 would not exceed the between-seed differences was met at seed 123 but not
-at seed 42, where E4-E3 was larger than each of the four pre-specified between-seed differences.
+at seed 42, where E4-E3 was larger than each of the four pre-specified between-seed differences. With
+the five seeds of amendment A2 (Section~\ref{sec:a2-results}), the between-seed differences of E4 reached
+0.0189, so that both values of E4-E3 lie within the training variability of E4.
 
 \begin{figure}[t]
     \centering
@@ -811,7 +850,9 @@ both seeds, whereas H2 at seed 123 (0.0129) was close to the between-seed differ
 
 E3's pooled \mf\ fell from 0.7904 on Sleep-EDF to 0.6099 on the first SHHS1 sample, a difference of
 0.1805. Because the two cohorts are evaluated differently, by out-of-fold predictions and by ten-model
-ensembles, we examine this difference descriptively by class; A$\rightarrow$B denotes a
+ensembles, we examine this difference descriptively by class. On the holdout sample, the corresponding
+difference was 0.1875 with the ensemble and 0.2107 when the fold models were scored individually, as
+on Sleep-EDF (Section~\ref{sec:a2-results}). A$\rightarrow$B denotes a
 reference-labelled A epoch predicted as B. N3 accounts for most of the loss (Fig.~\ref{fig:confusion}): E3 N3 F1 fell from 0.8085 to
 0.4055, with precision 0.9440 but recall 0.2582, and E0 showed nearly the same recall (0.2610) and
 N3$\rightarrow$N2 rate (72.3\% versus 73.1\%; Supplementary Table~\ref{SM-tab:sup_first_n3}).
@@ -914,6 +955,50 @@ recall from 0.876 to 0.312. AdaBN also scored below ADAST, by 0.0844 with \ci\ $
 below the matched source-only control of ADAST, by 0.0416 with \ci\ $[0.0333,0.0498]$. Supplementary
 Section S5 reports all classes and contrasts.
 
+\subsection{Second amendment}
+\label{sec:a2-results}
+
+\textbf{Normalisation scope.} Within the evaluation windows, the median per-recording standard
+deviation of the E6R input was 0.987 on Sleep-EDF and 0.993 on the holdout sample, against 0.770 and
+0.992 for E6, so the scale mismatch of E6 was removed. Its effect on transfer was small: E6R minus E6
+was 0.0068 (\ci\ $[0.0012,0.0124]$) in subject-mean \mf\ at seed 42 and $-0.0010$ ($[-0.0071,0.0051]$) at
+seed 123, and E6R reached subject-mean \mf\ of 0.5412 and 0.5452. E4 scored higher than E6R at both
+seeds, by 0.0364 ($[0.0313,0.0415]$) and 0.0230 ($[0.0177,0.0282]$), as did E3, by 0.0225
+($[0.0171,0.0278]$) and 0.0139 ($[0.0083,0.0194]$). By the locked rule, the statement that preserving
+calibrated amplitude transferred better than $z$-scoring is therefore retained. Windowed normalisation
+also lowered N3 recall below that of E6, to 0.1395 and 0.1515 (differences $-0.0591$ and $-0.0503$),
+with N3$\rightarrow$N2 rates of 84.2\% and 82.8\%, whereas E4 exceeded E6R in N3 recall by 0.1346 and
+0.1059. On Sleep-EDF, E6R reached a pooled \mf\ of 0.7702 and 0.7749, close to E6 (0.7691 and 0.7780)
+and below E4 (0.7891 and 0.7887).
+
+\textbf{Training seeds.} Across the five seeds of E4, holdout subject-mean \mf\ had a mean of 0.5720, a
+standard deviation of 0.0077 and a range of 0.5634-0.5822, whereas pooled Sleep-EDF \mf\ varied with a
+standard deviation of 0.0018 (range 0.7854-0.7903); training variability was thus about four times
+larger after transfer than within the source cohort. Nine of the ten pairwise between-seed intervals
+excluded zero, and the largest absolute difference was 0.0189. All 20 differences between an E4 seed and
+E0 or E2 at either seed were larger, 0.0313-0.0700 with every interval above 0.026, so by the locked
+rule these configuration contrasts exceed the variation between training runs (Supplementary
+Tables~\ref{SM-tab:sup_a2_arms}-\ref{SM-tab:sup_a2_contrasts}).
+
+\textbf{Single models and ensembles.} Scored alone, single fold models of one arm differed by up to 0.18
+in holdout subject-mean \mf, and the ten-model ensemble exceeded the mean of its single models by
+0.0121-0.0327 in every arm, each interval above zero (Supplementary Table~\ref{SM-tab:sup_a2_single}).
+N3 recall was slightly higher for single models than for ensembles (for E3 at seed 42, 0.2637 against
+0.2549), so ensembling did not cause the N3 deficit. Measured with single models, the drop in pooled
+\mf\ from Sleep-EDF to the holdout sample was 0.2107 and 0.2134 for E3 at seeds 42 and 123, compared with
+0.1875 and 0.1902 with the ensembles; the cohort comparison in Section~\ref{sec:gap} therefore
+understates the cross-cohort loss of a single model by about 0.02.
+
+\textbf{Sample size of the EM prior estimate.} On the holdout sample, the archived priors from the five
+adaptation recordings again placed N3 at the floor, and the adjusted ensemble predicted no N3. Estimating
+the priors from larger samples did not resolve the problem: with the 20{,}000 epochs of the AdaBN sample
+or with all 500 recordings, the fold-mean N3 prior was 0.030 and 0.029, about a fifth of the reference
+N3 share of 0.134, and N3 recall fell from 0.240 without adjustment to 0.134 and 0.129, with subject-mean
+\mf\ of 0.517 and 0.516 against 0.559. Random subsets of 5, 20 and 100 recordings converged on the same
+prior (median 0.028-0.029) as their spread narrowed (Supplementary Table~\ref{SM-tab:sup_a2_em}). By the
+locked rule, the collapse is therefore attributed to the label-shift assumption failing under feature
+shift, not to the small adaptation sample.
+
 %==============================================================================
 \section{Discussion}
 
@@ -924,18 +1009,24 @@ ResNet-1D-TCN configuration on band-pass-filtered input transferred better to SH
 CNN-BiLSTM baseline, and this advantage, first observed on 180 participants, was confirmed on 500 participants whose data had not informed any analysis. It was also much cheaper to develop and use:
 ten-fold training and validation took about 3.3\,h instead of 33.6\,h on the same GPU, and its forward
 pass was $3.76\times$ faster. For a pipeline that must be retrained for every preprocessing variant, seed
-and fold, this reduction in training time is a practical advantage, but it was measured with each
-pipeline's own recipe: the 15 baseline CNNs may each train for up to 1{,}000 epochs, the ResNet-1D
-encoder for at most 40, so the ratio describes the two pipelines as specified rather than the
-computational efficiency of the architectures alone. Second, band-pass filtering accounted for most
+and fold, this reduction in training time is a practical advantage. It arises because the baseline
+trains 15 encoder networks per fold, each stopped early after about 30 epochs, and therefore needs
+$22.5\times$ as many optimiser steps, not because a ResNet-1D step is cheaper; a baseline CNN step in fact
+takes less time. The ratio therefore describes the two pipelines as specified, not the per-step
+efficiency of the architectures. Second, band-pass filtering accounted for most
 of this advantage. The same model on unfiltered input performed close to the baseline on the holdout
 sample, and on the first sample neither the sequence-model replacement (E1-E0) nor the
 feature/context replacement (E2-E1) produced a comparable gain. How the signal is filtered is therefore a substantial part of how these models transfer, not an
 implementation detail. Third,
-preserving calibrated amplitude (E3) transferred better than record-wise $z$-scoring (E6). The E6
-comparison is not a clean test of normalisation as such: its statistics span about 23\,h of mostly
-daytime recording in Sleep-EDF but only the night in SHHS1, so the two cohorts reach the model at
-different relative scales.
+preserving calibrated amplitude (E3) transferred better than record-wise $z$-scoring (E6). Because
+the statistics of E6 span about 23\,h of mostly daytime recording in Sleep-EDF but only the night in
+SHHS1, the two cohorts reach E6 at different relative scales, so E6 alone is not a clean test of
+normalisation. Matching the span with a 90-minute window (E6R) removed this mismatch but hardly changed
+transfer, and both band-pass configurations still scored above E6R at both seeds. The deficit of
+$z$-scoring therefore does not stem from the mismatched span; the lower N3 recall of E6R suggests
+instead that removing absolute amplitude discards information the model uses to recognise N3. E6R also
+removes amplitude changes slower than its window, so this comparison concerns these two forms of
+$z$-scoring, not every possible normalisation.
 
 These are comparisons of whole configurations, including their training recipes. We did not test which
 frequency band, artefact or recording difference the band-pass filter removes, so the confirmed
@@ -945,17 +1036,23 @@ contrasts do not identify a mechanism.
 
 On the holdout sample, two training seeds of an identical configuration differed by 0.005 to 0.012 in
 subject-mean \mf\ for the four pre-specified configurations and by 0.020 for E2, and all four
-pre-specified between-seed intervals excluded zero. Such intervals
+pre-specified between-seed intervals excluded zero. Five seeds of E4 spread over 0.019 (standard
+deviation 0.0077), four times the spread of the same models on Sleep-EDF, and nine of their ten pairwise
+intervals excluded zero. Such intervals
 describe the uncertainty due to the sampled participants for fixed models, not the uncertainty due to
 training, so a contrast between two separately trained models can appear precise and still be of the
 size expected from retraining alone. E4-E3 is an example. The two configurations are equivalent by
 construction, and their trained weights show that, for each seed, they are two copies of one training
 run that drifted apart numerically; runs that would be identical in exact arithmetic nevertheless
-differed by 0.009 to 0.014 in subject-mean \mf\ on SHHS1. No physical or recording-specific mechanism is
-needed to explain this difference, and none is implied by our data. The same consideration applies to
-the seed-123 estimate of H2, whereas H1 and H3 exceeded every observed between-seed difference.
-Reporting variation between training runs alongside participant-level intervals would make pipeline
-comparisons more reliable in general.
+differed by 0.009 to 0.014 in subject-mean \mf\ on SHHS1, within the range of the five E4 seeds. No
+physical or recording-specific mechanism is needed to explain this difference, and none is implied by
+our data. The same consideration applies to the seed-123 estimate of H2 (0.0129), whereas every
+difference between an E4 seed and E0 or E2 (0.031-0.070) exceeded the largest between-seed difference.
+The contrasts of the band-pass pipeline with the baseline and with the unfiltered model are therefore
+robust to retraining. That
+transfer to a new cohort amplified training variability fourfold also means that a model selected on
+source data alone can land anywhere within this range on the target. Reporting variation between training
+runs alongside participant-level intervals would make pipeline comparisons more reliable in general.
 
 For practical use, the clipping and scaling steps of E3 are redundant: band-pass filtering alone (E4)
 defines the same pipeline with fewer operations, and we recommend that form. E3 remained the reference
@@ -987,7 +1084,11 @@ spectral and spatial composition of slow waves recorded at C4-A1 rather than Fpz
 between scorers, remain plausible contributors that the present design cannot separate.
 
 The interventions changed the N3 error in different ways. EM prior correction eliminated N3
-predictions, and class weighting raised N3 recall at the expense of N2 recall and accuracy. ADAST
+predictions. This was not a consequence of estimating the priors from only five recordings: with
+priors from all 500 holdout recordings, EM still estimated an N3 share of 0.029 against 0.134 and
+lowered N3 recall. Because the models under-detect N3 after transfer, their outputs understate N3, and
+EM, which assumes that only the class proportions differ between cohorts, propagates this bias into the
+priors; under feature shift the label-shift assumption does not hold. Class weighting raised N3 recall at the expense of N2 recall and accuracy. ADAST
 changed sign between learning budgets; with full-source training it more than doubled N3 recall and
 improved on its matched control on both SHHS1 samples, but lowered N1, N2 and REM F1 and source-cohort
 performance. It remained below zero-shot E3 and E4, but because its backbone without adaptation scored
@@ -1014,13 +1115,16 @@ holdout sample is new in its participants but comes from the same SHHS1 study, m
 procedures, so it confirms the findings within SHHS1 rather than across further cohorts. The
 confirmatory protocol was archived in the authors' public repository rather than in an independent
 study registry, so only its existence before the analysis, not the absence of earlier data access, is
-externally timestamped. Each
-configuration was trained with two seeds, which suffices to show that training variability matters but
-not to estimate its distribution. The intervention experiments were designed after the errors of the
+externally timestamped. Most
+configurations were trained with two seeds and E4 with five, which describes the spread of training
+variability but not the tails of its distribution. The intervention experiments were designed after the errors of the
 first SHHS1 sample had been examined, and only the full-source ADAST pair was re-evaluated on the
-holdout sample; ADAST was run with its own backbone rather than with the ResNet-1D-TCN pipeline. The amplitude and AdaBN analyses were specified after the confirmatory results and
-examine one configuration at one seed. Sleep-EDF uses out-of-fold predictions and SHHS1 uses ten-model ensembles, so score
-differences between the cohorts combine cohort and evaluation-procedure differences. The models use
+holdout sample; ADAST was run with its own backbone rather than with the ResNet-1D-TCN pipeline. The
+amplitude, AdaBN and second-amendment analyses were specified after the confirmatory results, on
+holdout labels that had already been used, and are descriptive; the amplitude and AdaBN analyses
+examine one configuration at one seed. Sleep-EDF uses out-of-fold predictions and SHHS1 uses ten-model
+ensembles; scoring single models shows that the ensembles reduce the apparent cross-cohort loss by about
+0.02, but the cohort comparison still combines cohort and evaluation-procedure differences. The models use
 future context and were evaluated offline, so forward-pass timing describes offline processing rather
 than real-time operation. Class-wise results are pooled across participants without sex- or
 age-stratified analysis. Evaluation on further cohorts, montages and subgroups would test whether the
@@ -1030,11 +1134,13 @@ filtering effect and the N3 pattern generalise.
 \section{Conclusion}
 
 Under a shared protocol, the ResNet-1D-TCN pipeline on band-pass-filtered EEG ran almost four times
-faster than the CNN-BiLSTM baseline, trained about ten times faster under its own recipe, and
-transferred better from Sleep-EDF to SHHS1. Its advantage, first observed
+faster than the CNN-BiLSTM baseline, needed about ten times less training time because it trains two
+networks per fold instead of sixteen, and transferred better from Sleep-EDF to SHHS1. Its advantage, first observed
 on 180 participants, was confirmed on 500 participants held out from development: subject-mean \mf\
 improved by 0.0467 over the baseline, by 0.0293 over record-wise $z$-scoring and by 0.0515 over the same
-model on unfiltered input. Band-pass filtering accounted for most of the transfer gain. Because
+model on unfiltered input, and its contrasts with the baseline and the unfiltered model exceeded the
+variation across five training seeds. Band-pass filtering accounted for most of the transfer gain, and
+$z$-scoring remained inferior when its statistics covered the same span in both cohorts. Because
 clipping never activated and batch normalisation absorbs a constant input scale, the band-pass-only and
 scaled variants were two numerically drifted runs of the same model, and band-pass filtering alone
 suffices to define the pipeline. All zero-shot pipelines classified most N3 epochs as N2. This decision
@@ -1053,9 +1159,9 @@ managed by NSRR (\url{https://sleepdata.org/datasets/shhs}). Because access to t
 controlled by the data provider, the repository and the manuscript package contain no participant-level
 SHHS records or predictions.
 
-The confirmatory protocol, its analysis script and amendment A1 were each committed to the repository
-before they were run; their commit identifiers, and a timestamp recorded by the GitHub server
-independently of the authors' commit metadata, are listed in Supplementary Section S3. The holdout
+The confirmatory protocol, its analysis script and amendments A1 and A2 were each committed to the
+repository before they were run; their commit identifiers, and a timestamp recorded by the GitHub server
+independently of the authors' commit metadata, are listed in Supplementary Sections S3, S5 and S6. The holdout
 participants are selected by a deterministic hash ranking that can be reproduced from the NSRR
 participant list, and the inference manifests record the SHA-256 values of the protocol, the preprocessed
 inputs and the model checkpoints. Provenance checks for the first SHHS1 sample are given in the

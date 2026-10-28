@@ -137,13 +137,15 @@ tham gia SHHS1 khác theo một giao thức đã cam kết trước khi xử lý
 \noindent
 \textbf{Kết quả.} Mạng dư một chiều kết hợp mạng tích chập thời gian (ResNet-1D-TCN) trên đầu vào lọc
 thông dải (E3) đạt \mf\ gộp 0.7904 trên Sleep-EDF. Dù có số tham số gấp $4.37\times$ đối chứng CNN-BiLSTM
-(E0), lượt truyền xuôi của E3 nhanh hơn $3.76\times$, và huấn luyện đủ mười fold theo công thức huấn luyện
-riêng của từng quy trình mất ít thời gian hơn $10.2\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
+(E0), lượt truyền xuôi của E3 nhanh hơn $3.76\times$, và huấn luyện đủ mười fold mất ít thời gian hơn
+$10.2\times$, vì E0 huấn luyện 15 mạng mã hóa và cần số bước tối ưu nhiều gấp $22.5\times$. Trên mẫu 500 người, E3 cải thiện \mf\ trung
 bình theo đối tượng so với E0 thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi
 (E6) thêm 0.0293 (0.0231-0.0354) và so với cùng mô hình trên đầu vào không lọc (E2) thêm 0.0515
-(0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Cấu hình chỉ lọc thông dải (E4) về
-bản chất là cùng một mô hình với E3, vì chuẩn hóa theo lô triệt tiêu hệ số đổi thang; E4 đạt điểm cao hơn E3
-0.009-0.014, cùng cỡ với chênh lệch giữa hai seed huấn luyện của cùng một cấu hình (0.005-0.020). E0 và E3
+(0.0460-0.0571); cả ba giả thuyết xác định trước đều được xác nhận. Trong một bản sửa đổi sau đó,
+$z$-score trên cửa sổ 90 phút, vốn làm thang đầu vào của hai đoàn hệ khớp nhau, vẫn kém cấu hình chỉ lọc
+thông dải (E4) ở cả hai seed, và năm seed huấn luyện của E4 chênh nhau tối đa 0.019, nhỏ hơn mọi chênh lệch
+so với E0 hoặc E2 (0.031-0.070). E4 về bản chất là cùng một mô hình với E3, vì chuẩn hóa theo lô triệt tiêu
+hệ số đổi thang; E4 đạt điểm cao hơn E3 0.009-0.014, nằm trong khoảng biến thiên giữa các seed này. E0 và E3
 phân loại hơn 72\% epoch N3 (ngủ sâu) thành N2. Quyết định giữa N2 và N3 phụ thuộc vào biên độ đầu vào,
 nhưng đổi thang biên độ, thích nghi chuẩn hóa theo lô và thích nghi đối kháng đều không giảm được lỗi này
 mà không làm giảm hiệu năng ở các giai đoạn khác.
@@ -206,21 +208,22 @@ Các đóng góp của chúng tôi tương ứng với các câu hỏi này.
 
 \begin{enumerate}[label=(\arabic*)]
 \item Chúng tôi cho thấy quy trình ResNet-1D-TCN đã triển khai chạy nhanh hơn gần bốn lần so với đối chứng
-CNN-BiLSTM dù có nhiều tham số hơn, và huấn luyện nhanh hơn khoảng mười lần theo công thức huấn luyện riêng
-của mỗi quy trình, và trong các thay đổi được đánh giá, lọc thông dải, chứ không phải bộ mã hóa
+CNN-BiLSTM dù có nhiều tham số hơn, và cần ít thời gian huấn luyện hơn khoảng mười lần vì mỗi fold chỉ
+huấn luyện hai mạng thay vì mười sáu, và trong các thay đổi được đánh giá, lọc thông dải, chứ không phải bộ mã hóa
 hay mô hình chuỗi, đóng góp phần lớn lợi thế khi chuyển quần thể: không lọc, cùng mô hình đạt kết quả
 gần đối chứng.
 \item Chúng tôi xác nhận lợi thế này trên 500 người tham gia SHHS1 giữ lại theo giao thức cố định trước khi
-xử lý dữ liệu của họ. Chúng tôi cũng cho thấy hai seed huấn luyện của cùng một cấu hình có thể chênh
-nhau ngang một số đối chiếu giữa các cấu hình. Biến thể chỉ lọc thông dải và biến thể có đổi thang đầu vào
-thực chất là hai lần chạy của cùng một quy trình, và chênh lệch điểm giữa chúng chỉ đến từ sai số số học
-tích lũy trong huấn luyện. Vì vậy, khoảng tin cậy tính với mô hình cố định đánh giá thấp độ bất định khi
+xử lý dữ liệu của họ. Với năm seed huấn luyện, chúng tôi cho thấy các đối chiếu đã xác nhận so với đối
+chứng và với mô hình không lọc vượt biến thiên giữa các lần huấn luyện. Ngược lại, biến thể chỉ lọc thông
+dải và biến thể có đổi thang đầu vào thực chất là hai lần chạy của cùng một quy trình, và chênh lệch điểm
+giữa chúng nằm trong biến thiên đó. Vì vậy, khoảng tin cậy tính với mô hình cố định đánh giá thấp độ bất định khi
 so sánh các quy trình.
 \item Chúng tôi xác định nhầm N3 thành N2 là lỗi chung khi chuyển quần thể, lặp lại ở mọi quy trình
 zero-shot và trên mẫu giữ lại. Khảo sát quét biên độ đầu vào cho thấy lỗi này phụ thuộc vào biên độ tín
 hiệu nhưng biên độ không giải thích được toàn bộ lỗi. Trong các thí nghiệm có đối chứng tương ứng, hiệu
 chỉnh tiên nghiệm, trọng số lớp, thích nghi chuẩn hóa theo lô và thích nghi miền đối kháng đều không giảm
-được lỗi này mà không làm giảm hiệu năng ở các giai đoạn khác.
+được lỗi này mà không làm giảm hiệu năng ở các giai đoạn khác; thất bại của hiệu chỉnh tiên nghiệm vẫn còn khi
+tiên nghiệm được ước lượng từ 500 bản ghi.
 \end{enumerate}
 
 %==============================================================================
@@ -395,7 +398,8 @@ Sleep-EDF dài 17-24\,giờ (trung vị 23\,giờ), gồm cả những đoạn b
 trong khi bản ghi SHHS1 chỉ bao phủ khoảng thời gian nằm trên giường ban đêm. Trong cửa sổ đánh giá, trung vị độ lệch chuẩn của đầu vào E6 là 0.77 ở
 Sleep-EDF nhưng 0.99 ở mẫu SHHS1 giữ lại (khoảng tứ phân vị 0.85-1.00). Như vậy, E6 đưa tín hiệu SHHS1 vào
 mô hình ở thang tương đối khoảng 1.3 lần so với lúc huấn luyện, ngoài việc loại bỏ khác biệt biên độ giữa
-các bản ghi.
+các bản ghi. Vì vậy, một bản sửa đổi sau đó bổ sung E6R, tính $z$-score trên cửa sổ 90 phút có tâm để tín
+hiệu của hai đoàn hệ đến mô hình ở cùng thang tương đối (Mục~\ref{sec:a2-methods}).
 
 \subsection{Cấu hình mô hình}
 
@@ -416,11 +420,12 @@ E3 & Lọc thông dải + cắt + $\div100$ & ResNet-1D & TCN; cấu hình lọc
 E4 & Chỉ lọc thông dải & ResNet-1D & TCN; cấu hình lọc thông dải không đổi thang \\
 E5 & Lọc thông dải + cắt & ResNet-1D & TCN; chỉ kiểm tra, đầu vào giống E4 \\
 E6 & Lọc thông dải + cắt + $z$-score & ResNet-1D & TCN; chuẩn hóa theo bản ghi \\
+E6R & Lọc thông dải + cắt + $z$-score 90 phút & ResNet-1D & TCN; chuẩn hóa theo cửa sổ (bản sửa đổi A2) \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Sáu cấu hình E0-E4 và E6 được đưa vào phân tích hiệu năng. Bộ mã hóa đối chứng nối đầu ra softmax năm lớp
+Sáu cấu hình E0-E4 và E6 được đưa vào phân tích hiệu năng chính, còn E6R thuộc bản sửa đổi thứ hai. Bộ mã hóa đối chứng nối đầu ra softmax năm lớp
 của 15 nhánh CNN trải trên epoch hiện tại, liền trước và liền sau (C/P/N), cho 75 đặc trưng mỗi epoch;
 ResNet-1D tạo 128 đặc trưng chỉ từ epoch hiện tại. TCN sáu khối không nhân quả có trường tiếp nhận 253
 epoch, còn BiLSTM đối chứng có 128 đơn vị ẩn mỗi chiều. Mọi mô hình đều chạy ngoại tuyến: mô hình chuỗi
@@ -439,7 +444,8 @@ hình chuỗi được huấn luyện trên các đặc trưng cố định này
 \mf\ xác thực.
 E1 dùng lại bộ mã hóa E0 nhưng thay thiết lập tối ưu mô hình chuỗi, còn E2 thay cả cách tối ưu và chọn bộ
 mã hóa (Phương pháp bổ sung S1), nên các so sánh cố định phân hoạch và cách đánh giá chứ không cố định mọi
-lựa chọn huấn luyện. Mọi cấu hình được huấn luyện với seed 42 và 123. Trên cùng các bản ghi Sleep-EDF
+lựa chọn huấn luyện. Mọi cấu hình được huấn luyện với seed 42 và 123; riêng E4 được huấn luyện thêm với seed
+2025, 2027 và 2029 trong bản sửa đổi thứ hai. Trên cùng các bản ghi Sleep-EDF
 Fpz-Cz, E0 ở seed 42 đạt \mf\ gộp 0.7754 và độ chính xác 0.8262, so với 0.7826 và 0.8409 được báo cáo cho
 ZleepAnlystNet với đánh giá chéo mười fold theo đối tượng~\cite{jadhav2024zleepanlystnet}, dù E0 được chọn
 trên các đối tượng xác thực giữ lại thay vì trên một phép chia ngẫu nhiên theo epoch của dữ liệu huấn
@@ -522,6 +528,26 @@ một hình dạng tensor, không phải thời gian suy luận cả đêm hay �
 được ghi bằng thời gian thực (wall-clock) của huấn luyện và xác thực trên cả mười fold trong lượt chạy seed
 123, trong đó mọi cấu hình được huấn luyện tuần tự trên cùng một GPU Tesla V100 với công thức huấn luyện và
 quy tắc dừng riêng (Phương pháp bổ sung S1).
+
+\subsection{Bản sửa đổi thứ hai: phạm vi chuẩn hóa, seed huấn luyện, ensemble, EM và chi phí huấn luyện}
+\label{sec:a2-methods}
+
+Một đợt rà soát nội bộ bản thảo đã chỉ ra năm điểm mà các phân tích trước còn bỏ ngỏ. Bản sửa đổi thứ hai
+(A2), được công bố trên kho mã trước mọi bước tiền xử lý, huấn luyện, suy luận hay phân tích của nó, xác
+định một phân tích mô tả cho mỗi điểm, cùng mọi tổ hợp, seed, thiết lập và quy tắc cho biết mỗi kết quả sẽ
+thay đổi bản thảo như thế nào (Mục bổ sung S6). A2 không kiểm định giả thuyết và không xét lại H1-H3. (A) E6R
+lặp lại E6 với $z$-score trượt có tâm trên cửa sổ 90 phút ở seed 42 và 123, để kiểm tra xem thiếu hụt của E6
+có phụ thuộc vào khoảng thời gian dùng để tính thống kê hay không. (B) E4 được huấn luyện thêm ba seed, tổng
+cộng năm seed, để mô tả biến thiên huấn luyện. (C) Từng mô hình fold của mỗi tổ hợp zero-shot cũng được chấm
+điểm riêng trên mẫu giữ lại, vì Sleep-EDF được đánh giá bằng một mô hình cho mỗi đối tượng còn SHHS1 bằng
+ensemble mười mô hình. (D) Hiệu chỉnh tiên nghiệm EM được lặp lại trên mẫu giữ lại với đúng mười mô hình E3
+seed 123 và các nhiệt độ đã lưu, chỉ thay dữ liệu dùng để ước lượng tiên nghiệm đích: tập con ngẫu nhiên
+gồm 5, 20 và 100 bản ghi (mỗi mức 200 lần bốc), 20\,000 epoch không nhãn của mẫu AdaBN, cả 500 bản ghi, và
+từng bản ghi riêng lẻ. (E) Thời gian huấn luyện của lượt chạy seed 123 được tách thành số bước tối ưu, thời
+gian mỗi bước đo trên GPU Tesla V100, và phần còn lại. 50 lần huấn luyện mới trên Sleep-EDF dùng phân hoạch,
+chương trình huấn luyện và công thức đã khóa, và các fold kiểm tra của chúng chỉ được mở một lần, sau khi mọi
+lần huấn luyện đã xong. Khoảng tin cậy là khoảng bootstrap cụm theo đối tượng có bắt cặp (10\,000 lần lấy
+mẫu lại, seed 2043).
 
 %==============================================================================
 \section{Kết quả}
@@ -634,28 +660,35 @@ Khác biệt về chi phí huấn luyện còn lớn hơn nhiều so với khác
 huấn luyện và xác thực đủ mười fold mất 33\,giờ\,36\,phút với E0 nhưng chỉ 3\,giờ\,17\,phút với E3 và
 2\,giờ\,45\,phút với E2, tức nhanh hơn lần lượt $10.2\times$ và $12.2\times$ (Bảng~\ref{tab:training-time}).
 Như vậy, một vòng đánh giá chéo đầy đủ của quy trình đề xuất hoàn tất trong một buổi làm việc thay vì kéo
-dài hơn một ngày, giúp rút ngắn mọi vòng phát triển và kiểm tra. E0 phải huấn luyện 15 nhánh CNN, mỗi nhánh
-tối đa 1\,000 epoch, trước khi huấn luyện BiLSTM, trong khi bộ mã hóa ResNet-1D là một mạng duy nhất được huấn
-luyện tối đa 40 epoch; riêng giai đoạn mô hình chuỗi TCN, như khi chạy cho E1, chỉ mất 14\,phút. Mức giảm vì vậy
-đến từ cả thiết kế bộ mã hóa lẫn công thức huấn luyện ngắn hơn của nó, và không nên quy toàn bộ cho TCN.
+dài hơn một ngày, giúp rút ngắn mọi vòng phát triển và kiểm tra. Phép phân tách trong bản sửa đổi A2 cho thấy
+chênh lệch này đến từ đâu. Mỗi fold, E0 huấn luyện 16 mạng, gồm 15 nhánh CNN và một BiLSTM, còn E3 huấn luyện
+một bộ mã hóa ResNet-1D và một TCN. Không nhánh CNN nào tiến gần giới hạn 1\,000 epoch: dừng sớm kết thúc chúng
+sau trung bình 29.1 epoch, so với 19.0 epoch của các bộ mã hóa ResNet-1D của E3 (giới hạn 40). Vì vậy E0 chạy
+số bước tối ưu nhiều gấp $22.5\times$ E3, trong khi mỗi bước của nó trung bình chỉ tốn 0.41 lần thời gian, vì một
+bước của CNN đối chứng (6.7\,ms) rẻ hơn một bước của ResNet-1D (16.1\,ms). Số bước nhân với thời gian đo được
+cho mỗi bước chiếm 59.5\% thời gian thực của E0 và 66.1\% của E3; phần còn lại gồm xác thực, trích đặc trưng,
+nạp dữ liệu và lưu checkpoint (Bảng bổ sung~\ref{SM-tab:sup_a2_cost}). Như vậy, tỷ số này phản ánh số mạng mà
+mỗi quy trình phải huấn luyện, không phải tốc độ tính toán mỗi bước, và không nên quy cho TCN hay cho hiệu quả
+mỗi bước của bộ mã hóa ResNet-1D.
 
 \begin{table}[H]
 \centering
 \caption{Thời gian thực (wall-clock) của huấn luyện và xác thực trên mười fold (seed 123; mọi cấu hình được
 huấn luyện tuần tự trên cùng một GPU Tesla V100). Tỷ số bằng thời gian của E0 chia cho thời gian của cấu
-hình. E1 dùng lại bộ mã hóa và đặc trưng đã lưu của E0, nên thời gian của nó chỉ gồm huấn luyện mô hình chuỗi.}
+hình. E1 dùng lại bộ mã hóa và đặc trưng đã lưu của E0, nên thời gian của nó chỉ gồm huấn luyện mô hình chuỗi.
+Số bước tối ưu được cộng trên mọi giai đoạn huấn luyện và mọi fold (bản sửa đổi A2).}
 \label{tab:training-time}
 \small
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrr}
 \toprule
-\textbf{Mã} & \textbf{Mười fold} & \textbf{Trung bình mỗi fold} & \textbf{Nhanh hơn E0} \\
+\textbf{Mã} & \textbf{Mười fold} & \textbf{Trung bình mỗi fold} & \textbf{Số bước tối ưu} & \textbf{Nhanh hơn E0} \\
 \midrule
-E0 & 33 giờ 35 phút & 3 giờ 22 phút & $1.0\times$ \\
-E1 (chỉ mô hình chuỗi) & 14 phút & 1 phút 26 giây & n/a \\
-E2 & 2 giờ 45 phút & 16 phút 30 giây & $12.2\times$ \\
-E3 & 3 giờ 17 phút & 19 phút 40 giây & $10.2\times$ \\
-E4 & 2 giờ 56 phút & 17 phút 36 giây & $11.5\times$ \\
-E6 & 2 giờ 25 phút & 14 phút 28 giây & $13.9\times$ \\
+E0 & 33 giờ 35 phút & 3 giờ 22 phút & 10\,692\,557 & $1.0\times$ \\
+E1 (chỉ mô hình chuỗi) & 14 phút & 1 phút 26 giây & n/a & n/a \\
+E2 & 2 giờ 45 phút & 16 phút 30 giây & 401\,776 & $12.2\times$ \\
+E3 & 3 giờ 17 phút & 19 phút 40 giây & 474\,809 & $10.2\times$ \\
+E4 & 2 giờ 56 phút & 17 phút 36 giây & 425\,612 & $11.5\times$ \\
+E6 & 2 giờ 25 phút & 14 phút 28 giây & 344\,928 & $13.9\times$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -775,7 +808,9 @@ Biến thiên giữa các lần huấn luyện có cùng bậc độ lớn với
 có cùng cấu hình: khoảng tính với mô hình cố định không phản ánh biến thiên giữa các lần huấn luyện. E4 cao
 hơn E3 0.0139 ($[0.0126,0.0153]$) ở seed 42 và 0.0091 ($[0.0074,0.0108]$) ở seed 123. Giao thức kỳ vọng
 E4-E3 không vượt các chênh lệch giữa hai seed; kỳ vọng này đúng ở seed 123 nhưng không đúng ở seed 42, nơi
-E4-E3 lớn hơn cả bốn chênh lệch giữa seed xác định trước.
+E4-E3 lớn hơn cả bốn chênh lệch giữa seed xác định trước. Với năm seed của bản sửa đổi A2
+(Mục~\ref{sec:a2-results}), chênh lệch giữa các seed của E4 lên tới 0.0189, nên cả hai giá trị của E4-E3 đều
+nằm trong biến thiên huấn luyện của E4.
 
 \begin{figure}[H]
     \centering
@@ -806,7 +841,8 @@ thuyết là tương đương lại cho kết quả khác nhau đến đâu. Ng�
 
 \mf\ gộp của E3 giảm từ 0.7904 trên Sleep-EDF xuống 0.6099 trên mẫu SHHS1 thứ nhất, tức giảm 0.1805. Vì hai
 đoàn hệ được đánh giá theo cách khác nhau (dự đoán ngoài fold so với tổ hợp mười mô hình), chúng tôi chỉ phân
-tích chênh lệch này theo lớp ở mức mô tả; A$\rightarrow$B ký hiệu một epoch có nhãn tham chiếu A bị dự đoán
+tích chênh lệch này theo lớp ở mức mô tả. Trên mẫu giữ lại, chênh lệch tương ứng là 0.1875 khi dùng ensemble và
+0.2107 khi chấm từng mô hình fold riêng lẻ như trên Sleep-EDF (Mục~\ref{sec:a2-results}). A$\rightarrow$B ký hiệu một epoch có nhãn tham chiếu A bị dự đoán
 là B. N3 chiếm phần lớn tổn thất (Hình~\ref{fig:confusion}): F1 N3 của E3 giảm từ 0.8085 xuống 0.4055, với
 precision (tỷ lệ dự đoán N3 là đúng) 0.9440 nhưng độ thu hồi chỉ 0.2582. E0 có độ thu hồi gần như giống hệt
 (0.2610) và tỷ lệ N3$\rightarrow$N2 tương tự (72.3\% so với 73.1\%; Bảng bổ sung~\ref{SM-tab:sup_first_n3}).
@@ -905,6 +941,46 @@ xuống 0.589 và độ thu hồi REM từ 0.876 xuống 0.312. AdaBN cũng th�
 $[0.0759,0.0929]$, và thấp hơn đối chứng chỉ học nguồn tương ứng của ADAST 0.0416 với \ci\ $[0.0333,0.0498]$.
 Mục bổ sung S5 trình bày mọi lớp và đối chiếu.
 
+\subsection{Bản sửa đổi thứ hai}
+\label{sec:a2-results}
+
+\textbf{Phạm vi chuẩn hóa.} Trong cửa sổ đánh giá, trung vị độ lệch chuẩn theo bản ghi của đầu vào E6R là
+0.987 ở Sleep-EDF và 0.993 ở mẫu giữ lại, so với 0.770 và 0.992 của E6, nên sai lệch thang của E6 đã được loại
+bỏ. Tác động lên khả năng chuyển quần thể thì nhỏ: E6R trừ E6 bằng 0.0068 (\ci\ $[0.0012,0.0124]$) về \mf\ trung
+bình theo đối tượng ở seed 42 và $-0.0010$ ($[-0.0071,0.0051]$) ở seed 123, và E6R đạt 0.5412 và 0.5452. E4
+cao hơn E6R ở cả hai seed, 0.0364 ($[0.0313,0.0415]$) và 0.0230 ($[0.0177,0.0282]$), và E3 cũng vậy, 0.0225
+($[0.0171,0.0278]$) và 0.0139 ($[0.0083,0.0194]$). Theo quy tắc đã khóa, nhận định rằng giữ biên độ đã hiệu
+chuẩn chuyển quần thể tốt hơn $z$-score vì vậy được giữ nguyên. Chuẩn hóa theo cửa sổ còn làm độ thu hồi N3
+thấp hơn E6, chỉ còn 0.1395 và 0.1515 (chênh lệch $-0.0591$ và $-0.0503$), với tỷ lệ N3$\rightarrow$N2 là
+84.2\% và 82.8\%, trong khi E4 vượt E6R về độ thu hồi N3 0.1346 và 0.1059. Trên Sleep-EDF, E6R đạt \mf\ gộp
+0.7702 và 0.7749, gần E6 (0.7691 và 0.7780) và thấp hơn E4 (0.7891 và 0.7887).
+
+\textbf{Seed huấn luyện.} Qua năm seed của E4, \mf\ trung bình theo đối tượng trên mẫu giữ lại có trung bình
+0.5720, độ lệch chuẩn 0.0077 và khoảng 0.5634-0.5822, trong khi \mf\ gộp trên Sleep-EDF có độ lệch chuẩn
+0.0018 (khoảng 0.7854-0.7903); biến thiên huấn luyện sau khi chuyển quần thể vì vậy lớn gấp khoảng bốn lần
+trong đoàn hệ nguồn. Chín trong mười khoảng chênh lệch giữa từng cặp seed không chứa giá trị không, và chênh
+lệch tuyệt đối lớn nhất là 0.0189. Cả 20 chênh lệch giữa một seed của E4 với E0 hoặc E2 ở một trong hai seed
+đều lớn hơn, 0.0313-0.0700, mọi khoảng đều trên 0.026, nên theo quy tắc đã khóa các đối chiếu cấu hình này
+vượt biến thiên giữa các lần huấn luyện (Bảng bổ sung~\ref{SM-tab:sup_a2_arms}-\ref{SM-tab:sup_a2_contrasts}).
+
+\textbf{Mô hình đơn và ensemble.} Khi chấm riêng, các mô hình fold của cùng một tổ hợp chênh nhau tới 0.18 về
+\mf\ trung bình theo đối tượng trên mẫu giữ lại, và ensemble mười mô hình vượt trung bình các mô hình đơn của
+nó 0.0121-0.0327 ở mọi tổ hợp, mọi khoảng đều trên không (Bảng bổ sung~\ref{SM-tab:sup_a2_single}). Độ thu hồi
+N3 của mô hình đơn nhỉnh hơn của ensemble (với E3 seed 42, 0.2637 so với 0.2549), nên ensemble không gây ra
+thiếu hụt N3. Tính bằng mô hình đơn, mức sụt \mf\ gộp từ Sleep-EDF sang mẫu giữ lại là 0.2107 và 0.2134 với
+E3 ở seed 42 và 123, so với 0.1875 và 0.1902 khi dùng ensemble; phép so sánh giữa hai đoàn hệ ở
+Mục~\ref{sec:gap} vì vậy đánh giá thấp tổn thất khi chuyển quần thể của một mô hình đơn khoảng 0.02.
+
+\textbf{Cỡ mẫu của ước lượng tiên nghiệm EM.} Trên mẫu giữ lại, tiên nghiệm đã lưu ước lượng từ năm bản ghi
+thích nghi một lần nữa đặt N3 ở mức sàn, và ensemble sau hiệu chỉnh không dự đoán N3 nào. Ước lượng tiên nghiệm
+từ mẫu lớn hơn không giải quyết được vấn đề: với 20\,000 epoch của mẫu AdaBN hoặc với cả 500 bản ghi, tiên
+nghiệm N3 trung bình qua các fold là 0.030 và 0.029, chỉ khoảng một phần năm tỷ lệ N3 tham chiếu 0.134, và độ
+thu hồi N3 giảm từ 0.240 khi không hiệu chỉnh xuống 0.134 và 0.129, với \mf\ trung bình theo đối tượng 0.517 và
+0.516 so với 0.559. Các tập con ngẫu nhiên gồm 5, 20 và 100 bản ghi hội tụ về cùng một tiên nghiệm (trung vị
+0.028-0.029) trong khi độ trải thu hẹp dần (Bảng bổ sung~\ref{SM-tab:sup_a2_em}). Theo quy tắc đã khóa, sự sụp
+đổ vì vậy được quy cho việc giả định dịch chuyển nhãn không đúng khi có dịch chuyển đặc trưng, không phải do mẫu
+thích nghi quá nhỏ.
+
 %==============================================================================
 \section{Thảo luận}
 
@@ -916,16 +992,22 @@ Mục bổ sung S5 trình bày mọi lớp và đối chiếu.
 nào. Nó cũng rẻ hơn nhiều khi phát triển và khi sử dụng: huấn luyện và xác thực mười fold chỉ mất khoảng
 3.3\,giờ thay vì 33.6\,giờ trên cùng một GPU, và lượt truyền xuôi nhanh hơn $3.76\times$. Với một quy trình
 phải huấn luyện lại cho mỗi biến thể tiền xử lý, mỗi seed và mỗi fold, việc giảm thời gian huấn luyện là một
-ưu điểm thực tế, nhưng nó được đo với công thức huấn luyện riêng của từng quy trình: mỗi CNN trong 15 CNN đối
-chứng có thể huấn luyện tới 1\,000 epoch, còn bộ mã hóa ResNet-1D tối đa 40 epoch, nên tỷ số này mô tả hai quy
-trình như đã định nghĩa chứ không phải hiệu quả tính toán của riêng kiến trúc. Thứ
+ưu điểm thực tế. Nó có được vì đối chứng huấn luyện 15 mạng mã hóa mỗi fold, mỗi mạng dừng sớm sau khoảng 30
+epoch, nên cần số bước tối ưu nhiều gấp $22.5\times$, chứ không phải vì một bước của ResNet-1D rẻ hơn; thực tế một
+bước của CNN đối chứng còn tốn ít thời gian hơn. Tỷ số này vì vậy mô tả hai quy trình như đã định nghĩa, không
+phải hiệu quả mỗi bước của kiến trúc. Thứ
 hai, lọc thông dải đóng góp phần lớn lợi thế này. Cùng mô hình trên đầu vào không lọc đạt kết quả gần đối
 chứng trên mẫu giữ lại, và trên mẫu thứ nhất, cả việc thay mô hình chuỗi (E1-E0) lẫn thay đặc trưng/ngữ cảnh
 (E2-E1) đều không tạo lợi ích tương đương. Cách lọc tín hiệu vì vậy là một phần đáng kể quyết định khả năng
 chuyển quần thể của các mô hình này, không phải chi tiết triển khai. Thứ ba, giữ biên độ đã hiệu chuẩn (E3)
-chuyển quần thể tốt hơn $z$-score theo bản ghi (E6). So sánh E6 không phải phép kiểm tra sạch về bản thân
-việc chuẩn hóa: thống kê của nó trải trên khoảng 23\,giờ bản ghi phần lớn ban ngày ở Sleep-EDF nhưng chỉ đêm
-ngủ ở SHHS1, nên hai đoàn hệ đến mô hình ở thang tương đối khác nhau.
+chuyển quần thể tốt hơn $z$-score theo bản ghi (E6). Vì thống kê của E6 trải trên khoảng 23\,giờ bản ghi phần
+lớn ban ngày ở Sleep-EDF nhưng chỉ đêm ngủ ở SHHS1, hai đoàn hệ đến E6 ở thang tương đối khác nhau, nên riêng E6
+không phải phép kiểm tra sạch về chuẩn hóa. Khớp khoảng thời gian bằng cửa sổ 90 phút (E6R) loại bỏ sai lệch
+này nhưng hầu như không thay đổi khả năng chuyển quần thể, và cả hai cấu hình lọc thông dải vẫn cao hơn E6R ở
+cả hai seed. Thiếu hụt của $z$-score vì vậy không bắt nguồn từ khoảng thời gian bị lệch; độ thu hồi N3 thấp hơn
+của E6R gợi ý rằng việc loại bỏ biên độ tuyệt đối làm mất thông tin mà mô hình dùng để nhận ra N3. E6R cũng
+loại bỏ các thay đổi biên độ chậm hơn cửa sổ của nó, nên phép so sánh này chỉ áp dụng cho hai dạng $z$-score
+này, không cho mọi cách chuẩn hóa có thể có.
 
 Đây là các so sánh giữa cấu hình hoàn chỉnh, gồm cả thiết lập huấn luyện. Chúng tôi không kiểm tra bộ lọc
 thông dải loại bỏ dải tần, nhiễu hay khác biệt ghi đo nào, nên các đối chiếu đã xác nhận không chỉ ra cơ chế.
@@ -934,16 +1016,22 @@ thông dải loại bỏ dải tần, nhiễu hay khác biệt ghi đo nào, nê
 
 Trên mẫu giữ lại, hai seed huấn luyện của cùng một cấu hình chênh nhau 0.005 đến 0.012 về \mf\ trung bình
 theo đối tượng ở bốn cấu hình xác định trước và 0.020 ở E2, và cả bốn khoảng giữa seed xác định trước đều
-không chứa giá trị không. Các khoảng này chỉ phản ánh độ bất định do việc lấy mẫu người tham gia khi mô hình
+không chứa giá trị không. Năm seed của E4 trải trên 0.019 (độ lệch chuẩn 0.0077), gấp bốn lần độ trải của
+chính các mô hình này trên Sleep-EDF, và chín trong mười khoảng chênh lệch từng cặp không chứa giá trị không.
+Các khoảng này chỉ phản ánh độ bất định do việc lấy mẫu người tham gia khi mô hình
 được giữ cố định, không phản ánh độ bất định do huấn luyện. Vì vậy, một đối chiếu giữa hai mô hình huấn luyện
 riêng có thể có khoảng tin cậy hẹp nhưng độ lớn chỉ ngang mức chênh lệch khi huấn luyện lại. E4-E3 là một ví
 dụ. Hai cấu hình này tương đương về mặt cấu tạo, và trọng số đã huấn luyện cho thấy ở mỗi seed chúng là hai
 lần chạy của cùng một quá trình huấn luyện, chỉ tách xa nhau dần do sai số số học. Nếu tính toán chính xác
 tuyệt đối, hai lần chạy này lẽ ra giống hệt nhau, nhưng trên SHHS1 chúng vẫn chênh 0.009 đến 0.014 về \mf\
-trung bình theo đối tượng. Không cần đến cơ chế sinh lý hay đặc điểm ghi đo nào để giải thích chênh lệch này,
-và dữ liệu của chúng tôi cũng không gợi ý cơ chế nào như vậy. Nhận xét tương tự áp dụng cho ước lượng H2 ở seed
-123, còn H1 và H3 lớn hơn mọi chênh lệch giữa seed quan sát được. Nói chung, báo cáo biến thiên giữa các lần
-huấn luyện bên cạnh khoảng tin cậy theo người tham gia sẽ làm so sánh giữa các quy trình đáng tin cậy hơn.
+trung bình theo đối tượng, nằm trong khoảng của năm seed E4. Không cần đến cơ chế sinh lý hay đặc điểm ghi đo
+nào để giải thích chênh lệch này, và dữ liệu của chúng tôi cũng không gợi ý cơ chế nào như vậy. Nhận xét tương
+tự áp dụng cho ước lượng H2 ở seed 123 (0.0129), còn mọi chênh lệch giữa một seed của E4 với E0 hoặc E2
+(0.031-0.070) đều vượt chênh lệch lớn nhất giữa các seed. Các đối chiếu của quy trình lọc thông dải với đối
+chứng và với mô hình không lọc vì vậy vững trước việc huấn luyện lại. Việc chuyển sang đoàn hệ mới khuếch đại
+biến thiên huấn luyện lên bốn lần cũng có nghĩa là một mô hình chỉ được chọn trên dữ liệu nguồn có thể rơi vào
+bất kỳ đâu trong khoảng này trên đoàn hệ đích. Nói chung, báo cáo biến thiên giữa các lần huấn luyện bên cạnh
+khoảng tin cậy theo người tham gia sẽ làm so sánh giữa các quy trình đáng tin cậy hơn.
 
 Trong sử dụng thực tế, các bước cắt và đổi thang của E3 là không cần thiết: chỉ lọc thông dải (E4) cho cùng
 một quy trình với ít thao tác hơn, và chúng tôi khuyến nghị dùng dạng này. E3 vẫn là cấu hình tham chiếu trong
@@ -972,8 +1060,11 @@ thuận lợi nhất vẫn để 60\% epoch N3 bị phân loại thành N2. Mộ
 giải thích; thành phần phổ và không gian của sóng chậm ghi ở C4-A1 thay vì Fpz-Cz, và khác biệt giữa những
 người chấm, vẫn là các yếu tố khả dĩ mà thiết kế hiện tại không tách được.
 
-Các can thiệp tác động lên lỗi N3 theo những cách khác nhau. Hiệu chỉnh tiên nghiệm EM làm mất hẳn dự đoán N3,
-còn trọng số lớp nâng độ thu hồi N3 nhưng phải đánh đổi độ thu hồi N2 và độ chính xác. Hiệu ứng của ADAST
+Các can thiệp tác động lên lỗi N3 theo những cách khác nhau. Hiệu chỉnh tiên nghiệm EM làm mất hẳn dự đoán N3.
+Điều này không phải do tiên nghiệm chỉ được ước lượng từ năm bản ghi: với tiên nghiệm từ cả 500 bản ghi giữ lại,
+EM vẫn ước lượng tỷ lệ N3 là 0.029 so với 0.134 và làm giảm độ thu hồi N3. Vì mô hình bỏ sót N3 sau khi chuyển
+quần thể, đầu ra của nó đánh giá thấp N3, và EM, vốn giả định hai đoàn hệ chỉ khác nhau về tỷ lệ lớp, truyền sai
+lệch này vào tiên nghiệm; khi có dịch chuyển đặc trưng, giả định dịch chuyển nhãn không còn đúng. Trọng số lớp nâng độ thu hồi N3 nhưng phải đánh đổi độ thu hồi N2 và độ chính xác. Hiệu ứng của ADAST
 đổi dấu giữa hai ngân sách học; với huấn luyện toàn nguồn, nó tăng độ thu hồi N3 hơn gấp đôi và vượt đối chứng tương ứng trên cả hai
 mẫu SHHS1, nhưng làm giảm F1 N1, N2 và REM cùng hiệu năng trên đoàn hệ nguồn. ADAST vẫn thấp hơn E3 và E4
 zero-shot, nhưng vì kiến trúc nền của nó khi chưa thích nghi đã thấp hơn E3 đáng kể, phép so sánh này trộn lẫn
@@ -1000,12 +1091,15 @@ mẫu giữ lại gồm những người tham gia mới nhưng vẫn thuộc ngh
 chấm điểm, nên nó xác nhận các phát hiện trong phạm vi SHHS1 chứ không xác nhận cho các đoàn hệ khác. Giao thức
 xác nhận được lưu trên kho mã công khai của tác giả thay vì một hệ thống đăng ký nghiên cứu độc lập; dấu thời
 gian bên ngoài vì vậy chỉ chứng minh giao thức có trước phân tích, không chứng minh dữ liệu chưa được truy cập
-trước đó. Mỗi cấu hình được huấn luyện với hai seed, đủ để cho thấy biến thiên huấn luyện là đáng kể nhưng
-chưa đủ để ước lượng phân phối của nó. Các thí nghiệm
+trước đó. Phần lớn cấu hình được huấn luyện với hai seed và E4 với năm seed, đủ để mô tả độ trải của biến
+thiên huấn luyện nhưng không đủ để ước lượng đuôi phân phối của nó. Các thí nghiệm
 can thiệp được thiết kế sau khi đã khảo sát lỗi của mẫu SHHS1 thứ nhất, và chỉ cặp ADAST toàn nguồn được đánh
-giá lại trên mẫu giữ lại; ADAST chạy với kiến trúc nền của chính nó chứ không trên quy trình ResNet-1D-TCN. Phân tích biên độ và AdaBN được xác định sau kết quả xác nhận và khảo sát một cấu
-hình ở một seed. Sleep-EDF dùng dự đoán ngoài fold còn SHHS1 dùng tổ hợp mười mô hình, nên chênh lệch điểm
-giữa hai đoàn hệ kết hợp khác biệt về đoàn hệ và về quy trình đánh giá. Các mô hình dùng ngữ cảnh tương lai
+giá lại trên mẫu giữ lại; ADAST chạy với kiến trúc nền của chính nó chứ không trên quy trình ResNet-1D-TCN.
+Phân tích biên độ, AdaBN và bản sửa đổi thứ hai được xác định sau kết quả xác nhận, trên nhãn giữ lại đã được
+dùng, và chỉ mang tính mô tả; phân tích biên độ và AdaBN khảo sát một cấu hình ở một seed. Sleep-EDF dùng dự
+đoán ngoài fold còn SHHS1 dùng tổ hợp mười mô hình; chấm điểm mô hình đơn cho thấy ensemble làm tổn thất khi
+chuyển quần thể trông nhỏ đi khoảng 0.02, nhưng phép so sánh giữa hai đoàn hệ vẫn kết hợp khác biệt về đoàn hệ
+và về quy trình đánh giá. Các mô hình dùng ngữ cảnh tương lai
 và được đánh giá ngoại tuyến, nên thời gian truyền xuôi mô tả xử lý ngoại tuyến chứ không phải vận hành thời
 gian thực. Kết quả theo lớp được gộp trên người tham gia, không phân tích phân tầng theo giới hoặc tuổi. Đánh
 giá trên các đoàn hệ, cấu hình điện cực và nhóm con khác sẽ kiểm tra liệu tác động của phép lọc và mô hình lỗi
@@ -1015,10 +1109,13 @@ N3 có tổng quát hóa hay không.
 \section{Kết luận}
 
 Theo một giao thức chung, quy trình ResNet-1D-TCN trên EEG lọc thông dải chạy nhanh hơn gần bốn lần so với đối
-chứng CNN-BiLSTM, huấn luyện nhanh hơn khoảng mười lần theo công thức huấn luyện riêng của nó, và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
+chứng CNN-BiLSTM, cần ít thời gian huấn luyện hơn khoảng mười lần vì mỗi fold chỉ huấn luyện hai mạng thay vì
+mười sáu, và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
 gia, đã được xác nhận trên 500 người tham gia giữ lại ngoài quá trình phát triển: \mf\ trung bình theo đối
 tượng cải thiện 0.0467 so với đối chứng, 0.0293 so với $z$-score theo bản ghi và 0.0515 so với cùng mô hình
-trên đầu vào không lọc. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể. Vì bước cắt không bao
+trên đầu vào không lọc, và các đối chiếu với đối chứng và với mô hình không lọc vượt biến thiên qua năm seed
+huấn luyện. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể, và $z$-score vẫn kém hơn khi thống kê
+của nó bao phủ cùng một khoảng thời gian ở hai đoàn hệ. Vì bước cắt không bao
 giờ kích hoạt và chuẩn hóa theo lô triệt tiêu một hệ số đổi thang hằng số, biến thể chỉ lọc thông dải và biến
 thể có đổi thang là hai lần chạy của cùng một mô hình, chỉ khác nhau do sai số số học, và chỉ cần lọc thông dải
 là đủ để định nghĩa quy trình. Mọi quy trình zero-shot đều phân loại phần lớn epoch N3 thành N2. Quyết định này
@@ -1037,9 +1134,9 @@ Mã nguồn, giao thức, phân hoạch dữ liệu và các phân tích tổng 
 quản lý (\url{https://sleepdata.org/datasets/shhs}). Vì quyền truy cập bản ghi nguồn do nhà cung cấp dữ liệu
 kiểm soát, kho mã và gói bản thảo không chứa bản ghi hay dự đoán SHHS cấp người tham gia.
 
-Giao thức xác nhận, chương trình phân tích và bản sửa đổi A1 đều được commit lên kho mã trước khi chạy; mã
-commit và một dấu thời gian do máy chủ GitHub ghi, độc lập với siêu dữ liệu commit của tác giả, được liệt kê ở
-Mục bổ sung S3. Người tham gia giữ lại được chọn bằng một phép xếp hạng băm có thể tái tạo từ danh sách người
+Giao thức xác nhận, chương trình phân tích và các bản sửa đổi A1 và A2 đều được commit lên kho mã trước khi
+chạy; mã commit và một dấu thời gian do máy chủ GitHub ghi, độc lập với siêu dữ liệu commit của tác giả, được
+liệt kê ở các Mục bổ sung S3, S5 và S6. Người tham gia giữ lại được chọn bằng một phép xếp hạng băm có thể tái tạo từ danh sách người
 tham gia NSRR, và các bản kê suy luận ghi giá trị SHA-256 của giao thức, đầu vào đã tiền xử lý và checkpoint
 mô hình. Chi tiết đối chiếu nguồn gốc của mẫu SHHS1 thứ nhất có trong tài liệu bổ sung và danh mục hiện vật của
 kho mã.

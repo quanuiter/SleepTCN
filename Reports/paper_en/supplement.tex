@@ -22,7 +22,8 @@ secondary, and E3-E2 and E4 analyses are post-hoc. Seed-specific results are kep
 alter the primary comparison family. Supplementary Section S3 reports the confirmatory evaluation on
 the 500-participant holdout SHHS1 sample under a pre-specified protocol. Supplementary Section S4 shows that
 the E3 and E4 configurations are equivalent up to numerical differences. Supplementary Section S5 reports the
-post-confirmatory amplitude and AdaBN analyses.
+post-confirmatory amplitude and AdaBN analyses, and Supplementary Section S6 the second amendment
+(normalisation scope, five training seeds, single models, EM sample size and training cost).
 E6 estimates mean and standard deviation from each complete unlabelled target recording; it is label-free
 but transductive at recording level, not purely inductive zero-shot inference.
 
@@ -1698,6 +1699,270 @@ probabilities differed by at most $1.4\times10^{-5}$, with identical predicted s
 AdaBN running variances differed by at most $1.0\times10^{-6}$ in relative terms. Third, the ensemble
 metadata field for the device retains the script default (CPU), whereas the fold-level metadata record
 the GPU. None of these deviations changed a condition or the analysis.
+
+%==============================================================================
+\section*{Supplementary Section S6: second amendment (A2)}
+\label{sec:sup_a2}
+
+\textbf{Design.} Amendment A2 (\nolinkurl{docs/SHHS_HOLDOUT_AMENDMENT_A2.md} and
+\nolinkurl{configs/shhs_holdout_amendment_a2.json}) was written after an internal review of a draft of
+this manuscript and committed at \texttt{38eb6dc} before any of its preprocessing, training, inference
+or analysis. As an independent record, the GitHub server logged an automated test run on this commit
+at 06:28:06 UTC on 26 October 2026 (GitHub Actions run 40279983451). The tools used on the GPU machine
+were committed later, at \texttt{0954b8c}, without changing the configuration file, whose SHA-256 value
+is checked before every step and recorded in every A2 output. A2 fixed five descriptive analyses
+(A-E), with all arms, seeds, the window length, subset sizes, numbers of draws and interpretation rules.
+Because the holdout labels had already been used in the confirmatory analysis and in A1, A2 is a
+post-confirmatory, descriptive analysis: it makes no hypothesis tests and does not retest or
+reinterpret H1-H3. Intervals are paired subject-cluster bootstrap intervals (10{,}000 resamples, seed
+2043).
+
+\textbf{Training and inference.} Fifty new runs were trained on Sleep-EDF with the locked split, runner
+and recipes: E6R (the E6 recipe on a new input) at seeds 42 and 123, the seeds of the archived E6 runs,
+and E4 at seeds 2025, 2027 and 2029. The E6R input applies the E3/E6 band-pass filter and clip, followed
+by a centred rolling $z$-score over 90 minutes (windows truncated at the recording edges, standard
+deviation floored at 1\,$\mu$V); its statistics are computed from the filtered signal without labels.
+The window length, about one sleep cycle, gives both cohorts statistics over spans of the same length,
+but it also removes amplitude changes slower than the window. The Sleep-EDF test folds were opened once,
+after all 50 runs had finished. The holdout input used the same 500 recordings, channel, resampling,
+label mapping and evaluation windows as the confirmatory run, and each arm averaged the probabilities
+of its ten fold models as before. Computation used one Tesla V100-PCIE-16GB, the GPU type of the
+original campaign, with Python 3.11, PyTorch 2.5.1+cu121 from the project's lock file and
+deterministic algorithms; three training processes ran in parallel. Holdout inference ran on the GPU
+after the A2 code had reproduced the stored CPU fold probabilities of E4 seed 42 for two recordings
+(folds 0 and 9) within $8.3\times10^{-7}$, inside the locked tolerance of $10^{-5}$, with identical
+predicted stages. No run failed, was resumed or was repeated.
+
+\textbf{Reproduction check.} Before the A2 runs, the archived E4 run for fold 0 at seed 123 was
+retrained with the A2 runner. The encoder stage was reproduced exactly (18 completed epochs, best
+epoch 9, validation \mf\ 0.7262). The TCN stage completed the same number of epochs (62) and selected
+the same epoch (31), but reached a validation \mf\ of 0.7818 instead of 0.7792; 96.9\% of the
+validation predictions agreed, and logits differed by up to 3.81. As specified, A2 continued and the
+result is reported as observed. Bitwise reproduction across machines and library builds is therefore
+not guaranteed for the TCN stage, and differences of this size are a further example of the numerical
+divergence described in Section S4.
+
+\textbf{A: normalisation scope.} Within the evaluation windows, the median per-recording standard
+deviation of the E6 input was 0.770 (interquartile range 0.672-0.870) on Sleep-EDF and 0.992
+(0.855-1.000) on the holdout sample; for E6R it was 0.987 (0.978-0.992) and 0.993 (0.980-0.999). E6R
+thus presents both cohorts to the model at the same relative scale. Its pooled out-of-fold Sleep-EDF
+\mf\ was 0.7702 at seed 42 and 0.7749 at seed 123, against 0.7691 and 0.7780 for E6 and 0.7891 and
+0.7887 for E4 (Table~\ref{tab:sup_a2_arms}). The locked interpretation rule required E4-E6R to have an
+interval above zero at both seeds for the manuscript to retain the statement that preserving
+calibrated amplitude transferred better than $z$-scoring; this condition was met
+(Table~\ref{tab:sup_a2_scope}).
+
+\begin{table}[H]
+\centering\small
+\caption{A2 arms and the archived arms they are compared with on the holdout sample ($n=500$). Intervals
+use bootstrap seed 2043 and can differ in the last digit from Table~\ref{tab:sup_holdout_arms}. Holdout
+metrics are those of the ten-model ensemble; Sleep-EDF is pooled out-of-fold \mf.}
+\label{tab:sup_a2_arms}
+\begin{tabular}{llrrrrr}
+\toprule
+Arm & Seed & Subject-mean \mf\ (\ci) & Pooled \mf & N3 recall & N3$\to$N2 & Sleep-EDF \mf \\
+\midrule
+E6R & 42 & 0.5412 [0.5311, 0.5512] & 0.5734 & 0.1395 & 84.2\% & 0.7702 \\
+E6R & 123 & 0.5452 [0.5349, 0.5552] & 0.5777 & 0.1515 & 82.8\% & 0.7749 \\
+E6 & 42 & 0.5344 [0.5228, 0.5459] & 0.5711 & 0.1987 & 77.1\% & 0.7691 \\
+E6 & 123 & 0.5462 [0.5346, 0.5579] & 0.5872 & 0.2018 & 77.2\% & 0.7780 \\
+\addlinespace
+E4 & 42 & 0.5776 [0.5660, 0.5890] & 0.6187 & 0.2742 & 71.1\% & 0.7891 \\
+E4 & 123 & 0.5682 [0.5565, 0.5796] & 0.6082 & 0.2574 & 72.6\% & 0.7887 \\
+E4 & 2025 & 0.5634 [0.5519, 0.5745] & 0.6040 & 0.2471 & 73.7\% & 0.7888 \\
+E4 & 2027 & 0.5822 [0.5706, 0.5934] & 0.6242 & 0.2658 & 72.1\% & 0.7903 \\
+E4 & 2029 & 0.5686 [0.5574, 0.5795] & 0.6102 & 0.2417 & 74.4\% & 0.7854 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{A: normalisation-scope contrasts on the holdout sample at each seed. Pooled and class-wise
+differences are computed over epochs.}
+\label{tab:sup_a2_scope}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrr}
+\toprule
+Seed & Contrast & $\Delta$ subject-mean \mf\ (\ci) & $\Delta$ pooled \mf\ (\ci) & $\Delta$ N3 recall (\ci) & $\Delta$ N3$\to$N2 rate (\ci) \\
+\midrule
+42 & E4-E6R & 0.0364 [0.0313, 0.0415] & 0.0453 [0.0396, 0.0510] & 0.1346 [0.1211, 0.1481] & $-$0.1305 [$-$0.1450, $-$0.1157] \\
+42 & E3-E6R & 0.0225 [0.0171, 0.0278] & 0.0296 [0.0237, 0.0355] & 0.1154 [0.1019, 0.1286] & $-$0.1150 [$-$0.1295, $-$0.1003] \\
+42 & E6R-E6 & 0.0068 [0.0012, 0.0124] & 0.0023 [$-$0.0037, 0.0082] & $-$0.0591 [$-$0.0741, $-$0.0447] & 0.0706 [0.0552, 0.0864] \\
+\addlinespace
+123 & E4-E6R & 0.0230 [0.0177, 0.0282] & 0.0305 [0.0248, 0.0363] & 0.1059 [0.0931, 0.1187] & $-$0.1017 [$-$0.1156, $-$0.0872] \\
+123 & E3-E6R & 0.0139 [0.0083, 0.0194] & 0.0203 [0.0141, 0.0265] & 0.0877 [0.0751, 0.1002] & $-$0.0864 [$-$0.1000, $-$0.0725] \\
+123 & E6R-E6 & $-$0.0010 [$-$0.0071, 0.0051] & $-$0.0094 [$-$0.0157, $-$0.0032] & $-$0.0503 [$-$0.0650, $-$0.0359] & 0.0558 [0.0406, 0.0714] \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\textbf{B: five training seeds of E4.} Across seeds 42, 123, 2025, 2027 and 2029, holdout subject-mean
+\mf\ had a mean of 0.5720, a sample standard deviation of 0.0077 and a range of 0.5634-0.5822, whereas
+pooled Sleep-EDF \mf\ had a mean of 0.7884, a standard deviation of 0.0018 and a range of
+0.7854-0.7903. Nine of the ten pairwise between-seed intervals excluded zero, and the largest absolute
+difference was 0.0189 (Table~\ref{tab:sup_a2_seeds}). Each of the 20 differences between an E4 seed and
+E0 or E2 at seed 42 or 123 was larger, 0.0313-0.0700 (Table~\ref{tab:sup_a2_contrasts}; lowest interval
+bound 0.0263), which meets the locked rule for describing these configuration contrasts as exceeding
+training variability.
+
+\begin{table}[H]
+\centering\small
+\caption{B: pairwise differences between the five E4 training seeds on the holdout sample (first-named
+seed minus second).}
+\label{tab:sup_a2_seeds}
+\begin{tabular}{lrrr}
+\toprule
+Contrast & $\Delta$ subject-mean \mf & \ci & $\Delta$ pooled \mf \\
+\midrule
+42-123 & 0.0094 & [0.0076, 0.0112] & 0.0105 \\
+42-2025 & 0.0143 & [0.0123, 0.0163] & 0.0146 \\
+42-2027 & $-$0.0046 & [$-$0.0063, $-$0.0029] & $-$0.0055 \\
+42-2029 & 0.0090 & [0.0069, 0.0111] & 0.0084 \\
+123-2025 & 0.0049 & [0.0028, 0.0070] & 0.0042 \\
+123-2027 & $-$0.0140 & [$-$0.0162, $-$0.0117] & $-$0.0159 \\
+123-2029 & $-$0.0004 & [$-$0.0029, 0.0021] & $-$0.0020 \\
+2025-2027 & $-$0.0189 & [$-$0.0211, $-$0.0166] & $-$0.0201 \\
+2025-2029 & $-$0.0053 & [$-$0.0072, $-$0.0034] & $-$0.0062 \\
+2027-2029 & 0.0136 & [0.0116, 0.0155] & 0.0139 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{B: E4 at each seed minus E0 and E2 at seeds 42 and 123 (difference in holdout subject-mean
+\mf, with interval).}
+\label{tab:sup_a2_contrasts}
+\begin{tabular}{lrrrr}
+\toprule
+E4 seed & $-$E0 (42) & $-$E0 (123) & $-$E2 (42) & $-$E2 (123) \\
+\midrule
+42 & 0.0606 [0.0541, 0.0671] & 0.0560 [0.0495, 0.0628] & 0.0654 [0.0598, 0.0711] & 0.0455 [0.0405, 0.0508] \\
+123 & 0.0512 [0.0448, 0.0577] & 0.0466 [0.0402, 0.0534] & 0.0560 [0.0505, 0.0617] & 0.0362 [0.0311, 0.0415] \\
+2025 & 0.0463 [0.0406, 0.0523] & 0.0418 [0.0359, 0.0479] & 0.0511 [0.0455, 0.0568] & 0.0313 [0.0263, 0.0364] \\
+2027 & 0.0652 [0.0586, 0.0717] & 0.0606 [0.0540, 0.0674] & 0.0700 [0.0639, 0.0761] & 0.0501 [0.0448, 0.0556] \\
+2029 & 0.0516 [0.0456, 0.0576] & 0.0470 [0.0410, 0.0533] & 0.0564 [0.0507, 0.0623] & 0.0365 [0.0315, 0.0417] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{C: ensembles and single models.} Each of the ten fold models of every zero-shot arm was also
+scored alone on the holdout sample (Table~\ref{tab:sup_a2_single}). The ensemble exceeded the mean of its
+single models by 0.0121-0.0327 in subject-mean \mf, with every interval above zero, and single models
+of one arm differed by up to 0.18 (E2, seed 123). N3 recall was slightly higher for single models than
+for the ensemble in every arm, so ensembling did not cause the N3 deficit. Measured with single models,
+as on Sleep-EDF, the drop in pooled \mf\ between the cohorts was 0.2107 and 0.2134 for E3 at seeds 42 and
+123 and 0.1916 and 0.2039 for E4, against 0.1875, 0.1902, 0.1704 and 0.1805 with the ensembles.
+
+\begin{table}[H]
+\centering\small
+\caption{C: single fold models and ten-model ensembles on the holdout sample. Single-model values are
+the mean (minimum-maximum) over the ten fold models. Gain is the ensemble minus the mean single model in
+subject-mean \mf, with interval.}
+\label{tab:sup_a2_single}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrr}
+\toprule
+Arm & Seed & Single subject-mean \mf & Ensemble & Gain (\ci) & N3 recall, single & N3 recall, ensemble \\
+\midrule
+E0 & 42 & 0.5049 (0.4574-0.5365) & 0.5170 & 0.0121 [0.0108, 0.0134] & 0.2636 & 0.2565 \\
+E0 & 123 & 0.5054 (0.4668-0.5556) & 0.5216 & 0.0162 [0.0149, 0.0177] & 0.2567 & 0.2506 \\
+E2 & 42 & 0.4857 (0.4134-0.5461) & 0.5122 & 0.0265 [0.0239, 0.0291] & 0.2568 & 0.2484 \\
+E2 & 123 & 0.4997 (0.4077-0.5857) & 0.5321 & 0.0324 [0.0296, 0.0351] & 0.2504 & 0.2402 \\
+E3 & 42 & 0.5391 (0.4280-0.5911) & 0.5637 & 0.0246 [0.0226, 0.0266] & 0.2637 & 0.2549 \\
+E3 & 123 & 0.5356 (0.4974-0.5708) & 0.5591 & 0.0235 [0.0214, 0.0255] & 0.2499 & 0.2392 \\
+E4 & 42 & 0.5567 (0.5111-0.5951) & 0.5776 & 0.0209 [0.0191, 0.0228] & 0.2809 & 0.2742 \\
+E4 & 123 & 0.5442 (0.4763-0.5710) & 0.5682 & 0.0240 [0.0221, 0.0258] & 0.2640 & 0.2574 \\
+E4 & 2025 & 0.5393 (0.4882-0.5605) & 0.5634 & 0.0241 [0.0222, 0.0259] & 0.2560 & 0.2471 \\
+E4 & 2027 & 0.5539 (0.5195-0.5855) & 0.5822 & 0.0284 [0.0262, 0.0305] & 0.2716 & 0.2658 \\
+E4 & 2029 & 0.5465 (0.4770-0.5727) & 0.5686 & 0.0221 [0.0200, 0.0242] & 0.2484 & 0.2417 \\
+E6 & 42 & 0.5017 (0.4463-0.5452) & 0.5344 & 0.0327 [0.0303, 0.0351] & 0.2126 & 0.1987 \\
+E6 & 123 & 0.5148 (0.4481-0.5462) & 0.5462 & 0.0314 [0.0290, 0.0338] & 0.2117 & 0.2018 \\
+E6R & 42 & 0.5199 (0.4861-0.5466) & 0.5412 & 0.0213 [0.0196, 0.0230] & 0.1538 & 0.1395 \\
+E6R & 123 & 0.5293 (0.5069-0.5644) & 0.5452 & 0.0159 [0.0145, 0.0174] & 0.1631 & 0.1515 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\textbf{D: sample size of the EM prior estimate.} The ten seed-123 E3 models were applied to the holdout
+sample with the archived per-fold temperatures and source priors; only the data used to estimate the
+target priors changed, and the ten adjusted fold probabilities were averaged before argmax. EM
+converged for every fold in every condition. The reference share of N3 among holdout epochs was 0.134.
+The archived priors from the five adaptation recordings placed N3 at the floor of $10^{-12}$ in every
+fold, and the adjusted ensemble predicted no N3. With priors from the 20{,}000 epochs of the AdaBN sample
+or from all 500 recordings, the fold-mean N3 prior rose only to 0.030 and 0.029, about a fifth of the
+reference share, and N3 recall fell from 0.240 for the temperature-scaled ensemble without adjustment to
+0.134 and 0.129 (Table~\ref{tab:sup_a2_em}). Random subsets converged to the same value as they grew:
+the median N3 prior was 0.028, 0.029 and 0.029 for 5, 20 and 100 recordings, and its 95\% range narrowed
+from 0-0.109 to 0.020-0.042. Larger samples therefore removed the variability of the estimate but not
+its bias. Both large-sample priors lay below half the reference share and lowered N3 recall, which
+meets the locked rule attributing the EM collapse to the failure of the label-shift assumption under
+feature shift rather than to the five-recording sample.
+
+\begin{table}[H]
+\centering\small
+\caption{D: EM prior correction for the seed-123 E3 ensemble on the holdout sample ($n=500$; reference N3
+share 0.134). N3 prior is the mean over the ten folds. Random subsets give the median and the
+2.5-97.5th percentiles over 200 draws. Per-record: each recording estimates its own priors; its N3
+prior is the median over recordings.}
+\label{tab:sup_a2_em}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Prior estimated from & N3 prior & Predicted N3 share & N3 recall & Pooled \mf & Subject-mean \mf \\
+\midrule
+No adjustment (raw ensemble) & n/a & 0.036 & 0.2392 & 0.5980 & 0.5591 \\
+No adjustment (temperature only) & n/a & 0.037 & 0.2403 & 0.5985 & 0.5594 \\
+Five adaptation recordings (archived) & $<10^{-11}$ & 0.000 & 0.0000 & 0.5086 & 0.4914 \\
+AdaBN sample (20{,}000 epochs) & 0.0302 & 0.021 & 0.1342 & 0.5495 & 0.5173 \\
+All 500 recordings & 0.0289 & 0.020 & 0.1286 & 0.5479 & 0.5162 \\
+Each recording separately & 0.0078 & 0.035 & 0.2185 & 0.5133 & 0.4477 \\
+\addlinespace
+5 random recordings & 0.028 [0.000, 0.109] & 0.019 & 0.120 [0.000, 0.302] & 0.531 [0.461, 0.590] & 0.502 [0.442, 0.552] \\
+20 random recordings & 0.029 [0.004, 0.058] & 0.020 & 0.129 [0.010, 0.208] & 0.543 [0.502, 0.575] & 0.512 [0.482, 0.539] \\
+100 random recordings & 0.029 [0.020, 0.042] & 0.020 & 0.129 [0.094, 0.169] & 0.548 [0.535, 0.561] & 0.516 [0.506, 0.526] \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\textbf{E: training cost.} Completed epochs and optimiser steps were read from the final training
+checkpoints of every stage of every fold in the archived seed-123 campaign, and wall-clock times from
+its monitoring records. Time per optimiser step was measured on the A2 GPU through the training loop
+itself, with the optimiser, loss, batch size and gradient clipping of each stage, using prebuilt
+batches (sequence batches with the record lengths of the fold-0 training records): 20 warm-up steps
+and three rounds of 200 timed steps. Mean step times were 6.67\,ms for one baseline CNN branch (range
+over rounds 6.31-6.94), 16.09\,ms for ResNet-1D (15.58-16.49), 83.3\,ms for the BiLSTM (81.4-85.0) and
+30.9\,ms for the TCN (30.6-31.2). No baseline CNN approached its limit of 1{,}000 epochs: the 150 CNNs
+stopped after 29.1 epochs on average, and the ResNet-1D encoders of E3 after 19.0 of at most 40. Because
+the baseline trains 15 encoder networks per fold, it ran 22.5 times as many optimiser steps as E3, but
+each of its steps took 0.41 times as long on average (Table~\ref{tab:sup_a2_cost}). The time not
+accounted for by optimiser steps (validation, feature extraction, data loading and checkpointing) was
+40.5\% of the wall-clock time for E0 and 33.9\% for E3.
+
+\begin{table}[H]
+\centering\small
+\caption{E: decomposition of ten-fold training time (seed 123, Tesla V100). Steps: optimiser steps
+summed over all stages and folds. Step time: the steps multiplied by the measured mean time per step.
+Remainder: wall-clock time not accounted for by step time. Ratios are E0 divided by the configuration.}
+\label{tab:sup_a2_cost}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+ID & Networks per fold & Epochs & Steps & Step time (h) & Wall clock (h) & Remainder & Steps ratio & Wall-clock ratio \\
+\midrule
+E0 & 16 & 4{,}635 & 10{,}692{,}557 & 19.99 & 33.59 & 40.5\% & 1.0 & 1.0 \\
+E2 & 2 & 735 & 401{,}776 & 1.83 & 2.75 & 33.3\% & 26.6 & 12.2 \\
+E3 & 2 & 857 & 474{,}809 & 2.17 & 3.28 & 33.9\% & 22.5 & 10.2 \\
+E4 & 2 & 790 & 425{,}612 & 1.94 & 2.93 & 33.7\% & 25.1 & 11.5 \\
+E6 & 2 & 753 & 344{,}928 & 1.58 & 2.41 & 34.4\% & 31.0 & 13.9 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\textbf{Deviations from the amendment.} Analysis D was run on a local CPU after, rather than before, the
+GPU stage; it reads only archived E3 seed-123 probabilities and calibration fits and none of the A2
+outputs, so the order did not affect it. No other deviation occurred.
 
 \section*{Provenance}
 
