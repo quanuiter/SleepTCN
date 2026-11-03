@@ -20,8 +20,8 @@ Unless stated otherwise, SHHS1 results refer to the first SHHS1 sample (180 part
 sample, seed 42 is primary and seed 123 is a post-protocol sensitivity repeat; E1 and E2 analyses are
 secondary, and E3-E2 and E4 analyses are post-hoc. Seed-specific results are kept separate and do not
 alter the primary comparison family. Supplementary Section S3 reports the confirmatory evaluation on
-the 500-participant holdout SHHS1 sample under a pre-specified protocol. Supplementary Section S4 shows that
-the E3 and E4 configurations are equivalent up to numerical differences. Supplementary Section S5 reports the
+the 500-participant holdout SHHS1 sample under a pre-specified protocol. Supplementary Section S4 examines
+approximate input-scale invariance and checkpoint similarities of E3 and E4. Supplementary Section S5 reports the
 post-confirmatory amplitude and AdaBN analyses, and Supplementary Section S6 the second amendment
 (normalisation scope, five training seeds, single models, EM sample size and training cost).
 E6 estimates mean and standard deviation from each complete unlabelled target recording; it is label-free
@@ -206,8 +206,9 @@ The $\pm800\,\mu$V clip is inactive in both cohorts: after band-pass filtering, 
 exceeded $246\,\mu$V, every holdout SHHS1 EEG channel has a physical range of $\pm125\,\mu$V, and
 the preprocessing audit of the first SHHS1 sample recorded no clipped samples. The first ResNet-1D convolution has no bias and is followed by batch normalisation,
 so dividing the input by 100 is equivalent to multiplying the stabilising constant $\epsilon$ of that
-layer by $10^4$. E3 and E4 therefore differ only through this constant and through numerical
-differences during training (Supplementary Section S4). For E6, Sleep-EDF recordings last 17-24\,h (median 23\,h) and include
+layer by $10^4$ when using batch statistics. Thus scale invariance is approximate at finite
+$\epsilon$; running-statistic initialisation and numerical precision can also affect the fitted
+models (Supplementary Section S4). For E6, Sleep-EDF recordings last 17-24\,h (median 23\,h) and include
 long daytime segments outside the evaluation window, whereas SHHS1 recordings cover the night only
 (holdout sample: 5.5-9.1\,h, median 8.8\,h). The per-recording standard deviation of the E6 input
 within the evaluation window therefore has a median of 0.77 on Sleep-EDF but about 0.99 on SHHS1
@@ -1540,24 +1541,29 @@ prediction files were present, no temporary file remained, and every file was ch
 recorded input hash, arm, fold and protocol hash when the ensembles were formed.
 
 %==============================================================================
-\section*{Supplementary Section S4: equivalence of the E3 and E4 models}
+\section*{Supplementary Section S4: approximate input-scale invariance of E3 and E4}
 \label{sec:sup_e3e4}
 
 This post-hoc analysis was not part of the holdout protocol. It uses only the Sleep-EDF checkpoints and
 reads no participant data (script \nolinkurl{scripts/compare_e3_e4_checkpoints.py}).
 
-\textbf{Analytical equivalence.} Let $z=w*x$ be the output of the bias-free first convolution and
+\textbf{Scale dependence of batch normalisation.} Let $z=w*x$ be the output of the bias-free first convolution and
 $\mathrm{BN}_\varepsilon(z)=\gamma(z-\mu_z)/\sqrt{\sigma_z^2+\varepsilon}+\beta$ the batch-normalisation
 transform. For a constant $c>0$, $\mathrm{BN}_\varepsilon(cz)=\mathrm{BN}_{\varepsilon/c^2}(z)$, so with
-$c=1/100$ the forward pass of E3 equals that of E4 with $\varepsilon$ multiplied by $10^4$. As
-$\varepsilon\to0$ the layer output does not depend on the scale of $z$, so
+$c=1/100$ the batch-normalised output of E3 equals that of E4 with $\varepsilon$ multiplied by
+$10^4$, for the same convolution weights and batch. This identity does not make E3 and E4 identical
+at their common finite $\varepsilon$. In the idealised limit $\varepsilon\to0$, the layer output
+does not depend on the scale of $z$, so
 $\partial L/\partial(z/100)=100\,\partial L/\partial z$ and the gradient with respect to $w$,
 $(x/100)\,\partial L/\partial(z/100)=x\,\partial L/\partial z$, is the same for both inputs; all later
-layers receive identical inputs and gradients. The running mean and variance scale by $1/100$ and
-$1/10^4$, so evaluation-mode outputs also agree. E3 and E4 share seed, initialisation, batch order and
-AdamW settings; in exact arithmetic and apart from $\varepsilon$, they therefore follow the same
-parameter trajectory. In finite-precision arithmetic the two runs can drift apart, and early stopping
-can then select different epochs.
+layers receive identical inputs and gradients under these idealised conditions. Evaluation-mode
+outputs additionally require the stored running mean and variance to scale by $1/100$ and $1/10^4$.
+That relation need not hold exactly during training: both runs initialise the running variance to the
+same nonzero value, rather than to values related by the input-scale factor. Although E3 and E4 share
+seed, parameter initialisation, batch order and AdamW settings, finite $\varepsilon$, running-statistic
+initialisation and finite-precision arithmetic can affect the outputs and optimisation or checkpoint
+selection. The scale-invariance argument therefore predicts approximate similarity, not identical
+training trajectories or statistical equivalence of their performance.
 
 \textbf{Trained weights.} Table~\ref{tab:sup_e3e4} compares the selected encoder and TCN checkpoints of
 E3 and E4 for each seed and fold. Cosine similarity is computed between flattened weight tensors with
@@ -1606,9 +1612,13 @@ the same configuration gave a median encoder similarity of $-0.005$ to $0.012$ a
 $-0.112$ to $-0.032$. When both runs selected the same epoch, the first-layer running variance of E4
 was 9{,}208-10{,}666 times that of E3. The running variance of E3 was at least 0.0439, so
 $\varepsilon=10^{-5}$ was at most 0.023\% of it. Early stopping selected different epochs in 8 of the 20
-pairs (3 at seed 42 and 5 at seed 123). For each seed, the trained E3 and E4 models are therefore much
-closer to each other than to a model trained with another seed: they behave as two copies of one
-training run that drifted apart numerically.
+pairs (3 at seed 42 and 5 at seed 123). These checkpoint statistics are consistent with substantial
+absorption of the fixed input-scale change. The reported running variances concern selected
+checkpoints, however, and do not bound the effect of $\varepsilon$ throughout training or isolate
+numerical round-off from other scale-dependent effects. The similarities support approximate scale
+invariance; they do not establish identical optimisation paths or prove that E4-E3 is caused solely
+by numerical drift. The score difference is interpreted alongside the observed seed variability in
+Section S6, without an equivalence or non-inferiority claim.
 
 %==============================================================================
 \section*{Supplementary Section S5: post-confirmatory amplitude and AdaBN analyses}
@@ -1738,8 +1748,8 @@ epoch 9, validation \mf\ 0.7262). The TCN stage completed the same number of epo
 the same epoch (31), but reached a validation \mf\ of 0.7818 instead of 0.7792; 96.9\% of the
 validation predictions agreed, and logits differed by up to 3.81. As specified, A2 continued and the
 result is reported as observed. Bitwise reproduction across machines and library builds is therefore
-not guaranteed for the TCN stage, and differences of this size are a further example of the numerical
-divergence described in Section S4.
+not guaranteed for the TCN stage. This check documents implementation-dependent reproducibility
+limits; it does not identify the cause of the E3-E4 differences in Section S4.
 
 \textbf{A: normalisation scope.} Within the evaluation windows, the median per-recording standard
 deviation of the E6 input was 0.770 (interquartile range 0.672-0.870) on Sleep-EDF and 0.992
@@ -1799,11 +1809,16 @@ Seed & Contrast & $\Delta$ subject-mean \mf\ (\ci) & $\Delta$ pooled \mf\ (\ci) 
 \textbf{B: five training seeds of E4.} Across seeds 42, 123, 2025, 2027 and 2029, holdout subject-mean
 \mf\ had a mean of 0.5720, a sample standard deviation of 0.0077 and a range of 0.5634-0.5822, whereas
 pooled Sleep-EDF \mf\ had a mean of 0.7884, a standard deviation of 0.0018 and a range of
-0.7854-0.7903. Nine of the ten pairwise between-seed intervals excluded zero, and the largest absolute
+0.7854-0.7903. These are dispersions of different metric aggregations and evaluation procedures
+(subject-mean ensemble scores versus pooled out-of-fold scores); their ratio cannot isolate an
+amplification of training variability due to cohort transfer. Nine of the ten pairwise between-seed
+intervals excluded zero, and the largest absolute
 difference was 0.0189 (Table~\ref{tab:sup_a2_seeds}). Each of the 20 differences between an E4 seed and
 E0 or E2 at seed 42 or 123 was larger, 0.0313-0.0700 (Table~\ref{tab:sup_a2_contrasts}; lowest interval
 bound 0.0263), which meets the locked rule for describing these configuration contrasts as exceeding
-training variability.
+the observed between-seed range of E4. This is consistency across the evaluated five E4 seeds and two
+seeds of each comparator, not a characterisation of the full retraining distribution. The
+participant-cluster intervals condition on the fitted models and do not include training uncertainty.
 
 \begin{table}[H]
 \centering\small

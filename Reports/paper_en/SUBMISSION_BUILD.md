@@ -4,6 +4,16 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 2 November 2026: the manuscript and supplement describe E3-E4 as approximately
+scale-invariant under batch normalisation, with finite-epsilon, running-statistic and numerical
+limitations rather than identical training trajectories. Between-seed conclusions refer to the
+observed five E4 seeds and two seeds of each comparator; the source/target dispersion comparison
+does not identify a fourfold amplification due to transfer because the metric aggregation and
+evaluation procedures differ. Experimental values and tables are unchanged. Funding and
+acknowledgements are combined in the author-supplied paragraph, and Ngo Nhat Quan's CRediT statement
+no longer includes Writing - original draft. Rebuild the English manuscript, supplement and source
+ZIP together after these editorial changes.
+
 Revision, 13 October 2026: Methods, Discussion and new Supplementary Table `tab:sup_e0_original`
 compare E0 with the published ZleepAnlystNet Sleep-EDF-18 Fpz-Cz results (macro-F1 0.7754 versus
 0.7826) and list the implementation differences; the original study's SHHS N3 F1 is cited as
@@ -13,8 +23,9 @@ Revision, 12 October 2026: the manuscript and supplement report the confirmatory
 held-out SHHS1 participants (protocol commit `a275617`, analysis commit `2019b51`). Abstract,
 introduction, methods, results, discussion, conclusion, declarations and highlights were revised
 accordingly; Supplementary Section S3 contains the holdout tables and protocol deviations. Supplementary Section S4
-(post-hoc) shows from the Sleep-EDF checkpoints that E3 and E4 are numerically drifted copies of one
-training run (`scripts/compare_e3_e4_checkpoints.py`, outputs in `runs/e3_e4_checkpoint_comparison/`). The
+(post-hoc) compares the Sleep-EDF checkpoints of E3 and E4; its interpretation is qualified by the
+2 November revision above (`scripts/compare_e3_e4_checkpoints.py`, outputs in
+`runs/e3_e4_checkpoint_comparison/`). The
 reproducibility statement now cites the protocol and analysis commits instead of snapshot `f7c22e7`.
 Supplementary Section S5 and manuscript Sections 3.7 and 4.8 report the post-confirmatory
 amendment A1 (input-amplitude sweep and AdaBN; amendment commit `ad61aa0`, GPU scripts `e5a255a`).
