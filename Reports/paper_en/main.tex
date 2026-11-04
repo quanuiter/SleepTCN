@@ -205,12 +205,11 @@ because it trains two networks per fold instead of sixteen, and that, among the 
 filtering rather than the encoder or sequence model accounts for most of its cross-cohort advantage:
 without filtering, the same model performed close to the baseline.
 \item We confirm this advantage on 500 held-out SHHS1 participants under a protocol fixed before their
-data were processed. Across five seeds of band-pass-only E4 and two seeds of each comparator, its
-contrasts with the baseline and the unfiltered model exceed the observed between-seed range of E4.
-The difference between the band-pass-only and fixed-scale variants lies within that range; their
-input-scale difference is largely absorbed by batch normalisation but does not imply identical
-training trajectories. Confidence intervals computed for fixed models quantify participant-sampling
-uncertainty and do not include variation due to retraining.
+data were processed. Across five seeds of the band-pass-only variant and two seeds of each comparator,
+its contrasts with the baseline and the unfiltered model exceed the observed between-seed range, whereas
+the band-pass-only and fixed-scale variants, whose input-scale difference batch normalisation largely
+absorbs, differ by less than that range. Confidence intervals computed for fixed models capture
+participant sampling but not retraining.
 \item We identify N3-to-N2 confusion as a shared cross-cohort error that recurs in every zero-shot
 pipeline and in the held-out sample. An input-amplitude sweep shows that this error depends on, but is
 not explained by, signal amplitude. In matched experiments, none of prior correction, class weighting,
@@ -839,10 +838,8 @@ The trained weights are consistent with approximate input-scale invariance
 and E4 had cosine similarity 0.909-0.974 and the median similarity over encoder weight tensors was
 0.696-0.863, against values between $-0.112$ and $0.012$ for two seeds of the same configuration. The
 first-layer running variance of E4 was about $10^4$ times that of E3, as the factor of 100 predicts, and
-early stopping selected different epochs for E3 and E4 in 8 of the 20 seed-fold pairs. These similarities
-support substantial absorption of the input-scale change, but do not identify numerical round-off as
-the sole cause of the score difference or establish identical optimisation paths. E4-E3 was within the
-observed five-seed range of E4. By contrast, H1 and H3 exceeded every reported between-seed difference
+early stopping selected different epochs for E3 and E4 in 8 of the 20 seed-fold pairs. The input-scale
+change was thus largely absorbed, and E4-E3 lay within the observed five-seed range of E4. By contrast, H1 and H3 exceeded every reported between-seed difference
 at both seeds, whereas H2 at seed 123 (0.0129) was close to the between-seed differences of E4 and E6.
 
 \subsection{Cross-model errors and their temporal distribution}
@@ -973,15 +970,13 @@ and below E4 (0.7891 and 0.7887).
 
 \textbf{Training seeds.} Across the five seeds of E4, holdout subject-mean \mf\ had a mean of 0.5720, a
 standard deviation of 0.0077 and a range of 0.5634-0.5822, whereas pooled Sleep-EDF \mf\ varied with a
-standard deviation of 0.0018 (range 0.7854-0.7903). These dispersions describe different metric
-aggregations and evaluation procedures: subject-mean scores from ten-model ensembles on SHHS1 and
-pooled out-of-fold scores on Sleep-EDF. Their ratio does not isolate an effect of cohort transfer on
-training variability. Nine of the ten pairwise between-seed intervals
+standard deviation of 0.0018 (range 0.7854-0.7903); the two dispersions use different aggregations
+(subject-mean ensemble scores versus pooled out-of-fold scores) and are not directly comparable. Nine of
+the ten pairwise between-seed intervals
 excluded zero, and the largest absolute difference was 0.0189. All 20 differences between an E4 seed and
 E0 or E2 at either seed were larger, 0.0313-0.0700 with every interval above 0.026, so by the locked
 rule these configuration contrasts exceed the observed between-seed range of E4 (Supplementary
-Tables~\ref{SM-tab:sup_a2_arms}-\ref{SM-tab:sup_a2_contrasts}). This comparison describes the evaluated
-five E4 seeds and two seeds of each comparator, not the full distribution of retraining effects.
+Tables~\ref{SM-tab:sup_a2_arms}-\ref{SM-tab:sup_a2_contrasts}).
 
 \textbf{Single models and ensembles.} Scored alone, single fold models of one arm differed by up to 0.18
 in holdout subject-mean \mf, and the ten-model ensemble exceeded the mean of its single models by
@@ -1041,33 +1036,27 @@ On the holdout sample, two training seeds of an identical configuration differed
 subject-mean \mf\ for the four pre-specified configurations and by 0.020 for E2, and all four
 pre-specified between-seed intervals excluded zero. Five seeds of E4 spread over 0.019 (standard
 deviation 0.0077), and nine of their ten pairwise intervals excluded zero. These intervals quantify
-participant-sampling uncertainty conditional on the fitted models; they do not include variation from
-training new models. A precisely estimated difference between two fitted models can therefore still
-be similar in size to the differences observed between training seeds. The source-cohort standard
-deviation of 0.0018 uses pooled out-of-fold scores rather than subject-mean ensemble scores, so the
-two dispersions do not establish a fourfold amplification caused by transfer.
+participant-sampling uncertainty for fitted models and do not include variation from training new
+models, so a precisely estimated difference between two fitted models can still be of the size observed
+between training seeds.
 
-E4-E3 illustrates the distinction between a fitted-model contrast and a pipeline-level claim. The
-variants differ by a fixed input-scale factor, which batch normalisation largely absorbs. Their
-checkpoint similarities support approximate scale invariance, but finite $\varepsilon$,
-running-statistic initialisation and numerical precision prevent a claim of identical training
-trajectories. Their SHHS1 subject-mean \mf\ differences of 0.009-0.014 lie within the observed
-five-seed range of E4; this does not establish statistical equivalence or show that numerical round-off
-alone caused the differences. H2 at seed 123 (0.0129) was also comparable to some observed
-between-seed differences, so its participant-level significance should be read separately from
-sensitivity to retraining.
+E4-E3 illustrates this. The two variants differ by a fixed input-scale factor that batch normalisation
+largely absorbs, and their checkpoints are far more similar to each other than to models trained with
+another seed; finite $\varepsilon$, running-statistic initialisation and numerical precision nevertheless
+let their training diverge. Their SHHS1 subject-mean \mf\ differences of 0.009-0.014 lie within the
+five-seed range of E4. H2 at seed 123 (0.0129) was likewise comparable to some between-seed differences,
+so its participant-level significance should be read together with its sensitivity to retraining.
 
-Every difference between an E4 seed and E0 or E2 (0.031-0.070) exceeded the largest observed
-between-seed difference of E4. The advantage of the band-pass pipeline over those comparators was
-therefore consistent across the evaluated seeds. Five seeds of E4 and two of each comparator do not
-characterise the full distribution of pipeline differences under retraining. Reporting the observed
-training spread alongside participant-level intervals makes these two sources of uncertainty explicit.
+Every difference between an E4 seed and E0 or E2 (0.031-0.070) exceeded the largest between-seed
+difference of E4, so the advantage of the band-pass pipeline over these comparators was consistent
+across the evaluated seeds, although five and two seeds do not characterise the full distribution of
+retraining effects. Reporting the training spread alongside participant-level intervals makes both
+sources of uncertainty explicit.
 
 For practical use, we recommend band-pass-only E4 as the simpler evaluated option: clipping never
-activated in these data, and E4 transferred well without the fixed scaling step. This recommendation
-does not require exact mathematical or statistical equivalence with E3. E3 remains the reference for
-the confirmatory hypotheses because the protocol fixed it before the holdout data were processed;
-the E4 and seed analyses provide supporting evidence without replacing those contrasts.
+activated in these data, and E4 transferred well without the fixed scaling step. E3 remains the
+reference for the confirmatory hypotheses because the protocol fixed it before the holdout data were
+processed; the E4 and seed analyses support, but do not replace, those contrasts.
 
 \subsection{N3 under-detection persists alongside aggregate improvement}
 
@@ -1141,13 +1130,12 @@ faster than the CNN-BiLSTM baseline, needed about ten times less training time b
 networks per fold instead of sixteen, and transferred better from Sleep-EDF to SHHS1. Its advantage, first observed
 on 180 participants, was confirmed on 500 participants held out from development: subject-mean \mf\
 improved by 0.0467 over the baseline, by 0.0293 over record-wise $z$-scoring and by 0.0515 over the same
-model on unfiltered input. Across the evaluated five E4 seeds and two seeds of E0 and E2, every
-E4-comparator difference exceeded the observed between-seed range of E4. Band-pass filtering accounted
-for most of the transfer gain, and
+model on unfiltered input, and across five seeds of the band-pass-only variant and two seeds of each
+comparator, its contrasts with the baseline and the unfiltered model exceeded the observed between-seed
+range. Band-pass filtering accounted for most of the transfer gain, and
 $z$-scoring remained inferior when its statistics covered the same span in both cohorts. Because
-clipping never activated and band-pass-only E4 transferred well without fixed scaling, E4 is the simpler
-evaluated option. Batch normalisation makes E3 and E4 approximately scale-invariant, but their observed
-score difference does not establish exact training or statistical equivalence. All zero-shot pipelines
+clipping never activated and batch normalisation largely absorbs a constant input scale, band-pass
+filtering alone is the simpler form of the pipeline. All zero-shot pipelines
 classified most N3 epochs as N2. This decision
 depended strongly on input amplitude, but none of rescaling, prior correction, class weighting,
 batch-normalisation adaptation or adversarial domain adaptation removed the error without losses in
@@ -1193,7 +1181,7 @@ Lung, and Blood Institute (R24 HL114473, 75N92019R002).
 \subsection*{CRediT authorship contribution statement}
 
 Ngo Nhat Quan: Conceptualization, Methodology, Software, Data curation, Formal analysis,
-Investigation, Visualization, Writing - review and editing. Pham Thai Son:
+Investigation, Visualization, Writing - original draft, Writing - review and editing. Pham Thai Son:
 Validation, Investigation, Visualization, Writing - review and editing. Tri Nguyen Ho Duy:
 Supervision, Writing - review and editing. Tri Nguyen: Supervision, Writing - review and editing.
 

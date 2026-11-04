@@ -3,5 +3,5 @@ Highlights
 - ResNet-1D-TCN forward passes were 3.76-fold faster than a CNN-BiLSTM control.
 - Its cross-cohort gain was confirmed on 500 held-out SHHS1 participants.
 - Band-pass filtering accounted for most of the cross-cohort gain.
-- E4 gains over E0 and E2 exceeded its observed five-seed spread.
+- Band-pass gains over baseline and unfiltered input exceeded five-seed spread.
 - All zero-shot pipelines scored most N3 (deep-sleep) epochs as N2.

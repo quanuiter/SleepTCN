@@ -4,6 +4,10 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 4 November 2026: the qualifications added on 2 November are stated once per section instead
+of repeatedly; their content is unchanged. Highlight 4 avoids configuration codes, and Ngo Nhat Quan's
+CRediT statement again includes Writing - original draft, as confirmed by the author.
+
 Revision, 2 November 2026: the manuscript and supplement describe E3-E4 as approximately
 scale-invariant under batch normalisation, with finite-epsilon, running-statistic and numerical
 limitations rather than identical training trajectories. Between-seed conclusions refer to the

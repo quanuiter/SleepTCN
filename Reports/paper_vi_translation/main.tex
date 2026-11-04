@@ -141,8 +141,8 @@ CNN-BiLSTM (E0), suy luận nhanh hơn $3.76\times$ và huấn luyện nhanh hơ
 tối ưu nhiều gấp $22.5\times$. Trên 500 người này, E3 cải thiện \mf\ trung bình theo đối tượng so với E0
 thêm 0.0467 (\ci\ 0.0403-0.0531), so với chuẩn hóa $z$-score theo bản ghi (E6) thêm 0.0293
 (0.0231-0.0354) và so với đầu vào không lọc (E2) thêm 0.0515 (0.0460-0.0571), xác nhận cả ba giả thuyết
-xác định trước. Năm seed huấn luyện của cấu hình chỉ lọc thông dải (E4) chênh nhau tối đa 0.019, nhỏ hơn
-mọi chênh lệch so với E0 hoặc E2 (0.031-0.070), và $z$-score trượt trên cửa sổ 90 phút, dù làm thang đầu
+xác định trước. Qua các seed đã đánh giá, cấu hình chỉ lọc thông dải (E4) vượt E0 và E2
+0.031-0.070, lớn hơn khoảng chênh lệch giữa các seed quan sát được của E4 (0.019), và $z$-score trượt trên cửa sổ 90 phút, dù làm thang đầu
 vào của hai đoàn hệ khớp nhau, vẫn kém E4. E0 và E3 phân loại hơn 72\% epoch N3 (ngủ sâu) thành N2, và
 cả đổi thang biên độ lẫn thích nghi miền đều không loại bỏ được lỗi này mà không làm giảm hiệu năng ở các
 giai đoạn khác.
@@ -210,11 +210,11 @@ huấn luyện hai mạng thay vì mười sáu, và trong các thay đổi đư
 hay mô hình chuỗi, đóng góp phần lớn lợi thế khi chuyển quần thể: không lọc, cùng mô hình đạt kết quả
 gần đối chứng.
 \item Chúng tôi xác nhận lợi thế này trên 500 người tham gia SHHS1 giữ lại theo giao thức cố định trước khi
-xử lý dữ liệu của họ. Với năm seed huấn luyện, chúng tôi cho thấy các đối chiếu đã xác nhận so với đối
-chứng và với mô hình không lọc vượt biến thiên giữa các lần huấn luyện. Ngược lại, biến thể chỉ lọc thông
-dải và biến thể có đổi thang đầu vào thực chất là hai lần chạy của cùng một quy trình, và chênh lệch điểm
-giữa chúng nằm trong biến thiên đó. Vì vậy, khoảng tin cậy tính với mô hình cố định đánh giá thấp độ bất định khi
-so sánh các quy trình.
+xử lý dữ liệu của họ. Qua năm seed của biến thể chỉ lọc thông dải và hai seed của mỗi cấu hình so sánh, các
+đối chiếu của nó với đối chứng và với mô hình không lọc vượt khoảng chênh lệch giữa các seed quan sát được,
+trong khi biến thể chỉ lọc thông dải và biến thể có đổi thang cố định, vốn có chênh lệch thang đầu vào bị chuẩn
+hóa theo lô triệt tiêu phần lớn, chênh nhau ít hơn khoảng đó. Khoảng tin cậy tính với mô hình cố định phản ánh
+việc lấy mẫu người tham gia nhưng không phản ánh việc huấn luyện lại.
 \item Chúng tôi xác định nhầm N3 thành N2 là lỗi chung khi chuyển quần thể, lặp lại ở mọi quy trình
 zero-shot và trên mẫu giữ lại. Khảo sát quét biên độ đầu vào cho thấy lỗi này phụ thuộc vào biên độ tín
 hiệu nhưng biên độ không giải thích được toàn bộ lỗi. Trong các thí nghiệm có đối chứng tương ứng, hiệu
@@ -385,10 +385,13 @@ lại làm suy giảm; cả hai đều nằm ngoài dải thông 0.5-30\,Hz.
 Bước cắt $\pm800\,\mu$V không bao giờ kích hoạt: giá trị Sleep-EDF sau lọc thông dải không vượt
 $246\,\mu$V, mọi kênh EEG của mẫu SHHS1 giữ lại có dải vật lý $\pm125\,\mu$V, và kiểm tra tiền xử lý của mẫu
 SHHS1 thứ nhất không ghi nhận mẫu tín hiệu nào bị cắt. Vì vậy E3 chỉ khác E4 ở hệ số 100. Lớp tích chập
-đầu tiên của ResNet-1D không có bias và đứng ngay trước một lớp chuẩn hóa theo lô, nên hệ số này bị triệt
-tiêu (chỉ còn ảnh hưởng không đáng kể qua hằng số ổn định $\varepsilon$) và gradient cũng không đổi. Do đó
-E3 và E4 chỉ khác nhau ở sai số số học tích lũy trong huấn luyện (Mục bổ sung S4), và E3-E2 ước lượng tác
-động của lọc thông dải cộng với biến thiên giữa các lần huấn luyện.
+đầu tiên của ResNet-1D không có bias và đứng ngay trước một lớp chuẩn hóa theo lô, lớp này triệt tiêu phần lớn
+một hệ số thang đầu vào hằng số. Tính bất biến này chỉ là xấp xỉ: hằng số ổn định hữu hạn $\varepsilon$, cách
+khởi tạo thống kê tích lũy và độ chính xác số có thể ảnh hưởng đến đầu ra và quỹ đạo huấn luyện (Mục bổ sung
+S4). Vì vậy E3-E4 so sánh hai biến thể được huấn luyện riêng, có đổi thang cố định và chỉ lọc thông dải, chứ
+không phải hai lần chạy giống hệt nhau về mặt toán học. E3-E2 so sánh bước lọc cùng với bước đổi thang cố
+định, cộng với biến thiên giữa các lần huấn luyện; kết quả của E4 ủng hộ đóng góp của bước lọc khi không có
+bước đổi thang cố định.
 
 Thống kê theo bản ghi của E6 được tính trên những khoảng thời gian rất khác nhau ở hai đoàn hệ. Bản ghi
 Sleep-EDF dài 17-24\,giờ (trung vị 23\,giờ), gồm cả những đoạn ban ngày dài nằm ngoài cửa sổ đánh giá,
@@ -822,14 +825,14 @@ nằm trong biến thiên huấn luyện của E4.
     \label{fig:holdout}
 \end{figure}
 
-Trọng số đã huấn luyện cho thấy vì sao không nên hiểu chênh lệch này là tác động của thang đầu vào (Bảng
+Trọng số đã huấn luyện phù hợp với tính bất biến xấp xỉ theo thang đầu vào (Bảng
 bổ sung~\ref{SM-tab:sup_e3e4}). Với cùng seed và fold, kernel lớp đầu của E3 và E4 có độ tương tự cosine
 0.909-0.974 và trung vị độ tương tự trên các tensor trọng số bộ mã hóa là 0.696-0.863, so với các giá trị
 từ $-0.112$ đến $0.012$ giữa hai seed của cùng cấu hình. Phương sai tích lũy (running variance)
 ở lớp chuẩn hóa đầu tiên của E4 lớn hơn của E3 khoảng $10^4$ lần, đúng như hệ số 100 dự đoán, và quy tắc
-dừng sớm chọn epoch khác nhau cho E3 và E4 ở 8 trên 20 cặp seed-fold. Vì vậy, mỗi mô hình E3 là một lần chạy
-lặp lại của mô hình E4 tương ứng, chỉ lệch đi do sai số số học tích lũy, và E4-E3 đo mức hai lần chạy về lý
-thuyết là tương đương lại cho kết quả khác nhau đến đâu. Ngược lại, H1 và H3 lớn hơn mọi chênh lệch giữa seed
+dừng sớm chọn epoch khác nhau cho E3 và E4 ở 8 trên 20 cặp seed-fold. Như vậy, thay đổi thang đầu vào đã bị
+triệt tiêu phần lớn, và E4-E3 nằm trong khoảng năm seed quan sát được của E4. Ngược lại, H1 và H3 lớn hơn mọi
+chênh lệch giữa seed đã báo cáo
 ở cả hai seed, còn H2 ở seed 123 (0.0129) gần với chênh lệch giữa seed của E4 và E6.
 
 \subsection{Lỗi chung của các mô hình và vị trí của lỗi theo thời gian}
@@ -953,11 +956,11 @@ thấp hơn E6, chỉ còn 0.1395 và 0.1515 (chênh lệch $-0.0591$ và $-0.05
 
 \textbf{Seed huấn luyện.} Qua năm seed của E4, \mf\ trung bình theo đối tượng trên mẫu giữ lại có trung bình
 0.5720, độ lệch chuẩn 0.0077 và khoảng 0.5634-0.5822, trong khi \mf\ gộp trên Sleep-EDF có độ lệch chuẩn
-0.0018 (khoảng 0.7854-0.7903); biến thiên huấn luyện sau khi chuyển quần thể vì vậy lớn gấp khoảng bốn lần
-trong đoàn hệ nguồn. Chín trong mười khoảng chênh lệch giữa từng cặp seed không chứa giá trị không, và chênh
+0.0018 (khoảng 0.7854-0.7903); hai độ trải này dùng cách tổng hợp khác nhau (điểm trung bình theo
+đối tượng của ensemble so với điểm gộp ngoài fold) nên không so sánh trực tiếp được. Chín trong mười khoảng chênh lệch giữa từng cặp seed không chứa giá trị không, và chênh
 lệch tuyệt đối lớn nhất là 0.0189. Cả 20 chênh lệch giữa một seed của E4 với E0 hoặc E2 ở một trong hai seed
 đều lớn hơn, 0.0313-0.0700, mọi khoảng đều trên 0.026, nên theo quy tắc đã khóa các đối chiếu cấu hình này
-vượt biến thiên giữa các lần huấn luyện (Bảng bổ sung~\ref{SM-tab:sup_a2_arms}-\ref{SM-tab:sup_a2_contrasts}).
+vượt khoảng chênh lệch giữa các seed quan sát được của E4 (Bảng bổ sung~\ref{SM-tab:sup_a2_arms}-\ref{SM-tab:sup_a2_contrasts}).
 
 \textbf{Mô hình đơn và ensemble.} Khi chấm riêng, các mô hình fold của cùng một tổ hợp chênh nhau tới 0.18 về
 \mf\ trung bình theo đối tượng trên mẫu giữ lại, và ensemble mười mô hình vượt trung bình các mô hình đơn của
@@ -1013,27 +1016,27 @@ khác biệt ghi đo cụ thể nào.
 
 Trên mẫu giữ lại, hai seed huấn luyện của cùng một cấu hình chênh nhau 0.005 đến 0.012 về \mf\ trung bình
 theo đối tượng ở bốn cấu hình xác định trước và 0.020 ở E2, và cả bốn khoảng giữa seed xác định trước đều
-không chứa giá trị không. Năm seed của E4 trải trên 0.019 (độ lệch chuẩn 0.0077), gấp bốn lần độ trải của
-chính các mô hình này trên Sleep-EDF, và chín trong mười khoảng chênh lệch từng cặp không chứa giá trị không.
-Các khoảng này chỉ phản ánh độ bất định do việc lấy mẫu người tham gia khi mô hình
-được giữ cố định, không phản ánh độ bất định do huấn luyện. Vì vậy, một đối chiếu giữa hai mô hình huấn luyện
-riêng có thể có khoảng tin cậy hẹp nhưng độ lớn chỉ ngang mức chênh lệch khi huấn luyện lại. E4-E3 là một ví
-dụ. Hai cấu hình này tương đương về mặt cấu tạo, và trọng số đã huấn luyện cho thấy ở mỗi seed chúng là hai
-lần chạy của cùng một quá trình huấn luyện, chỉ tách xa nhau dần do sai số số học. Nếu tính toán chính xác
-tuyệt đối, hai lần chạy này lẽ ra giống hệt nhau, nhưng trên SHHS1 chúng vẫn chênh 0.009 đến 0.014 về \mf\
-trung bình theo đối tượng, nằm trong khoảng của năm seed E4. Không cần đến cơ chế sinh lý hay đặc điểm ghi đo
-nào để giải thích chênh lệch này, và dữ liệu của chúng tôi cũng không gợi ý cơ chế nào như vậy. Nhận xét tương
-tự áp dụng cho ước lượng H2 ở seed 123 (0.0129), còn mọi chênh lệch giữa một seed của E4 với E0 hoặc E2
-(0.031-0.070) đều vượt chênh lệch lớn nhất giữa các seed. Các đối chiếu của quy trình lọc thông dải với đối
-chứng và với mô hình không lọc vì vậy vững trước việc huấn luyện lại. Việc chuyển sang đoàn hệ mới khuếch đại
-biến thiên huấn luyện lên bốn lần cũng có nghĩa là một mô hình chỉ được chọn trên dữ liệu nguồn có thể rơi vào
-bất kỳ đâu trong khoảng này trên đoàn hệ đích. Nói chung, báo cáo biến thiên giữa các lần huấn luyện bên cạnh
-khoảng tin cậy theo người tham gia sẽ làm so sánh giữa các quy trình đáng tin cậy hơn.
+không chứa giá trị không. Năm seed của E4 trải trên 0.019 (độ lệch chuẩn 0.0077), và chín trong mười khoảng chênh lệch từng
+cặp không chứa giá trị không. Các khoảng này phản ánh độ bất định do lấy mẫu người tham gia với các mô hình đã
+huấn luyện, không bao gồm biến thiên khi huấn luyện mô hình mới, nên một chênh lệch được ước lượng chính xác
+giữa hai mô hình đã huấn luyện vẫn có thể chỉ ngang mức chênh lệch giữa các seed huấn luyện.
 
-Trong sử dụng thực tế, các bước cắt và đổi thang của E3 là không cần thiết: chỉ lọc thông dải (E4) cho cùng
-một quy trình với ít thao tác hơn, và chúng tôi khuyến nghị dùng dạng này. E3 vẫn là cấu hình tham chiếu trong
-phân tích xác nhận chỉ vì giao thức đã cố định nó trước khi xử lý dữ liệu giữ lại. Các đối chiếu đã xác nhận
-áp dụng cho quy trình ResNet-1D-TCN có lọc thông dải, mà E3 và E4 là hai cách hiện thực.
+E4-E3 là một ví dụ. Hai biến thể khác nhau ở một hệ số thang đầu vào cố định mà chuẩn hóa theo lô triệt tiêu
+phần lớn, và checkpoint của chúng giống nhau hơn nhiều so với mô hình huấn luyện bằng seed khác; tuy vậy,
+$\varepsilon$ hữu hạn, cách khởi tạo thống kê tích lũy và độ chính xác số vẫn khiến quá trình huấn luyện của
+chúng tách ra. Chênh lệch \mf\ trung bình theo đối tượng trên SHHS1 của chúng, 0.009-0.014, nằm trong khoảng
+năm seed của E4. H2 ở seed 123 (0.0129) cũng tương đương một số chênh lệch giữa seed, nên ý nghĩa thống kê
+theo người tham gia của nó cần được đọc cùng với độ nhạy trước việc huấn luyện lại.
+
+Mọi chênh lệch giữa một seed của E4 với E0 hoặc E2 (0.031-0.070) đều vượt chênh lệch lớn nhất giữa các seed
+của E4, nên lợi thế của quy trình lọc thông dải so với các cấu hình này nhất quán qua các seed đã đánh giá,
+dù năm và hai seed chưa mô tả được toàn bộ phân phối của tác động huấn luyện lại. Báo cáo độ trải huấn luyện
+bên cạnh khoảng tin cậy theo người tham gia giúp thể hiện rõ cả hai nguồn bất định.
+
+Trong sử dụng thực tế, chúng tôi khuyến nghị E4 chỉ lọc thông dải như phương án đơn giản hơn trong các cấu
+hình đã đánh giá: bước cắt không bao giờ kích hoạt trên dữ liệu này, và E4 chuyển quần thể tốt mà không cần
+bước đổi thang cố định. E3 vẫn là tham chiếu cho các giả thuyết xác nhận vì giao thức đã cố định nó trước khi
+xử lý dữ liệu giữ lại; các phân tích E4 và seed hỗ trợ, nhưng không thay thế, các đối chiếu đó.
 
 \subsection{Bỏ sót N3 vẫn tồn tại bên cạnh cải thiện tổng hợp}
 
@@ -1104,12 +1107,10 @@ chứng CNN-BiLSTM, cần ít thời gian huấn luyện hơn khoảng mười l
 mười sáu, và chuyển từ Sleep-EDF sang SHHS1 tốt hơn. Lợi thế của nó, quan sát lần đầu trên 180 người tham
 gia, đã được xác nhận trên 500 người tham gia giữ lại ngoài quá trình phát triển: \mf\ trung bình theo đối
 tượng cải thiện 0.0467 so với đối chứng, 0.0293 so với $z$-score theo bản ghi và 0.0515 so với cùng mô hình
-trên đầu vào không lọc, và các đối chiếu với đối chứng và với mô hình không lọc vượt biến thiên qua năm seed
-huấn luyện. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể, và $z$-score vẫn kém hơn khi thống kê
-của nó bao phủ cùng một khoảng thời gian ở hai đoàn hệ. Vì bước cắt không bao
-giờ kích hoạt và chuẩn hóa theo lô triệt tiêu một hệ số đổi thang hằng số, biến thể chỉ lọc thông dải và biến
-thể có đổi thang là hai lần chạy của cùng một mô hình, chỉ khác nhau do sai số số học, và chỉ cần lọc thông dải
-là đủ để định nghĩa quy trình. Mọi quy trình zero-shot đều phân loại phần lớn epoch N3 thành N2. Quyết định này
+trên đầu vào không lọc, và qua năm seed của biến thể chỉ lọc thông dải và hai seed của mỗi cấu hình so sánh,
+các đối chiếu của nó với đối chứng và với mô hình không lọc vượt khoảng chênh lệch giữa các seed quan sát được. Lọc thông dải đóng góp phần lớn lợi ích khi chuyển quần thể, và $z$-score vẫn kém hơn khi thống kê
+của nó bao phủ cùng một khoảng thời gian ở hai đoàn hệ. Vì bước cắt không bao giờ kích hoạt và chuẩn hóa theo lô triệt tiêu phần lớn một
+hệ số thang hằng số, chỉ lọc thông dải là dạng đơn giản hơn của quy trình. Mọi quy trình zero-shot đều phân loại phần lớn epoch N3 thành N2. Quyết định này
 phụ thuộc mạnh vào biên độ đầu vào, nhưng không biện pháp nào trong số đổi thang, hiệu chỉnh tiên nghiệm, trọng
 số lớp, thích nghi chuẩn hóa theo lô và thích nghi miền đối kháng giảm được lỗi này mà không làm giảm hiệu năng
 ở các giai đoạn khác. Vì vậy, khi so sánh các quy trình phân giai đoạn giấc ngủ, cần báo cáo chi phí tính toán,
@@ -1138,13 +1139,10 @@ Nghiên cứu này là phân tích thứ cấp trên dữ liệu kho lưu trữ 
 gia. Quyền truy cập dữ liệu SHHS được cấp qua National Sleep Research Resource theo thỏa thuận sử dụng dữ liệu
 của tổ chức này. Phân tích thứ cấp trên dữ liệu kho đã khử định danh này không cần phê duyệt đạo đức bổ sung.
 
-\subsection*{Tài trợ}
+\subsection*{Tài trợ và lời cảm ơn}
 
 Nghiên cứu này được hỗ trợ bởi Quỹ Hỗ trợ Nghiên cứu Khoa học của Trường Đại học Công nghệ Thông tin, Đại học
-Quốc gia Thành phố Hồ Chí Minh.
-
-\subsection*{Lời cảm ơn}
-Sleep Heart Health Study (SHHS) được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and Blood
+Quốc gia Thành phố Hồ Chí Minh. Sleep Heart Health Study (SHHS) được hỗ trợ bởi các thỏa thuận hợp tác của National Heart, Lung, and Blood
 Institute: U01HL53916 (University of California, Davis), U01HL53931 (New York University), U01HL53934
 (University of Minnesota), U01HL53937 và U01HL64360 (Johns Hopkins University), U01HL53938 (University of
 Arizona), U01HL53940 (University of Washington), U01HL53941 (Boston University) và U01HL63463 (Case Western
