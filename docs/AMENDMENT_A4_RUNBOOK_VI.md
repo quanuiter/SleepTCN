@@ -77,7 +77,8 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 cd /workspace
 python -m pip install --quiet gdown
 gdown <ID của a4_inputs_sleepedf.tar> -O /workspace/a4_inputs_sleepedf.tar
-sha256sum /workspace/a4_inputs_sleepedf.tar      # phải bằng mã đã ghi ở Phần I bước 3
+sha256sum /workspace/a4_inputs_sleepedf.tar
+# phải bằng 4271ea88b4aeb90affe0162a835e3dc00eb53e6835994af0a759bc3c857842ab (gói 7,06 GB, 460 tệp, tạo ngày 11/11/2026)
 cd /workspace/SleepTCN
 tar -xf /workspace/a4_inputs_sleepedf.tar -C /workspace/SleepTCN
 python scripts/run_amendment_a4.py verify-bundle   # BUNDLE VERIFIED
