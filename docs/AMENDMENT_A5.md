@@ -67,3 +67,28 @@ Bootstrap cụm theo người có ghép cặp, 10.000 lần, seed 2047. Chỉ s�
 - **Chuyển quần thể:** E3−E0, E4−E0, E4−E2, E3−E2 trên từng kênh; một đối chiếu lặp lại nếu khoảng ở seed 42
   nằm trên không.
 - Mọi arm, kênh, đối chứng và cả hai người chấm đều được báo cáo bất kể kết quả.
+
+## 7. Sai lệch D1 (12/11/2026): ISRUC nhóm I không dùng được cho A5
+
+Trước khi chạy toàn bộ, bộ đọc được thử trên hai người thật (số 1 và 26). Bộ đọc hoạt động đúng (kênh C4-A1 và
+F4-A1, 200 Hz, số nhãn khớp số epoch), nhưng dữ liệu thô có ba vấn đề làm A5 không thực hiện được như đã khóa.
+Chưa có dự đoán nào được tính trên ISRUC.
+
+| | Người 1 | Người 26 | Tham chiếu Sleep-EDF / SHHS1 |
+|---|---|---|---|
+| Header EEG | ±25, ghi là µV | ±25, ghi là µV | |
+| Độ lệch chuẩn trung vị epoch N3 sau lọc 0,5–30 Hz, C4-A1 | 2,1 | 1,2 | 20,8 / 18,8 µV |
+| Biên độ đỉnh–đỉnh trung vị epoch N3, C4-A1 | 15,4 | 8,5 | quy tắc chấm N3 yêu cầu ≥ 75 µV |
+| Bộ lọc phần cứng ghi trong header | 0,3–35 Hz, notch 50 Hz | 1–35 Hz, notch 50 Hz | |
+
+1. **Thang biên độ sai so với header:** epoch được chấm N3 có biên độ nhỏ hơn mức tối thiểu của quy tắc chấm
+   điểm khoảng 5–9 lần, nên giá trị trong tệp không phải µV.
+2. **Thang khác nhau giữa các người:** biên độ N3 của người 26 bằng khoảng nửa người 1, nên không có hệ số chung
+   nào khôi phục được µV (và chọn hệ số sau khi xem dữ liệu là điều chỉnh hậu nghiệm).
+3. **Bộ lọc phần cứng khác nhau và đã áp dụng khi ghi:** người 26 bị lọc thông cao ở 1 Hz, loại phần lớn sóng
+   chậm 0,5–1 Hz; đầu vào "không lọc" của ISRUC vì vậy không phải tín hiệu chưa lọc.
+
+Quy tắc của A5 dựa trên biên độ tuyệt đối, và các arm E0–E4 nhận tín hiệu µV thô; cả hai đều không có nghĩa trên
+dữ liệu này. Vì vậy phần đánh giá trên ISRUC của A5 **không được thực hiện**. Quy tắc có cổng chỉ được báo cáo như
+một phân tích chẩn đoán trên dữ liệu phát triển (mục 2), không có xác nhận độc lập. Nhận định này áp dụng cho câu
+hỏi của A5 (biên độ tuyệt đối, so sánh lọc); các mô hình chuẩn hóa theo từng bản ghi vẫn có thể dùng ISRUC.
