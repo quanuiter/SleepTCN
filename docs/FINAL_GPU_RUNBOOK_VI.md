@@ -16,7 +16,7 @@ Giao thức: `docs/AMENDMENT_A4.md`. Chi tiết cài môi trường: `docs/AMEND
 |---|---|---|
 | `C:\Users\ADMIN\SleepTCN_upload\a4_inputs_sleepedf.tar` | 7,06 GB | `4271ea88b4aeb90affe0162a835e3dc00eb53e6835994af0a759bc3c857842ab` |
 | `C:\Users\ADMIN\SleepTCN_upload\final_core.tar` | 2,24 GB | `32d735b393934fd94489d6358232ce02369e49979802bae0bb461b9ea6644887` |
-| `final_holdout.tar` (chỉ khi bạn quyết định đưa đầu vào SHHS1 lên máy thuê; xem DUA của NSRR) | khoảng 11 GB | ghi khi tạo |
+| `C:\Users\ADMIN\SleepTCN_upload\final_holdout.tar` (đầu vào A4 của SHHS1; dữ liệu NSRR, theo DUA) | 11,03 GB | `af618a968f3bf4ec7f7f176af561810c86f607462bfc2128a9c7b66ae2e907e9` |
 
 Tạo `final_holdout.tar` nếu dùng:
 
