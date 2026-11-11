@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "amendment": "A5",
+  "status": "locked_before_isruc_download",
+  "protocol_document": "docs/AMENDMENT_A5.md",
+  "parents": {
+    "confirmatory_protocol": "docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md",
+    "amendment_a3": "configs/amendment_a3.json",
+    "amendment_a4": "configs/amendment_a4.json",
+    "unchanged": "H1-H3 and the reports of the parent analysis, A1-A4 are not changed, re-tested or re-interpreted"
+  },
+  "development_data": "The gated rule and its statistic were developed after examining the SHHS1 holdout, the telemetry cohort and Sleep-EDF out-of-fold predictions (exploratory, 11 November 2026). These cohorts are development data for A5 and are not evidence for it. ISRUC subgroup I is the only evaluation cohort; it was never downloaded or examined before this lock.",
+  "cohort": {
+    "name": "ISRUC-Sleep subgroup I",
+    "source": "https://sleeptight.isr.uc.pt/ (distributed through MEGA)",
+    "subjects": "all 100 subjects; a subject is excluded only if a required channel is missing, its unit is not microvolts or its label file cannot be aligned by the rule below; exclusions are fixed and reported before any label is compared with a prediction",
+    "files": "raw recording N/N.rec (EDF), scorer label files N/N_1.txt and N/N_2.txt; the provider-filtered ExtractedChannels files are not used",
+    "channels": {
+      "C4": "C4-A1 (accepted labels: C4-A1, C4-M1, C4)",
+      "F4": "F4-A1 (accepted labels: F4-A1, F4-M1, F4)"
+    },
+    "resampling": "200 Hz to 100 Hz on the continuous signal before epoching: scipy.signal.resample_poly up 1, down 2, window ('kaiser', 5.0); a recording at another rate is resampled by the reduced integer ratio with the same window",
+    "labels": {
+      "primary_scorer": 1,
+      "secondary_scorer": 2,
+      "mapping": {"0": "W", "1": "N1", "2": "N2", "3": "N3", "4": "N3", "5": "REM"},
+      "other_values": "excluded (-1)",
+      "alignment": "one label per 30 s epoch from the recording start; if the label file is longer than the signal, trailing labels are dropped; if it is shorter, the remaining signal is marked unknown (-1); the number of epochs adjusted is reported per subject"
+    },
+    "preprocessing": "the trailing incomplete 30 s epoch is dropped; evaluation window and variants exactly as Sleep-EDF and SHHS1 (sleeptcn.preprocessing.trim_sleep_window and preprocess_signal_variant, default PreprocessConfig)",
+    "variants": ["paper_raw_v1", "bandpass_v2", "filtered_v2"]
+  },
+  "arms": ["E0_s42", "E2_s42", "E3_s42", "E4_s42", "E0_s123", "E2_s123", "E3_s123", "E4_s123"],
+  "primary_arm": "E4_s42",
+  "inference": "archived fold checkpoints (runs/holdout_ckpt_restore_20261010), mean of the ten fold softmax outputs in float64, argmax, no weight updates; any device; before ISRUC inference the device must reproduce stored telemetry ensemble probabilities of E0_s42 and E4_s42 for two recordings within 1e-4 with identical argmax",
+  "rule": {
+    "statistic": "amplitude disagreement of a recording: among epochs whose band-pass epoch standard deviation is at or above the Sleep-EDF threshold (16.513058 uV, configs/amendment_a3.json rule, fitted on all 153 Sleep-EDF recordings) and that the ensemble predicts as N2 or N3, the share predicted N2; undefined (rule not applied) when fewer than 20 such epochs exist",
+    "gate": "per arm, the 95th percentile of the statistic over the 153 Sleep-EDF recordings scored with that arm's out-of-fold predictions (runs/a3/sleep_edf_oof); computed from source data only",
+    "correction": "in a recording whose statistic exceeds the gate, every epoch predicted N2 whose band-pass standard deviation is at or above the threshold is relabelled N3 (A3 rule R1); other recordings are unchanged",
+    "comparators": {
+      "unmodified": "ensemble argmax",
+      "ungated_R1": "A3 rule R1 applied to every recording",
+      "entropy_gate": "same correction, gated instead by the recording's mean prediction entropy above the 95th percentile of the Sleep-EDF out-of-fold recordings of the same arm"
+    },
+    "no_tuning": "no threshold, percentile or minimum count is chosen on ISRUC"
+  },
+  "analysis": {
+    "bootstrap": {"type": "paired subject-cluster percentile", "resamples": 10000, "seed": 2047},
+    "metrics": ["subject-mean macro-F1", "pooled macro-F1", "accuracy", "kappa", "N3 recall", "N3 precision", "N3-to-N2 rate", "per-class F1"],
+    "detector": "within ISRUC, Spearman correlation of the amplitude statistic and of the mean entropy with the recording's N3 recall (recordings with at least 20 reference N3 epochs), per channel and arm",
+    "channel_contrast": "per arm, F4 minus C4 in N3 recall, N3-to-N2 rate and subject-mean macro-F1, paired by subject; the N3/N2 ratio of band-pass epoch standard deviation per channel",
+    "transfer_contrasts": ["E3-E0", "E4-E0", "E4-E2", "E3-E2"],
+    "scorer": "all results with scorer 1; the primary arm's results repeated with scorer 2"
+  },
+  "interpretation_rules": {
+    "rule_supported": "On ISRUC C4 with the primary arm, gated rule minus unmodified has a subject-mean macro-F1 interval above zero, and the lower interval bounds of the same difference on ISRUC F4 and on Sleep-EDF out-of-fold are above -0.01.",
+    "rule_not_supported": "On ISRUC C4 with the primary arm, the interval of gated rule minus unmodified includes or lies below zero while the unmodified N3 recall is below 0.5.",
+    "rule_not_tested": "If the primary arm's unmodified N3 recall on ISRUC C4 is 0.7 or higher, ISRUC shows no N3 under-detection and the rule is reported as not tested by this cohort.",
+    "gate_vs_entropy": "Reported as the difference between the amplitude-gated and entropy-gated results with its interval; no claim of superiority unless that interval lies above zero.",
+    "derivation_account": "The N3 deficit is described as derivation-related within ISRUC if F4 minus C4 in N3 recall has an interval above zero for E3 and E4 at both seeds.",
+    "transfer": "A transfer contrast is said to replicate on ISRUC if its seed-42 interval lies above zero; seed 123 is reported beside it.",
+    "reporting": "All arms, channels, comparators and both scorers are reported whatever the outcome; no hypothesis tests."
+  }
+}
