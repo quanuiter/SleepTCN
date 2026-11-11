@@ -105,3 +105,10 @@ python scripts/a4_analyze.py
 | `git_history_without_8af1d12...` | Clone nông; clone lại không có `--depth` |
 | `export CUBLAS_WORKSPACE_CONFIG...` | Chưa đặt biến môi trường trong terminal hiện tại |
 | `DEVICE CHECK FAILED` | Không chạy suy luận; gửi `runs/final/device_check.json` về |
+
+## Phương án Google Colab
+
+Notebook `notebooks/final_colab_a4.ipynb` làm toàn bộ các phần trên trên Colab: đặt ba tệp tar vào
+`MyDrive/SleepTCN_upload/`, mở notebook trên Colab với runtime GPU, chạy ô 1 → ô 5. Tiến độ được đồng bộ lên
+`MyDrive/SleepTCN_final_backup/` mỗi 5 phút; khi bị ngắt kết nối, chạy lại ô 1, 2, 3 rồi ô 4 để tiếp tục. Kết quả
+`final_results.tar.gz` được ghi vào thư mục backup đó.
