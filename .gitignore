@@ -21,6 +21,10 @@ data/cache/
 runs/*
 !runs/cohort_psd/
 !runs/cpu_benchmark/
+!runs/a3/
+runs/a3/*
+!runs/a3/analysis/
+!runs/a3/telemetry_preprocess_manifest.json
 !runs/v2/
 runs/v2/*
 !runs/v2/analysis/

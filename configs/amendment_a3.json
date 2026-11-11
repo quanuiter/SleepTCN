@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "name": "amendment_a3",
+  "status": "post-confirmatory descriptive; locked before any A3 download, preprocessing, inference or analysis",
+  "parents": {
+    "confirmatory_protocol": "docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md",
+    "amendment_a1": "docs/SHHS_HOLDOUT_AMENDMENT_A1.md",
+    "amendment_a2": "docs/SHHS_HOLDOUT_AMENDMENT_A2.md"
+  },
+  "arms": [
+    {"arm": "E0_s42", "experiment": "E0", "seed": 42},
+    {"arm": "E2_s42", "experiment": "E2", "seed": 42},
+    {"arm": "E3_s42", "experiment": "E3", "seed": 42},
+    {"arm": "E4_s42", "experiment": "E4", "seed": 42},
+    {"arm": "E6_s42", "experiment": "E6", "seed": 42},
+    {"arm": "E0_s123", "experiment": "E0", "seed": 123},
+    {"arm": "E2_s123", "experiment": "E2", "seed": 123},
+    {"arm": "E3_s123", "experiment": "E3", "seed": 123},
+    {"arm": "E4_s123", "experiment": "E4", "seed": 123},
+    {"arm": "E6_s123", "experiment": "E6", "seed": 123}
+  ],
+  "primary_arm": "E4_s42",
+  "checkpoint_workspace": "runs/holdout_ckpt_restore_20261010",
+  "encoder_batch_size": 256,
+  "ensemble": "mean of the ten fold softmax outputs in float64, then argmax",
+  "amplitude_rule": {
+    "feature": "standard deviation in microvolts of the 30 s epoch of the bandpass_v2 input",
+    "source": "reference N2 and N3 epochs of the Sleep-EDF bandpass_v2 recordings; no target data",
+    "threshold": "value among 999 pooled quantiles (0.001 to 0.999) of source N2 and N3 epochs that maximises the sum of the N3 rate at or above and the N2 rate below",
+    "R1_hard": "an epoch whose predicted stage is N2 and whose feature is at or above the threshold is relabelled N3; nothing else changes",
+    "R2_soft": "logistic regression of source N3 versus N2 on ln(feature) (scikit-learn, C=1e6, lbfgs); likelihood ratio = fitted odds divided by the source N3:N2 count ratio; the probability mass p(N2)+p(N3) of each epoch is redistributed with odds p(N3)/p(N2) multiplied by the likelihood ratio; other classes unchanged; then argmax",
+    "tunable_parameters": "none; nothing is chosen on target data or on model performance",
+    "primary_variant": "R1_hard",
+    "source_cost": "on Sleep-EDF the rules are applied to out-of-fold predictions with threshold and regression fitted on the recordings outside the test fold"
+  },
+  "cohorts": {
+    "shhs1_holdout": {
+      "status": "already used in the confirmatory analysis, A1, A2 and the post-hoc stage-wise description",
+      "processed_root": "data/processed/shhs_holdout_v1",
+      "predictions": ["runs/holdout_inference_v1/ensemble", "runs/a2/holdout/ensemble"],
+      "arms": "the ten arms above plus E4_s2025, E4_s2027, E4_s2029, E6R_s42, E6R_s123"
+    },
+    "sleep_edf_telemetry": {
+      "status": "never downloaded or examined by the authors before this lock",
+      "source": "https://physionet.org/files/sleep-edfx/1.0.0/sleep-telemetry/",
+      "checksums": "https://physionet.org/files/sleep-edfx/1.0.0/SHA256SUMS.txt",
+      "records": "all 44 PSG/hypnogram pairs of 22 subjects, both nights (placebo and temazepam)",
+      "channel": "EEG Fpz-Cz",
+      "subject_rule": "first five characters of the record key (ST7ss)",
+      "preprocessing": "sleeptcn.preprocessing.process_record with the default PreprocessConfig, identical to Sleep-EDF SC",
+      "variants": ["paper_raw_v1", "bandpass_v2", "filtered_v2", "filtered_zscore_v2"],
+      "processed_root": "data/processed/telemetry_a3",
+      "raw_root": "data/raw/sleep-telemetry"
+    },
+    "isruc_subgroup1": {
+      "status": "planned; data host unreachable at lock time (files now distributed through MEGA, 14.12 GB); run only when the raw recordings are obtained",
+      "records": "all 100 subjects of subgroup I, raw .rec recordings (EDF), not the provider-filtered ExtractedChannels files",
+      "channel": "C4-A1",
+      "resampling": "200 Hz to 100 Hz, polyphase, up 1, down 2, Kaiser window beta 5.0, on the continuous signal before epoching",
+      "labels": "scorer 1; 0 W, 1 N1, 2 N2, 3 N3, 5 REM; other values excluded",
+      "note": "file parsing and unit checks are settled before any label is compared with a prediction; any change to this specification is reported as a deviation"
+    }
+  },
+  "metrics": ["subject-mean macro-F1", "pooled macro-F1", "accuracy", "kappa", "per-class precision, recall and F1", "N3-to-N2 rate"],
+  "bootstrap": {"type": "paired subject-cluster percentile", "resamples": 10000, "seed": 2044},
+  "contrasts_new_cohort": ["E3-E0", "E3-E6", "E3-E2", "E4-E0", "E4-E2", "E4-E3", "E4-E6"],
+  "interpretation_rules": {
+    "replication": "a contrast is said to replicate on a new cohort if its seed-42 interval for subject-mean macro-F1 lies above zero; seed 123 is reported beside it",
+    "rule_improves": "interval of rule minus unmodified for subject-mean macro-F1 lies above zero",
+    "rule_trade_off": "interval for N3 recall lies above zero and the interval for subject-mean macro-F1 includes zero",
+    "rule_harms": "interval for subject-mean macro-F1 lies below zero",
+    "reporting": "both rules, all arms and all cohorts including the source cost are reported whatever the outcome; no hypothesis tests"
+  }
+}
