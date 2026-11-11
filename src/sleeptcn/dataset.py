@@ -29,7 +29,10 @@ REQUIRED_FIELDS = {
 # the same 153 records and evaluation windows as ``filtered_v2`` (the A2 preprocessing
 # check compares labels and epoch indices record by record), so the frozen split applies
 # unchanged; the split file itself is never edited because runs record its hash.
-POST_SPLIT_VARIANTS = frozenset({"filtered_zscore_window_v3", "filtered_zscore_rolling90_v3"})
+# Amendment A4 adds the one-edge filter variants, built from the stored unfiltered evaluation window of
+# the same 153 records (same keys, labels and epoch indices; see src/sleeptcn/amendment_a4_data.py).
+POST_SPLIT_VARIANTS = frozenset({"filtered_zscore_window_v3", "filtered_zscore_rolling90_v3",
+                                 "highpass_v4", "lowpass_v4"})
 
 
 @dataclass(frozen=True)

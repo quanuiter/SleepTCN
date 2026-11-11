@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "amendment": "A4",
+  "status": "locked_before_a4_training",
+  "status_rule": "Scripts refuse to bundle, train, test or infer A4 runs until status is 'locked_before_a4_training' and this file is committed and pushed with the subject 'Lock Amendment A4'. When locking, change only the status field.",
+  "protocol_document": "docs/AMENDMENT_A4.md",
+  "runbook": "docs/AMENDMENT_A4_RUNBOOK_VI.md",
+  "parents": {
+    "confirmatory_protocol": "docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md",
+    "amendment_a2": "configs/shhs_holdout_amendment_a2.json",
+    "amendment_a3": "configs/amendment_a3.json",
+    "unchanged": "H1-H3 and the reports of the parent analysis, A1, A2 and A3 are not changed, re-tested or re-interpreted"
+  },
+  "purpose": "Separate the two edges of the 0.5-30 Hz band-pass: does the transfer gain of band-pass filtering (E4 over unfiltered E2) come from removing content below 0.5 Hz, above 30 Hz, or both?",
+  "status_of_data": "Holdout labels were used by the parent analysis, A1, A2 and A3; the telemetry cohort was first used by A3. Sleep-EDF test folds of the A4 arms are opened once, after all A4 training. No arm, seed, cutoff or interpretation rule below depends on A4 results.",
+  "inputs": {
+    "builder": "src/sleeptcn/amendment_a4_data.py",
+    "route": "the stored contiguous paper_raw_v1 evaluation window of every record, filtered as one signal; the same route must reproduce the stored bandpass_v2 input within relative 1e-4 except at the first and last window epoch (checked for every record, edge epochs reported)",
+    "variants": {
+      "highpass_v4": "zero-phase Butterworth high-pass, order 4, 0.5 Hz, second-order sections, forward-backward; no low-pass, no clipping, no rescaling",
+      "lowpass_v4": "zero-phase Butterworth low-pass, order 4, 30 Hz, second-order sections, forward-backward; no high-pass, no clipping, no rescaling"
+    },
+    "cohorts": ["sleep_edf (153 records)", "shhs1_holdout (500)", "telemetry (44)"]
+  },
+  "training": {
+    "source": "Sleep-EDF SC, locked ten-fold subject split data/splits/sleepedf_sc_10fold_seed42_v2.json, validation fold = next fold",
+    "runner": "src/sleeptcn/experiment.run_experiment with the unchanged configs/experiments_v2.json, through src/sleeptcn/amendment_a4.py (a renamed copy of the A2 driver)",
+    "arms": {
+      "E4HP": {"experiment": "E4", "data_variant": "highpass_v4", "seeds": [42, 123]},
+      "E4LP": {"experiment": "E4", "data_variant": "lowpass_v4", "seeds": [42, 123]}
+    },
+    "folds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "run_order": [["E4HP", 42], ["E4LP", 42], ["E4HP", 123], ["E4LP", 123]],
+    "reproduction_check": "E4 fold 0 seed 123 retrained with the A4 driver on the rented GPU before any A4 run and compared with the archived run at commit 8af1d12; reported whatever the outcome",
+    "sleep_edf_test": "after every A4 run has finished validation-only training and passed run validation, the locked Sleep-EDF test folds are evaluated once with the pre-locked best checkpoints"
+  },
+  "zero_shot": {
+    "cohorts": ["shhs1_holdout", "telemetry"],
+    "ensemble": "mean of the ten fold softmax outputs in float64, then argmax; no weight updates",
+    "device": "CPU after the checkpoints are copied back"
+  },
+  "analysis": {
+    "reference_arms": "E2 (unfiltered) and E4 (band-pass) at seeds 42 and 123, archived predictions: Sleep-EDF out-of-fold (runs/a3/sleep_edf_oof), holdout (runs/holdout_inference_v1/ensemble), telemetry (runs/a3/telemetry/ensemble)",
+    "metrics": ["subject-mean macro-F1", "pooled macro-F1", "accuracy", "kappa", "N3 recall", "N3-to-N2 rate", "per-class F1"],
+    "contrasts_per_seed": ["E4HP-E2", "E4LP-E2", "E4-E4HP", "E4-E4LP"],
+    "bootstrap": {"type": "paired subject-cluster percentile", "resamples": 10000, "seed": 2046},
+    "share_of_gain": "(E4HP - E2) / (E4 - E2) and (E4LP - E2) / (E4 - E2) in holdout subject-mean macro-F1, point estimates per seed, reported only where E4 - E2 has an interval above zero",
+    "interpretation_rule": "An edge is said to carry the transfer gain on a cohort if, at both seeds, its arm minus E2 has an interval above zero and E4 minus its arm has an interval that includes zero or lies below zero. If both edges satisfy the first condition, the gain is described as shared; if neither arm differs from E2, the gain is described as requiring both edges. Statements are made per cohort; Sleep-EDF out-of-fold results are reported beside them.",
+    "hypothesis_tests": "none; descriptive"
+  }
+}
