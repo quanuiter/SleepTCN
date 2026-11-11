@@ -1,14 +1,14 @@
-# Runbook phiên GPU cuối cùng (A4 + A5)
+# Runbook phiên GPU cuối cùng (A4)
 
-Một phiên máy thuê làm toàn bộ phần tính toán còn lại:
-- A4: huấn luyện hai biên bộ lọc, mở tập test Sleep-EDF, suy luận trên SHHS1 giữ lại và Telemetry.
-- A5: tải và tiền xử lý ISRUC nhóm I, suy luận ở kênh C4 và F4.
+Một phiên máy thuê làm toàn bộ phần tính toán còn lại của bài: A4, huấn luyện hai biên bộ lọc (E4HP chỉ lọc
+thông cao 0,5 Hz, E4LP chỉ lọc thông thấp 30 Hz; seed 42 và 123; 10 fold), mở tập test Sleep-EDF một lần, rồi
+suy luận zero-shot trên Telemetry và, nếu bạn đưa dữ liệu lên, trên SHHS1 giữ lại. ISRUC không còn trong phiên này
+(sai lệch D1 của A5, `docs/AMENDMENT_A5.md` mục 7).
 
-Giao thức: `docs/AMENDMENT_A4.md`, `docs/AMENDMENT_A5.md`. Chi tiết cài môi trường giống
-`docs/AMENDMENT_A4_RUNBOOK_VI.md` mục II.1–II.3.
+Giao thức: `docs/AMENDMENT_A4.md`. Chi tiết cài môi trường: `docs/AMENDMENT_A4_RUNBOOK_VI.md` mục II.1–II.3.
 
-**Máy cần:** GPU ít nhất 16 GB (V100 như A2), ít nhất 6 nhân CPU, ít nhất 100 GB đĩa, quyền root (để cài công cụ
-tải MEGA và giải nén RAR). **Thời gian:** khoảng 10–12 giờ, phần lớn máy tự chạy.
+**Máy cần:** GPU ít nhất 16 GB (V100 như A2), ít nhất 6 nhân CPU, ít nhất 60 GB đĩa. Không cần quyền root.
+**Thời gian:** khoảng 8–9 giờ (A4 huấn luyện 6–7 giờ, phần còn lại khoảng 1–2 giờ), phần lớn máy tự chạy.
 
 ## Phần 0. Ở máy local, trước khi thuê
 
@@ -18,15 +18,14 @@ tải MEGA và giải nén RAR). **Thời gian:** khoảng 10–12 giờ, phần
 | `C:\Users\ADMIN\SleepTCN_upload\final_core.tar` | 2,24 GB | `32d735b393934fd94489d6358232ce02369e49979802bae0bb461b9ea6644887` |
 | `final_holdout.tar` (chỉ khi bạn quyết định đưa đầu vào SHHS1 lên máy thuê; xem DUA của NSRR) | khoảng 11 GB | ghi khi tạo |
 
-Tạo `final_holdout.tar` (nếu dùng):
+Tạo `final_holdout.tar` nếu dùng:
 
 ```powershell
 python scripts/final_bundle.py pack --part holdout --output C:/Users/ADMIN/SleepTCN_upload/final_holdout.tar
 Get-FileHash C:\Users\ADMIN\SleepTCN_upload\final_holdout.tar -Algorithm SHA256
 ```
 
-Mỗi tệp đặt chia sẻ "Bất kỳ ai có đường liên kết", ghi lại ID (đoạn giữa `/d/` và `/view`). Bộ đọc ISRUC phải đã
-được thử trên một người thật ở máy local trước phiên này.
+Mỗi tệp đặt chia sẻ "Bất kỳ ai có đường liên kết", ghi lại ID (đoạn giữa `/d/` và `/view`).
 
 ## Phần 1. Mã nguồn và môi trường
 
@@ -54,76 +53,47 @@ python scripts/run_amendment_a4.py verify-bundle
 python scripts/final_bundle.py verify --part core
 python scripts/final_bundle.py verify --part holdout                   # nếu dùng
 python scripts/run_amendment_a4.py env-check --device cuda             # ENVIRONMENT OK
+python scripts/final_infer.py device-check --device cuda               # DEVICE CHECK PASSED
 git status --short                                                     # vẫn trống
 ```
 
-## Phần 3. Bắt đầu A4 (chạy nền khoảng 7 giờ)
+## Phần 3. A4: kiểm tra tái lập và huấn luyện (khoảng 7 giờ)
 
 ```bash
 python scripts/run_amendment_a4.py repro --device cuda                 # ~20 phút; IDENTICAL hoặc DIFFERS, đều tiếp tục
 nohup python scripts/run_amendment_a4.py train --device cuda --workers 3 --num-workers 1 > /workspace/a4_train.log 2>&1 &
+python scripts/run_amendment_a4.py status                              # xem tiến độ bất cứ lúc nào
 ```
 
-## Phần 4. Trong lúc A4 huấn luyện: ISRUC và kiểm tra thiết bị
+Nếu mất kết nối hay một tiến trình lỗi, chạy lại đúng lệnh `train`: lần chạy đã xong được bỏ qua, lần chạy dở được
+tiếp tục từ checkpoint.
 
-Kiểm tra thiết bị (bắt buộc trước mọi suy luận; phải in `DEVICE CHECK PASSED`):
-
-```bash
-python scripts/final_infer.py device-check --device cuda
-```
-
-Tải ISRUC nhóm I bằng MEGAcmd. Bản cài cho Ubuntu lấy từ trang tải chính thức của MEGA
-(https://mega.io/cmd); chọn đúng phiên bản Ubuntu của máy (`lsb_release -a`):
+## Phần 4. Sau khi huấn luyện xong: mở test và suy luận
 
 ```bash
-apt-get update && apt-get install -y unrar || apt-get install -y p7zip-full
-# cài gói megacmd .deb của MEGA cho đúng phiên bản Ubuntu, ví dụ:
-#   wget https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megacmd-xUbuntu_22.04_amd64.deb && apt-get install -y ./megacmd-*.deb
-mkdir -p /workspace/isruc && cd /workspace/isruc
-mega-get "https://mega.nz/folder/QJgDQDDZ#ZMDj3w82msavACurqP48IA" /workspace/isruc/
-```
-
-Nếu MEGA báo vượt hạn mức tải (quota), đợi rồi chạy lại đúng lệnh `mega-get` (tệp đã tải được giữ). Sau khi tải
-xong, đưa các tệp `N.rar` (hoặc thư mục `N/`) về thẳng `/workspace/isruc/`, rồi:
-
-```bash
-cd /workspace/SleepTCN
-python scripts/a5_prepare_isruc.py inspect --raw-root /workspace/isruc   # chỉ đọc định dạng; xem danh sách loại
-python scripts/a5_prepare_isruc.py run --raw-root /workspace/isruc       # ghi data/processed/isruc_a5
-nohup python scripts/final_infer.py a5 --device cuda > /workspace/a5_infer.log 2>&1 &
-```
-
-`inspect` in kênh, đơn vị, tần số, mã nhãn và số nhãn của từng người. Nếu dừng vì lỗi, hoặc loại quá 10 người,
-**dừng phần ISRUC** và gửi log về; không sửa mã trên máy thuê. A4 vẫn chạy bình thường.
-
-## Phần 5. Sau khi A4 huấn luyện xong
-
-```bash
-python scripts/run_amendment_a4.py status                             # 40 runs trained
-python scripts/run_amendment_a4.py test                               # preflight
+python scripts/run_amendment_a4.py status                              # 40 runs trained
+python scripts/run_amendment_a4.py test                                # preflight
 python scripts/run_amendment_a4.py test --device cuda --confirm OPEN-A4-LOCKED-TEST-ONCE
-python scripts/final_infer.py a4 --device cuda                        # cần final_holdout.tar; nếu không, xem dưới
+python scripts/final_infer.py a4 --device cuda                         # Telemetry, rồi SHHS1 nếu có đầu vào
 ```
 
-Nếu không đưa SHHS1 lên máy thuê, lệnh `a4` sẽ dừng ở phần SHHS1: chạy phần đó ở máy local bằng CPU (khoảng
-3 giờ) sau khi tải kết quả về, cùng lệnh với `--device cpu`.
+Nếu không đưa SHHS1 lên máy thuê, lệnh `a4` in "skipped" cho SHHS1; phần đó chạy ở máy local bằng CPU (khoảng
+3 giờ) sau khi tải kết quả về: `python scripts/final_infer.py a4 --device cpu`.
 
-## Phần 6. Xuất kết quả và tải về
+## Phần 5. Xuất kết quả và tải về
 
 ```bash
 cd /workspace/SleepTCN
 tar -czf /workspace/final_results.tar.gz runs/a4/full runs/a4/monitoring runs/a4/test_campaign_a4.json \
-    runs/a4/reproduction_check.json runs/final data/processed/isruc_a5/isruc_preprocess_manifest.json \
-    data/processed/isruc_a5/C4/bandpass_v2 data/processed/isruc_a5/F4/bandpass_v2 /workspace/*.log
+    runs/a4/reproduction_check.json runs/final /workspace/a4_train.log
 sha256sum /workspace/final_results.tar.gz
 ```
 
-Tải `final_results.tar.gz` về máy local và kiểm tra SHA-256 trước khi tắt máy thuê. Ở máy local:
+Tải `final_results.tar.gz` về và kiểm tra SHA-256 trước khi tắt máy thuê. Ở máy local:
 
 ```powershell
 tar -xzf final_results.tar.gz -C D:\SleepTCN
 python scripts/a4_analyze.py
-python scripts/a5_analyze.py
 ```
 
 ## Lỗi thường gặp
@@ -131,6 +101,7 @@ python scripts/a5_analyze.py
 | Lỗi | Xử lý |
 |---|---|
 | `git_worktree_not_clean` | Có tệp lạ trong repo; mọi tệp tải về đặt ở `/workspace`, ngoài `SleepTCN/` |
+| `a4_config_not_locked` | Clone trước khi có commit khóa A4; `git pull` |
+| `git_history_without_8af1d12...` | Clone nông; clone lại không có `--depth` |
+| `export CUBLAS_WORKSPACE_CONFIG...` | Chưa đặt biến môi trường trong terminal hiện tại |
 | `DEVICE CHECK FAILED` | Không chạy suy luận; gửi `runs/final/device_check.json` về |
-| MEGA vượt hạn mức | Đợi rồi chạy lại `mega-get`; A4 không bị ảnh hưởng |
-| `a5_prepare_isruc.py` dừng | Dừng phần ISRUC, gửi log; A4 vẫn hoàn tất được |
