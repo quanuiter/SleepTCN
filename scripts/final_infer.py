@@ -33,8 +33,8 @@ RESTORE = ROOT / "runs/holdout_ckpt_restore_20261010"
 OUT = ROOT / "runs/final"
 FOLDS = 10
 A5_ARMS = [("E0", 42), ("E2", 42), ("E3", 42), ("E4", 42), ("E0", 123), ("E2", 123), ("E3", 123), ("E4", 123)]
-A4_INPUTS = {"shhs1_holdout": (ROOT / "data/processed/shhs_holdout_a4", 500),
-             "telemetry": (ROOT / "data/processed/telemetry_a4", 44)}
+A4_INPUTS = {"telemetry": (ROOT / "data/processed/telemetry_a4", 44),
+             "shhs1_holdout": (ROOT / "data/processed/shhs_holdout_a4", 500)}
 ISRUC_ROOT = ROOT / "data/processed/isruc_a5"
 CHECK_RECORDS = ("ST7011J", "ST7022J")
 
@@ -154,6 +154,9 @@ def task_a4(args, device) -> None:
     require_check()
     config, config_sha = load_a4_config(ROOT)
     for cohort, (root, expected) in A4_INPUTS.items():
+        if not root.is_dir():
+            print(f"A4 {cohort}: inputs not present on this machine ({root}); skipped", flush=True)
+            continue
         for arm, spec in config["training"]["arms"].items():
             for seed in spec["seeds"]:
                 targets = [A4Target(arm, seed, fold) for fold in range(FOLDS)]

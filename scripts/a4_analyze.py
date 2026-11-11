@@ -66,7 +66,7 @@ def oof_predictions(arm: str, seed: int, records: dict) -> dict[str, np.ndarray]
 def a4_predictions(cohort: str, arm: str, seed: int, records: dict) -> dict[str, np.ndarray]:
     if cohort == "sleep_edf_oof":
         return oof_predictions(arm, seed, records)
-    folder = ROOT / "runs/a4/zero_shot" / cohort / "ensemble" / f"{arm}_s{seed}"
+    folder = ROOT / "runs/final/a4" / cohort / f"{arm}_s{seed}"  # written by scripts/final_infer.py a4
     return {key: p.argmax(axis=1) for key, p in a3.load_probabilities(folder, records).items()}
 
 
