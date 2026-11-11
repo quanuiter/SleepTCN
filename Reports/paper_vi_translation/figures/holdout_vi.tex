@@ -5,6 +5,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepgfplotslibrary{groupplots}
+\usetikzlibrary{calc}
 \definecolor{sone}{HTML}{2A78D6}
 \definecolor{stwo}{HTML}{EB6834}
 \definecolor{sthree}{HTML}{1BAF7A}
@@ -23,7 +24,7 @@
 \addlegendentry{{Mẫu giữ lại, seed 42}}
 \addplot[stwo,mark=diamond*,mark size=2.8pt,line width=0.9pt,only marks,error bars/.cd,x dir=both,x explicit,error bar style={line width=0.9pt},error mark options={rotate=90,mark size=2pt}] coordinates {(0.0375,2.75) -= (0.006799999999999997,0) += (0.006900000000000003,0) (0.0129,1.75) -= (0.0072,0) += (0.007000000000000001,0) (0.027,0.75) -= (0.005299999999999999,0) += (0.005500000000000001,0)};
 \addlegendentry{{Mẫu giữ lại, seed 123}}
-\nextgroupplot[title={(b) Cùng cấu hình, khác lần huấn luyện},height=4.1cm,ymin=0.4,ymax=7.6,ytick={7,6,5,4,3,2,1},yticklabels={{E3 seed 42$-$123},{E4 seed 42$-$123},{E0 seed 42$-$123},{E6 seed 42$-$123},{E2 seed 42$-$123},{E4$-$E3, seed 42},{E4$-$E3, seed 123}},xlabel={$\Delta$ macro-F1 trung bình theo đối tượng}]
+\nextgroupplot[title={(b) Chênh lệch giữa hai seed và E4$-$E3},height=4.1cm,ymin=0.4,ymax=7.6,ytick={7,6,5,4,3,2,1},yticklabels={{E3 seed 42$-$123},{E4 seed 42$-$123},{E0 seed 42$-$123},{E6 seed 42$-$123},{E2 seed 42$-$123},{E4$-$E3, seed 42},{E4$-$E3, seed 123}},xlabel={$\Delta$ macro-F1 trung bình theo đối tượng}]
 \addplot[ink,line width=0.7pt,forget plot] coordinates {(0,0.4) (0,7.6)};
 \addplot[ink,mark=*,mark size=2.2pt,line width=0.9pt,only marks,error bars/.cd,x dir=both,x explicit,error bar style={line width=0.9pt},error mark options={rotate=90,mark size=2pt}] coordinates {(0.0046,7) -= (0.002,0) += (0.0021000000000000003,0) (0.0094,6) -= (0.0018000000000000004,0) += (0.0017999999999999995,0) (-0.0046,5) -= (0.0017000000000000001,0) += (0.0017000000000000001,0) (-0.0118,4) -= (0.003300000000000001,0) += (0.003299999999999999,0)};
 \addplot[ink,only marks,mark=o,mark size=2.4pt,line width=0.9pt] coordinates {(-0.0199,3)};

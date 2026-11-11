@@ -57,7 +57,8 @@ VI = {
     '8 train':'8 train', '1 validation':'1 validation', '1 test':'1 test',
     '10 subject-wise folds; out-of-fold predictions':'10 fold theo đối tượng; dự đoán ngoài fold',
     'Source models':'Mô hình nguồn', '10 fold checkpoints':'10 checkpoint theo fold',
-    'SHHS1 test set':'Tập kiểm tra SHHS1', '180 participants':'180 người tham gia',
+    'SHHS1 samples':'Các mẫu SHHS1',
+    'First 180 · holdout 500 participants':'Mẫu đầu 180 · giữ lại 500 người',
     'Probability averaging':'Lấy trung bình xác suất',
 }
 
@@ -208,10 +209,10 @@ for dx,dy in [(1.5,1.5),(.75,.75),(0,0)]:
 label(53,17.8,'Source models',size=9,weight='bold',ha='center')
 label(53,4.6,'10 fold checkpoints',size=7.3,color=MUTED,ha='center')
 arrow((61,11.2),(73,11.2),BLUE,.8)
-label(74.5,17.8,'SHHS1 test set',size=9.3,weight='bold')
-label(74.5,14.2,'180 participants',size=7.6,color=MUTED)
+label(74.5,17.8,'SHHS1 samples',size=9.3,weight='bold')
+label(74.5,14.2,'First 180 · holdout 500 participants',size=7.6,color=MUTED)
 label(74.5,9.6,'Probability averaging',size=7.5)
-label(74.5,5.8,'E0 / E3 / E6',size=7.7,weight='bold',color=BLUE)
+label(74.5,5.8,'E0 / E2 / E3 / E4 / E6',size=7.7,weight='bold',color=BLUE)
 
 # Account for actual manuscript insertion width (16.4 cm).
 font_factor = 7.1*2.54/16.4

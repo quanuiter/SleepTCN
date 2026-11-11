@@ -18,12 +18,14 @@
 This supplement provides model specifications, training settings and supporting statistical analyses.
 Unless stated otherwise, SHHS1 results refer to the first SHHS1 sample (180 participants). On that
 sample, seed 42 is primary and seed 123 is a post-protocol sensitivity repeat; E1 and E2 analyses are
-secondary, and E3-E2 and E4 analyses are post-hoc. Seed-specific results are kept separate and do not
+secondary, and E3$-$E2 and E4 analyses are post-hoc. Seed-specific results are kept separate and do not
 alter the primary comparison family. Supplementary Section S3 reports the confirmatory evaluation on
 the 500-participant holdout SHHS1 sample under a pre-specified protocol. Supplementary Section S4 examines
 approximate input-scale invariance and checkpoint similarities of E3 and E4. Supplementary Section S5 reports the
-post-confirmatory amplitude and AdaBN analyses, and Supplementary Section S6 the second amendment
-(normalisation scope, five training seeds, single models, EM sample size and training cost).
+post-confirmatory amplitude and AdaBN analyses, Supplementary Section S6 the second amendment
+(normalisation scope, five training seeds, single models, EM sample size and training cost), and
+Supplementary Section S7 a post-hoc description of the input power spectra, Supplementary Section S8
+a stage-wise description of input amplitude, and Supplementary Section S9 the whole-night CPU timing.
 E6 estimates mean and standard deviation from each complete unlabelled target recording; it is label-free
 but transductive at recording level, not purely inductive zero-shot inference.
 
@@ -43,8 +45,8 @@ The ResNet-1D encoder instead produces a 128-dimensional, pre-dropout representa
 epoch. Layer specifications are given in Table~\ref{tab:sup_architecture}. Encoders are trained and
 selected before sequence training. Their selected checkpoints are loaded in evaluation mode, and
 features are cached without gradients. E1 reuses the E0 encoder and its features within the same
-fold and seed; its sequence training settings differ from E0 (Table~\ref{tab:sup_training}). E1-E0
-is therefore a sequence-model configuration comparison, not an architecture-only effect. E2-E1
+fold and seed; its sequence training settings differ from E0 (Table~\ref{tab:sup_training}). E1$-$E0
+is therefore a sequence-model configuration comparison, not an architecture-only effect. E2$-$E1
 replaces the feature/context package, including encoder training and selection, while retaining the
 specified TCN recipe.
 
@@ -101,7 +103,7 @@ own input variant.}
 \label{tab:sup_training}
 \begin{tabularx}{\textwidth}{l*{4}{>{\raggedright\arraybackslash}X}}
 \toprule
-Setting & CNN15 (E0/E1) & BiLSTM (E0) & ResNet (E2-E6) & TCN (E1-E6) \\
+Setting & CNN15 (E0/E1) & BiLSTM (E0) & ResNet (E2$-$E6) & TCN (E1$-$E6) \\
 \midrule
 Optimiser & Adam & Adam & AdamW & Adam \\
 Learning rate & $10^{-3}$ & $10^{-2}$ & $10^{-3}$ & $5\times10^{-4}$ \\
@@ -159,7 +161,7 @@ Whole retained recordings are the sequence units for training and inference. Bat
 unknown/movement labels are excluded from the loss and metrics; unknown epochs retain their
 positions in the signal sequence. The TCN masks padded positions after the input projection and
 each convolutional sub-block. Its theoretical receptive field is
-$1+2(3-1)(1+2+4+8+16+32)=253$ feature epochs, spanning up to 126 epochs on each side, subject to
+$1+2(3--1)(1+2+4+8+16+32)=253$ feature epochs, spanning up to 126 epochs on each side, subject to
 recording boundaries. This is not a causal architecture. E1 also receives the explicit neighbouring
 signal epochs through its CNN features. The 100-epoch input used for timing below is a benchmark
 shape, not a training-window length.
@@ -170,7 +172,7 @@ Signal values are read in physical microvolts. Sleep-EDF uses Fpz-Cz at 100 Hz. 
 and is resampled continuously from 125 to 100 Hz with polyphase resampling (up/down = 4/5,
 Kaiser window $\beta=5$, constant padding). Table~\ref{tab:sup_variants} specifies operations after
 this cohort-specific loading/resampling step. Filtering uses a fourth-order Butterworth design
-with 0.5-30 Hz cutoffs, implemented as second-order sections with forward-backward filtering.
+with 0.5--30 Hz cutoffs, implemented as second-order sections with forward-backward filtering.
 It operates on the continuous recording before epoch extraction and trimming.
 
 \begin{table}[H]
@@ -208,9 +210,9 @@ the preprocessing audit of the first SHHS1 sample recorded no clipped samples. T
 so dividing the input by 100 is equivalent to multiplying the stabilising constant $\epsilon$ of that
 layer by $10^4$ when using batch statistics. Thus scale invariance is approximate at finite
 $\epsilon$; running-statistic initialisation and numerical precision can also affect the fitted
-models (Supplementary Section S4). For E6, Sleep-EDF recordings last 17-24\,h (median 23\,h) and include
+models (Supplementary Section S4). For E6, Sleep-EDF recordings last 17--24\,h (median 23\,h) and include
 long daytime segments outside the evaluation window, whereas SHHS1 recordings cover the night only
-(holdout sample: 5.5-9.1\,h, median 8.8\,h). The per-recording standard deviation of the E6 input
+(holdout sample: 5.5--9.1\,h, median 8.8\,h). The per-recording standard deviation of the E6 input
 within the evaluation window therefore has a median of 0.77 on Sleep-EDF but about 0.99 on SHHS1
 (Supplementary Section S3, S6).
 
@@ -241,7 +243,7 @@ depend on the recipes and stopping rules in Table~\ref{tab:sup_training}.
 Bootstrap samples draw subjects with replacement and use the same sampled subjects for both
 configurations, retaining all nights of each sampled subject. The 95\% percentile interval uses
 the 2.5th and 97.5th percentiles of 10,000 paired resamples. The primary Sleep-EDF analysis uses
-bootstrap seed 2026; context analyses use 2028, and the SHHS1 E1/E2 and E3-E2 extensions use
+bootstrap seed 2026; context analyses use 2028, and the SHHS1 E1/E2 and E3$-$E2 extensions use
 2031 and 2032, respectively. Each analysis retains its archived seed and comparison family.
 Two-sided Wilcoxon tests use \texttt{zero\_method="wilcox"}, excluding zero differences from
 ranking, no continuity correction and automatic selection of the calculation method. If all paired
@@ -254,7 +256,7 @@ interpreted as equivalence between configurations.
 \subsection*{First SHHS1 sample: performance, N3 errors and ADAST budgets}
 
 The following three tables accompany Sections 4.4, 4.6 and 4.7 of the main text.
-On this sample, the unadjusted exact sign tests for the two primary comparisons, E3-E0 and E3-E6, gave
+On this sample, the unadjusted exact sign tests for the two primary comparisons, E3$-$E0 and E3$-$E6, gave
 $p = 3.8\times10^{-13}$ and $1.9\times10^{-7}$. Within $\pm1$ epoch of a reference-label transition, the
 pooled boundary \mf\ of E3 exceeded that of E0 by 0.0366 and that of E6 by 0.0183. For E6, N3 recall
 near reference-label changes was 0.0721, compared with 0.0733 for E3.
@@ -375,10 +377,10 @@ is applied to the four tests within each seed, not to the marginal bootstrap int
 \toprule
 Contrast & Seed 42: $\Delta$ [\ci], $p_{\rm Holm}$ & Seed 123: $\Delta$ [\ci], $p_{\rm Holm}$ \\
 \midrule
-E1-E0 & .004811 [$-.000915$, .010193], .1022 & .002188 [$-.002870$, .007043], .9130 \\
-E2-E1 & .003251 [$-.002370$, .008808], .1036 & .005143 [$-.000571$, .011292], .2400 \\
-E3-E2 & .006962 [.000305, .014520], .8989 & .005478 [$-.002611$, .015796], .9130 \\
-E3-E6 & .021319 [.012179, .030698], .0012 & .010249 [.002435, .017989], .1313 \\
+E1$-$E0 & .004811 [$-.000915$, .010193], .1022 & .002188 [$-.002870$, .007043], .9130 \\
+E2$-$E1 & .003251 [$-.002370$, .008808], .1036 & .005143 [$-.000571$, .011292], .2400 \\
+E3$-$E2 & .006962 [.000305, .014520], .8989 & .005478 [$-.002611$, .015796], .9130 \\
+E3$-$E6 & .021319 [.012179, .030698], .0012 & .010249 [.002435, .017989], .1313 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -431,17 +433,17 @@ W/T/L denotes subjects with a positive/zero/negative paired difference.}
 \toprule
 Contrast & $\Delta$ subject-mean \mf & \ci & $p_{\rm Holm}$ & W/T/L \\
 \midrule
-E4-E2 & +.0323 & [.0236, .0410] & $7.40\times10^{-13}$ & 135/1/44 \\
-E3-E4 & -.0098 & [$-.0125$, $-.0073$] & $1.89\times10^{-10}$ & 56/1/123 \\
-E3-E6 & +.0131 & [.0023, .0239] & .0085 & 111/0/69 \\
-E3-E0 & +.0331 & [.0225, .0438] & $5.19\times10^{-9}$ & 131/0/49 \\
+E4$-$E2 & +.0323 & [.0236, .0410] & $7.40\times10^{-13}$ & 135/1/44 \\
+E3$-$E4 & -.0098 & [$-.0125$, $-.0073$] & $1.89\times10^{-10}$ & 56/1/123 \\
+E3$-$E6 & +.0131 & [.0023, .0239] & .0085 & 111/0/69 \\
+E3$-$E0 & +.0331 & [.0225, .0438] & $5.19\times10^{-9}$ & 131/0/49 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[H]
 \centering\small
-\caption{Additional E4-E3 comparisons on the same 180 SHHS1 participants and 169,012 labelled
+\caption{Additional E4$-$E3 comparisons on the same 180 SHHS1 participants and 169,012 labelled
 epochs. Every result uses the mean probabilities of all ten source-fold models at its stated seed.
 Intervals are paired subject-cluster percentile bootstrap intervals (10,000 resamples, bootstrap
 seed 2031), not intervals over training seeds. E4 seed 42 was newly inferred from historical
@@ -458,8 +460,8 @@ Seed & Model & Subject-mean \mf & Pooled \mf & N3 recall & N3 F1 \\
 123 & E3 & .5634 & .6031 & .2410 & .3840 \\
 123 & E4 & .5732 & .6147 & .2591 & .4068 \\
 \midrule
-\multicolumn{2}{l}{E4-E3, seed 42} & +.0131 & \multicolumn{3}{l}{\ci\ [.0111, .0153] for subject-mean difference} \\
-\multicolumn{2}{l}{E4-E3, seed 123} & +.0098 & \multicolumn{3}{l}{\ci\ [.0073, .0125] for subject-mean difference} \\
+\multicolumn{2}{l}{E4$-$E3, seed 42} & +.0131 & \multicolumn{3}{l}{\ci\ [.0111, .0153] for subject-mean difference} \\
+\multicolumn{2}{l}{E4$-$E3, seed 123} & +.0098 & \multicolumn{3}{l}{\ci\ [.0073, .0125] for subject-mean difference} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -469,16 +471,16 @@ Seed & Model & Subject-mean \mf & Pooled \mf & N3 recall & N3 F1 \\
 \caption{Secondary and post-hoc SHHS1 paired contrasts (seed 42; 180 subjects).
 Intervals are marginal 95\% paired subject-cluster percentile bootstrap intervals for the
 subject-mean difference, with 10,000 resamples. The E1/E2 extension was specified before their
-SHHS1 inference but after the cohort had been evaluated with E0/E3/E6. E3-E2 was specified
+SHHS1 inference but after the cohort had been evaluated with E0/E3/E6. E3$-$E2 was specified
 after their separate marginal results had been examined.}
 \label{tab:sup_shhs_secondary_paired}
 \begin{tabular}{lrrrr}
 \toprule
 Contrast & $\Delta$ subject-mean \mf & \ci & $p$ & W/T/L \\
 \midrule
-E1-E0 & +.00651 & [.00192, .01087] & $.00325^{a}$ & 108/0/72 \\
-E2-E1 & -.01280 & [$-.02209$, $-.00350$] & $.01005^{a}$ & 80/0/100 \\
-E3-E2 & +.04750 & [.03724, .05792] & $2.35\times10^{-17}$\,$^{b}$ & 147/0/33 \\
+E1$-$E0 & +.00651 & [.00192, .01087] & $.00325^{a}$ & 108/0/72 \\
+E2$-$E1 & -.01280 & [$-.02209$, $-.00350$] & $.01005^{a}$ & 80/0/100 \\
+E3$-$E2 & +.04750 & [.03724, .05792] & $2.35\times10^{-17}$\,$^{b}$ & 147/0/33 \\
 \bottomrule
 \end{tabular}
 
@@ -739,7 +741,7 @@ used for fitting, stopping, class weights or selection. All 20 checkpoints are f
 the new target ensemble evaluation, and all ten probabilities are averaged in each arm.
 The historical E3 model is not the matched unweighted control.
 
-Verified CPU pairs from folds 0-5 are reused; folds 6-9 are fresh CUDA pairs, not continuations
+Verified CPU pairs from folds 0--5 are reused; folds 6--9 are fresh CUDA pairs, not continuations
 of partially trained CPU models. Both arms within each fold use the same backend. PyTorch
 versions are 2.5.1 (CPU) and 2.11.0 (CUDA); the experiment is therefore mixed-backend, not a
 uniform-backend replication. Independent CPU replay of CUDA source-validation and outer-test
@@ -1143,11 +1145,11 @@ Training/validation used 2,975.78 seconds on T4, excluding upload and result ver
 \subsection*{ADAST: full-source ten-fold transfer and matched budget contrast}
 
 The full-source comparison comprises ten source-only/ADAST pairs at seed 123.
-Four previously evaluated models from folds 0-1 are reused after checking their
+Four previously evaluated models from folds 0--1 are reused after checking their
 checkpoint, input and verification hashes; the retained-source-CE and other ablation
-arms are excluded. Sixteen models for folds 2-9 complete 30 epochs on T4 CUDA.
+arms are excluded. Sixteen models for folds 2--9 complete 30 epochs on T4 CUDA.
 Each epoch covers the entire source-training partition for that fold, yielding
-35,670-37,620 updates per model over 30 epochs. The paired arms share initial
+35,670--37,620 updates per model over 30 epochs. The paired arms share initial
 weights and source permutations and use the same five unlabelled adaptation
 participants (4,989 epochs). The input bundle physically contains the source
 records covered by the earlier authorised fold-0/1 train/validation union; each
@@ -1350,12 +1352,12 @@ The protocol was committed to the project repository before any holdout recordin
 Commit timestamps are recorded by the authors' machine; as an independent record, the GitHub server
 logged an automated test run on the protocol commit \texttt{a275617} at 11:18:09 UTC on 10 October 2026
 (GitHub Actions run 38047923110), two days before the analysis script was committed at \texttt{2019b51}. It consists of the document \nolinkurl{docs/SHHS_HOLDOUT_CONFIRMATORY_PROTOCOL_V1.md} and the
-configuration file \nolinkurl{configs/shhs_holdout_confirmatory_v1.json}. Participants ranked 221-720 in the SHA-256 ranking used for the first SHHS1 sample
-formed the holdout sample; ranks 1-220 reproduced the roles of the first selection exactly. One
+configuration file \nolinkurl{configs/shhs_holdout_confirmatory_v1.json}. Participants ranked 221--720 in the SHA-256 ranking used for the first SHHS1 sample
+formed the holdout sample; ranks 1--220 reproduced the roles of the first selection exactly. One
 ranked participant (rank 490) had no recording available from NSRR and was replaced, before any
 processing, by the participant at rank 721. All 500 recordings passed the technical audit (EDF and
 annotation hashes, channel, sampling rate and duration) without further replacement. The final
-sample comprised 500 participants (249 men and 251 women; age $62.8\pm11.5$ years, range 40-90) and
+sample comprised 500 participants (249 men and 251 women; age $62.8\pm11.5$ years, range 40--90) and
 458{,}409 scored epochs in the evaluation windows.
 
 Twelve arms were evaluated with locked checkpoints: E0, E2, E3, E4 and E6 at seeds 42 and 123, and the
@@ -1365,11 +1367,11 @@ was restored from the audited repository history or from a verified backup and c
 recorded SHA-256 value. No metric was computed before all arms had finished. The analysis script was
 committed before it was run and was run once.
 
-The confirmatory family comprised H1 (E3-E0), H2 (E3-E6) and H3 (E3-E2) at seed 42. A
+The confirmatory family comprised H1 (E3$-$E0), H2 (E3$-$E6) and H3 (E3$-$E2) at seed 42. A
 hypothesis was confirmed if its Holm-adjusted two-sided Wilcoxon $p$-value was below 0.05 and its
 paired subject-cluster bootstrap interval (10{,}000 resamples, seed 2040) lay entirely above zero. The
 primary metric was subject-mean \mf\ over five fixed classes, with the F1 of an absent class set to 0,
-as for the first sample. The protocol pre-specified seven secondary analyses (S1-S7), reported below.
+as for the first sample. The protocol pre-specified seven secondary analyses (S1--S7), reported below.
 All intervals condition on the trained checkpoints and do not include training variability.
 
 \begin{table}[H]
@@ -1410,29 +1412,29 @@ difference; pooled columns give observed differences in pooled metrics.}
 \toprule
  & Contrast & $\Delta$ & \ci & $p_{\mathrm{Holm}}$ & W/T/L & Median & Pooled \mf & Pooled $\kappa$ \\
 \midrule
-H1 & E3-E0 & 0.0467 & $[$0.0403, 0.0531$]$ & $2.0\times10^{-37}$ & 380/0/120 & 0.0398 & 0.0418 & 0.0581 \\
-H2 & E3-E6 & 0.0293 & $[$0.0231, 0.0354$]$ & $2.8\times10^{-22}$ & 342/0/158 & 0.0282 & 0.0319 & 0.0322 \\
-H3 & E3-E2 & 0.0515 & $[$0.0460, 0.0571$]$ & $1.2\times10^{-50}$ & 395/1/104 & 0.0400 & 0.0497 & 0.0583 \\
+H1 & E3$-$E0 & 0.0467 & $[$0.0403, 0.0531$]$ & $2.0\times10^{-37}$ & 380/0/120 & 0.0398 & 0.0418 & 0.0581 \\
+H2 & E3$-$E6 & 0.0293 & $[$0.0231, 0.0354$]$ & $2.8\times10^{-22}$ & 342/0/158 & 0.0282 & 0.0319 & 0.0322 \\
+H3 & E3$-$E2 & 0.0515 & $[$0.0460, 0.0571$]$ & $1.2\times10^{-50}$ & 395/1/104 & 0.0400 & 0.0497 & 0.0583 \\
 \addlinespace
-S1 & E3-E0 & 0.0375 & $[$0.0307, 0.0444$]$ & $1.1\times10^{-22}$ & 345/0/155 & 0.0341 & 0.0322 & 0.0466 \\
-S1 & E3-E6 & 0.0129 & $[$0.0057, 0.0199$]$ & $1.7\times10^{-5}$ & 285/0/215 & 0.0119 & 0.0109 & 0.0159 \\
-S1 & E3-E2 & 0.0270 & $[$0.0217, 0.0325$]$ & $1.8\times10^{-18}$ & 327/1/172 & 0.0167 & 0.0256 & 0.0303 \\
+S1 & E3$-$E0 & 0.0375 & $[$0.0307, 0.0444$]$ & $1.1\times10^{-22}$ & 345/0/155 & 0.0341 & 0.0322 & 0.0466 \\
+S1 & E3$-$E6 & 0.0129 & $[$0.0057, 0.0199$]$ & $1.7\times10^{-5}$ & 285/0/215 & 0.0119 & 0.0109 & 0.0159 \\
+S1 & E3$-$E2 & 0.0270 & $[$0.0217, 0.0325$]$ & $1.8\times10^{-18}$ & 327/1/172 & 0.0167 & 0.0256 & 0.0303 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection*{Secondary analyses}
 
-\textbf{S2: E4-E3 and between-seed differences.} The protocol expected E4-E3 not to exceed
-the between-seed differences of the same configuration systematically, and stated that E4-E3 would
+\textbf{S2: E4$-$E3 and between-seed differences.} The protocol expected E4$-$E3 not to exceed
+the between-seed differences of the same configuration systematically, and stated that E4$-$E3 would
 not be interpreted as an effect of preprocessing. This expectation was met at seed 123 but not at seed
-42, where E4-E3 (0.0139) exceeded the absolute value of each between-seed difference (largest
+42, where E4$-$E3 (0.0139) exceeded the absolute value of each between-seed difference (largest
 0.0118, for E6). The between-seed difference of E2, which was not part of S2, was $-0.0199$
 (seed 42 minus seed 123).
 
 \begin{table}[H]
 \centering\small
-\caption{S2: E4-E3 at each seed and between-seed differences of identical configurations (seed 42
+\caption{S2: E4$-$E3 at each seed and between-seed differences of identical configurations (seed 42
 minus seed 123). Intervals only; no hypothesis tests were pre-specified.}
 \label{tab:sup_holdout_s2}
 \begin{tabular}{lrrrr}
@@ -1501,7 +1503,7 @@ averaged only over the classes present in each participant's reference labels, a
 contrasts remained confirmed (Table~\ref{tab:sup_holdout_s5s7}).
 
 \textbf{S6: input scale of E6.} Within the evaluation windows, the median per-recording standard
-deviation of the E6 input was 0.992 (interquartile range 0.855-1.000) on the holdout
+deviation of the E6 input was 0.992 (interquartile range 0.855--1.000) on the holdout
 sample, compared with a median of 0.77 on Sleep-EDF. Because E6 standardises each complete
 recording, the evaluated night of a Sleep-EDF recording, which also contains long daytime segments,
 reaches the model at a smaller relative scale than an SHHS1 night.
@@ -1521,9 +1523,9 @@ on the pooled 680 participants (descriptive). $\Delta$ is the difference in subj
 \cmidrule(lr){2-4}\cmidrule(lr){5-6}
 Contrast & $\Delta$ & \ci & $p_{\mathrm{Holm}}$ & $\Delta$ & \ci \\
 \midrule
-E3-E0 & 0.0482 & $[$0.0416, 0.0549$]$ & $4.3\times10^{-37}$ & 0.0452 & $[$0.0398, 0.0506$]$ \\
-E3-E6 & 0.0296 & $[$0.0231, 0.0359$]$ & $3.7\times10^{-22}$ & 0.0288 & $[$0.0237, 0.0337$]$ \\
-E3-E2 & 0.0535 & $[$0.0476, 0.0595$]$ & $3.2\times10^{-50}$ & 0.0504 & $[$0.0456, 0.0554$]$ \\
+E3$-$E0 & 0.0482 & $[$0.0416, 0.0549$]$ & $4.3\times10^{-37}$ & 0.0452 & $[$0.0398, 0.0506$]$ \\
+E3$-$E6 & 0.0296 & $[$0.0231, 0.0359$]$ & $3.7\times10^{-22}$ & 0.0288 & $[$0.0237, 0.0337$]$ \\
+E3$-$E2 & 0.0535 & $[$0.0476, 0.0595$]$ & $3.2\times10^{-50}$ & 0.0504 & $[$0.0456, 0.0554$]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1603,11 +1605,11 @@ Seed & Fold & Epoch E3/E4 & Stem & Encoder & TCN & BN ratio & Between seeds \\
 \end{tabular}
 \end{table}
 
-Across the 20 seed-fold pairs, the stem kernels of E3 and E4 had cosine similarity 0.909-0.974, the
-median encoder similarity was 0.696-0.863 and the median TCN similarity was 0.920-0.993. Two seeds of
+Across the 20 seed-fold pairs, the stem kernels of E3 and E4 had cosine similarity 0.909--0.974, the
+median encoder similarity was 0.696--0.863 and the median TCN similarity was 0.920--0.993. Two seeds of
 the same configuration gave a median encoder similarity of $-0.005$ to $0.012$ and a stem similarity of
 $-0.112$ to $-0.032$. When both runs selected the same epoch, the first-layer running variance of E4
-was 9{,}208-10{,}666 times that of E3. The running variance of E3 was at least 0.0439, so
+was 9{,}208--10{,}666 times that of E3. The running variance of E3 was at least 0.0439, so
 $\varepsilon=10^{-5}$ was at most 0.023\% of it. Early stopping selected different epochs in 8 of the 20
 pairs (3 at seed 42 and 5 at seed 123). For each seed, the trained E3 and E4 models are therefore much
 closer to each other than to a model trained with another seed, consistent with substantial absorption
@@ -1637,8 +1639,8 @@ after the confirmatory analysis because the band-pass-only form is the recommend
 (Supplementary Section S4); no scale factor or adaptation setting depended on holdout results.
 
 \textbf{Signal amplitude.} The per-recording standard deviation of the band-pass-filtered input over the
-stored epochs had a median of 14.36\,$\mu$V (interquartile range 11.63-16.82) in
-the 153 Sleep-EDF recordings and 16.50\,$\mu$V (13.72-21.26) in the 500 holdout recordings, a ratio
+stored epochs had a median of 14.36\,$\mu$V (interquartile range 11.63--16.82) in
+the 153 Sleep-EDF recordings and 16.50\,$\mu$V (13.72--21.26) in the 500 holdout recordings, a ratio
 of 1.149.
 
 \begin{table}[H]
@@ -1718,7 +1720,7 @@ is checked before every step and recorded in every A2 output. A2 fixed five desc
 (A-E), with all arms, seeds, the window length, subset sizes, numbers of draws and interpretation rules.
 Because the holdout labels had already been used in the confirmatory analysis and in A1, A2 is a
 post-confirmatory, descriptive analysis: it makes no hypothesis tests and does not retest or
-reinterpret H1-H3. Intervals are paired subject-cluster bootstrap intervals (10{,}000 resamples, seed
+reinterpret H1--H3. Intervals are paired subject-cluster bootstrap intervals (10{,}000 resamples, seed
 2043).
 
 \textbf{Training and inference.} Fifty new runs were trained on Sleep-EDF with the locked split, runner
@@ -1746,11 +1748,11 @@ result is reported as observed. Bitwise reproduction across machines and library
 not guaranteed for the TCN stage.
 
 \textbf{A: normalisation scope.} Within the evaluation windows, the median per-recording standard
-deviation of the E6 input was 0.770 (interquartile range 0.672-0.870) on Sleep-EDF and 0.992
-(0.855-1.000) on the holdout sample; for E6R it was 0.987 (0.978-0.992) and 0.993 (0.980-0.999). E6R
+deviation of the E6 input was 0.770 (interquartile range 0.672--0.870) on Sleep-EDF and 0.992
+(0.855--1.000) on the holdout sample; for E6R it was 0.987 (0.978--0.992) and 0.993 (0.980--0.999). E6R
 thus presents both cohorts to the model at the same relative scale. Its pooled out-of-fold Sleep-EDF
 \mf\ was 0.7702 at seed 42 and 0.7749 at seed 123, against 0.7691 and 0.7780 for E6 and 0.7891 and
-0.7887 for E4 (Table~\ref{tab:sup_a2_arms}). The locked interpretation rule required E4-E6R to have an
+0.7887 for E4 (Table~\ref{tab:sup_a2_arms}). The locked interpretation rule required E4$-$E6R to have an
 interval above zero at both seeds for the manuscript to retain the statement that preserving
 calibrated amplitude transferred better than $z$-scoring; this condition was met
 (Table~\ref{tab:sup_a2_scope}).
@@ -1789,25 +1791,25 @@ differences are computed over epochs.}
 \toprule
 Seed & Contrast & $\Delta$ subject-mean \mf\ (\ci) & $\Delta$ pooled \mf\ (\ci) & $\Delta$ N3 recall (\ci) & $\Delta$ N3$\to$N2 rate (\ci) \\
 \midrule
-42 & E4-E6R & 0.0364 [0.0313, 0.0415] & 0.0453 [0.0396, 0.0510] & 0.1346 [0.1211, 0.1481] & $-$0.1305 [$-$0.1450, $-$0.1157] \\
-42 & E3-E6R & 0.0225 [0.0171, 0.0278] & 0.0296 [0.0237, 0.0355] & 0.1154 [0.1019, 0.1286] & $-$0.1150 [$-$0.1295, $-$0.1003] \\
-42 & E6R-E6 & 0.0068 [0.0012, 0.0124] & 0.0023 [$-$0.0037, 0.0082] & $-$0.0591 [$-$0.0741, $-$0.0447] & 0.0706 [0.0552, 0.0864] \\
+42 & E4$-$E6R & 0.0364 [0.0313, 0.0415] & 0.0453 [0.0396, 0.0510] & 0.1346 [0.1211, 0.1481] & $-$0.1305 [$-$0.1450, $-$0.1157] \\
+42 & E3$-$E6R & 0.0225 [0.0171, 0.0278] & 0.0296 [0.0237, 0.0355] & 0.1154 [0.1019, 0.1286] & $-$0.1150 [$-$0.1295, $-$0.1003] \\
+42 & E6R$-$E6 & 0.0068 [0.0012, 0.0124] & 0.0023 [$-$0.0037, 0.0082] & $-$0.0591 [$-$0.0741, $-$0.0447] & 0.0706 [0.0552, 0.0864] \\
 \addlinespace
-123 & E4-E6R & 0.0230 [0.0177, 0.0282] & 0.0305 [0.0248, 0.0363] & 0.1059 [0.0931, 0.1187] & $-$0.1017 [$-$0.1156, $-$0.0872] \\
-123 & E3-E6R & 0.0139 [0.0083, 0.0194] & 0.0203 [0.0141, 0.0265] & 0.0877 [0.0751, 0.1002] & $-$0.0864 [$-$0.1000, $-$0.0725] \\
-123 & E6R-E6 & $-$0.0010 [$-$0.0071, 0.0051] & $-$0.0094 [$-$0.0157, $-$0.0032] & $-$0.0503 [$-$0.0650, $-$0.0359] & 0.0558 [0.0406, 0.0714] \\
+123 & E4$-$E6R & 0.0230 [0.0177, 0.0282] & 0.0305 [0.0248, 0.0363] & 0.1059 [0.0931, 0.1187] & $-$0.1017 [$-$0.1156, $-$0.0872] \\
+123 & E3$-$E6R & 0.0139 [0.0083, 0.0194] & 0.0203 [0.0141, 0.0265] & 0.0877 [0.0751, 0.1002] & $-$0.0864 [$-$0.1000, $-$0.0725] \\
+123 & E6R$-$E6 & $-$0.0010 [$-$0.0071, 0.0051] & $-$0.0094 [$-$0.0157, $-$0.0032] & $-$0.0503 [$-$0.0650, $-$0.0359] & 0.0558 [0.0406, 0.0714] \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
 \textbf{B: five training seeds of E4.} Across seeds 42, 123, 2025, 2027 and 2029, holdout subject-mean
-\mf\ had a mean of 0.5720, a sample standard deviation of 0.0077 and a range of 0.5634-0.5822, whereas
+\mf\ had a mean of 0.5720, a sample standard deviation of 0.0077 and a range of 0.5634--0.5822, whereas
 pooled Sleep-EDF \mf\ had a mean of 0.7884, a standard deviation of 0.0018 and a range of
-0.7854-0.7903; the two dispersions use different aggregations (subject-mean ensemble scores versus
+0.7854--0.7903; the two dispersions use different aggregations (subject-mean ensemble scores versus
 pooled out-of-fold scores) and are not directly comparable. Nine of the ten pairwise between-seed
 intervals excluded zero, and the largest absolute
 difference was 0.0189 (Table~\ref{tab:sup_a2_seeds}). Each of the 20 differences between an E4 seed and
-E0 or E2 at seed 42 or 123 was larger, 0.0313-0.0700 (Table~\ref{tab:sup_a2_contrasts}; lowest interval
+E0 or E2 at seed 42 or 123 was larger, 0.0313--0.0700 (Table~\ref{tab:sup_a2_contrasts}; lowest interval
 bound 0.0263), which meets the locked rule for describing these configuration contrasts as exceeding
 the observed between-seed range of E4.
 
@@ -1820,16 +1822,16 @@ seed minus second).}
 \toprule
 Contrast & $\Delta$ subject-mean \mf & \ci & $\Delta$ pooled \mf \\
 \midrule
-42-123 & 0.0094 & [0.0076, 0.0112] & 0.0105 \\
-42-2025 & 0.0143 & [0.0123, 0.0163] & 0.0146 \\
-42-2027 & $-$0.0046 & [$-$0.0063, $-$0.0029] & $-$0.0055 \\
-42-2029 & 0.0090 & [0.0069, 0.0111] & 0.0084 \\
-123-2025 & 0.0049 & [0.0028, 0.0070] & 0.0042 \\
-123-2027 & $-$0.0140 & [$-$0.0162, $-$0.0117] & $-$0.0159 \\
-123-2029 & $-$0.0004 & [$-$0.0029, 0.0021] & $-$0.0020 \\
-2025-2027 & $-$0.0189 & [$-$0.0211, $-$0.0166] & $-$0.0201 \\
-2025-2029 & $-$0.0053 & [$-$0.0072, $-$0.0034] & $-$0.0062 \\
-2027-2029 & 0.0136 & [0.0116, 0.0155] & 0.0139 \\
+42--123 & 0.0094 & [0.0076, 0.0112] & 0.0105 \\
+42--2025 & 0.0143 & [0.0123, 0.0163] & 0.0146 \\
+42--2027 & $-$0.0046 & [$-$0.0063, $-$0.0029] & $-$0.0055 \\
+42--2029 & 0.0090 & [0.0069, 0.0111] & 0.0084 \\
+123--2025 & 0.0049 & [0.0028, 0.0070] & 0.0042 \\
+123--2027 & $-$0.0140 & [$-$0.0162, $-$0.0117] & $-$0.0159 \\
+123--2029 & $-$0.0004 & [$-$0.0029, 0.0021] & $-$0.0020 \\
+2025--2027 & $-$0.0189 & [$-$0.0211, $-$0.0166] & $-$0.0201 \\
+2025--2029 & $-$0.0053 & [$-$0.0072, $-$0.0034] & $-$0.0062 \\
+2027--2029 & 0.0136 & [0.0116, 0.0155] & 0.0139 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1854,7 +1856,7 @@ E4 seed & $-$E0 (42) & $-$E0 (123) & $-$E2 (42) & $-$E2 (123) \\
 
 \textbf{C: ensembles and single models.} Each of the ten fold models of every zero-shot arm was also
 scored alone on the holdout sample (Table~\ref{tab:sup_a2_single}). The ensemble exceeded the mean of its
-single models by 0.0121-0.0327 in subject-mean \mf, with every interval above zero, and single models
+single models by 0.0121--0.0327 in subject-mean \mf, with every interval above zero, and single models
 of one arm differed by up to 0.18 (E2, seed 123). N3 recall was slightly higher for single models than
 for the ensemble in every arm, so ensembling did not cause the N3 deficit. Measured with single models,
 as on Sleep-EDF, the drop in pooled \mf\ between the cohorts was 0.2107 and 0.2134 for E3 at seeds 42 and
@@ -1871,21 +1873,21 @@ subject-mean \mf, with interval.}
 \toprule
 Arm & Seed & Single subject-mean \mf & Ensemble & Gain (\ci) & N3 recall, single & N3 recall, ensemble \\
 \midrule
-E0 & 42 & 0.5049 (0.4574-0.5365) & 0.5170 & 0.0121 [0.0108, 0.0134] & 0.2636 & 0.2565 \\
-E0 & 123 & 0.5054 (0.4668-0.5556) & 0.5216 & 0.0162 [0.0149, 0.0177] & 0.2567 & 0.2506 \\
-E2 & 42 & 0.4857 (0.4134-0.5461) & 0.5122 & 0.0265 [0.0239, 0.0291] & 0.2568 & 0.2484 \\
-E2 & 123 & 0.4997 (0.4077-0.5857) & 0.5321 & 0.0324 [0.0296, 0.0351] & 0.2504 & 0.2402 \\
-E3 & 42 & 0.5391 (0.4280-0.5911) & 0.5637 & 0.0246 [0.0226, 0.0266] & 0.2637 & 0.2549 \\
-E3 & 123 & 0.5356 (0.4974-0.5708) & 0.5591 & 0.0235 [0.0214, 0.0255] & 0.2499 & 0.2392 \\
-E4 & 42 & 0.5567 (0.5111-0.5951) & 0.5776 & 0.0209 [0.0191, 0.0228] & 0.2809 & 0.2742 \\
-E4 & 123 & 0.5442 (0.4763-0.5710) & 0.5682 & 0.0240 [0.0221, 0.0258] & 0.2640 & 0.2574 \\
-E4 & 2025 & 0.5393 (0.4882-0.5605) & 0.5634 & 0.0241 [0.0222, 0.0259] & 0.2560 & 0.2471 \\
-E4 & 2027 & 0.5539 (0.5195-0.5855) & 0.5822 & 0.0284 [0.0262, 0.0305] & 0.2716 & 0.2658 \\
-E4 & 2029 & 0.5465 (0.4770-0.5727) & 0.5686 & 0.0221 [0.0200, 0.0242] & 0.2484 & 0.2417 \\
-E6 & 42 & 0.5017 (0.4463-0.5452) & 0.5344 & 0.0327 [0.0303, 0.0351] & 0.2126 & 0.1987 \\
-E6 & 123 & 0.5148 (0.4481-0.5462) & 0.5462 & 0.0314 [0.0290, 0.0338] & 0.2117 & 0.2018 \\
-E6R & 42 & 0.5199 (0.4861-0.5466) & 0.5412 & 0.0213 [0.0196, 0.0230] & 0.1538 & 0.1395 \\
-E6R & 123 & 0.5293 (0.5069-0.5644) & 0.5452 & 0.0159 [0.0145, 0.0174] & 0.1631 & 0.1515 \\
+E0 & 42 & 0.5049 (0.4574--0.5365) & 0.5170 & 0.0121 [0.0108, 0.0134] & 0.2636 & 0.2565 \\
+E0 & 123 & 0.5054 (0.4668--0.5556) & 0.5216 & 0.0162 [0.0149, 0.0177] & 0.2567 & 0.2506 \\
+E2 & 42 & 0.4857 (0.4134--0.5461) & 0.5122 & 0.0265 [0.0239, 0.0291] & 0.2568 & 0.2484 \\
+E2 & 123 & 0.4997 (0.4077--0.5857) & 0.5321 & 0.0324 [0.0296, 0.0351] & 0.2504 & 0.2402 \\
+E3 & 42 & 0.5391 (0.4280--0.5911) & 0.5637 & 0.0246 [0.0226, 0.0266] & 0.2637 & 0.2549 \\
+E3 & 123 & 0.5356 (0.4974--0.5708) & 0.5591 & 0.0235 [0.0214, 0.0255] & 0.2499 & 0.2392 \\
+E4 & 42 & 0.5567 (0.5111--0.5951) & 0.5776 & 0.0209 [0.0191, 0.0228] & 0.2809 & 0.2742 \\
+E4 & 123 & 0.5442 (0.4763--0.5710) & 0.5682 & 0.0240 [0.0221, 0.0258] & 0.2640 & 0.2574 \\
+E4 & 2025 & 0.5393 (0.4882--0.5605) & 0.5634 & 0.0241 [0.0222, 0.0259] & 0.2560 & 0.2471 \\
+E4 & 2027 & 0.5539 (0.5195--0.5855) & 0.5822 & 0.0284 [0.0262, 0.0305] & 0.2716 & 0.2658 \\
+E4 & 2029 & 0.5465 (0.4770--0.5727) & 0.5686 & 0.0221 [0.0200, 0.0242] & 0.2484 & 0.2417 \\
+E6 & 42 & 0.5017 (0.4463--0.5452) & 0.5344 & 0.0327 [0.0303, 0.0351] & 0.2126 & 0.1987 \\
+E6 & 123 & 0.5148 (0.4481--0.5462) & 0.5462 & 0.0314 [0.0290, 0.0338] & 0.2117 & 0.2018 \\
+E6R & 42 & 0.5199 (0.4861--0.5466) & 0.5412 & 0.0213 [0.0196, 0.0230] & 0.1538 & 0.1395 \\
+E6R & 123 & 0.5293 (0.5069--0.5644) & 0.5452 & 0.0159 [0.0145, 0.0174] & 0.1631 & 0.1515 \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -1900,7 +1902,7 @@ or from all 500 recordings, the fold-mean N3 prior rose only to 0.030 and 0.029,
 reference share, and N3 recall fell from 0.240 for the temperature-scaled ensemble without adjustment to
 0.134 and 0.129 (Table~\ref{tab:sup_a2_em}). Random subsets converged to the same value as they grew:
 the median N3 prior was 0.028, 0.029 and 0.029 for 5, 20 and 100 recordings, and its 95\% range narrowed
-from 0-0.109 to 0.020-0.042. Larger samples therefore removed the variability of the estimate but not
+from 0--0.109 to 0.020--0.042. Larger samples therefore removed the variability of the estimate but not
 its bias. Both large-sample priors lay below half the reference share and lowered N3 recall, which
 meets the locked rule attributing the EM collapse to the failure of the label-shift assumption under
 feature shift rather than to the five-recording sample.
@@ -1909,7 +1911,7 @@ feature shift rather than to the five-recording sample.
 \centering\small
 \caption{D: EM prior correction for the seed-123 E3 ensemble on the holdout sample ($n=500$; reference N3
 share 0.134). N3 prior is the mean over the ten folds. Random subsets give the median and the
-2.5-97.5th percentiles over 200 draws. Per-record: each recording estimates its own priors; its N3
+2.5--97.5th percentiles over 200 draws. Per-record: each recording estimates its own priors; its N3
 prior is the median over recordings.}
 \label{tab:sup_a2_em}
 \resizebox{\textwidth}{!}{%
@@ -1937,8 +1939,8 @@ its monitoring records. Time per optimiser step was measured on the A2 GPU throu
 itself, with the optimiser, loss, batch size and gradient clipping of each stage, using prebuilt
 batches (sequence batches with the record lengths of the fold-0 training records): 20 warm-up steps
 and three rounds of 200 timed steps. Mean step times were 6.67\,ms for one baseline CNN branch (range
-over rounds 6.31-6.94), 16.09\,ms for ResNet-1D (15.58-16.49), 83.3\,ms for the BiLSTM (81.4-85.0) and
-30.9\,ms for the TCN (30.6-31.2). No baseline CNN approached its limit of 1{,}000 epochs: the 150 CNNs
+over rounds 6.31--6.94), 16.09\,ms for ResNet-1D (15.58--16.49), 83.3\,ms for the BiLSTM (81.4--85.0) and
+30.9\,ms for the TCN (30.6--31.2). No baseline CNN approached its limit of 1{,}000 epochs: the 150 CNNs
 stopped after 29.1 epochs on average, and the ResNet-1D encoders of E3 after 19.0 of at most 40. Because
 the baseline trains 15 encoder networks per fold, it ran 22.5 times as many optimiser steps as E3, but
 each of its steps took 0.41 times as long on average (Table~\ref{tab:sup_a2_cost}). The time not
@@ -1968,6 +1970,150 @@ E6 & 2 & 753 & 344{,}928 & 1.58 & 2.41 & 34.4\% & 31.0 & 13.9 \\
 \textbf{Deviations from the amendment.} Analysis D was run on a local CPU after, rather than before, the
 GPU stage; it reads only archived E3 seed-123 probabilities and calibration fits and none of the A2
 outputs, so the order did not affect it. No other deviation occurred.
+
+%==============================================================================
+\section*{Supplementary Section S7: power spectra of the model inputs}
+\label{sec:sup_psd}
+
+This post-hoc description was not part of the holdout protocol or of amendments A1 and A2. It reads the
+stored evaluation-window epochs of the unfiltered and band-pass inputs for the 153 Sleep-EDF recordings
+and the 500 holdout SHHS1 recordings, loads no model and computes no performance metric; stage labels
+enter only through the evaluation window and the exclusion of Movement and Unknown epochs (script
+\nolinkurl{scripts/analyze_cohort_psd.py}). For each recording, the power spectral density of every
+valid 30\,s epoch was estimated at 100\,Hz by Welch's method (20\,s Hann segments, 50\% overlap, segment
+mean removed) and averaged over epochs. Power fractions are sums over the frequency bins below 0.5\,Hz,
+from 0.5 to below 30\,Hz and from 30 to 50\,Hz, divided by the total without the zero-frequency bin
+(Table~\ref{tab:sup_psd}).
+
+\begin{table}[H]
+\centering\small
+\caption{Share of signal power in three frequency ranges, as median and interquartile range over
+recordings (\%). The band-pass input retains a small share below 0.5\,Hz because the filter attenuation
+at its corner frequency is finite.}
+\label{tab:sup_psd}
+\begin{tabular}{llrrr}
+\toprule
+Cohort & Input & Below 0.5\,Hz & 0.5 to 30\,Hz & Above 30\,Hz \\
+\midrule
+Sleep-EDF ($n=153$) & Unfiltered & 26.4 [21.4, 33.2] & 68.4 [60.0, 73.4] & 3.1 [1.4, 6.9] \\
+ & Band-pass & 1.3 [1.0, 1.6] & 98.6 [98.3, 98.9] & 0.08 [0.04, 0.13] \\
+SHHS1 holdout ($n=500$) & Unfiltered & 21.0 [14.4, 28.9] & 77.7 [69.9, 84.0] & 1.1 [0.7, 1.8] \\
+ & Band-pass & 0.5 [0.4, 0.6] & 99.4 [99.3, 99.5] & 0.07 [0.05, 0.11] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Between 0.1 and 0.2\,Hz, the median SHHS1 spectrum of the unfiltered input exceeded that of Sleep-EDF by
+3.2--8.8\,dB, and from 40 to 50\,Hz it was 7.7--19.6\,dB lower; within 0.5--30\,Hz the differences ranged
+from $-2.5$ to $+4.4$\,dB for the unfiltered input and from $-2.3$ to $+4.4$\,dB for the band-pass
+input. The 0.05\,Hz bin adjoins the removed segment mean and is not interpreted. The decline of the
+unfiltered SHHS1 spectrum above 40\,Hz coincides with the transition band of the anti-aliasing filter
+applied when the 125\,Hz recordings were resampled to 100\,Hz. The spectra are shown in Fig.~4 of the
+main text.
+
+%==============================================================================
+\section*{Supplementary Section S8: stage-wise amplitude and slow-wave power of the band-pass input}
+\label{sec:sup_stage}
+
+This post-hoc description was not part of the holdout protocol or of amendments A1 and A2. It reads the
+stored evaluation-window epochs of the band-pass input and their reference stages for the 153 Sleep-EDF
+recordings and the 500 holdout SHHS1 recordings, and uses no model and no prediction (script
+\nolinkurl{scripts/analyze_stage_spectra.py}). For every valid 30\,s epoch it computes the standard
+deviation in microvolts and the power between 0.5 and 4\,Hz (Welch estimate at 100\,Hz with 4\,s Hann
+segments and 50\% overlap, summed over the band and expressed in dB relative to $1\,\mu$V$^2$). A
+recording enters the summary of a stage if it has at least ten epochs of that stage
+(Table~\ref{tab:sup_stage}).
+
+\begin{table}[H]
+\centering\small
+\caption{Epoch standard deviation and 0.5--4\,Hz power of the band-pass input by reference stage: median
+and interquartile range over recordings of the per-recording median over epochs. $n$ is the number of
+recordings with at least ten epochs of the stage.}
+\label{tab:sup_stage}
+\begin{tabular}{llrrr}
+\toprule
+Cohort & Stage & $n$ & Standard deviation ($\mu$V) & 0.5--4\,Hz power (dB) \\
+\midrule
+Sleep-EDF & W & 153 & 15.17 [11.80, 17.89] & 22.12 [19.68, 24.02] \\
+ & N1 & 153 & 8.14 [6.66, 9.99] & 16.20 [14.63, 18.38] \\
+ & N2 & 153 & 11.46 [9.39, 13.74] & 19.95 [18.45, 21.63] \\
+ & N3 & 117 & 20.84 [16.31, 23.33] & 25.81 [23.92, 27.01] \\
+ & REM & 153 & 7.40 [6.31, 8.95] & 15.59 [14.34, 17.06] \\
+\addlinespace
+SHHS1 holdout & W & 500 & 12.97 [10.62, 16.30] & 17.95 [15.80, 20.54] \\
+ & N1 & 453 & 9.17 [7.97, 10.71] & 15.63 [14.43, 17.08] \\
+ & N2 & 500 & 13.00 [11.71, 14.75] & 20.25 [19.35, 21.37] \\
+ & N3 & 455 & 18.83 [16.94, 21.11] & 24.65 [23.75, 25.59] \\
+ & REM & 478 & 8.57 [7.56, 9.89] & 15.80 [14.62, 16.97] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Within the recordings that had at least ten epochs of both stages, the ratio of the N3 to the N2 median
+standard deviation was 1.62 [1.44, 1.80] on Sleep-EDF ($n=117$) and 1.43 [1.34, 1.54] on the holdout
+sample ($n=455$), and the N3 minus N2 difference in 0.5--4\,Hz power was 4.90 [3.67, 5.97]\,dB and 4.22
+[3.57, 4.90]\,dB.
+
+Table~\ref{tab:sup_stage_sep} describes how well each quantity alone separates reference N3 from
+reference N2 epochs, pooled over the epochs of a cohort (69{,}132 N2 and 13{,}039 N3 epochs in Sleep-EDF;
+207{,}848 and 61{,}523 in the holdout sample). The rule assigns N3 to an epoch at or above a threshold;
+the threshold of a cohort is the value, among 999 quantiles of its pooled N2 and N3 epochs, that maximises
+the sum of the two rates. The analysis considers these two stages only and is not a five-stage classifier.
+
+\begin{table}[H]
+\centering\small
+\caption{Separation of reference N3 from reference N2 epochs by a single quantity of the band-pass
+input. AUC is the area under the receiver operating characteristic curve within the cohort. The last
+two columns apply the stated threshold to the epochs of the evaluated cohort.}
+\label{tab:sup_stage_sep}
+\begin{tabular}{lllrrr}
+\toprule
+Quantity & Evaluated cohort & Threshold from & AUC & N3 at or above & N2 below \\
+\midrule
+Standard deviation & Sleep-EDF & Sleep-EDF ($16.51\,\mu$V) & 0.940 & 85.6\% & 87.0\% \\
+ & SHHS1 holdout & SHHS1 holdout ($15.71\,\mu$V) & 0.892 & 90.3\% & 77.2\% \\
+ & SHHS1 holdout & Sleep-EDF ($16.51\,\mu$V) & & 84.0\% & 82.2\% \\
+ & Sleep-EDF & SHHS1 holdout ($15.71\,\mu$V) & & 88.8\% & 83.3\% \\
+\addlinespace
+0.5--4\,Hz power & Sleep-EDF & Sleep-EDF (23.62\,dB) & 0.950 & 87.2\% & 88.0\% \\
+ & SHHS1 holdout & SHHS1 holdout (22.71\,dB) & 0.913 & 90.3\% & 81.6\% \\
+ & SHHS1 holdout & Sleep-EDF (23.62\,dB) & & 77.4\% & 88.8\% \\
+ & Sleep-EDF & SHHS1 holdout (22.71\,dB) & & 93.1\% & 80.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section*{Supplementary Section S9: whole-night inference time on a CPU}
+\label{sec:sup_cpu}
+
+This post-hoc timing was not part of the holdout protocol or of amendments A1 and A2 (script
+\nolinkurl{scripts/benchmark_cpu_whole_night.py}). It calls the inference function of the holdout
+evaluation, which encodes the epochs in batches of 256, applies the sequence model to the whole night
+and takes the softmax, for the locked fold-0, seed-42 model of E0 and of E3 on the holdout recording of
+median length (932 epochs, 7.8\,h). E2, E4, E6 and E6R share the architecture of E3. Disk I/O,
+preprocessing and model loading are excluded. The processor was an Intel Core i5-13500H under Windows 11
+with Python 3.11.9 and PyTorch 2.5.1 (CPU build). For each thread setting, one untimed warm-up run per
+model was followed by five timed runs per model in alternating order (Table~\ref{tab:sup_cpu}). The
+times depend on the machine and describe one fold model; a ten-model ensemble takes ten times as long.
+
+\begin{table}[H]
+\centering\small
+\caption{Whole-night CPU inference of one fold model on a 932-epoch recording: median and range of five
+runs.}
+\label{tab:sup_cpu}
+\begin{tabular}{llrrr}
+\toprule
+Threads & Configuration & Time (s) & Epochs\,s$^{-1}$ & E0 time / E3 time \\
+\midrule
+1 & E0 & 4.31 [4.27, 4.34] & 216 & \\
+1 & E3 & 1.38 [1.35, 1.39] & 676 & 3.13 \\
+\addlinespace
+4 & E0 & 1.75 [1.74, 1.86] & 534 & \\
+4 & E3 & 0.55 [0.54, 0.57] & 1{,}699 & 3.18 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section*{Provenance}
 

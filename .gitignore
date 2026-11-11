@@ -19,6 +19,8 @@ data/cache/
 # Mặc định bỏ toàn bộ run/checkpoint lớn. Chỉ giữ lại các tóm tắt và gói công bố
 # nhẹ cần để kiểm thử một checkout sạch và truy nguyên các con số trong báo cáo.
 runs/*
+!runs/cohort_psd/
+!runs/cpu_benchmark/
 !runs/v2/
 runs/v2/*
 !runs/v2/analysis/

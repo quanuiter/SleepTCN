@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "role": "post-hoc descriptive CPU timing; one fold model per arm; machine dependent",
+  "scope": "infer_probabilities on one whole night; excludes disk I/O, preprocessing, model loading",
+  "record": "shhs1-200926.npz",
+  "fold": 0,
+  "seed": 42,
+  "encoder_batch_size": 256,
+  "warmup_runs": 1,
+  "timed_runs_per_arm": 5,
+  "order": "alternating",
+  "environment": {
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "torch": "2.5.1+cpu",
+    "numpy": "1.26.4"
+  },
+  "arms": {
+    "E0": {
+      "data_variant": "paper_raw_v1",
+      "epochs": 932,
+      "extractor_sha256": "4bc258e5c371449fa771fce7acc285caa13c319760829a0466fad0f0601021d2",
+      "sequence_checkpoint_sha256": "2a3506de597afc44f021c3c2aeac3a8e93b3387d4e7413ef24e89410f936985a"
+    },
+    "E3": {
+      "data_variant": "filtered_v2",
+      "epochs": 932,
+      "extractor_sha256": "2e6cf4cd643f2c53492b3e19251a69404cfda27a7fb8c80a1947d859bf317239",
+      "sequence_checkpoint_sha256": "8eab1095e64afa28f4a3e7a647ae6af3b18031ea136d7b8eac41b763502c431d"
+    }
+  },
+  "threads": {
+    "1": {
+      "E0": {
+        "seconds_samples": [
+          4.3136627,
+          4.3386678,
+          4.3222649,
+          4.2733224,
+          4.3100411
+        ],
+        "seconds_median": 4.3136627,
+        "seconds_min": 4.2733224,
+        "seconds_max": 4.3386678,
+        "epochs_per_second": 216.05769037064488,
+        "milliseconds_per_epoch": 4.6283934549356225
+      },
+      "E3": {
+        "seconds_samples": [
+          1.390095,
+          1.3796643,
+          1.3760557,
+          1.3524532,
+          1.3898117
+        ],
+        "seconds_median": 1.3796643,
+        "seconds_min": 1.3524532,
+        "seconds_max": 1.390095,
+        "epochs_per_second": 675.5266480403965,
+        "milliseconds_per_epoch": 1.4803265021459227
+      },
+      "speedup_e3_over_e0": 3.126603116424771
+    },
+    "4": {
+      "E0": {
+        "seconds_samples": [
+          1.7431768,
+          1.7452936,
+          1.7457826,
+          1.8553454,
+          1.8174106
+        ],
+        "seconds_median": 1.7457826,
+        "seconds_min": 1.7431768,
+        "seconds_max": 1.8553454,
+        "epochs_per_second": 533.8579958352202,
+        "milliseconds_per_epoch": 1.873157296137339
+      },
+      "E3": {
+        "seconds_samples": [
+          0.5405182,
+          0.5485338,
+          0.5555769,
+          0.5484991,
+          0.5721697
+        ],
+        "seconds_median": 0.5485338,
+        "seconds_min": 0.5405182,
+        "seconds_max": 0.5721697,
+        "epochs_per_second": 1699.074879250832,
+        "milliseconds_per_epoch": 0.5885555793991416
+      },
+      "speedup_e3_over_e0": 3.1826345067523647
+    }
+  }
+}

@@ -4,6 +4,25 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 11 November 2026: the second-amendment results are placed beside the results they qualify
+instead of in a separate section, and a post-hoc description of the input power spectra is added
+(`scripts/analyze_cohort_psd.py`, summary in `runs/cohort_psd/psd_summary.json`, new main-text figure
+`figures/results_psd_en.pdf` from `figure_sources/psd_figure.py`, Supplementary Section S7). Related
+work cites twelve further studies, and a table positions the Sleep-EDF results against published
+single-channel results. Editorial corrections: en dashes for ranges, uniform table sizes and decimals,
+the E0 training time rounded consistently (33 h 36 min), and AI-assistance statements kept in the
+declaration only. No previously reported experimental value changed.
+
+Second revision of the same day: two further post-hoc descriptions were added, a stage-wise
+description of input amplitude and 0.5-4 Hz power (`scripts/analyze_stage_spectra.py`, summary in
+`runs/cohort_psd/stage_spectra_summary.json`, Supplementary Section S8) and a whole-night CPU timing
+(`scripts/benchmark_cpu_whole_night.py`, summary in `runs/cpu_benchmark/whole_night_cpu_benchmark.json`,
+Supplementary Section S9). The three-point speed-up figure was replaced by a per-seed figure of every
+configuration (`figures/results_seeds_en.pdf`, source `figure_sources/seeds_en.tex` written by
+`results_figures.py`), the evaluation panel of the study-design schematic now lists the holdout
+sample, and panel (b) of the holdout figure was retitled. Contrast names use a minus sign (E3$-$E0)
+so that they cannot be read as ranges. No previously reported experimental value changed.
+
 Revision, 4 November 2026: the qualifications added on 2 November are stated once per section instead
 of repeatedly; their content is unchanged. Highlight 4 avoids configuration codes, and Ngo Nhat Quan's
 CRediT statement again includes Writing - original draft, as confirmed by the author.
@@ -78,15 +97,16 @@ requirements against the current BSPC Guide for Authors.
 Run these commands from the bundle root. Build the supplement first because `main.tex` imports its
 table labels with `xr-hyper`:
 
-The study-design schematic and speed--performance plot are supplied as vector PDFs. The schematic
-also has an editable SVG and a Matplotlib builder; the speed plot retains its TikZ source.
+The study-design schematic and the result plots are supplied as vector PDFs. The schematic
+also has an editable SVG and a Matplotlib builder; the plots retain their PGFPlots sources.
 From `figure_sources/`, run the following commands to rebuild them (the quoted output-directory
 argument also works in PowerShell). The schematic builder requires Python, Matplotlib and Arial
 (or a locally selected substitute font). No experimental results are recalculated.
 
 ```powershell
 python study_design.py
-pdflatex -interaction=nonstopmode -halt-on-error '-output-directory=../figures' gate8_primary_speedup_f1_en.tex
+python results_figures.py
+pdflatex -interaction=nonstopmode -halt-on-error seeds_en.tex   # then copy to ../figures/results_seeds_en.pdf
 ```
 
 ```powershell
