@@ -254,7 +254,7 @@ def main() -> None:
         cohort = {"fold_fits": fold_fits, "arms": {}}
         for arm in arms:
             folder = args.a3_root / "sleep_edf_oof" / arm
-            if folder.exists():
+            if folder.exists() and all((folder / f"{key}.npz").exists() for key in source):
                 cohort["arms"][arm], _ = analyse_arm(source, load_probabilities(folder, source), fits_by_key, weights_cache)
         report["cohorts"]["sleep_edf_oof"] = cohort
 
@@ -274,7 +274,8 @@ def main() -> None:
                   "arms": {}}
         matrices_by_arm = {}
         for arm in cohort_arms:
-            found = [root / arm for root in roots if (root / arm).exists()]
+            found = [root / arm for root in roots
+                     if all((root / arm / f"{key}.npz").exists() for key in records)]
             if not found:
                 continue
             cohort["arms"][arm], matrices_by_arm[arm] = analyse_arm(
