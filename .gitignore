@@ -25,6 +25,7 @@ runs/*
 runs/a3/*
 !runs/a3/analysis/
 !runs/a3/telemetry_preprocess_manifest.json
+!runs/a5_dev/
 !runs/v2/
 runs/v2/*
 !runs/v2/analysis/
