@@ -409,8 +409,11 @@ window, whereas SHHS1 recordings cover the night in bed. Within the evaluation w
 standard deviation of E6 inputs was 0.77 in Sleep-EDF but 0.99 in the holdout SHHS1 sample
 (interquartile range 0.85--1.00). E6 thus presents SHHS1 signals to the model at about 1.3 times the
 relative scale seen in training, in addition to removing between-recording amplitude differences. A
-later amendment therefore added E6R, which computes the $z$-score over a centred 90-minute window so
-that both cohorts reach the model at the same relative scale (Section~\ref{sec:a2-methods}).
+descriptive comparison therefore evaluates E6R (amendment A2): the same band-pass and clip as E6,
+followed by a centred 90-minute rolling $z$-score, at seeds 42 and 123. This tests whether the E6
+deficit depends on the span used to estimate its statistics; it also changes the temporal scope of
+amplitude normalisation. Its input-scale and performance results are reported together in
+Section~\ref{sec:a2-results}.
 
 \subsection{Model configurations}
 
@@ -463,6 +466,10 @@ ZleepAnlystNet under ten-fold subject-wise cross-validation~\cite{jadhav2024zlee
 E0 was selected on held-out validation subjects rather than on a random epoch-wise split of the
 training data (Supplementary Table~\ref{SM-tab:sup_e0_original}).
 
+The five-seed E4 analysis is descriptive: three additional seeds (2025, 2027 and 2029)
+extend the original two runs. E6R and the additional E4 runs used the locked split, runner and recipes;
+all 50 new Sleep-EDF runs finished before their test folds were opened once.
+
 \subsection{Statistical analysis}
 
 All configurations completed validation-based selection before the seed-42 test predictions were
@@ -483,6 +490,12 @@ subject-mean \mf, with E3$-$E0 and E3$-$E6 as primary comparisons under the same
 involving E1, E2 and E4 are secondary or post-hoc, and boundary analyses are post-hoc diagnostics
 (Supplementary Methods S1).
 
+The subsequent A2 analyses described here by scientific topic were specified in the public
+repository before their preprocessing, training, inference or analysis. They do not retest H1--H3;
+their paired subject-cluster bootstrap intervals use 10{,}000 resamples and seed 2043
+(Supplementary Section S6). To distinguish model averaging from cohort differences, every fold
+model of each zero-shot arm was also scored individually on the holdout sample (A2).
+
 \subsection{Confirmatory holdout protocol}
 
 Before any holdout recording was preprocessed, a protocol fixing the cohort, preprocessing,
@@ -500,7 +513,7 @@ arms were evaluated, E0, E2, E3, E4 and E6 at both seeds plus ADAST and its cont
 checkpoints on CPU, and no metric was computed before all predictions existed. Deviations, none of which
 changed a prediction, are listed in Supplementary Section S3.
 
-\subsection{Post-confirmatory amplitude and adaptation analyses}
+\subsection{Amplitude sensitivity and batch-normalisation adaptation}
 \label{sec:amendment-methods}
 
 After the confirmatory analysis, an amendment published in the repository before its inference
@@ -532,6 +545,11 @@ source validation data, and target labels were used only for scoring. The full-s
 applied, without further training, to the holdout sample. Supplementary Methods S2 specifies fitting,
 selection, budgets and development experiments.
 
+The EM sensitivity analysis (A2) keeps the ten seed-123 E3 models and fitted temperatures fixed
+and varies only the unlabelled data used to estimate target priors: random subsets of 5, 20 and 100
+holdout recordings (200 draws each), the 20{,}000 epochs of the AdaBN sample, all 500 recordings,
+and each recording separately.
+
 \subsection{Operational evaluation}
 
 Inference timing was measured on one Tesla V100 for all configurations, excluding I/O, preprocessing
@@ -547,26 +565,13 @@ were timed, excluding I/O, preprocessing and model loading, and their median is 
 across all ten folds in the seed-123 run, in which every configuration was trained sequentially on the
 same Tesla V100 with its own recipe and stopping rule (Supplementary Methods S1).
 
-\subsection{Further descriptive analyses}
-\label{sec:a2-methods}
+The training-cost decomposition (A2) separates the seed-123 wall-clock time into the number of
+optimiser steps, the time per step measured on the same Tesla V100, and the remainder.
 
-A second amendment (A2), published in the repository before any of its preprocessing, training,
-inference or analysis, specified five descriptive analyses, with all arms, seeds, settings and the rule
-by which each result would be reported (Supplementary Section S6). It
-makes no hypothesis tests and does not revisit H1--H3. (A) E6R repeats E6 with a centred 90-minute
-rolling $z$-score at seeds 42 and 123, testing whether the deficit of E6 depended on the span of its
-statistics. (B) E4 was trained with three further seeds, giving five, to describe training variability.
-(C) Every fold model of each zero-shot arm was also scored alone on the holdout sample, because
-Sleep-EDF is evaluated with one model per subject but SHHS1 with ten-model ensembles. (D) The EM prior
-correction was repeated on the holdout sample with the same ten seed-123 E3 models and temperatures,
-changing only the data from which the target priors were estimated: random subsets of 5, 20 and 100
-recordings (200 draws each), the 20{,}000 unlabelled epochs of the AdaBN sample, all 500 recordings, and
-each recording separately. (E) The training time of the seed-123 run was decomposed into the number of
-optimiser steps, the time per step measured on a Tesla V100, and the remainder. The 50 new Sleep-EDF runs
-used the locked split, runner and recipes, and their test folds were opened once, after all runs had
-finished. Intervals are paired subject-cluster bootstrap intervals (10{,}000 resamples, seed 2043).
+\subsection{Input spectra and stage-wise amplitude}
+\label{sec:spectral-methods}
 
-Finally, a post-hoc description outside both amendments compared the power spectra of the unfiltered
+A post-hoc description outside both amendments compared the power spectra of the unfiltered
 and band-pass inputs in the 153 Sleep-EDF and the 500 holdout recordings (Welch estimate with 20\,s Hann
 segments and 50\% overlap, averaged over the valid epochs of each evaluation window). The spectra
 involve no model and no stage labels beyond the evaluation window (Supplementary Section S7). The
@@ -841,9 +846,19 @@ unfiltered E2, not part of this pre-specified set, differed by $-0.0199$. All fo
 for fixed models do not capture variation between training runs. E4 again scored higher than E3, by
 0.0139 ($[0.0126,0.0153]$) at seed 42 and 0.0091 ($[0.0074,0.0108]$) at seed 123. The pre-specified
 expectation that E4$-$E3 would not exceed the between-seed differences was met at seed 123 but not
-at seed 42, where E4$-$E3 was larger than each of the four pre-specified between-seed differences. With
-the five seeds of amendment A2 (Section~\ref{sec:a2-results}), the between-seed differences of E4 reached
-0.0189, so that both values of E4$-$E3 lie within the training variability of E4.
+at seed 42, where E4$-$E3 was larger than each of the four pre-specified between-seed differences. The later five-seed E4 analysis gives an observed maximum absolute between-seed difference of
+0.0189, encompassing both E4$-$E3 point estimates (Fig.~\ref{fig:holdout}b). This descriptive
+context does not change the outcome of the original two-seed expectation or establish equivalence.
+
+\textbf{Training seeds.} Across the five seeds of E4, holdout subject-mean \mf\ had a mean of 0.5720, a
+standard deviation of 0.0077 and a range of 0.5634--0.5822, whereas pooled Sleep-EDF \mf\ varied with a
+standard deviation of 0.0018 (range 0.7854--0.7903); the two dispersions use different aggregations
+(subject-mean ensemble scores versus pooled out-of-fold scores) and are not directly comparable. Nine of
+the ten pairwise between-seed intervals
+excluded zero, and the largest absolute difference was 0.0189. All 20 differences between an E4 seed and
+E0 or E2 at either seed were larger, 0.0313--0.0700 with every interval above 0.026, so by the locked
+rule these configuration contrasts exceed the observed between-seed range of E4 (Supplementary
+Tables~\ref{SM-tab:sup_a2_arms}--\ref{SM-tab:sup_a2_contrasts}).
 
 \begin{figure}[t]
     \centering
@@ -853,7 +868,10 @@ the five seeds of amendment A2 (Section~\ref{sec:a2-results}), the between-seed 
     ($n=500$, seeds 42 and 123). (b) Differences between two training seeds of the same configuration
     (seed 42 minus seed 123) and E4$-$E3 at each seed on the holdout sample; E2 has no pre-specified
     interval and is shown as a point estimate (open circle). Bars are 95\% subject-cluster bootstrap
-    intervals; both panels share the horizontal axis. Values are taken from
+    intervals; both panels share the horizontal axis. The shaded region in (b), $[-0.0189,+0.0189]$,
+    marks the maximum absolute difference among five E4 seeds in either direction (Supplementary
+    Tables~\ref{SM-tab:sup_a2_arms}--\ref{SM-tab:sup_a2_contrasts}); it is an observed envelope,
+    not a confidence interval or an equivalence margin. Values are taken from
     Tables~\ref{tab:holdout-confirmatory} and~\ref{tab:shhs-paired} and Supplementary
     Tables~\ref{SM-tab:sup_shhs_secondary_paired} and~\ref{SM-tab:sup_holdout_s2}.}
     \label{fig:holdout}
@@ -868,11 +886,11 @@ early stopping selected different epochs for E3 and E4 in 8 of the 20 seed-fold 
 change was thus largely absorbed, and E4$-$E3 lay within the observed five-seed range of E4. By contrast, H1 and H3 exceeded every reported between-seed difference
 at both seeds, whereas H2 at seed 123 (0.0129) was close to the between-seed differences of E4 and E6.
 
-\subsection{Input spectra, normalisation scope and training variability}
+\subsection{Input spectra and normalisation scope}
 \label{sec:a2-results}
 
-The first analysis below is a post-hoc description of the inputs; the other two belong to the second
-amendment (Section~\ref{sec:a2-methods}) and are descriptive.
+The spectra are a post-hoc description of the inputs; the E6/E6R comparison is descriptive
+and was specified in amendment A2 (Supplementary Section S6).
 
 \textbf{Spectral content of the inputs.} The input spectra show what the filter removes
 (Fig.~\ref{fig:psd}; Supplementary Section S7). In the unfiltered signal, a median of 26.4\% of
@@ -908,16 +926,6 @@ also lowered N3 recall below that of E6, to 0.1395 and 0.1515 (differences $-0.0
 with N3$\rightarrow$N2 rates of 84.2\% and 82.8\%, whereas E4 exceeded E6R in N3 recall by 0.1346 and
 0.1059. On Sleep-EDF, E6R reached a pooled \mf\ of 0.7702 and 0.7749, close to E6 (0.7691 and 0.7780)
 and below E4 (0.7891 and 0.7887).
-
-\textbf{Training seeds.} Across the five seeds of E4, holdout subject-mean \mf\ had a mean of 0.5720, a
-standard deviation of 0.0077 and a range of 0.5634--0.5822, whereas pooled Sleep-EDF \mf\ varied with a
-standard deviation of 0.0018 (range 0.7854--0.7903); the two dispersions use different aggregations
-(subject-mean ensemble scores versus pooled out-of-fold scores) and are not directly comparable. Nine of
-the ten pairwise between-seed intervals
-excluded zero, and the largest absolute difference was 0.0189. All 20 differences between an E4 seed and
-E0 or E2 at either seed were larger, 0.0313--0.0700 with every interval above 0.026, so by the locked
-rule these configuration contrasts exceed the observed between-seed range of E4 (Supplementary
-Tables~\ref{SM-tab:sup_a2_arms}--\ref{SM-tab:sup_a2_contrasts}).
 
 \subsection{Cross-model errors and their temporal distribution}
 \label{sec:gap}
@@ -1087,17 +1095,33 @@ Third, preserving calibrated amplitude (E3) transferred better than record-wise 
 the statistics of E6 span about 23\,h of mostly daytime recording in Sleep-EDF but only the night in
 SHHS1, the two cohorts reach E6 at different relative scales, so E6 alone is not a clean test of
 normalisation. Matching the span with a 90-minute window (E6R) removed this mismatch but hardly changed
-transfer, and both band-pass configurations still scored above E6R at both seeds. The deficit of
-$z$-scoring therefore does not stem from the mismatched span; the lower N3 recall of E6R suggests
+transfer, and both band-pass configurations still scored above E6R at both seeds. The mismatched span alone therefore does not explain the observed $z$-score deficit; the lower N3 recall of E6R suggests
 instead that removing absolute amplitude discards information the model uses to recognise N3. E6R also
 removes amplitude changes slower than its window, so this comparison concerns these two forms of
 $z$-scoring, not every possible normalisation.
+
+A plausible mechanism is local amplitude compression: for
+$z_t=(x_t-\mu_{W_t})/\sigma_{W_t}$, where $W_t$ is the centred 90-minute window, windows containing more high-amplitude slow-wave activity can
+have a larger denominator and thus reduce the normalised amplitude of an N3 epoch. The existing
+stage-wise analysis supports the relevance of this cue: the median within-record N3/N2 amplitude
+ratio was 1.62 in Sleep-EDF and 1.43 in SHHS1, and the corresponding delta-power contrasts were
+4.90 and 4.22\,dB (Supplementary Section S8). This makes local compression consistent with E6R's
+low N3 recall (0.1395--0.1515), but neither the local denominator conditional on stage nor its
+causal effect on predictions was measured. A 90-minute window is not a measured individual sleep
+cycle; the present evidence does not show that normalisation converts N3 morphology into N2.
 
 These are comparisons of whole configurations, including their training recipes. The confirmed
 contrasts establish the effect of the filtering step on transfer, and the input spectra indicate where
 it may arise: the unfiltered recordings of the two cohorts differ most below 0.5\,Hz and above 30\,Hz,
 the ranges the filter removes, whereas their in-band spectra differ by a few decibels with or without
 filtering. The comparisons concern the complete 0.5--30\,Hz filter and do not separate its two edges.
+The larger fraction of raw power below 0.5\,Hz (26.4\% and 21.0\%) than above 30\,Hz (3.1\% and
+1.1\%) does not establish which edge accounts for the performance gain: removed power is not a
+measure of model sensitivity. Furthermore, SHHS1 resampling includes anti-alias filtering, so
+differences above 40\,Hz cannot be assigned uniquely to muscle artefact. Testing a frozen E4 model
+with only one filter edge would also alter its training--inference input match. Isolating the
+benefit of each edge therefore remains a question for matched training and evaluation, beyond
+the present spectral description.
 
 \subsection{Training variability and the E3$-$E4 contrast}
 
@@ -1119,8 +1143,11 @@ so its participant-level significance should be read together with its sensitivi
 Every difference between an E4 seed and E0 or E2 (0.031--0.070) exceeded the largest between-seed
 difference of E4, so the advantage of the band-pass pipeline over these comparators was consistent
 across the evaluated seeds, although five and two seeds do not characterise the full distribution of
-retraining effects. Reporting the training spread alongside participant-level intervals makes both
-sources of uncertainty explicit.
+retraining effects. In particular, E2's two-seed absolute difference of 0.0199 already exceeds E4's five-seed
+maximum of 0.0189. The observed E4 range is therefore not a common uncertainty bound for the
+baselines. Two E2 runs cannot establish a larger population variance, nor can five E4 runs
+establish stability under arbitrary retraining. Reporting the training spread alongside
+participant-level intervals makes these distinct sources of uncertainty explicit.
 
 For practical use, we recommend band-pass-only E4 as the simpler evaluated option: clipping never
 activated in these data, and E4 transferred well without the fixed scaling step. E3 remains the
@@ -1170,6 +1197,13 @@ it against other stages. The sign change between budgets also shows that the lea
 budget must be reported when an unsupervised domain-adaptation baseline is compared, and greater REM
 recall without greater REM F1 shows that recall gains must be read together with precision.
 
+The unresolved comparison is adaptation on the same E4 backbone. Full-source ADAST improved
+subject-mean \mf\ by 0.0429 over its own control and increased N3 recall from 0.2366 to 0.6161,
+whereas AdaBN only changed E4's normalisation statistics. AdaBN's failure does not rule out
+adversarial adaptation or self-training on E4, and ADAST's gain cannot be added to E4's score:
+the starting representations, training objectives and budgets differ. A matched E4 adaptation
+study would need to assess N3 recovery together with N1, N2 and REM costs; it was not performed here.
+
 \subsection{Positioning and limits of generalisation}
 
 This study combines paired pipeline comparisons, computational cost, an analysis of cross-cohort errors
@@ -1216,8 +1250,8 @@ montage and scoring procedures, so it confirms the findings within SHHS1. The co
 archived in the authors' public repository, and the GitHub server timestamps establish its existence
 before the analysis. The intervention experiments were designed after the errors of the first SHHS1
 sample had been examined, and the amplitude, AdaBN and second-amendment analyses were specified after
-the confirmatory results; these analyses are descriptive. Five seeds describe the spread of training
-variability rather than the tails of its distribution. Sleep-EDF is scored with out-of-fold predictions
+the confirmatory results; these analyses are descriptive. Five E4 seeds and two seeds per comparator give asymmetric coverage of training variability;
+neither the tails nor the relative variances of the configurations are established. Sleep-EDF is scored with out-of-fold predictions
 and SHHS1 with ten-model ensembles, so the cohort comparison combines cohort and evaluation-procedure
 differences, of which the ensembles account for about 0.02. The models use future context, so
 forward-pass timing describes offline processing. Class-wise results are pooled across participants

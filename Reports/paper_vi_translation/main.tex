@@ -412,8 +412,11 @@ Sleep-EDF dài 17--24\,giờ (trung vị 23\,giờ), gồm cả những đoạn 
 trong khi bản ghi SHHS1 chỉ bao phủ khoảng thời gian nằm trên giường ban đêm. Trong cửa sổ đánh giá, trung vị độ lệch chuẩn của đầu vào E6 là 0.77 ở
 Sleep-EDF nhưng 0.99 ở mẫu SHHS1 giữ lại (khoảng tứ phân vị 0.85--1.00). Như vậy, E6 đưa tín hiệu SHHS1 vào
 mô hình ở thang tương đối khoảng 1.3 lần so với lúc huấn luyện, ngoài việc loại bỏ khác biệt biên độ giữa
-các bản ghi. Vì vậy, một bản sửa đổi sau đó bổ sung E6R, tính $z$-score trên cửa sổ 90 phút có tâm để tín
-hiệu của hai đoàn hệ đến mô hình ở cùng thang tương đối (Mục~\ref{sec:a2-methods}).
+các bản ghi. Vì vậy, so sánh mô tả E6R (bản sửa đổi A2) dùng cùng bộ lọc và phép cắt như E6,
+nhưng tính $z$-score trên cửa sổ trượt có tâm dài 90 phút, ở seed 42 và 123. So sánh này kiểm tra
+thiếu hụt của E6 có phụ thuộc khoảng thời gian tính thống kê hay không, đồng thời thay đổi phạm vi
+thời gian của chuẩn hóa biên độ. Kết quả thang đầu vào và hiệu năng được trình bày cùng nhau tại
+Mục~\ref{sec:a2-results}.
 
 \subsection{Cấu hình mô hình}
 
@@ -465,6 +468,10 @@ ZleepAnlystNet với đánh giá chéo mười fold theo đối tượng~\cite{j
 trên các đối tượng xác thực giữ lại thay vì trên một phép chia ngẫu nhiên theo epoch của dữ liệu huấn
 luyện (Bảng bổ sung~\ref{SM-tab:sup_e0_original}).
 
+Phân tích năm seed của E4 mang tính mô tả: ba seed 2025, 2027 và 2029 bổ sung cho hai lượt ban đầu.
+E6R và các lượt E4 bổ sung dùng phân hoạch, trình chạy và thiết lập đã khóa; toàn bộ 50 lượt Sleep-EDF
+mới hoàn thành trước khi các fold kiểm tra được mở một lần.
+
 \subsection{Phân tích thống kê}
 
 Mọi cấu hình đã hoàn tất chọn mô hình dựa trên xác thực trước khi đánh giá dự đoán kiểm tra seed 42. Trên
@@ -485,6 +492,12 @@ hình fold Sleep-EDF được lấy trung bình (ở độ chính xác float64) 
 các so sánh liên quan E1, E2 và E4 là thứ cấp hoặc hậu nghiệm, và các phân tích vùng ranh giới là chẩn
 đoán hậu nghiệm (Phương pháp bổ sung S1).
 
+Các phân tích A2 được trình bày theo chủ đề tại đây đã được xác định trên kho công khai trước
+khi tiền xử lý, huấn luyện, suy luận hay phân tích. Chúng không kiểm định lại H1--H3; các khoảng
+bootstrap cụm theo đối tượng dùng 10{,}000 lượt lấy mẫu và seed 2043 (Mục bổ sung S6).
+Để phân biệt hiệu ứng tổ hợp với khác biệt đoàn hệ, từng mô hình fold của mỗi cấu hình zero-shot
+cũng được chấm riêng trên mẫu giữ lại (A2).
+
 \subsection{Giao thức xác nhận trên mẫu giữ lại}
 
 Trước khi tiền xử lý bất kỳ bản ghi giữ lại nào, chúng tôi công bố trên kho dự án công khai (ngày
@@ -502,7 +515,7 @@ tổ hợp được đánh giá trên CPU với các checkpoint đã khóa: E0, 
 đối chứng của nó; không chỉ số nào được tính trước khi có đủ mọi dự đoán. Các điểm lệch khỏi giao thức được
 liệt kê ở Mục bổ sung S3; không điểm nào làm thay đổi dự đoán.
 
-\subsection{Phân tích biên độ và thích nghi sau xác nhận}
+\subsection{Độ nhạy biên độ và thích nghi chuẩn hóa theo lô}
 \label{sec:amendment-methods}
 
 Sau phân tích xác nhận, một bản sửa đổi giao thức được công bố trên kho dự án trước khi chạy suy luận. Bản
@@ -533,6 +546,11 @@ luyện toàn nguồn), và được đánh giá ở epoch 30. Việc chọn mô
 lên mẫu giữ lại. Phương
 pháp bổ sung S2 nêu cách khớp, chọn mô hình, ngân sách và các thí nghiệm phát triển.
 
+Phân tích độ nhạy EM (A2) giữ cố định mười mô hình E3 seed 123 và các nhiệt độ đã khớp,
+chỉ thay dữ liệu không nhãn dùng ước lượng tiên nghiệm đích: các tập ngẫu nhiên gồm 5, 20 và 100
+bản ghi giữ lại (200 lượt mỗi cỡ mẫu), 20{,}000 epoch của mẫu AdaBN, toàn bộ 500 bản ghi,
+và từng bản ghi riêng lẻ.
+
 \subsection{Đánh giá vận hành}
 
 Thời gian suy luận được đo trên một GPU Tesla V100 cho mọi cấu hình, không tính I/O, tiền xử lý và huấn
@@ -548,24 +566,11 @@ và trung vị được báo cáo (Mục bổ sung S9). Chi phí huấn luyện
 123, trong đó mọi cấu hình được huấn luyện tuần tự trên cùng một GPU Tesla V100 với công thức huấn luyện và
 quy tắc dừng riêng (Phương pháp bổ sung S1).
 
-\subsection{Các phân tích mô tả bổ sung}
-\label{sec:a2-methods}
+Phân rã chi phí huấn luyện (A2) tách thời gian seed 123 thành số bước tối ưu hóa,
+thời gian mỗi bước đo trên cùng Tesla V100 và phần thời gian còn lại.
 
-Bản sửa đổi thứ hai (A2), được công bố trên kho mã trước mọi bước tiền xử lý, huấn luyện, suy luận hay phân
-tích của nó, xác định năm phân tích mô tả, cùng mọi tổ hợp, seed, thiết lập và quy tắc báo cáo từng kết quả
-(Mục bổ sung S6). A2 không kiểm định giả thuyết và không xét lại H1--H3. (A) E6R
-lặp lại E6 với $z$-score trượt có tâm trên cửa sổ 90 phút ở seed 42 và 123, để kiểm tra xem thiếu hụt của E6
-có phụ thuộc vào khoảng thời gian dùng để tính thống kê hay không. (B) E4 được huấn luyện thêm ba seed, tổng
-cộng năm seed, để mô tả biến thiên huấn luyện. (C) Từng mô hình fold của mỗi tổ hợp zero-shot cũng được chấm
-điểm riêng trên mẫu giữ lại, vì Sleep-EDF được đánh giá bằng một mô hình cho mỗi đối tượng còn SHHS1 bằng
-ensemble mười mô hình. (D) Hiệu chỉnh tiên nghiệm EM được lặp lại trên mẫu giữ lại với đúng mười mô hình E3
-seed 123 và các nhiệt độ đã lưu, chỉ thay dữ liệu dùng để ước lượng tiên nghiệm đích: tập con ngẫu nhiên
-gồm 5, 20 và 100 bản ghi (mỗi mức 200 lần bốc), 20\,000 epoch không nhãn của mẫu AdaBN, cả 500 bản ghi, và
-từng bản ghi riêng lẻ. (E) Thời gian huấn luyện của lượt chạy seed 123 được tách thành số bước tối ưu, thời
-gian mỗi bước đo trên GPU Tesla V100, và phần còn lại. 50 lần huấn luyện mới trên Sleep-EDF dùng phân hoạch,
-chương trình huấn luyện và công thức đã khóa, và các fold kiểm tra của chúng chỉ được mở một lần, sau khi mọi
-lần huấn luyện đã xong. Khoảng tin cậy là khoảng bootstrap cụm theo đối tượng có bắt cặp (10\,000 lần lấy
-mẫu lại, seed 2043).
+\subsection{Phổ đầu vào và biên độ theo giai đoạn}
+\label{sec:spectral-methods}
 
 Cuối cùng, một phân tích mô tả hậu nghiệm nằm ngoài cả hai bản sửa đổi so sánh phổ công suất của đầu vào
 không lọc và đầu vào lọc thông dải trên 153 bản ghi Sleep-EDF và 500 bản ghi giữ lại (ước lượng Welch với
@@ -838,9 +843,17 @@ Biến thiên giữa các lần huấn luyện có cùng bậc độ lớn với
 có cùng cấu hình: khoảng tính với mô hình cố định không phản ánh biến thiên giữa các lần huấn luyện. E4 cao
 hơn E3 0.0139 ($[0.0126,0.0153]$) ở seed 42 và 0.0091 ($[0.0074,0.0108]$) ở seed 123. Giao thức kỳ vọng
 E4$-$E3 không vượt các chênh lệch giữa hai seed; kỳ vọng này đúng ở seed 123 nhưng không đúng ở seed 42, nơi
-E4$-$E3 lớn hơn cả bốn chênh lệch giữa seed xác định trước. Với năm seed của bản sửa đổi A2
-(Mục~\ref{sec:a2-results}), chênh lệch giữa các seed của E4 lên tới 0.0189, nên cả hai giá trị của E4$-$E3 đều
-nằm trong biến thiên huấn luyện của E4.
+E4$-$E3 lớn hơn cả bốn chênh lệch giữa seed xác định trước. Phân tích năm seed E4 sau đó cho chênh lệch tuyệt đối lớn nhất quan sát được là
+0.0189, bao trùm hai ước lượng E4$-$E3 (Hình~\ref{fig:holdout}b). Bối cảnh mô tả này không thay đổi
+kết quả kỳ vọng hai seed ban đầu và không chứng minh tính tương đương.
+
+\textbf{Seed huấn luyện.} Qua năm seed của E4, \mf\ trung bình theo đối tượng trên mẫu giữ lại có trung bình
+0.5720, độ lệch chuẩn 0.0077 và khoảng 0.5634--0.5822, trong khi \mf\ gộp trên Sleep-EDF có độ lệch chuẩn
+0.0018 (khoảng 0.7854--0.7903); hai độ trải này dùng cách tổng hợp khác nhau (điểm trung bình theo
+đối tượng của ensemble so với điểm gộp ngoài fold) nên không so sánh trực tiếp được. Chín trong mười khoảng chênh lệch giữa từng cặp seed không chứa giá trị không, và chênh
+lệch tuyệt đối lớn nhất là 0.0189. Cả 20 chênh lệch giữa một seed của E4 với E0 hoặc E2 ở một trong hai seed
+đều lớn hơn, 0.0313--0.0700, mọi khoảng đều trên 0.026, nên theo quy tắc đã khóa các đối chiếu cấu hình này
+vượt khoảng chênh lệch giữa các seed quan sát được của E4 (Bảng bổ sung~\ref{SM-tab:sup_a2_arms}--\ref{SM-tab:sup_a2_contrasts}).
 
 \begin{figure}[H]
     \centering
@@ -850,7 +863,9 @@ nằm trong biến thiên huấn luyện của E4.
     ($n=500$, seed 42 và 123). (b) Chênh lệch giữa hai seed huấn luyện của cùng một cấu hình (seed 42 trừ
     seed 123) và E4$-$E3 ở từng seed trên mẫu giữ lại; E2 không có khoảng tin cậy xác định trước nên chỉ vẽ
     điểm ước lượng (vòng tròn rỗng). Thanh ngang là khoảng bootstrap cụm theo đối tượng 95\%; hai ô dùng cùng
-    trục hoành. Số liệu lấy từ Bảng~\ref{tab:holdout-confirmatory}, Bảng~\ref{tab:shhs-paired} và các Bảng
+    trục hoành. Dải tô trong ô (b), $[-0.0189,+0.0189]$, biểu thị chênh lệch tuyệt đối lớn nhất
+    giữa năm seed E4 theo hai hướng (các Bảng bổ sung~\ref{SM-tab:sup_a2_arms}--\ref{SM-tab:sup_a2_contrasts});
+    đây là biên quan sát, không phải khoảng tin cậy hay biên tương đương. Số liệu lấy từ Bảng~\ref{tab:holdout-confirmatory}, Bảng~\ref{tab:shhs-paired} và các Bảng
     bổ sung~\ref{SM-tab:sup_shhs_secondary_paired} và~\ref{SM-tab:sup_holdout_s2}.}
     \label{fig:holdout}
 \end{figure}
@@ -865,11 +880,11 @@ triệt tiêu phần lớn, và E4$-$E3 nằm trong khoảng năm seed quan sát
 chênh lệch giữa seed đã báo cáo
 ở cả hai seed, còn H2 ở seed 123 (0.0129) gần với chênh lệch giữa seed của E4 và E6.
 
-\subsection{Phổ đầu vào, phạm vi chuẩn hóa và biến thiên huấn luyện}
+\subsection{Phổ đầu vào và phạm vi chuẩn hóa}
 \label{sec:a2-results}
 
-Phân tích đầu tiên dưới đây là một mô tả hậu nghiệm về đầu vào; hai phân tích còn lại thuộc bản sửa đổi thứ
-hai (Mục~\ref{sec:a2-methods}) và mang tính mô tả.
+Phổ tín hiệu là mô tả hậu nghiệm về đầu vào; so sánh E6/E6R mang tính mô tả và được xác định
+trong bản sửa đổi A2 (Mục bổ sung S6).
 
 \textbf{Thành phần phổ của đầu vào.} Phổ của đầu vào cho thấy bộ lọc loại bỏ những gì
 (Hình~\ref{fig:psd}; Mục bổ sung S7). Trong tín hiệu không lọc, trung vị 26.4\% công suất của một bản ghi
@@ -901,14 +916,6 @@ chuẩn chuyển quần thể tốt hơn $z$-score vì vậy được giữ nguy
 thấp hơn E6, chỉ còn 0.1395 và 0.1515 (chênh lệch $-0.0591$ và $-0.0503$), với tỷ lệ N3$\rightarrow$N2 là
 84.2\% và 82.8\%, trong khi E4 vượt E6R về độ thu hồi N3 0.1346 và 0.1059. Trên Sleep-EDF, E6R đạt \mf\ gộp
 0.7702 và 0.7749, gần E6 (0.7691 và 0.7780) và thấp hơn E4 (0.7891 và 0.7887).
-
-\textbf{Seed huấn luyện.} Qua năm seed của E4, \mf\ trung bình theo đối tượng trên mẫu giữ lại có trung bình
-0.5720, độ lệch chuẩn 0.0077 và khoảng 0.5634--0.5822, trong khi \mf\ gộp trên Sleep-EDF có độ lệch chuẩn
-0.0018 (khoảng 0.7854--0.7903); hai độ trải này dùng cách tổng hợp khác nhau (điểm trung bình theo
-đối tượng của ensemble so với điểm gộp ngoài fold) nên không so sánh trực tiếp được. Chín trong mười khoảng chênh lệch giữa từng cặp seed không chứa giá trị không, và chênh
-lệch tuyệt đối lớn nhất là 0.0189. Cả 20 chênh lệch giữa một seed của E4 với E0 hoặc E2 ở một trong hai seed
-đều lớn hơn, 0.0313--0.0700, mọi khoảng đều trên 0.026, nên theo quy tắc đã khóa các đối chiếu cấu hình này
-vượt khoảng chênh lệch giữa các seed quan sát được của E4 (Bảng bổ sung~\ref{SM-tab:sup_a2_arms}--\ref{SM-tab:sup_a2_contrasts}).
 
 \subsection{Lỗi chung của các mô hình và vị trí của lỗi theo thời gian}
 \label{sec:gap}
@@ -1070,7 +1077,7 @@ chuyển quần thể tốt hơn $z$-score theo bản ghi (E6). Vì thống kê 
 lớn ban ngày ở Sleep-EDF nhưng chỉ đêm ngủ ở SHHS1, hai đoàn hệ đến E6 ở thang tương đối khác nhau, nên riêng E6
 không phải phép kiểm tra sạch về chuẩn hóa. Khớp khoảng thời gian bằng cửa sổ 90 phút (E6R) loại bỏ sai lệch
 này nhưng hầu như không thay đổi khả năng chuyển quần thể, và cả hai cấu hình lọc thông dải vẫn cao hơn E6R ở
-cả hai seed. Thiếu hụt của $z$-score vì vậy không bắt nguồn từ khoảng thời gian bị lệch; độ thu hồi N3 thấp hơn
+cả hai seed. Chỉ riêng khoảng thời gian bị lệch vì vậy không giải thích được thiếu hụt $z$-score; độ thu hồi N3 thấp hơn
 của E6R gợi ý rằng việc loại bỏ biên độ tuyệt đối làm mất thông tin mà mô hình dùng để nhận ra N3. E6R cũng
 loại bỏ các thay đổi biên độ chậm hơn cửa sổ của nó, nên phép so sánh này chỉ áp dụng cho hai dạng $z$-score
 này, không cho mọi cách chuẩn hóa có thể có.
@@ -1080,6 +1087,21 @@ tác động của bước lọc lên khả năng chuyển quần thể, và ph�
 bản ghi không lọc của hai đoàn hệ khác nhau nhiều nhất ở dưới 0.5\,Hz và trên 30\,Hz, đúng các dải mà bộ lọc
 loại bỏ, trong khi phổ trong dải của chúng chỉ lệch nhau vài decibel dù có lọc hay không. Các so sánh áp dụng
 cho toàn bộ bộ lọc 0.5--30\,Hz và không tách riêng hai biên của nó.
+
+Một cơ chế khả dĩ là nén biên độ cục bộ: với $z_t=(x_t-\mu_{W_t})/\sigma_{W_t}$,
+cửa sổ chứa nhiều hoạt động sóng chậm biên độ lớn có thể có mẫu số lớn hơn, làm giảm biên độ
+chuẩn hóa của epoch N3. Phân tích theo giai đoạn đã có cho tỷ số biên độ N3/N2 trung vị trong
+bản ghi là 1.62 ở Sleep-EDF và 1.43 ở SHHS1, cùng tương phản công suất delta 4.90 và 4.22\,dB
+(Mục bổ sung S8). Điều này phù hợp với giả thuyết nén cục bộ và recall N3 thấp của E6R
+(0.1395--0.1515), nhưng chưa đo mẫu số cục bộ theo giai đoạn hay tác động nhân quả lên dự đoán.
+Cửa sổ 90 phút không phải chu kỳ ngủ cá nhân đã đo; chưa có bằng chứng chuẩn hóa biến hình thái
+N3 thành N2.
+
+Tỷ lệ công suất thô dưới 0.5\,Hz (26.4\% và 21.0\%) lớn hơn trên 30\,Hz (3.1\% và 1.1\%)
+không xác định mép lọc nào tạo ra lợi ích: công suất bị loại không đo độ nhạy của mô hình.
+Lấy mẫu lại SHHS1 có lọc chống chồng phổ, nên khác biệt trên 40\,Hz không thể chỉ quy cho nhiễu cơ.
+Thử một mép lọc với E4 cố định cũng thay đổi sự khớp đầu vào giữa huấn luyện và suy luận.
+Tách lợi ích từng mép cần huấn luyện và đánh giá đối sánh, nằm ngoài mô tả phổ hiện có.
 
 \subsection{Biến thiên huấn luyện và đối chiếu E3$-$E4}
 
@@ -1106,6 +1128,12 @@ Trong sử dụng thực tế, chúng tôi khuyến nghị E4 chỉ lọc thông
 hình đã đánh giá: bước cắt không bao giờ kích hoạt trên dữ liệu này, và E4 chuyển quần thể tốt mà không cần
 bước đổi thang cố định. E3 vẫn là tham chiếu cho các giả thuyết xác nhận vì giao thức đã cố định nó trước khi
 xử lý dữ liệu giữ lại; các phân tích E4 và seed hỗ trợ, nhưng không thay thế, các đối chiếu đó.
+
+Độ chênh tuyệt đối hai seed E2 là 0.0199, đã lớn hơn cực đại năm seed E4 là 0.0189.
+Vì vậy, khoảng E4 không phải biên bất định chung cho các baseline. Hai lượt E2 không chứng minh
+phương sai tổng thể lớn hơn, và năm lượt E4 không chứng minh ổn định với mọi lần huấn luyện lại.
+Năm seed E4 so với hai seed mỗi đối chứng tạo mức bao phủ bất đối xứng; chưa xác định được phần
+đuôi hay phương sai tương đối của các phân phối huấn luyện.
 
 \subsection{Bỏ sót N3 vẫn tồn tại bên cạnh cải thiện tổng hợp}
 
@@ -1146,6 +1174,13 @@ của việc thích nghi. AdaBN, áp dụng trực tiếp lên các mô hình E4
 cấp đoàn hệ hoặc không tác động đến lỗi N3, hoặc chỉ giảm được nó bằng cách hy sinh các giai đoạn khác. Việc hiệu ứng đổi dấu giữa hai ngân sách cũng cho thấy cần báo cáo ngân sách học khi so sánh với
 một phương pháp thích nghi miền không giám sát; còn việc độ thu hồi REM tăng mà F1 REM không tăng cho thấy mọi
 cải thiện về độ thu hồi cần được xem cùng với precision.
+
+So sánh còn bỏ ngỏ là thích nghi trên chính backbone E4. ADAST toàn nguồn cải thiện \mf\
+trung bình theo đối tượng 0.0429 so với đối chứng riêng và tăng recall N3 từ 0.2366 lên 0.6161,
+trong khi AdaBN chỉ thay thống kê chuẩn hóa E4. Thất bại của AdaBN không loại trừ thích nghi đối kháng
+hay tự huấn luyện trên E4; cũng không thể cộng mức tăng ADAST vào điểm E4 vì biểu diễn ban đầu,
+mục tiêu và ngân sách khác nhau. Nghiên cứu đối sánh E4 cần đánh giá phục hồi N3 cùng tổn thất ở
+N1, N2 và REM; thực nghiệm này chưa được thực hiện.
 
 \subsection{Vị trí của nghiên cứu và giới hạn tổng quát hóa}
 

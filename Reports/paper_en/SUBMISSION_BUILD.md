@@ -161,3 +161,8 @@ does not rerun a model or recalculate experimental statistics.
 - Graphical abstract is encouraged, not required. BSPC uses single-anonymized review.
 - Final author confirmation, the funder's role, the basis for the ethics statement, data-use
   compliance and approval of the current revision must be settled before Submit.
+
+## Editorial response to Son Quan feedback (16 November 2026)
+
+No training, inference or new experimental analysis was performed for this revision.
+Existing A2 methods are grouped with preprocessing, training/statistics, interventions and operational evaluation; the five-seed results now accompany the original seed contrasts. Figure 3b adds the observed maximum absolute five-seed E4 difference in either direction (+/-0.0189), explicitly not a confidence interval or equivalence margin. Discussion distinguishes unequal seed coverage, the hypothesised E6R local amplitude compression mechanism, descriptive spectral evidence versus filter-edge attribution, and the untested question of ADAST/self-training on E4. Original confirmatory decisions and all numerical tables remain unchanged. The Vietnamese translation and portable figure sources are synchronised.
