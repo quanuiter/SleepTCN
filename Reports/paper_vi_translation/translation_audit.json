@@ -1,6 +1,6 @@
 {
   "english_source": "Reports/paper_en/main.tex",
-  "english_sha256": "e251065770dfe04eadfc7cb54b7b749b48f00f3ec2c233b6dcefd4a7934e17b5",
+  "english_sha256": "a4a5572d862c4538a8b8dc91bec2fc1cf65bc1bc33026a834d5b19f30154d7a9",
   "translated_prose_blocks": [
     16,
     17,
@@ -71,14 +71,14 @@
     119,
     121
   ],
-  "table_count": 9,
-  "figure_count": 2,
+  "table_count": 8,
+  "figure_count": 5,
   "table_numeric_sequences_preserved": true,
   "citation_and_reference_sequences_preserved": true,
   "scope": "Main manuscript only; supplement references point to the original English supplement. Bibliographic entries retained in their original language.",
   "preview_figure_added": true,
   "figure1_revision": "Approved study-design schematic; both language variants inserted on 2026-10-01.",
-  "pages": 17,
+  "pages": 18,
   "figure1_page": 5,
   "translated_prose_blocks_note": "Historical initial-translation indices; later direct editorial revisions are not indexed here.",
   "teacher_revision_20261001": {
@@ -149,5 +149,19 @@
     "table_numeric_sequences_checked_against_english": true,
     "en_vi_citation_reference_label_sequences_match": true,
     "all_pages_visually_reviewed": true
+  },
+  "revision_20261120": {
+    "full_retranslation_from_current_english": true,
+    "thematic_structure_and_a4_section_synchronised": true,
+    "revision_analyses_s13_synchronised": true,
+    "decimal_numbers_match_english": "411 of 411 (English has two extra from rule widths)",
+    "en_vi_ref_and_cite_keys_match": true,
+    "pages": 18,
+    "tables": 8,
+    "figures": 5,
+    "pages_visually_spot_checked": [
+      1,
+      10
+    ]
   }
 }

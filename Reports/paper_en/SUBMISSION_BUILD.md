@@ -4,6 +4,18 @@ This is a LaTeX source bundle, not a complete experimental-data archive. It cont
 standalone supplement, bibliography, figure assets, vector plot source and editable highlights text.
 No raw data, participant identifiers, predictions or internal audit documents are included.
 
+Revision, 20 November 2026: the manuscript is organised by scientific topic instead of by amendment
+and is repositioned as a controlled evaluation (new title, abstract and contribution 1; keyword
+"pre-specified analysis" instead of "external validation"). Added: amendment A4 on the two filter
+edges (Section 4.5, Table 7, Supplementary Section S12; lock commit `73a2050`); a table of the role of
+every analysis (Table 3); E6R defined beside E6; the five-seed E4 band in Fig. 2b and the E6R,
+seed-asymmetry and ADAST paragraphs from branch `production_2`; the Holm p-values of the Sleep-EDF
+contrasts; the E3/E4 roles; and the post-hoc telemetry split by placebo and temazepam night, sleep
+parameters with Bland-Altman limits and ICC, and holdout subgroups by age, sex and AHI
+(`scripts/revision_extra_analyses.py`, summary `runs/revision/extra_analyses.json`, Supplementary
+Section S13). The supplement title matches the manuscript. No previously reported experimental value
+changed. The manifest and source ZIP below were regenerated for this revision.
+
 Revision, 11 November 2026: the second-amendment results are placed beside the results they qualify
 instead of in a separate section, and a post-hoc description of the input power spectra is added
 (`scripts/analyze_cohort_psd.py`, summary in `runs/cohort_psd/psd_summary.json`, new main-text figure

@@ -1,5 +1,12 @@
 # Bản dịch tiếng Việt của bài chính nộp BSPC
 
+> **Cập nhật 20-11-2026:** dịch lại toàn bộ theo `../paper_en/main.tex` hiện hành: bố cục theo chủ đề
+> khoa học thay vì theo bản sửa đổi, tiêu đề và tóm tắt mới, Bảng 3 (vai trò từng phân tích), E6R định
+> nghĩa cạnh E6, mục 4.5 về hai cạnh của bộ lọc (A4), phân tích hậu kiểm theo đêm giả dược/temazepam, chỉ
+> số giấc ngủ và nhóm tuổi/giới/AHI (Mục bổ sung S13). 8 bảng, 5 hình, 18 trang; 411 số thập phân, mọi
+> khóa `\ref` và `\cite` khớp bản Anh (`translation_audit.json`, mục `revision_20261120`). Hình 2 lấy
+> từ nhánh `production_2` (dải dao động năm seed E4). Các ghi chú bên dưới là lịch sử.
+
 > **Cập nhật 15-10-2026:** thêm Hình 3-5 (đối chiếu xác nhận so với biến thiên giữa hai seed, ma trận
 > nhầm lẫn E3 trước/sau chuyển quần thể, quét biên độ và AdaBN) và bỏ Bảng 9 vì số liệu đã có trong
 > Hình 5 và Bảng bổ sung S45-S46. Mã nguồn hình: `../paper_en/figure_sources/results_figures.py`. Bảng
