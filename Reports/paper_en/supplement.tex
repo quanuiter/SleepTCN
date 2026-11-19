@@ -7,7 +7,7 @@
 \renewcommand{\thefigure}{S\arabic{figure}}
 \newcommand{\mf}{\ensuremath{\mathrm{macro\text{-}F1}}}
 \newcommand{\ci}{95\% CI}
-\title{Supplementary Material\\\large Architecture and Preprocessing Choices under Dataset Shift in Single-Channel EEG Sleep Staging: A Controlled Evaluation on Sleep-EDF and SHHS1}
+\title{Supplementary Material\\\large Architecture and Preprocessing Choices in Single-Channel EEG Sleep Staging under Cohort Shift: A Controlled Evaluation with Confirmation on Held-out SHHS Participants}
 \author{Ngo Nhat Quan, Pham Thai Son, Tri Nguyen Ho Duy and Tri Nguyen}
 \hypersetup{pdfauthor={Ngo Nhat Quan; Pham Thai Son; Tri Nguyen Ho Duy; Tri Nguyen}}
 \date{}
@@ -27,7 +27,9 @@ post-confirmatory amplitude and AdaBN analyses, Supplementary Section S6 the sec
 Supplementary Section S7 a post-hoc description of the input power spectra, Supplementary Section S8
 a stage-wise description of input amplitude, Supplementary Section S9 the whole-night CPU timing,
 Supplementary Section S10 the telemetry cohort and the amplitude-guided rule (amendment A3), and
-Supplementary Section S11 the exploratory label-free gate and the abandoned ISRUC evaluation.
+Supplementary Section S11 the exploratory label-free gate and the abandoned ISRUC evaluation,
+Supplementary Section S12 the separation of the filter edges (amendment A4), and Supplementary
+Section S13 the post-hoc telemetry analysis by drug condition, the sleep parameters and the holdout subgroups.
 E6 estimates mean and standard deviation from each complete unlabelled target recording; it is label-free
 but transductive at recording level, not purely inductive zero-shot inference.
 
@@ -2333,6 +2335,116 @@ Under the interpretation rule, the high-pass edge carries the gain on telemetry 
 below zero at both seeds). No edge carries it on the holdout sample: E4LP$-$E2 is above zero at both seeds, but so is
 E4$-$E4LP. No arm differs from E2 at both seeds on Sleep-EDF. Summary:
 \nolinkurl{runs/a4/analysis/a4_summary.json}; analysis script \nolinkurl{scripts/a4_analyze.py}.
+
+%==============================================================================
+\section*{Supplementary Section S13: drug condition, sleep parameters and subgroups (post hoc)}
+\label{sec:sup_revision}
+
+Both analyses were added during revision, after all other results, and are descriptive
+(\nolinkurl{scripts/revision_extra_analyses.py}; bootstrap seed 2048; summary
+\nolinkurl{runs/revision/extra_analyses.json}). They use only the locked predictions.
+
+\textbf{Drug condition.} The night type of each telemetry recording was taken from PhysioNet
+\nolinkurl{ST-subjects.xls} (SHA-256 verified against the PhysioNet checksum list). Each of the 22 subjects contributes one
+placebo and one temazepam night, so each condition has 22 recordings and subjects.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Telemetry by night type: contrasts in subject-mean \mf\ (\ci).}
+\label{tab:sup_tele_night}
+\begin{tabular}{llrrrr}
+\toprule
+& & \multicolumn{2}{c}{Placebo nights} & \multicolumn{2}{c}{Temazepam nights} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Contrast & & Seed 42 & Seed 123 & Seed 42 & Seed 123 \\
+\midrule
+E3$-$E0 & & $-$0.0338 [$-$0.0538, $-$0.0157] & $-$0.0349 [$-$0.0610, $-$0.0124] & $-$0.0249 [$-$0.0575, 0.0010] & $-$0.0404 [$-$0.0739, $-$0.0154] \\
+E4$-$E0 & & $-$0.0490 [$-$0.0736, $-$0.0275] & $-$0.0314 [$-$0.0582, $-$0.0093] & $-$0.0356 [$-$0.0692, $-$0.0081] & $-$0.0335 [$-$0.0669, $-$0.0092] \\
+E4$-$E2 & & 0.0056 [$-$0.0194, 0.0276] & 0.0288 [0.0000, 0.0578] & 0.0028 [$-$0.0191, 0.0237] & 0.0054 [$-$0.0195, 0.0299] \\
+E4HP$-$E2 & & 0.0383 [0.0154, 0.0644] & 0.0463 [0.0197, 0.0780] & 0.0350 [0.0114, 0.0616] & 0.0374 [0.0165, 0.0624] \\
+E4LP$-$E2 & & $-$0.0351 [$-$0.0616, $-$0.0149] & $-$0.0063 [$-$0.0292, 0.0118] & $-$0.0206 [$-$0.0355, $-$0.0085] & $-$0.0071 [$-$0.0297, 0.0116] \\
+E4$-$E4HP & & $-$0.0328 [$-$0.0611, $-$0.0119] & $-$0.0175 [$-$0.0465, 0.0035] & $-$0.0322 [$-$0.0663, $-$0.0071] & $-$0.0321 [$-$0.0684, $-$0.0057] \\
+E4$-$E4LP & & 0.0406 [0.0158, 0.0671] & 0.0351 [0.0151, 0.0573] & 0.0234 [0.0043, 0.0438] & 0.0125 [$-$0.0018, 0.0270] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Sleep parameters.} For every recording, total sleep time (TST), the time in N1, N2, N3 and REM,
+wake after sleep onset (WASO, wake between the first and last sleep epoch), sleep efficiency (SE, sleep
+epochs over scored epochs) and REM latency (from the first sleep epoch) were computed within the
+evaluation window from scored epochs, once from the reference hypnogram and once from the ensemble
+prediction. Bias is predicted minus reference; limits of agreement (LoA) are bias $\pm1.96$ standard
+deviations of the differences; ICC is the two-way random, absolute-agreement, single-measure ICC(A,1).
+Because the window is anchored on reference sleep, SE and REM latency are window-relative.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Sleep parameters at seed 42 (minutes; SE in \%): reference mean, bias [95\% LoA] and ICC(A,1).
+At seed 123 the TST and N3 biases differ from seed 42 by at most 2.1 min, except TST of E3 on the holdout
+sample ($+2.9$ instead of $+7.7$).}
+\label{tab:sup_sleep_params}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+& & \multicolumn{2}{c}{E0} & \multicolumn{2}{c}{E3} & \multicolumn{2}{c}{E4} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Parameter & Ref. & Bias [LoA] & ICC & Bias [LoA] & ICC & Bias [LoA] & ICC \\
+\midrule
+\multicolumn{8}{l}{\textit{SHHS1 holdout ($n=500$)}} \\
+TST & 358.7 & +35.1 [$-$50, +120] & 0.69 & +7.7 [$-$86, +102] & 0.76 & +5.3 [$-$87, +98] & 0.77 \\
+N1 & 18.9 & +35.6 [$-$20, +91] & 0.08 & +20.7 [$-$28, +70] & 0.19 & +20.0 [$-$25, +65] & 0.22 \\
+N2 & 207.8 & $-$2.7 [$-$136, +131] & 0.40 & $-$1.9 [$-$141, +137] & 0.38 & +2.6 [$-$133, +138] & 0.40 \\
+N3 & 61.5 & $-$43.6 [$-$109, +22] & 0.29 & $-$43.7 [$-$112, +25] & 0.26 & $-$42.4 [$-$110, +25] & 0.28 \\
+REM & 70.4 & +45.9 [$-$68, +160] & 0.19 & +32.6 [$-$67, +132] & 0.28 & +25.1 [$-$66, +117] & 0.34 \\
+WASO & 59.4 & $-$5.8 [$-$86, +74] & 0.54 & $-$1.5 [$-$65, +62] & 0.70 & $-$0.5 [$-$62, +61] & 0.73 \\
+SE & 78.0 & +7.7 [$-$11, +27] & 0.42 & +1.7 [$-$19, +22] & 0.55 & +1.2 [$-$19, +21] & 0.57 \\
+REM latency & 86.5 & $-$39.3 [$-$168, +89] & 0.20 & $-$27.0 [$-$147, +93] & 0.37 & $-$25.1 [$-$140, +89] & 0.38 \\
+\addlinespace
+\multicolumn{8}{l}{\textit{Telemetry ($n=44$ nights)}} \\
+TST & 434.9 & $-$4.2 [$-$50, +42] & 0.88 & $-$10.0 [$-$64, +44] & 0.84 & $-$11.0 [$-$67, +45] & 0.82 \\
+N1 & 41.5 & $-$0.9 [$-$36, +34] & 0.70 & $-$9.7 [$-$42, +23] & 0.62 & $-$10.1 [$-$40, +20] & 0.66 \\
+N2 & 225.6 & $-$7.3 [$-$100, +85] & 0.54 & +15.4 [$-$79, +110] & 0.52 & +21.3 [$-$74, +116] & 0.49 \\
+N3 & 72.9 & +9.6 [$-$55, +74] & 0.64 & +6.0 [$-$60, +72] & 0.62 & +6.8 [$-$60, +73] & 0.61 \\
+REM & 94.9 & $-$5.7 [$-$58, +46] & 0.60 & $-$21.6 [$-$78, +35] & 0.43 & $-$29.1 [$-$88, +30] & 0.32 \\
+WASO & 27.7 & +5.4 [$-$27, +38] & 0.81 & +7.5 [$-$27, +42] & 0.79 & +8.3 [$-$29, +46] & 0.76 \\
+SE & 90.1 & $-$0.8 [$-$10, +8] & 0.83 & $-$2.0 [$-$13, +9] & 0.78 & $-$2.2 [$-$13, +9] & 0.76 \\
+REM latency & 105.8 & +0.2 [$-$134, +134] & 0.29 & $-$0.8 [$-$128, +127] & 0.36 & +9.5 [$-$121, +140] & 0.34 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\textbf{Subgroups.} Age (\texttt{age\_s1}), sex (\texttt{gender}) and the apnoea--hypopnoea index
+with $\geq3\%$ desaturation (\texttt{ahi\_a0h3}) of the 500 holdout participants were read from the NSRR SHHS1
+dataset (version 0.21.0) on the analysis computer; no participant-level value is reproduced here.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Holdout SHHS1 subgroups: subject-mean \mf\ at seed 42, E3$-$E0 (\ci) at seed 42 and its point estimate at
+seed 123, N3 recall of E3 and mean N3 time per night (reference, and E3 minus reference).}
+\label{tab:sup_subgroups}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrrrrrrrr}
+\toprule
+Factor & Level & $n$ & E0 & E3 & E4 & E3$-$E0 (seed 42) & Seed 123 & N3 recall & N3 ref. (min) & N3 bias (min) \\
+\midrule
+Age (years) & $<$55 & 122 & 0.528 & 0.583 & 0.593 & +0.054 [+0.043, +0.066] & +0.044 & 0.260 & 58 & $-$40 \\
+ & 55--64 & 154 & 0.542 & 0.582 & 0.596 & +0.040 [+0.029, +0.052] & +0.035 & 0.270 & 68 & $-$48 \\
+ & 65--74 & 135 & 0.511 & 0.555 & 0.571 & +0.044 [+0.032, +0.055] & +0.031 & 0.246 & 62 & $-$45 \\
+ & $\geq$75 & 89 & 0.468 & 0.521 & 0.535 & +0.053 [+0.035, +0.070] & +0.042 & 0.231 & 54 & $-$38 \\
+\addlinespace
+Sex & female & 251 & 0.533 & 0.580 & 0.593 & +0.047 [+0.038, +0.056] & +0.038 & 0.273 & 76 & $-$53 \\
+ & male & 249 & 0.501 & 0.547 & 0.562 & +0.046 [+0.037, +0.055] & +0.037 & 0.224 & 47 & $-$34 \\
+\addlinespace
+AHI (events/h) & $<$5 & 159 & 0.543 & 0.596 & 0.606 & +0.053 [+0.042, +0.064] & +0.045 & 0.287 & 69 & $-$48 \\
+ & 5--15 & 180 & 0.520 & 0.572 & 0.586 & +0.051 [+0.040, +0.063] & +0.042 & 0.250 & 65 & $-$48 \\
+ & 15--30 & 109 & 0.494 & 0.527 & 0.544 & +0.033 [+0.020, +0.047] & +0.024 & 0.220 & 54 & $-$39 \\
+ & $\geq$30 & 52 & 0.475 & 0.515 & 0.529 & +0.041 [+0.026, +0.055] & +0.027 & 0.208 & 41 & $-$28 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section*{Provenance}
 

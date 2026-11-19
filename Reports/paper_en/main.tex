@@ -68,15 +68,15 @@
   linkcolor=linkblue,
   citecolor=linkblue,
   urlcolor=linkblue,
-  pdftitle={An Efficient ResNet-1D-TCN Pipeline for Single-Channel EEG Sleep Staging: Reproduction, Confirmed Transfer and Its Limits},
+  pdftitle={Architecture and Preprocessing Choices in Single-Channel EEG Sleep Staging under Cohort Shift: A Controlled Evaluation with Confirmation on Held-out SHHS Participants},
   pdfauthor={Ngo Nhat Quan; Pham Thai Son; Tri Nguyen Ho Duy; Tri Nguyen},
-  pdfkeywords={sleep staging; single-channel EEG; temporal convolutional network; reproducibility; domain shift; external validation}
+  pdfkeywords={sleep staging; single-channel EEG; temporal convolutional network; reproducibility; domain shift; pre-specified analysis}
 }
 
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\itshape Single-channel EEG sleep staging}
-\fancyhead[R]{\small\itshape Reproduction, efficiency and transfer}
+\fancyhead[R]{\small\itshape Controlled evaluation under cohort shift}
 \fancyfoot[C]{\thepage}
 \setlength{\headheight}{14pt}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -89,9 +89,9 @@
 \begin{document}
 
 %------------------------------------------------------------------ front matter
-\title{\bfseries\LARGE An Efficient ResNet-1D-TCN Pipeline for\\[0.15em]
-Single-Channel EEG Sleep Staging:\\[0.15em]
-Reproduction, Confirmed Transfer and Its Limits}
+\title{\bfseries\LARGE Architecture and Preprocessing Choices in\\[0.15em]
+Single-Channel EEG Sleep Staging under Cohort Shift:\\[0.15em]
+\Large A Controlled Evaluation with Confirmation on Held-out SHHS Participants}
 
 \author[a,$\ast$]{Ngo Nhat Quan}
 \author[a]{Pham Thai Son}
@@ -121,37 +121,36 @@ Tri Nguyen: \texttt{tringuyen@uit.edu.vn}
 
 \begin{abstract}
 \noindent
-\textbf{Background.} Automatic sleep staging models are usually developed and evaluated on one public
-cohort, and how their accuracy, cost and errors carry over to other cohorts is rarely tested on data
+\textbf{Background.} Sleep staging models are usually developed and evaluated on one public cohort,
+and whether the choices that improve them there also hold on other cohorts is rarely tested on data
 unused during development.
 
 \noindent
-\textbf{Methods.} We reproduced the single-channel ZleepAnlystNet design (E0) on the 78-subject
-Sleep-EDF cassette recordings and replaced its fifteen-network encoder and BiLSTM by a residual
-encoder with a temporal convolutional network (ResNet-1D-TCN), with and without 0.5--30\,Hz band-pass
-filtering. Transfer without retraining was confirmed on 500 Sleep Heart Health Study participants
-under a protocol committed beforehand, and examined on a second cohort (Sleep-EDF telemetry, 22
-subjects).
+\textbf{Methods.} On the 78-subject Sleep-EDF cassette recordings we reproduced the single-channel
+ZleepAnlystNet baseline and compared it, within one protocol, with a residual encoder and temporal
+convolutional network (ResNet-1D-TCN) under several input conditions. Transfer without retraining
+was tested on the Sleep Heart Health Study (SHHS), with three hypotheses committed before 500 held-out
+participants were processed, and on Sleep-EDF telemetry (22 subjects).
 
 \noindent
-\textbf{Results.} On Sleep-EDF, the band-pass ResNet-1D-TCN (E3) reached a pooled \mf\ of 0.790
-against 0.775 for E0, trained $10.2\times$ faster and scored a night $3$--$4\times$ faster. On the
-500 held-out participants it exceeded E0 by 0.047 (\ci\ 0.040--0.053), confirming all three
-pre-specified hypotheses, and its advantage exceeded the spread between training seeds. On the
-telemetry cohort, by contrast, E0 scored 0.03--0.04 higher and filtering gave no gain. In the
-Sleep Heart Health Study, more than 72\% of deep-sleep (N3) epochs were classified as N2, although
-an amplitude threshold from Sleep-EDF still separated 84\% of them from N2; model uncertainty did not
-indicate which recordings were affected, whereas an amplitude statistic did.
+\textbf{Results.} On Sleep-EDF the band-pass ResNet-1D-TCN matched the baseline (pooled \mf\ 0.790
+versus 0.775) and trained about ten times faster than it. On the 500 held-out SHHS participants it
+exceeded the baseline by 0.047 (\ci\ 0.040--0.053), and all three hypotheses were confirmed; the gain
+coincided with band-pass filtering, not with the architecture. On telemetry the baseline scored
+higher, and the filter edge that helped differed from SHHS. In SHHS, more than 72\% of deep-sleep
+(N3) epochs were scored as N2 by every model, underestimating N3 time by about 43 minutes per night,
+although the amplitude cue for N3 remained present; model uncertainty did not reveal the affected
+recordings.
 
 \noindent
-\textbf{Conclusions.} The proposed pipeline matches the baseline at a fraction of its cost, but its
-transfer advantage depends on the target cohort. Pipeline comparisons should be confirmed on held-out
-data from each intended target.
+\textbf{Conclusions.} Preprocessing, more than architecture, determined transfer, and its benefit
+depended on the target cohort. Pipeline comparisons should be confirmed on held-out data from each
+intended target and report training variability and stage-specific errors.
 \end{abstract}
 
 \vspace{0.3em}
 \noindent\textbf{Keywords:} sleep staging; single-channel EEG; temporal convolutional network;
-reproducibility; domain shift; external validation.
+reproducibility; domain shift; pre-specified analysis.
 
 \vspace{0.3em}
 \begin{center}\rule{0.9\textwidth}{0.4pt}\end{center}
@@ -178,14 +177,17 @@ its result on held-out participants under a protocol committed before their data
 
 Our contributions are as follows.
 \begin{enumerate}[label=(\arabic*)]
-\item \textbf{Reproduction and an efficient pipeline.} The reimplemented baseline came within 0.0072
-of the published Sleep-EDF \mf, and the ResNet-1D-TCN pipeline with band-pass filtering exceeded it
-while training about ten times faster and scoring a night three to four times faster.
+\item \textbf{Reproduction and a controlled comparison.} The reimplemented baseline came within 0.0072
+of the published Sleep-EDF \mf. Within the same folds and protocol, the ResNet-1D-TCN with band-pass
+filtering matched or exceeded it while training about ten times faster than this baseline; the
+architecture itself, without filtering, gave no detectable gain. The components are established; the
+contribution lies in their controlled comparison and in what transfers.
 \item \textbf{Confirmed transfer, and its limits.} On 500 held-out SHHS participants the advantage of
 the band-pass pipeline over the baseline, over record-wise $z$-scoring and over unfiltered input was
-confirmed and exceeded the variation between training seeds. On a second target cohort with the
-training derivation, however, the baseline scored higher and filtering gave no gain, so the transfer
-advantage depends on the target.
+confirmed under a protocol committed beforehand, and the advantage of band-pass input over the
+baseline and unfiltered input exceeded the spread of five E4 training seeds. On a second, small target
+cohort with the training derivation, however, the baseline scored higher, and the filter edge that
+helped differed from SHHS, so the transfer advantage depends on the target.
 \item \textbf{A diagnosis of the dominant transfer error.} After transfer to SHHS, most deep-sleep
 (N3) epochs were classified as N2 by every pipeline. The amplitude contrast between N3 and N2 was
 still present in the target signal, model uncertainty did not flag the affected recordings, and a
@@ -312,8 +314,8 @@ Layer dimensions and hyperparameters are given in Supplementary Methods S1.
     ResNet numbers denote output channels; GAP is global average pooling. (b) Sleep-EDF uses ten
     shared subject-wise folds, with eight for training, one for validation and one for testing per
     rotation. Target cohorts are scored by averaging the class probabilities of the ten fold models,
-    without target-domain model fitting. E1 was evaluated on the first SHHS1 sample only. The symbols
-    represent architecture and fold roles, not measured signals or partition sizes.}
+    without target-domain model fitting. E1 was evaluated on the first SHHS1 sample only. E6R and the
+    one-edge configurations E4HP and E4LP share the ResNet-1D-TCN architecture.}
     \label{fig:pipeline}
 \end{figure}
 
@@ -329,8 +331,8 @@ Layer dimensions and hyperparameters are given in Supplementary Methods S1.
 E0 & Unfiltered & 15-branch CNN & BiLSTM; reproduced baseline \\
 E1 & Unfiltered & 15-branch CNN & TCN; sequence-model replacement \\
 E2 & Unfiltered & ResNet-1D & TCN; encoder replacement \\
-E3 & Band-pass + clip + $\div100$ & ResNet-1D & TCN; proposed pipeline \\
-E4 & Band-pass only & ResNet-1D & TCN; proposed pipeline without fixed scaling \\
+E3 & Band-pass + clip + $\div100$ & ResNet-1D & TCN; confirmatory configuration (H1--H3) \\
+E4 & Band-pass only & ResNet-1D & TCN; recommended form, without fixed scaling \\
 E6 & Band-pass + clip + $z$-score & ResNet-1D & TCN; record-wise normalisation \\
 E6R & Band-pass + clip + 90-min $z$-score & ResNet-1D & TCN; windowed normalisation \\
 \bottomrule
@@ -353,7 +355,9 @@ study selected on a random epoch-wise split of the training data
 
 On Sleep-EDF, out-of-fold predictions are pooled; the unit of inference is the subject. Target
 cohorts are scored with the ten-model ensemble. Pooled \mf\ is computed from summed confusion
-matrices and subject-mean \mf\ averages the participants' scores; metrics use five fixed classes.
+matrices and subject-mean \mf\ averages the participants' scores; metrics use five fixed classes,
+and a class absent from both the reference and the prediction of a participant counts with F1 of 0
+(Supplementary Section S3).
 Differences are given with paired subject-cluster bootstrap percentile intervals (10{,}000
 resamples)~\cite{efron1994bootstrap}. These intervals treat the trained models as fixed and exclude
 variation between training runs, which is reported separately through the training seeds.
@@ -363,11 +367,33 @@ October 2026, before any holdout recording was processed. It fixed three seed-42
 subject-mean \mf: H1, E3$-$E0; H2, E3$-$E6; H3, E3$-$E2. A hypothesis was confirmed if its
 Holm-adjusted~\cite{holm1979} two-sided Wilcoxon~\cite{wilcoxon1945} $p$-value was below 0.05 and its
 bootstrap interval lay above zero. Later analyses were each specified in an amendment committed
-before they were run: amplitude sensitivity and batch-normalisation adaptation (A1), normalisation
-scope, five seeds, single models, prior estimation and training cost (A2), the telemetry cohort and
-an amplitude-guided correction (A3), and the separation of the two filter edges (A4). These analyses
-are descriptive. Commit identifiers and GitHub server timestamps are listed in Supplementary
-Sections S3, S5, S6, S10, S11 and S12.
+before they were run and are descriptive; Table~\ref{tab:roles} lists the role of every analysis.
+Commit identifiers and GitHub server timestamps are given in Supplementary Sections S3, S5, S6, S10,
+S11 and S12.
+
+\begin{table}[t]
+\centering
+\caption{Role of each analysis. Confirmatory: decision rule fixed before the data were processed;
+descriptive: specified beforehand in an amendment, without hypothesis tests; exploratory: developed on
+the data on which it is reported.}
+\label{tab:roles}
+\small
+\begin{tabularx}{\textwidth}{lYll}
+\toprule
+\textbf{Analysis} & \textbf{Content} & \textbf{Role} & \textbf{Specified} \\
+\midrule
+Protocol & H1--H3 on the 500 holdout SHHS1 participants & Confirmatory & 10 Oct 2026 \\
+Sleep-EDF contrasts & Four stepwise contrasts, out-of-fold & Pre-specified & before training \\
+A1 & Amplitude sweep, AdaBN & Descriptive & 12 Oct 2026 \\
+Interventions & EM prior correction, class weighting, ADAST (first SHHS1 sample) & Descriptive & after first-sample errors \\
+A2 & E6R, five E4 seeds, single models, EM sample size, training cost & Descriptive & 26 Oct 2026 \\
+A3 & Telemetry cohort, amplitude-guided rule & Descriptive & 11 Nov 2026 \\
+A4 & Filter edges (E4HP, E4LP) & Descriptive & 11 Nov 2026 \\
+Gate & Amplitude and entropy gates & Exploratory & after A3 results \\
+Revision & Placebo/temazepam split, sleep parameters, age/sex/AHI subgroups & Post hoc & after all results \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Computational cost}
 
@@ -425,9 +451,11 @@ between studies, these values position the pipelines and do not rank them. E3 ex
 (\ci\ 0.0057--0.0259) in pooled \mf, improving in 49 of 78 subjects. Of the pre-specified stepwise
 contrasts, replacing the BiLSTM by the TCN (E1$-$E0, 0.0048) and replacing the encoder (E2$-$E1,
 0.0033) had intervals including zero, and band-pass filtering added 0.0070 (E3$-$E2) with an
-interval just above zero but improvement in only 37 of 78 subjects. E3 exceeded record-wise
-$z$-scoring by 0.0213 (\ci\ 0.0122--0.0307; Holm $p=0.0012$). All four contrasts kept their sign at
-seed 123 (Supplementary Tables~\ref{SM-tab:sup_edf_perclass}--\ref{SM-tab:sup_edf_seed_contrasts}).
+interval just above zero, improvement in only 37 of 78 subjects and Holm $p=0.90$, so it would not
+have met the decision rule used for the holdout sample. E3 exceeded record-wise $z$-scoring by 0.0213
+(\ci\ 0.0122--0.0307; Holm $p=0.0012$). All four contrasts kept their sign at seed 123, but E3$-$E6
+was then no longer significant (0.0102, Holm $p=0.13$), so on Sleep-EDF only E3$-$E6 at seed 42 met
+both criteria (Supplementary Tables~\ref{SM-tab:sup_edf_perclass}--\ref{SM-tab:sup_edf_seed_contrasts}).
 
 \begin{table}[t]
 \centering
@@ -497,7 +525,9 @@ E6 & 1{,}085{,}578 & 3.58 & & 2 h 25 min & 344{,}928 \\
 On the first SHHS1 sample, E3 exceeded E0 by 0.0412 (\ci\ 0.0314--0.0512), E6 by 0.0274 and E2 by
 0.0475 in subject-mean \mf. On the 500 holdout participants all three pre-specified hypotheses were
 confirmed, with estimates close to those of the first sample (Table~\ref{tab:holdout};
-Fig.~\ref{fig:holdout}a). E3 improved on E0 in 380 of 500 participants. The unfiltered ResNet-1D-TCN
+Fig.~\ref{fig:holdout}a). E3 improved on E0 in 380 of 500 participants, and in post-hoc subgroups by
+age, sex and apnoea--hypopnoea index (AHI) E3$-$E0 ranged from 0.033 to 0.054 with every interval above
+zero, although absolute scores fell with age and AHI (Supplementary Section S13). The unfiltered ResNet-1D-TCN
 E2 scored close to E0 (0.5122 versus 0.5170 at seed 42, 0.5321 versus 0.5216 at seed 123), so most of
 the advantage over the baseline coincided with the change of input filtering rather than with the
 change of encoder and sequence model.
@@ -535,7 +565,12 @@ Training variability was of the same order as some contrasts (Figs.~\ref{fig:hol
 and~\ref{fig:seeds}). Two seeds of the same configuration differed by 0.005--0.020 in holdout
 subject-mean \mf, and five seeds of E4 spanned 0.5634--0.5822 (largest pairwise difference 0.0189).
 Every difference between an E4 seed and E0 or E2 at either seed was larger (0.031--0.070), whereas
-E4$-$E3 (0.0139 and 0.0091) lay within the spread of E4. Windowed $z$-scoring with matched scale in
+E4$-$E3 (0.0139 and 0.0091) lay within the spread of E4. E3 and E4 differ only by a constant factor
+that batch normalisation largely absorbs, yet they differed by up to 0.014 here and by $-0.013$ on
+telemetry at seed 42 (\ci\ $-0.018$ to $-0.008$); this difference between nearly identical
+configurations indicates the scale of training noise against which every contrast should be read.
+E3 remains the configuration of the confirmatory hypotheses, and E4, which omits the inactive clip
+and the fixed scaling, is the form we recommend. Windowed $z$-scoring with matched scale in
 both cohorts (E6R) still scored below E4 at both seeds, by 0.036 and 0.023 (Supplementary
 Section S6).
 
@@ -564,13 +599,17 @@ Section S6).
 \subsection{Transfer to the telemetry cohort}
 \label{sec:telemetry}
 
-On the telemetry cohort the ranking reversed (Table~\ref{tab:telemetry}). E0 scored highest, and E3
+On the telemetry cohort the SHHS1 ranking did not hold (Table~\ref{tab:telemetry}). E0 scored highest, and E3
 and E4 were below it at both seeds: E3$-$E0 was $-0.030$ (\ci\ $-0.054$ to $-0.011$) and $-0.037$, and
 E4$-$E0 $-0.043$ and $-0.032$, each with an interval below zero. Band-pass filtering gave no
 detectable gain over the unfiltered ResNet-1D-TCN (E4$-$E2 0.003 and 0.016, E3$-$E2 0.015 and 0.011,
 all intervals including zero), although it raised N3 recall by 0.03--0.06. N3 was not under-detected:
 recall was 0.80--0.87 and 12--19\% of N3 epochs were classified as N2. With 22 subjects, the intervals
-are about four times wider than on the holdout sample (Supplementary Section S10).
+are about four times wider than on the holdout sample (Supplementary Section S10). Because half of the
+nights were recorded under temazepam, which alters slow-wave and fast activity, placebo and temazepam
+nights were also analysed separately (post hoc): E4$-$E0 was $-0.049$ and $-0.031$ on placebo nights
+and $-0.036$ and $-0.034$ on temazepam nights, each with an interval below zero, so the result did not
+depend on the drug condition (Supplementary Section S13).
 
 \begin{table}[t]
 \centering
@@ -626,15 +665,17 @@ changed the N3 error, with 71--74\% of N3 epochs classified as N2 by every confi
 telemetry the pattern reversed. E4HP exceeded E2 by 0.034 (0.013--0.058) and 0.039 (0.017--0.064)
 and also exceeded E4, by 0.031 and 0.023, so the high-pass edge carried the gain there, although E4HP
 remained below E0 (Table~\ref{tab:telemetry}); E4LP scored below E2 at seed 42 ($-0.028$, \ci\
-$-0.052$ to $-0.011$). On Sleep-EDF the four configurations differed by less than 0.01. Each edge
+$-0.052$ to $-0.011$). E4HP exceeded E2 on placebo and on temazepam nights alike (0.035--0.046, each
+interval above zero), so the high-pass effect was not confined to the drug nights. On Sleep-EDF the four configurations differed by less than 0.01. Each edge
 alone thus lowered the score in one target cohort, whereas the full band-pass scored at least as high
 as the unfiltered model in every cohort (Supplementary Section~S12).
 
 \begin{table}[t]
 \centering
 \caption{Separation of the filter edges (A4): subject-mean \mf\ of E2 (unfiltered), E4 (0.5--30\,Hz
-band-pass), E4HP (0.5\,Hz high-pass only) and E4LP (30\,Hz low-pass only). Sleep-EDF: out-of-fold
-predictions; target cohorts: ten-model ensembles. Contrasts with intervals are in Supplementary
+band-pass), E4HP (0.5\,Hz high-pass only) and E4LP (30\,Hz low-pass only). All values are subject-mean,
+including Sleep-EDF, where Table~\ref{tab:sleepedf-performance} reports pooled \mf. Sleep-EDF:
+out-of-fold predictions; target cohorts: ten-model ensembles. Contrasts with intervals are in Supplementary
 Table~\ref{SM-tab:sup_a4}.}
 \label{tab:edges}
 \small
@@ -657,11 +698,21 @@ E4LP & 0.7330 & 0.7306 & 0.5693 & 0.5615 & 0.6968 & 0.7180 \\
 
 The largest error after transfer to SHHS1 concerned N3 (Fig.~\ref{fig:confusion}). For E3, N3 F1 fell
 from 0.809 on Sleep-EDF to 0.406 on the first SHHS1 sample, with precision 0.944 but recall 0.258, and
-73.1\% of reference N3 epochs were classified as N2, against 18.2\% on Sleep-EDF. Correcting this cell
-alone would recover 74.5\% of the cross-cohort drop in pooled \mf. On the holdout sample the
-N3$\rightarrow$N2 rate was 72.3\% for E0, 72.7\% for E3, 71.1\% for E4 and 77.1\% for E6, so the error
-was shared by every pipeline, and it occurred in stable N3 as well as near stage changes
+73.1\% of reference N3 epochs were classified as N2, against 18.2\% on Sleep-EDF. An oracle correction
+of this cell alone, using the reference labels, would recover 74.5\% of the cross-cohort drop in
+pooled \mf; this ranks the error by its weight and is not an achievable improvement. On the holdout
+sample the N3$\rightarrow$N2 rate was 72.3\% for E0, 72.7\% for E3, 71.1\% for E4 and 77.1\% for E6,
+so the error was shared by every pipeline, and it occurred in stable N3 as well as near stage changes
 (Supplementary Tables~\ref{SM-tab:sup_perclass_transfer}--\ref{SM-tab:sup_boundary}).
+
+In terms of sleep parameters (post hoc, within the evaluation window), every ensemble underestimated
+N3 time on the holdout sample by 42--45\,min per night against a reference mean of 62\,min, with an
+intraclass correlation ICC(A,1) of only 0.24--0.29 with the reference. Total sleep time was estimated
+within 3--8\,min on average by E3 and E4 (ICC 0.76--0.77) but overestimated by 35\,min by E0. On
+telemetry, N3 time differed from the reference by $+5$ to $+10$\,min. The error was not confined to
+older or apnoeic participants: N3 recall of E3 was 0.21--0.29 in every age, sex and AHI subgroup, and
+the shortfall in N3 time was largest where reference N3 was longest, 53\,min in women and 48\,min
+below an AHI of 15 (Supplementary Section S13).
 
 \begin{figure}[t]
     \centering
@@ -706,12 +757,13 @@ validation.
 \subsection{What holds}
 
 The reproduction succeeded within a margin compatible with the stricter model selection used here, and
-the proposed ResNet-1D-TCN pipeline matched or exceeded the baseline on Sleep-EDF at about a tenth of
-its training time and a third of its inference time. Because every preprocessing variant, seed and
-fold has to be retrained, this reduction in cost is a practical advantage, and it does not depend on
-the target cohort. On SHHS1, the advantage of the band-pass pipeline was confirmed on 500
-participants who played no part in development, and its contrasts with the baseline and the
-unfiltered model exceeded the variation between five training seeds. Most of this advantage
+the band-pass ResNet-1D-TCN matched or exceeded the baseline on Sleep-EDF at about a tenth of the
+baseline's training time and a third of its inference time. Because every preprocessing variant, seed
+and fold has to be retrained, this reduction in cost relative to the reproduced baseline is a practical
+advantage, and it does not depend on the target cohort; it was not compared with other compact models.
+On SHHS1, the advantage of the band-pass pipeline was confirmed on 500 participants who played no part
+in development, and the contrasts of E4 with the baseline and the unfiltered model exceeded the
+variation between its five training seeds. Most of this advantage
 coincided with band-pass filtering rather than with the architecture, consistent with the
 observation that the filter removes the frequency ranges in which SHHS1 and Sleep-EDF differ most.
 Separating the two edges showed that, in SHHS1, the low-pass edge accounted for most of the filtering
@@ -775,18 +827,25 @@ was not tested on the ResNet-1D-TCN backbone: ADAST raised N3 recall of its own 
 0.62 and improved on its control by 0.043, whereas on E4 only AdaBN was evaluated, so whether
 adversarial or self-training adaptation would reduce the N3 error on the stronger backbone remains
 open; ADAST's gain cannot be added to the score of E4, because the representations, objectives and
-budgets differ. Sleep-EDF is
-scored with out-of-fold predictions and the targets with ten-model ensembles, which inflates the
-apparent cross-cohort drop of a single model by about 0.02. All models use future context, and results
-are not stratified by age or sex.
+budgets differ. No other published architecture, such as a compact sequence model or a model
+pre-trained on many cohorts, was retrained within the same folds, so the cost and transfer comparisons
+are relative to the reproduced baseline only, and the speed-up reflects the sixteen networks per fold
+of that baseline rather than an absolute efficiency. The SHHS1 recordings were resampled from 125 to
+100\,Hz with an anti-aliasing filter whose transition band lies above 40\,Hz, so part of the
+high-frequency difference between the cohorts, and hence of the low-pass gain, may arise from this
+step rather than from hardware or physiology; a training run through the same resampling chain was not
+performed. Sleep-EDF is scored with out-of-fold predictions and the targets with ten-model ensembles,
+which inflates the apparent cross-cohort drop of a single model by about 0.02. All models use future
+context, the evaluation window depends on reference labels, and the subgroup, drug-condition and
+sleep-parameter analyses were added post hoc.
 
 %==============================================================================
 \section{Conclusion}
 
 A reproduced ZleepAnlystNet baseline and a ResNet-1D-TCN pipeline were compared under one protocol.
-The proposed pipeline matched or exceeded the baseline on Sleep-EDF with about a tenth of its training
-time, and its advantage on SHHS1, which coincided mainly with band-pass filtering, was confirmed on 500
-held-out participants. On a second target cohort the advantage did not hold, and the filter edge that
+The band-pass ResNet-1D-TCN matched or exceeded the baseline on Sleep-EDF with about a tenth of the
+baseline's training time, and its advantage on SHHS1, which coincided mainly with band-pass filtering
+rather than with the architecture, was confirmed on 500 held-out participants. On a second target cohort the advantage did not hold, and the filter edge that
 helped differed between the two targets; of the filters tested, only the full band-pass did not score
 below unfiltered input in either. Under transfer to SHHS1,
 every pipeline classified most N3 epochs as N2 although the amplitude cue remained available, and
