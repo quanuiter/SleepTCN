@@ -190,6 +190,10 @@ def holdout(lang):
     out.append(f'\\nextgroupplot[title={{{s["panel_b"]}}},height=4.1cm,ymin=0.4,ymax={n + 0.6},'
                f'ytick={{{ticks}}},yticklabels={{{tick_labels}}},xlabel={{{s["delta"]}}}]')
     out.append(f'\\addplot[ink,line width=0.7pt,forget plot] coordinates {{(0,0.4) (0,{n + 0.6})}};')
+    # Observed maximum absolute difference among five seeds (A2), not a confidence interval.
+    out.append(r'\path[fill=sone,fill opacity=0.10] (axis cs:-0.0189,0.4) rectangle (axis cs:0.0189,7.6);')
+    for edge in (-0.0189, 0.0189):
+        out.append(f'\\addplot[sone,dashed,line width=0.6pt,forget plot] coordinates {{({edge},0.4) ({edge},7.6)}};')
     seed_points = [(e, lo, hi, n - k) for k, (_, e, lo, hi) in enumerate(rows[:4])]
     out.append(interval_plot('ink', '*', seed_points, '2.2pt'))
     out.append(f'\\addplot[ink,only marks,mark=o,mark size=2.4pt,line width=0.9pt] coordinates {{({rows[4][1]},{n - 4})}};')

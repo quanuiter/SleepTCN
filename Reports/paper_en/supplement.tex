@@ -25,7 +25,9 @@ approximate input-scale invariance and checkpoint similarities of E3 and E4. Sup
 post-confirmatory amplitude and AdaBN analyses, Supplementary Section S6 the second amendment
 (normalisation scope, five training seeds, single models, EM sample size and training cost), and
 Supplementary Section S7 a post-hoc description of the input power spectra, Supplementary Section S8
-a stage-wise description of input amplitude, and Supplementary Section S9 the whole-night CPU timing.
+a stage-wise description of input amplitude, Supplementary Section S9 the whole-night CPU timing,
+Supplementary Section S10 the telemetry cohort and the amplitude-guided rule (amendment A3), and
+Supplementary Section S11 the exploratory label-free gate and the abandoned ISRUC evaluation.
 E6 estimates mean and standard deviation from each complete unlabelled target recording; it is label-free
 but transductive at recording level, not purely inductive zero-shot inference.
 
@@ -255,7 +257,7 @@ interpreted as equivalence between configurations.
 
 \subsection*{First SHHS1 sample: performance, N3 errors and ADAST budgets}
 
-The following three tables accompany Sections 4.4, 4.6 and 4.7 of the main text.
+The following three tables accompany Sections 4.3 and 4.6 of the main text.
 On this sample, the unadjusted exact sign tests for the two primary comparisons, E3$-$E0 and E3$-$E6, gave
 $p = 3.8\times10^{-13}$ and $1.9\times10^{-7}$. Within $\pm1$ epoch of a reference-label transition, the
 pooled boundary \mf\ of E3 exceeded that of E0 by 0.0366 and that of E6 by 0.0183. For E6, N3 recall
@@ -1688,6 +1690,18 @@ AdaBN & $-$0.1206 $[$$-$0.1295, $-$0.1116$]$ & 0.0086 $[$$-$0.0052, 0.0222$]$ & 
 \end{tabular}}
 \end{table}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/results_amplitude_en.pdf}
+\caption{Amplitude sensitivity and AdaBN for E4 (seed 42) on the holdout SHHS1 sample ($n=500$). The filtered input
+was multiplied by 0.5--2 while the encoder kept its stored batch-normalisation statistics; $\times$1 (dotted line) is
+unmodified E4. AdaBN replaces the batch-normalisation statistics with those of unlabelled SHHS1 epochs (right of the
+dashed line). (a) The N3$\rightarrow$N2 rate falls monotonically as amplitude increases, but N3 recall rises only up
+to $\times$1.5. (b) Subject-mean macro-F1 does not exceed that of E4 at any factor. Values from
+Table~\ref{tab:sup_amendment_arms}.}
+\label{fig:sup_amplitude}
+\end{figure}
+
 AdaBN minus ADAST was $-$0.0844 ($[$$-$0.0929, $-$0.0759$]$) in subject-mean \mf\ and $-$0.3334 ($[$$-$0.3487, $-$0.3185$]$) in N3 recall; AdaBN minus the source-only
 control of ADAST was $-$0.0416 ($[$$-$0.0498, $-$0.0333$]$) in subject-mean \mf.
 The pre-specified expectation of rising N3 recall and falling N3$\to$N2 rate for factors above 1 was met
@@ -2114,6 +2128,211 @@ Threads & Configuration & Time (s) & Epochs\,s$^{-1}$ & E0 time / E3 time \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+%==============================================================================
+\section*{Supplementary Section S10: telemetry cohort and amplitude-guided rule (amendment A3)}
+\label{sec:sup_telemetry}
+
+Amendment A3 was committed to the repository before the telemetry recordings were downloaded (commit
+\texttt{872d4ef}, GitHub server timestamp 2026-11-11 02:48:23 UTC; \nolinkurl{configs/amendment_a3.json},
+\nolinkurl{docs/AMENDMENT_A3.md}). It specified the cohort, preprocessing, arms (E0, E2, E3, E4 and E6 at seeds 42
+and 123), metrics, contrasts, the amplitude-guided rules and their interpretation; the analysis is descriptive
+(bootstrap seed 2044). All 44 recording pairs of the Sleep-EDF telemetry subset were downloaded from PhysioNet and
+checked against the published SHA-256 values, and preprocessed with the unchanged Sleep-EDF function. Three file
+format deviations were recorded before any label was compared with a prediction: in 29 recordings, the trailing
+10 or 20\,s that do not fill a 30\,s epoch were dropped (D1); 7 hypnograms whose EDF+ start-date field names the
+previous day were read with a minimal annotation parser that reproduced the standard reader on every hypnogram the
+latter can read (D2); and in 42 recordings, signal not covered by an annotation was marked Unknown and excluded
+from the metrics, as unscored cassette epochs are (D3). The cohort comprises 42{,}467 scored epochs in the
+evaluation window. The out-of-fold Sleep-EDF predictions needed for the source cost of the rule were regenerated
+with the archived checkpoints and reproduced the published pooled \mf\ of every configuration
+(for example 0.7754 for E0 and 0.7904 for E3).
+
+\begin{table}[H]
+\centering\small
+\caption{Telemetry cohort: configuration contrasts (22 subjects, subject-cluster intervals).}
+\label{tab:sup_telemetry_contrasts}
+\begin{tabular}{llrrr}
+\toprule
+Seed & Contrast & $\Delta$ subject-mean \mf\ (\ci) & $\Delta$ pooled \mf\ (\ci) & $\Delta$ N3 recall (\ci) \\
+\midrule
+42 & E3$-$E0 & $-$0.0301 [$-$0.0539, $-$0.0107] & $-$0.0281 [$-$0.0507, $-$0.0089] & $-$0.023 [$-$0.044, 0.000] \\
+42 & E4$-$E0 & $-$0.0429 [$-$0.0700, $-$0.0206] & $-$0.0412 [$-$0.0666, $-$0.0195] & $-$0.018 [$-$0.038, 0.004] \\
+42 & E3$-$E2 & 0.0154 [$-$0.0058, 0.0355] & 0.0135 [$-$0.0095, 0.0348] & 0.053 [0.033, 0.075] \\
+42 & E4$-$E2 & 0.0026 [$-$0.0190, 0.0224] & 0.0003 [$-$0.0232, 0.0208] & 0.058 [0.037, 0.081] \\
+42 & E3$-$E6 & 0.0171 [$-$0.0065, 0.0407] & 0.0127 [$-$0.0060, 0.0287] & 0.006 [$-$0.028, 0.034] \\
+42 & E4$-$E6 & 0.0043 [$-$0.0206, 0.0277] & $-$0.0005 [$-$0.0202, 0.0154] & 0.011 [$-$0.023, 0.039] \\
+42 & E4$-$E3 & $-$0.0128 [$-$0.0175, $-$0.0081] & $-$0.0132 [$-$0.0173, $-$0.0091] & 0.005 [0.003, 0.007] \\
+123 & E3$-$E0 & $-$0.0367 [$-$0.0648, $-$0.0137] & $-$0.0382 [$-$0.0652, $-$0.0159] & $-$0.028 [$-$0.052, $-$0.002] \\
+123 & E4$-$E0 & $-$0.0324 [$-$0.0599, $-$0.0109] & $-$0.0317 [$-$0.0586, $-$0.0099] & $-$0.016 [$-$0.037, 0.008] \\
+123 & E3$-$E2 & 0.0111 [$-$0.0132, 0.0353] & 0.0046 [$-$0.0201, 0.0283] & 0.034 [0.021, 0.047] \\
+123 & E4$-$E2 & 0.0155 [$-$0.0090, 0.0404] & 0.0110 [$-$0.0150, 0.0363] & 0.046 [0.029, 0.063] \\
+123 & E3$-$E6 & 0.0018 [$-$0.0249, 0.0312] & $-$0.0030 [$-$0.0230, 0.0149] & 0.004 [$-$0.031, 0.033] \\
+123 & E4$-$E6 & 0.0062 [$-$0.0193, 0.0323] & 0.0035 [$-$0.0164, 0.0206] & 0.016 [$-$0.020, 0.048] \\
+123 & E4$-$E3 & 0.0043 [$-$0.0028, 0.0096] & 0.0065 [0.0032, 0.0102] & 0.012 [0.006, 0.018] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Rule R1 relabels as N3 every epoch predicted N2 whose band-pass epoch standard deviation reaches the threshold that
+maximised balanced accuracy between reference N3 and N2 on Sleep-EDF ($16.51\,\mu$V); on Sleep-EDF itself, the
+threshold of each fold was estimated without that fold. By the locked rule, R1 improved subject-mean \mf\ on the
+holdout sample and harmed it on telemetry and on Sleep-EDF for every arm (Table~\ref{tab:sup_rule}). On telemetry,
+the Sleep-EDF threshold placed 96.9\% of N3 epochs above it but only 60.8\% of N2 epochs below it. A soft variant
+(R2), which rescales the N2/N3 odds by an amplitude likelihood ratio, behaved alike and is reported in the summary
+file (\nolinkurl{runs/a3/analysis/a3_summary.json}).
+
+\begin{table}[H]
+\centering\small
+\caption{Rule R1 minus unmodified ensemble, subject-mean \mf\ (\ci).}
+\label{tab:sup_rule}
+\begin{tabular}{llrrr}
+\toprule
+Arm & Seed & Sleep-EDF (out-of-fold) & SHHS1 holdout & Telemetry \\
+\midrule
+E0 & 42 & $-$0.0252 [$-$0.0353, $-$0.0157] & 0.0578 [0.0524, 0.0631] & $-$0.0769 [$-$0.0972, $-$0.0584] \\
+E2 & 42 & $-$0.0273 [$-$0.0367, $-$0.0184] & 0.0593 [0.0539, 0.0645] & $-$0.0774 [$-$0.0961, $-$0.0598] \\
+E3 & 42 & $-$0.0281 [$-$0.0385, $-$0.0183] & 0.0578 [0.0524, 0.0630] & $-$0.0769 [$-$0.0967, $-$0.0587] \\
+E4 & 42 & $-$0.0278 [$-$0.0378, $-$0.0183] & 0.0534 [0.0481, 0.0585] & $-$0.0771 [$-$0.0968, $-$0.0588] \\
+E6 & 42 & $-$0.0181 [$-$0.0286, $-$0.0085] & 0.0700 [0.0641, 0.0759] & $-$0.0717 [$-$0.0924, $-$0.0525] \\
+E0 & 123 & $-$0.0285 [$-$0.0383, $-$0.0193] & 0.0578 [0.0524, 0.0632] & $-$0.0775 [$-$0.0976, $-$0.0593] \\
+E2 & 123 & $-$0.0270 [$-$0.0368, $-$0.0176] & 0.0610 [0.0556, 0.0663] & $-$0.0776 [$-$0.0967, $-$0.0598] \\
+E3 & 123 & $-$0.0294 [$-$0.0395, $-$0.0200] & 0.0620 [0.0565, 0.0673] & $-$0.0800 [$-$0.0989, $-$0.0623] \\
+E4 & 123 & $-$0.0293 [$-$0.0394, $-$0.0196] & 0.0580 [0.0527, 0.0633] & $-$0.0779 [$-$0.0974, $-$0.0597] \\
+E6 & 123 & $-$0.0236 [$-$0.0336, $-$0.0142] & 0.0691 [0.0631, 0.0750] & $-$0.0702 [$-$0.0912, $-$0.0508] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section*{Supplementary Section S11: label-free gate (exploratory) and the abandoned ISRUC evaluation}
+\label{sec:sup_gate}
+
+The gate was developed after the A3 results, on the same three cohorts, and is reported as exploratory
+(\nolinkurl{scripts/a5_development_diagnostic.py}). For a recording, the \emph{amplitude disagreement} is the
+share of epochs with band-pass standard deviation of at least $16.51\,\mu$V and predicted N2 or N3 that the
+ensemble predicts as N2 (undefined below 20 such epochs). The gate of each arm is the 95th percentile of this
+statistic over the 153 Sleep-EDF recordings scored with that arm's out-of-fold predictions; R1 is applied only above
+it. The entropy gate uses the recording's mean prediction entropy with the same percentile. Bootstrap seed 2047.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Label-free gate. $\rho$: Spearman correlation with the recording's N3 recall within the SHHS1 holdout
+sample (438 recordings with at least 20 N3 epochs). Gated rule minus unmodified, subject-mean \mf\ (\ci), with the
+number of corrected recordings in parentheses (500 holdout, 153 Sleep-EDF and 44 telemetry recordings).}
+\label{tab:sup_gate}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrrrrr}
+\toprule
+& & \multicolumn{2}{c}{$\rho$ (SHHS1)} & \multicolumn{3}{c}{Amplitude gate} & Entropy gate \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-7}\cmidrule(lr){8-8}
+Arm & Seed & Amplitude & Entropy & SHHS1 & Sleep-EDF & Telemetry & SHHS1 \\
+\midrule
+E0 & 42 & $-$0.91 & $-$0.06 & 0.0384 [0.0333, 0.0437] (223) & 0.0014 [$-$0.0003, 0.0035] (5) & $-$0.0021 [$-$0.0064, 0.0000] (1) & 0.0290 [0.0245, 0.0337] \\
+E2 & 42 & $-$0.93 & $-$0.15 & 0.0431 [0.0377, 0.0486] (257) & $-$0.0010 [$-$0.0024, 0.0001] (5) & $-$0.0104 [$-$0.0210, $-$0.0017] (5) & 0.0423 [0.0372, 0.0475] \\
+E3 & 42 & $-$0.93 & $-$0.14 & 0.0422 [0.0368, 0.0477] (249) & $-$0.0004 [$-$0.0032, 0.0026] (5) & $-$0.0098 [$-$0.0220, 0.0000] (4) & 0.0415 [0.0363, 0.0467] \\
+E4 & 42 & $-$0.92 & $-$0.12 & 0.0381 [0.0329, 0.0434] (241) & $-$0.0006 [$-$0.0021, 0.0007] (5) & $-$0.0100 [$-$0.0227, 0.0000] (4) & 0.0295 [0.0247, 0.0342] \\
+E0 & 123 & $-$0.89 & $-$0.03 & 0.0387 [0.0336, 0.0441] (239) & $-$0.0007 [$-$0.0030, 0.0010] (5) & $-$0.0022 [$-$0.0065, 0.0000] (1) & 0.0245 [0.0201, 0.0289] \\
+E2 & 123 & $-$0.93 & $-$0.12 & 0.0479 [0.0425, 0.0535] (286) & $-$0.0013 [$-$0.0051, 0.0016] (5) & $-$0.0105 [$-$0.0214, $-$0.0016] (5) & 0.0460 [0.0408, 0.0513] \\
+E3 & 123 & $-$0.93 & $-$0.10 & 0.0459 [0.0404, 0.0516] (261) & $-$0.0021 [$-$0.0049, $-$0.0002] (5) & $-$0.0093 [$-$0.0210, 0.0000] (4) & 0.0415 [0.0363, 0.0467] \\
+E4 & 123 & $-$0.93 & $-$0.11 & 0.0426 [0.0372, 0.0481] (248) & $-$0.0023 [$-$0.0058, 0.0003] (6) & $-$0.0100 [$-$0.0231, 0.0000] (4) & 0.0389 [0.0339, 0.0439] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Amendment A5 (commit \texttt{28067f0}, GitHub server timestamp 2026-11-11 08:38:21 UTC;
+\nolinkurl{docs/AMENDMENT_A5.md}) specified an independent evaluation of the gate on ISRUC-Sleep subgroup I at
+channels C4-A1 and F4-A1. Before the full cohort was processed, the reader was tested on subjects 1 and 26. Both
+recordings declare $\pm25\,\mu$V EEG channels, but the median band-pass standard deviation of epochs scored N3 at
+C4-A1 was 2.1 and 1.2 units and their median peak-to-peak amplitude 15.4 and 8.5 units, below the 75\,$\mu$V that
+N3 scoring requires and different between the two subjects; the declared hardware high-pass was 0.3\,Hz for subject
+1 and 1\,Hz for subject 26. Because the rule and configurations E0--E4 depend on absolute amplitude and unfiltered
+input, the ISRUC evaluation was abandoned before any prediction was computed (A5 deviation D1). This concerns the
+raw ISRUC recordings for amplitude-dependent analyses; models with record-wise normalisation are not affected in the
+same way.
+
+%==============================================================================
+\section*{Supplementary Section S12: separation of the filter edges (amendment A4)}
+\label{sec:sup_a4}
+
+Amendment A4 was committed before any A4 input was trained on (commit \texttt{73a2050}, GitHub server timestamp
+2026-11-11 06:40:09 UTC; \nolinkurl{configs/amendment_a4.json}, \nolinkurl{docs/AMENDMENT_A4.md}). It fixed the two
+arms, E4HP (zero-phase Butterworth high-pass, order 4, 0.5\,Hz, no low-pass) and E4LP (low-pass, order 4, 30\,Hz,
+no high-pass), seeds 42 and 123, the ten Sleep-EDF folds and the unchanged E4 recipe, the reference arms E2 and E4,
+the metrics, the contrasts, the paired subject-cluster bootstrap (10{,}000 resamples, seed 2046) and the
+interpretation rule; the analysis is descriptive. Both filters were applied to the stored contiguous evaluation
+window of every record, and the same route reproduced the stored band-pass input within a relative $10^{-4}$ except
+at the first and last window epoch.
+
+\textbf{Execution.} Before the A4 runs, E4 at fold 0 and seed 123 was retrained with the A4 driver and compared with
+the archived run, as specified. The rerun was not bitwise identical: it stopped at the same epochs of both stages and
+agreed on 95.1\% of validation labels, with validation \mf\ 0.7831 against 0.7792. The 40 runs were trained in
+several GPU sessions; interrupted runs resumed from their last checkpoint, and every run passed the same run
+validation (checkpoint, prediction and metric hashes against its manifest) before the Sleep-EDF test folds were
+evaluated once, on CPU. The target cohorts were scored on CPU, the device specified by the amendment, after a device
+check reproduced stored telemetry ensemble probabilities within $10^{-4}$ with identical predicted labels.
+Preprocessed target inputs were verified against the SHA-256 manifest of the inference bundle.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{A4 contrasts in subject-mean \mf\ (\ci). Sleep-EDF: out-of-fold predictions of 78 subjects; SHHS1
+holdout: 500 participants; telemetry: 22 subjects. Share of the band-pass gain on the holdout sample,
+(arm$-$E2)/(E4$-$E2): E4LP 0.87 and 0.81, E4HP $-0.49$ and $-0.67$ at seeds 42 and 123.}
+\label{tab:sup_a4}
+\begin{tabular}{llrr}
+\toprule
+Cohort & Contrast & Seed 42 & Seed 123 \\
+\midrule
+Sleep-EDF & E4HP$-$E2 & $-$0.0031 [$-$0.0114, 0.0053] & 0.0031 [$-$0.0047, 0.0131] \\
+ & E4LP$-$E2 & $-$0.0032 [$-$0.0094, 0.0031] & $-$0.0037 [$-$0.0112, 0.0037] \\
+ & E4$-$E4HP & 0.0044 [$-$0.0029, 0.0115] & 0.0016 [$-$0.0058, 0.0085] \\
+ & E4$-$E4LP & 0.0044 [$-$0.0028, 0.0128] & 0.0083 [0.0001, 0.0175] \\
+\addlinespace
+SHHS1 holdout & E4HP$-$E2 & $-$0.0322 [$-$0.0368, $-$0.0274] & $-$0.0242 [$-$0.0290, $-$0.0193] \\
+ & E4LP$-$E2 & 0.0571 [0.0516, 0.0626] & 0.0294 [0.0250, 0.0339] \\
+ & E4$-$E4HP & 0.0976 [0.0915, 0.1038] & 0.0603 [0.0554, 0.0653] \\
+ & E4$-$E4LP & 0.0083 [0.0039, 0.0127] & 0.0067 [0.0017, 0.0118] \\
+\addlinespace
+Telemetry & E4HP$-$E2 & 0.0336 [0.0131, 0.0577] & 0.0388 [0.0166, 0.0641] \\
+ & E4LP$-$E2 & $-$0.0281 [$-$0.0517, $-$0.0106] & $-$0.0077 [$-$0.0319, 0.0109] \\
+ & E4$-$E4HP & $-$0.0310 [$-$0.0608, $-$0.0091] & $-$0.0233 [$-$0.0552, $-$0.0003] \\
+ & E4$-$E4LP & 0.0306 [0.0102, 0.0523] & 0.0232 [0.0072, 0.0406] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{A4 arms: pooled \mf, N3 recall and share of reference N3 epochs predicted as N2.}
+\label{tab:sup_a4_arms}
+\begin{tabular}{llrrrrrr}
+\toprule
+& & \multicolumn{3}{c}{Seed 42} & \multicolumn{3}{c}{Seed 123} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Cohort & ID & Pooled \mf & N3 recall & N3$\to$N2 & Pooled \mf & N3 recall & N3$\to$N2 \\
+\midrule
+Sleep-EDF & E2 & 0.7835 & 0.814 & 17.7\% & 0.7828 & 0.806 & 18.2\% \\
+ & E4 & 0.7891 & 0.815 & 17.9\% & 0.7887 & 0.819 & 17.2\% \\
+ & E4HP & 0.7847 & 0.818 & 17.4\% & 0.7876 & 0.815 & 17.5\% \\
+ & E4LP & 0.7841 & 0.814 & 17.8\% & 0.7807 & 0.805 & 18.6\% \\
+\addlinespace
+SHHS1 holdout & E2 & 0.5533 & 0.248 & 71.5\% & 0.5724 & 0.240 & 72.1\% \\
+ & E4 & 0.6187 & 0.274 & 71.1\% & 0.6082 & 0.257 & 72.6\% \\
+ & E4HP & 0.5204 & 0.229 & 73.9\% & 0.5493 & 0.255 & 72.2\% \\
+ & E4LP & 0.6126 & 0.264 & 70.8\% & 0.6029 & 0.247 & 72.1\% \\
+\addlinespace
+Telemetry & E2 & 0.7395 & 0.798 & 19.2\% & 0.7416 & 0.811 & 18.0\% \\
+ & E4 & 0.7399 & 0.855 & 14.3\% & 0.7526 & 0.857 & 14.0\% \\
+ & E4HP & 0.7742 & 0.853 & 14.5\% & 0.7778 & 0.860 & 13.7\% \\
+ & E4LP & 0.7130 & 0.789 & 19.6\% & 0.7311 & 0.802 & 18.8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under the interpretation rule, the high-pass edge carries the gain on telemetry (E4HP$-$E2 above zero and E4$-$E4HP
+below zero at both seeds). No edge carries it on the holdout sample: E4LP$-$E2 is above zero at both seeds, but so is
+E4$-$E4LP. No arm differs from E2 at both seeds on Sleep-EDF. Summary:
+\nolinkurl{runs/a4/analysis/a4_summary.json}; analysis script \nolinkurl{scripts/a4_analyze.py}.
 
 \section*{Provenance}
 

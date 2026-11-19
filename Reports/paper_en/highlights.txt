@@ -1,7 +1,7 @@
 Highlights
 
-- ResNet-1D-TCN forward passes were 3.76-fold faster than a CNN-BiLSTM control.
-- Its cross-cohort gain was confirmed on 500 held-out SHHS1 participants.
-- Band-pass filtering accounted for most of the cross-cohort gain.
-- Band-pass gains over baseline and unfiltered input exceeded five-seed spread.
-- All zero-shot pipelines scored most N3 (deep-sleep) epochs as N2.
+- A single-channel ZleepAnlystNet baseline was reproduced within 0.007 macro-F1.
+- A ResNet-1D-TCN pipeline matched its accuracy and trained about ten times faster.
+- Its SHHS transfer gain was confirmed on 500 held-out participants.
+- On a second cohort the baseline scored higher: transfer gains depend on the target.
+- Missed deep sleep after transfer went unflagged by model uncertainty.
