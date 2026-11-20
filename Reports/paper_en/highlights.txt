@@ -4,4 +4,4 @@ Highlights
 - A ResNet-1D-TCN pipeline matched its accuracy and trained about ten times faster.
 - Its SHHS transfer gain was confirmed on 500 held-out participants.
 - On a second cohort the baseline scored higher: transfer gains depend on the target.
-- Missed deep sleep after transfer went unflagged by model uncertainty.
+- Ensembles missed 42–45 of 62 min of deep sleep a night, unflagged by uncertainty.

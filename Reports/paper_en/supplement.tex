@@ -1877,6 +1877,9 @@ of one arm differed by up to 0.18 (E2, seed 123). N3 recall was slightly higher 
 for the ensemble in every arm, so ensembling did not cause the N3 deficit. Measured with single models,
 as on Sleep-EDF, the drop in pooled \mf\ between the cohorts was 0.2107 and 0.2134 for E3 at seeds 42 and
 123 and 0.1916 and 0.2039 for E4, against 0.1875, 0.1902, 0.1704 and 0.1805 with the ensembles.
+Paired by fold (post hoc, \path{scripts/single_model_holdout.py}), the E3 fold model exceeded the E0
+fold model trained on the same split in 8 of 10 folds at each seed (mean E3$-$E0 0.0342 at seed 42 and
+0.0302 at seed 123, range $-$0.083 to 0.079), and E4 in 10 and 9 of 10 folds (mean 0.0517 and 0.0389).
 
 \begin{table}[H]
 \centering\small

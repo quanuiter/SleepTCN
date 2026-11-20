@@ -218,8 +218,9 @@ Sleep-EDF Expanded là bộ chuẩn công khai tiêu chuẩn cho EEG đơn
 kênh~\cite{kemp2000sleepEDF,physionetSleepEDF,pollard2026physionet}. SHHS là một đoàn hệ đa trung tâm lớn được
 xây dựng để nghiên cứu rối loạn hô hấp khi ngủ~\cite{quan1997shhs} và được phân phối qua National Sleep Research
 Resource (NSRR)~\cite{zhang2018nsrr}; nó khác Sleep-EDF về tuổi, bệnh đi kèm, phần cứng, cách đặt điện cực và
-phân bố nhãn. Chấm điểm ngủ sâu dùng tiêu chí biên độ sóng chậm~\cite{rechtschaffen1968,berry2017aasm}, biên độ
-sóng chậm thay đổi theo vị trí trên da đầu~\cite{massimini2004travelling}, và mối liên hệ của nó với việc chấm
+phân bố nhãn. Chấm điểm ngủ sâu dùng tiêu chí biên độ sóng chậm~\cite{rechtschaffen1968,berry2017aasm}; phiên bản~3 của sổ tay
+AASM~\cite{troester2023aasm} sửa các quy tắc hô hấp và tim mạch nhưng giữ tiêu chí sóng chậm của N3, nên gộp
+giai đoạn 3 và 4 thành N3 vẫn là cách ánh xạ chuẩn. Biên độ sóng chậm thay đổi theo vị trí trên da đầu~\cite{massimini2004travelling}, và mối liên hệ của nó với việc chấm
 N3 trong SHHS đã được khảo sát~\cite{davidson2025n3}.
 
 %==============================================================================
@@ -376,7 +377,7 @@ A2 & E6R, năm seed E4, mô hình đơn lẻ, cỡ mẫu EM, chi phí huấn luy
 A3 & Đoàn hệ telemetry, quy tắc dựa trên biên độ & Mô tả & 11/11/2026 \\
 A4 & Cạnh lọc (E4HP, E4LP) & Mô tả & 11/11/2026 \\
 Cổng & Cổng biên độ và cổng entropy & Thăm dò & sau kết quả A3 \\
-Chỉnh sửa & Tách giả dược/temazepam, chỉ số giấc ngủ, nhóm tuổi/giới/AHI & Hậu kiểm & sau mọi kết quả \\
+Chỉnh sửa & Tách giả dược/temazepam, chỉ số giấc ngủ, nhóm tuổi/giới/AHI, FLOPs, mô hình đơn ghép theo fold & Hậu kiểm & sau mọi kết quả \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -468,8 +469,9 @@ SleePyCo~\cite{lee2024sleepyco} & 0.790 & 0.846 & 0.787 & \\
 
 \subsection{Chi phí tính toán}
 
-Các quy trình ResNet-1D-TCN có số tham số gấp $4.37\times$ E0 nhưng chạy nhanh hơn $3.76\times$ trong phép đo
-GPU (Bảng~\ref{tab:cost}); E1, vẫn giữ mười lăm nhánh CNN, chỉ nhanh hơn $1.07\times$. Một mô hình fold chấm một
+Các quy trình ResNet-1D-TCN có số tham số gấp $4.37\times$ và số phép tính dấu phẩy động gấp $2.1\times$ E0
+(122 so với 57 MFLOPs mỗi epoch) nhưng chạy nhanh hơn $3.76\times$ trong phép đo GPU (Bảng~\ref{tab:cost}),
+vì E0 chạy mười lăm CNN nhỏ nối tiếp nhau; E1, vẫn giữ mười lăm nhánh CNN, chỉ nhanh hơn $1.07\times$. Một mô hình fold chấm một
 đêm 932 epoch trên một luồng xử lý trong 4.31\,s với E0 và 1.38\,s với E3, nên tổ hợp mười mô hình E3 chấm một
 đêm trong khoảng 14\,s không cần GPU. Huấn luyện và kiểm định cả mười fold mất 33\,giờ\,36\,phút với E0 và
 3\,giờ\,17\,phút với E3. Khác biệt này đến từ việc E0 huấn luyện mười sáu mạng mỗi fold và cần số bước tối ưu
@@ -480,19 +482,20 @@ xác định, không phải của hiệu quả từng bước (Bảng bổ sung~
 \centering
 \caption{Chi phí tính toán. Độ trễ GPU: Tesla V100, lô gồm một chuỗi 100 epoch, fold 0 và seed 42. CPU: một mô
 hình fold, đêm 932 epoch, một luồng (Intel Core i5-13500H). Huấn luyện: thời gian thực qua mười fold, seed
-123, cùng GPU; E1 dùng lại bộ mã hóa của E0.}
+123, cùng GPU; E1 dùng lại bộ mã hóa của E0. GFLOPs: một lượt lan truyền xuôi cho một chuỗi 100 epoch, đếm
+hậu kiểm từ kiến trúc (một phép nhân--cộng tính là 2 FLOP).}
 \label{tab:cost}
 \small
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-\textbf{Mã} & \textbf{Tham số} & \textbf{GPU (ms)} & \textbf{CPU một đêm (s)} & \textbf{Huấn luyện} & \textbf{Số bước tối ưu} \\
+\textbf{Mã} & \textbf{Tham số} & \textbf{GFLOPs} & \textbf{GPU (ms)} & \textbf{CPU một đêm (s)} & \textbf{Huấn luyện} & \textbf{Số bước tối ưu} \\
 \midrule
-E0 & 248\,630 & 13.43 & 4.31 & 33 giờ 36 phút & 10\,692\,557 \\
-E1 & 640\,950 & 12.51 & & 14 phút (chỉ chuỗi) & \\
-E2 & 1\,085\,578 & 3.58 & & 2 giờ 45 phút & 401\,776 \\
-E3 & 1\,085\,578 & 3.57 & 1.38 & 3 giờ 17 phút & 474\,809 \\
-E4 & 1\,085\,578 & & & 2 giờ 56 phút & 425\,612 \\
-E6 & 1\,085\,578 & 3.58 & & 2 giờ 25 phút & 344\,928 \\
+E0 & 248\,630 & 5.74 & 13.43 & 4.31 & 33 giờ 36 phút & 10\,692\,557 \\
+E1 & 640\,950 & 5.78 & 12.51 & & 14 phút (chỉ chuỗi) & \\
+E2 & 1\,085\,578 & 12.20 & 3.58 & & 2 giờ 45 phút & 401\,776 \\
+E3 & 1\,085\,578 & 12.20 & 3.57 & 1.38 & 3 giờ 17 phút & 474\,809 \\
+E4 & 1\,085\,578 & 12.20 & & & 2 giờ 56 phút & 425\,612 \\
+E6 & 1\,085\,578 & 12.20 & 3.58 & & 2 giờ 25 phút & 344\,928 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -505,7 +508,9 @@ trung bình theo đối tượng. Trên 500 người tham gia giữ lại, cả 
 với ước lượng gần với mẫu thứ nhất (Bảng~\ref{tab:holdout}; Hình~\ref{fig:holdout}a). E3 cải thiện so với E0 ở
 380 trên 500 người, và trong các nhóm con hậu kiểm theo tuổi, giới và chỉ số ngưng thở--giảm thở (AHI),
 E3$-$E0 nằm trong khoảng 0.033 đến 0.054 với mọi khoảng nằm trên 0, dù điểm tuyệt đối giảm theo tuổi và AHI
-(Mục bổ sung S13). ResNet-1D-TCN không lọc E2 đạt điểm gần E0 (0.5122 so với 0.5170 ở seed 42, 0.5321 so với
+(Mục bổ sung S13). Khi chấm từng mô hình fold riêng, E3 vượt mô hình E0 cùng fold ở 8 trên 10 fold ở mỗi seed
+(chênh lệch trung bình 0.034 và 0.030), và mọi tổ hợp đều vượt trung bình các mô hình đơn của nó 0.012--0.033
+(Bảng bổ sung~\ref{SM-tab:sup_a2_single}). ResNet-1D-TCN không lọc E2 đạt điểm gần E0 (0.5122 so với 0.5170 ở seed 42, 0.5321 so với
 0.5216 ở seed 123), nên phần lớn ưu thế so với mô hình đối chứng trùng với thay đổi về lọc đầu vào chứ không phải
 với thay đổi bộ mã hóa và mô hình chuỗi.
 

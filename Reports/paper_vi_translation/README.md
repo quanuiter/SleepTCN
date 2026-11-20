@@ -1,5 +1,9 @@
 # Bản dịch tiếng Việt của bài chính nộp BSPC
 
+> **Cập nhật 20-11-2026 (lần 2):** đồng bộ cột GFLOPs và câu về số phép tính trong Bảng chi phí, câu về sổ
+> tay AASM phiên bản 3 (tài liệu tham khảo mới), câu so sánh E3/E0 theo từng mô hình fold và dòng Chỉnh sửa
+> của Bảng 3. 422 số thập phân và mọi khóa `\ref`/`\cite` khớp bản Anh (`revision_20261120b`); 18 trang.
+
 > **Cập nhật 20-11-2026:** dịch lại toàn bộ theo `../paper_en/main.tex` hiện hành: bố cục theo chủ đề
 > khoa học thay vì theo bản sửa đổi, tiêu đề và tóm tắt mới, Bảng 3 (vai trò từng phân tích), E6R định
 > nghĩa cạnh E6, mục 4.5 về hai cạnh của bộ lọc (A4), phân tích hậu kiểm theo đêm giả dược/temazepam, chỉ

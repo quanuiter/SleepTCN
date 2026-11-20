@@ -1,6 +1,6 @@
 {
   "english_source": "Reports/paper_en/main.tex",
-  "english_sha256": "a4a5572d862c4538a8b8dc91bec2fc1cf65bc1bc33026a834d5b19f30154d7a9",
+  "english_sha256": "13ab06b7fa2ac293ce0b31f1cbc34a0926691bd475173e056f02f5892e86e47f",
   "translated_prose_blocks": [
     16,
     17,
@@ -163,5 +163,11 @@
       1,
       10
     ]
+  },
+  "revision_20261120b": {
+    "synchronised": "FLOPs column and sentence, AASM version 3 sentence and reference, fold-paired single-model sentence, roles-table row",
+    "decimal_numbers_match_english": "422 of 422 (English has two extra from rule widths)",
+    "en_vi_ref_and_cite_keys_match": true,
+    "pages": 18
   }
 }

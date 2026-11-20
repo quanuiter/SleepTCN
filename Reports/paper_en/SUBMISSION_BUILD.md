@@ -16,6 +16,14 @@ parameters with Bland-Altman limits and ICC, and holdout subgroups by age, sex a
 Section S13). The supplement title matches the manuscript. No previously reported experimental value
 changed. The manifest and source ZIP below were regenerated for this revision.
 
+Second revision of the same day: the cost table gains a GFLOPs column counted post hoc from the
+architectures (`scripts/count_model_flops.py`, summary `runs/revision/model_flops.json`; parameter
+counts reproduce the table), Section 2 cites version 3 of the AASM scoring manual, the holdout section
+reports fold-paired single-model E3-E0 differences (`scripts/single_model_holdout.py`, summary
+`runs/revision/single_model_holdout.json`; it reproduces Supplementary Table `tab:sup_a2_single`), and
+highlight 5 states the N3 deficit in minutes. No previously reported value changed; the manifest and
+source ZIP were regenerated again.
+
 Revision, 11 November 2026: the second-amendment results are placed beside the results they qualify
 instead of in a separate section, and a post-hoc description of the input power spectra is added
 (`scripts/analyze_cohort_psd.py`, summary in `runs/cohort_psd/psd_summary.json`, new main-text figure

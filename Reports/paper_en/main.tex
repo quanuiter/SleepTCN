@@ -223,7 +223,9 @@ EEG~\cite{kemp2000sleepEDF,physionetSleepEDF,pollard2026physionet}. SHHS is a la
 cohort assembled to study sleep-disordered breathing~\cite{quan1997shhs} and distributed through the
 National Sleep Research Resource (NSRR)~\cite{zhang2018nsrr}; it differs from Sleep-EDF in age,
 comorbidity, hardware, derivation and label distribution. Deep-sleep scoring uses slow-wave amplitude
-criteria~\cite{rechtschaffen1968,berry2017aasm}, slow-wave amplitude varies across the
+criteria~\cite{rechtschaffen1968,berry2017aasm}; version~3 of the AASM manual~\cite{troester2023aasm}
+revised respiratory and cardiac rules and kept the N3 slow-wave criterion, so merging stages 3 and 4 into N3
+remains the standard mapping. Slow-wave amplitude varies across the
 scalp~\cite{massimini2004travelling}, and its relation to N3 scoring in SHHS has been
 examined~\cite{davidson2025n3}.
 
@@ -390,7 +392,7 @@ A2 & E6R, five E4 seeds, single models, EM sample size, training cost & Descript
 A3 & Telemetry cohort, amplitude-guided rule & Descriptive & 11 Nov 2026 \\
 A4 & Filter edges (E4HP, E4LP) & Descriptive & 11 Nov 2026 \\
 Gate & Amplitude and entropy gates & Exploratory & after A3 results \\
-Revision & Placebo/temazepam split, sleep parameters, age/sex/AHI subgroups & Post hoc & after all results \\
+Revision & Placebo/temazepam split, sleep parameters, age/sex/AHI subgroups, FLOPs, fold-paired single models & Post hoc & after all results \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -489,8 +491,9 @@ SleePyCo~\cite{lee2024sleepyco} & 0.790 & 0.846 & 0.787 & \\
 
 \subsection{Computational cost}
 
-The ResNet-1D-TCN pipelines have $4.37\times$ the parameters of E0 but ran $3.76\times$ faster in the
-GPU benchmark (Table~\ref{tab:cost}); E1, which keeps the fifteen CNN branches, gained only
+The ResNet-1D-TCN pipelines have $4.37\times$ the parameters and $2.1\times$ the floating-point
+operations of E0 (122 versus 57 MFLOPs per epoch) but ran $3.76\times$ faster in the GPU benchmark
+(Table~\ref{tab:cost}), because E0 runs fifteen small CNNs one after another; E1, which keeps the fifteen CNN branches, gained only
 $1.07\times$. One fold model scored a 932-epoch night on one processor thread in 4.31\,s for E0 and
 1.38\,s for E3, so a ten-model E3 ensemble scores a night in about 14\,s without a GPU. Training and
 validating all ten folds took 33\,h\,36\,min for E0 and 3\,h\,17\,min for E3. The difference arises
@@ -502,19 +505,20 @@ specified, not of per-step efficiency (Supplementary Table~\ref{SM-tab:sup_a2_co
 \centering
 \caption{Computational cost. GPU latency: Tesla V100, batch of one 100-epoch sequence, fold 0 and
 seed 42. CPU: one fold model, 932-epoch night, one thread (Intel Core i5-13500H). Training:
-wall-clock time over ten folds, seed 123, same GPU; E1 reuses the E0 encoder.}
+wall-clock time over ten folds, seed 123, same GPU; E1 reuses the E0 encoder. GFLOPs: forward pass of
+one 100-epoch sequence, counted post hoc from the architecture (one multiply--accumulate = 2 FLOPs).}
 \label{tab:cost}
 \small
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-\textbf{ID} & \textbf{Parameters} & \textbf{GPU (ms)} & \textbf{CPU night (s)} & \textbf{Training} & \textbf{Optimiser steps} \\
+\textbf{ID} & \textbf{Parameters} & \textbf{GFLOPs} & \textbf{GPU (ms)} & \textbf{CPU night (s)} & \textbf{Training} & \textbf{Optimiser steps} \\
 \midrule
-E0 & 248{,}630 & 13.43 & 4.31 & 33 h 36 min & 10{,}692{,}557 \\
-E1 & 640{,}950 & 12.51 & & 14 min (sequence only) & \\
-E2 & 1{,}085{,}578 & 3.58 & & 2 h 45 min & 401{,}776 \\
-E3 & 1{,}085{,}578 & 3.57 & 1.38 & 3 h 17 min & 474{,}809 \\
-E4 & 1{,}085{,}578 & & & 2 h 56 min & 425{,}612 \\
-E6 & 1{,}085{,}578 & 3.58 & & 2 h 25 min & 344{,}928 \\
+E0 & 248{,}630 & 5.74 & 13.43 & 4.31 & 33 h 36 min & 10{,}692{,}557 \\
+E1 & 640{,}950 & 5.78 & 12.51 & & 14 min (sequence only) & \\
+E2 & 1{,}085{,}578 & 12.20 & 3.58 & & 2 h 45 min & 401{,}776 \\
+E3 & 1{,}085{,}578 & 12.20 & 3.57 & 1.38 & 3 h 17 min & 474{,}809 \\
+E4 & 1{,}085{,}578 & 12.20 & & & 2 h 56 min & 425{,}612 \\
+E6 & 1{,}085{,}578 & 12.20 & 3.58 & & 2 h 25 min & 344{,}928 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -527,7 +531,10 @@ On the first SHHS1 sample, E3 exceeded E0 by 0.0412 (\ci\ 0.0314--0.0512), E6 by
 confirmed, with estimates close to those of the first sample (Table~\ref{tab:holdout};
 Fig.~\ref{fig:holdout}a). E3 improved on E0 in 380 of 500 participants, and in post-hoc subgroups by
 age, sex and apnoea--hypopnoea index (AHI) E3$-$E0 ranged from 0.033 to 0.054 with every interval above
-zero, although absolute scores fell with age and AHI (Supplementary Section S13). The unfiltered ResNet-1D-TCN
+zero, although absolute scores fell with age and AHI (Supplementary Section S13). Scored one fold model at a
+time, E3 exceeded the matching E0 fold model in 8 of 10 folds at each seed (mean difference 0.034 and 0.030),
+and every ensemble exceeded the mean of its single models by 0.012--0.033 (Supplementary
+Table~\ref{SM-tab:sup_a2_single}). The unfiltered ResNet-1D-TCN
 E2 scored close to E0 (0.5122 versus 0.5170 at seed 42, 0.5321 versus 0.5216 at seed 123), so most of
 the advantage over the baseline coincided with the change of input filtering rather than with the
 change of encoder and sequence model.
